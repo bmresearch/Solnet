@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <AssemblyName>Solnet.Rpc</AssemblyName>
+        <RootNamespace>Solnet.Rpc</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Infra" />
+      <Folder Include="Net" />
+      <Folder Include="Personal" />
+      <Folder Include="Solana\Blocks" />
+      <Folder Include="TransactionReceipts" />
+      <Folder Include="Web3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Nethereum.JsonRpc.Client" Version="3.8.0" />
+    </ItemGroup>
+
+</Project>
