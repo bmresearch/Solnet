@@ -1,12 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <Description>
+            Solnet.Wallet uses BIP32 and BIP39 to generate an HD tree of Solana compatible addresses from a randomly generated word seed.
+        </Description>
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="NBitcoin" Version="5.0.54" />
+        <PackageReference Include="Chaos.NaCl.Standard" Version="1.0.0" />
+        <PackageReference Include="NBitcoin" Version="5.0.77" />
         <PackageReference Include="Portable.BouncyCastle" Version="1.8.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Solnet.Models\Solnet.Models.csproj" />
+      <ProjectReference Include="..\Solnet.Util\Solnet.Util.csproj" />
     </ItemGroup>
     
 </Project>

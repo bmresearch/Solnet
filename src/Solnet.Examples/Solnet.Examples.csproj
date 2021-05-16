@@ -1,12 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <OutputType>Exe</OutputType>
         <TargetFramework>net5.0</TargetFramework>
         <OutputType>Exe</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Solnet.Rpc\Solnet.Rpc.csproj" />
+      <ProjectReference Include="..\Solnet.Models\Solnet.Models.csproj" />
+      <ProjectReference Include="..\Solnet.Util\Solnet.Util.csproj" />
+      <ProjectReference Include="..\Solnet.Wallet\Solnet.Wallet.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Chaos.NaCl.Standard" Version="1.0.0" />
+      <PackageReference Include="NBitcoin" Version="5.0.78" />
     </ItemGroup>
 
 </Project>

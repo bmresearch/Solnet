@@ -1,9 +1,5 @@
 ![solnet](docs/assets/solnet-horizontal.png)
 
-# Solnet
-
-Technical support, chat and collaboration at the [Solnet Discord]().
-
 # What is Solnet?
 
 Solnet is Solana's .NET integration library.

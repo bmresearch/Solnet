@@ -10,7 +10,7 @@ namespace Solnet.Examples
     class SolnetRpcTester
     {
 
-        static void Main(string[] args)
+        static void Example(string[] args)
         {
 
             SolanaJsonRpcClient c = new SolanaJsonRpcClient();
