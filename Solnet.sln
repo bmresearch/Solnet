@@ -12,8 +12,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Examples", "src\Soln
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Util", "src\Solnet.Util\Solnet.Util.csproj", "{5B8896C9-4B06-41C9-B0F9-05B9F6190CA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.KeyGen", "src\Solnet.KeyGen\Solnet.KeyGen.csproj", "{3C534072-1F5F-4625-9831-ACBBA28E5C47}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
