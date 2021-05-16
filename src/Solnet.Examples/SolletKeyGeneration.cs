@@ -7,7 +7,7 @@ namespace Solnet.Examples
 {
     public class SolletKeyGeneration
     {
-        static void Example()
+        static void Main(string[] args)
         {
             var expectedSolletAddresses = new List<string[]>
             {
@@ -38,10 +38,10 @@ namespace Solnet.Examples
                 Console.WriteLine($"SOLLET publicKey>b58 {account.EncodedPublicKey}");
                 Console.WriteLine($"SOLLET privateKey>b58 {account.EncodedPrivateKey}");
                 
-                Debug.Assert(account.EncodedPublicKey == expectedSolletAddresses.get_Item(i)[0] && account.EncodedPrivateKey == expectedSolletAddresses.get_Item(i)[1]);
+                Debug.Assert(account.EncodedPublicKey == expectedSolletAddresses[i][0] && account.EncodedPrivateKey == expectedSolletAddresses[i][1]);
                 
-                if (account.EncodedPublicKey != expectedSolletAddresses.get_Item(i)[0] ||
-                    account.EncodedPrivateKey != expectedSolletAddresses.get_Item(i)[1])
+                if (account.EncodedPublicKey != expectedSolletAddresses[i][0] ||
+                    account.EncodedPrivateKey != expectedSolletAddresses[i][1])
                     flag = false;
             }
             if (flag)

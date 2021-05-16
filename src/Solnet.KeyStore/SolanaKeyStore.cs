@@ -2,8 +2,7 @@ using System.IO;
 using System.Text;
 using Chaos.NaCl;
 using Solnet.Util;
-using Solnet.Wallet.Account;
-using Solnet.Wallet.Key;
+using Solnet.Wallet;
 
 namespace Solnet.KeyStore
 {
