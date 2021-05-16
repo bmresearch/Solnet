@@ -2,13 +2,11 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
+        <OutputType>Exe</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Accounts" />
-      <Folder Include="KeyStore" />
-      <Folder Include="Rpc" />
-      <Folder Include="Wallet" />
+      <ProjectReference Include="..\Solnet.Rpc\Solnet.Rpc.csproj" />
     </ItemGroup>
 
 </Project>
