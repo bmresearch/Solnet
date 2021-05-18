@@ -1,27 +1,27 @@
 using System.IO;
 using System.Text;
-using Chaos.NaCl;
 using Solnet.Util;
 using Solnet.Wallet;
 
-namespace Solnet.KeyStore
+namespace Solnet.KeyStore.Services
 {
     /// <summary>
     /// Implements a keystore compatible with the solana-keygen made in rust.
     /// </summary>
-    public class SolanaKeyStore : IKeyStore
+    public class SolanaKeyStore
     {
         /// <summary>
         /// Restores a keypair from a keystore compatible with the solana-keygen made in rust.
         /// </summary>
-        /// <param name="path">The path to the keystore</param>
-        public Account RestoreKeystore(string path)
+        /// <param name="path">The path to the keystore.</param>
+        /// <param name="passphrase">The passphrase used while originally generating the keys.</param>
+        public Wallet.Wallet RestoreKeystore(string path, string passphrase = "")
         {
             var inputBytes = File.ReadAllText(path).FromStringByteArray();
 
-            var acc = new Account(inputBytes, Ed25519.PublicKeyFromSeed(inputBytes[..32]));
+            var wallet = new Wallet.Wallet(inputBytes, passphrase, SeedMode.Bip39);
             
-            return acc;
+            return wallet;
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Solnet.KeyStore
         /// <param name="path"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException">NOT IMPLEMENTED.</exception>
-        public Account DecryptAndRestoreKeystore(string path)
+        public Wallet.Wallet DecryptAndRestoreKeystore(string path)
         {
             throw new System.NotImplementedException();
         }
@@ -39,19 +39,19 @@ namespace Solnet.KeyStore
         /// Saves a keypair to a keystore compatible with the solana-keygen made in rust.
         /// </summary>
         /// <param name="path">The path to the keystore</param>
-        /// <param name="account">The account to save to the keystore.</param>
-        public void SaveKeystore(string path, Account account)
+        /// <param name="wallet">The wallet to save to the keystore.</param>
+        public void SaveKeystore(string path, Wallet.Wallet wallet)
         {
-            File.WriteAllBytes(path, Encoding.ASCII.GetBytes(account.PrivateKey.ToStringByteArray()));
+            File.WriteAllBytes(path, Encoding.ASCII.GetBytes(wallet.DeriveMnemonicSeed().ToStringByteArray()));
         }
 
         /// <summary>
         /// NOT IMPLEMENTED.
         /// </summary>
         /// <param name="path"></param>
-        /// <param name="account">The account to save to the keystore.</param>
+        /// <param name="wallet">The wallet to save to the keystore.</param>
         /// <exception cref="System.NotImplementedException">NOT IMPLEMENTED.</exception>
-        public void EncryptAndSaveKeystore(string path, Account account)
+        public void EncryptAndSaveKeystore(string path, Wallet.Wallet wallet)
         {
             throw new System.NotImplementedException();
         }

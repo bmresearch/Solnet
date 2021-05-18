@@ -28,7 +28,34 @@ namespace Solnet.Wallet
         /// The method used for <see cref="SeedMode.Ed25519Bip32"/> key generation.
         /// </summary>
         private Ed25519Bip32 _ed25519Bip32;
+        
+        /// <summary>
+        /// Initialize a wallet from passed word count and word list for the mnemonic and passphrase.
+        /// </summary>
+        /// <param name="wordCount">The mnemonic word count.</param>
+        /// <param name="wordlist">The language of the mnemonic words.</param>
+        /// <param name="passphrase">The passphrase.</param>
+        /// <param name="seedMode">The seed generation mode.</param>
+        public Wallet(WordCount wordCount, Wordlist wordlist, string passphrase = "", SeedMode seedMode = SeedMode.Ed25519Bip32) 
+            : this(new Mnemonic(wordlist, wordCount), passphrase, seedMode)
+        {
+        }
 
+        /// <summary>
+        /// Initialize a wallet from the passed mnemonic and passphrase.
+        /// </summary>
+        /// <param name="mnemonic">The mnemonic.</param>
+        /// <param name="passphrase">The passphrase.</param>
+        /// <param name="seedMode">The seed generation mode.</param>
+        public Wallet(Mnemonic mnemonic, string passphrase = "", SeedMode seedMode = SeedMode.Ed25519Bip32)
+        {
+            Mnemonic = mnemonic;
+            Passphrase = passphrase;
+            
+            _seedMode = seedMode;
+            InitializeSeed();
+        }
+        
         /// <summary>
         /// Initialize a wallet with the passed passphrase and seed mode.
         /// <remarks>See <see cref="SeedMode"/>.</remarks>
@@ -38,47 +65,25 @@ namespace Solnet.Wallet
         public Wallet(string passphrase = "", SeedMode seedMode = SeedMode.Ed25519Bip32)
         {
             Mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
+            Passphrase = passphrase;
             
             _seedMode = seedMode;
-            _seed = InitializeSeed(Mnemonic, passphrase);
+            InitializeSeed();
         }
-        
+
         /// <summary>
-        /// Initialize a wallet from passed word count and word list for the mnemonic and passphrase.
+        /// Initializes a wallet from the passed seed byte array.
         /// </summary>
-        /// <param name="wordCount"></param>
-        /// <param name="wordlist"></param>
+        /// <param name="seed">The seed used for key derivation.</param>
         /// <param name="passphrase">The passphrase.</param>
-        /// <param name="seedMode">The seed generation mode.</param>
-        public Wallet(WordCount wordCount, Wordlist wordlist, string passphrase = "", SeedMode seedMode = SeedMode.Ed25519Bip32)
+        /// <param name="seedMode">The seed mode.</param>
+        public Wallet(byte[] seed, string passphrase = "", SeedMode seedMode = SeedMode.Ed25519Bip32)
         {
-            Mnemonic = new Mnemonic(wordlist, wordCount);
+            Passphrase = passphrase;
             
             _seedMode = seedMode;
-            _seed = InitializeSeed(Mnemonic, passphrase);
-        }
-        
-        /// <summary>
-        /// Initialize a wallet from the passed mnemonic and passphrase.
-        /// </summary>
-        /// <param name="mnemonic"></param>
-        /// <param name="passphrase">The passphrase.</param>
-        /// <param name="seedMode">The seed generation mode.</param>
-        public Wallet(Mnemonic mnemonic, string passphrase = "", SeedMode seedMode = SeedMode.Ed25519Bip32)
-        {
-            Mnemonic = mnemonic;
-            
-            _seedMode = seedMode;
-            _seed = InitializeSeed(mnemonic, passphrase);
-        }
-        
-        /// <summary>
-        /// Initializes a wallet from the passed account.
-        /// </summary>
-        /// <param name="account">The account holding the keypair.</param>
-        public Wallet(Account account)
-        {
-            Account = account;
+            _seed = seed;
+            InitializeFirstAccount();
         }
         
         /// <summary>
@@ -159,6 +164,21 @@ namespace Solnet.Wallet
         }
 
         /// <summary>
+        /// Derive a seed from the passed mnemonic and/or passphrase, depending on <see cref="SeedMode"/>.
+        /// </summary>
+        /// <returns>The seed.</returns>
+        public byte[] DeriveMnemonicSeed()
+        {
+            if (_seed != null) return _seed;
+            return _seedMode switch
+            {
+                SeedMode.Ed25519Bip32 => Mnemonic.DeriveSeed(),
+                SeedMode.Bip39 => Mnemonic.DeriveSeed(Passphrase),
+                _ => Mnemonic.DeriveSeed()
+            };
+        }
+        
+        /// <summary>
         /// Gets the corresponding ed25519 key pair from the passed seed.
         /// </summary>
         /// <param name="seed">The seed</param>
@@ -167,52 +187,42 @@ namespace Solnet.Wallet
             new(Ed25519.ExpandedPrivateKeyFromSeed(seed), Ed25519.PublicKeyFromSeed(seed));
 
         /// <summary>
-        /// Generate the keypair for the passed mnemonic and passphrase.
+        /// Initializes the first account with a key pair derived from the initialized seed.
         /// </summary>
-        /// <param name="mnemonic">The mnemonic</param>
-        /// <param name="passphrase">The passphrase.</param>
-        /// <returns>The key pair.</returns>
-        private byte[] InitializeSeed(Mnemonic mnemonic, string passphrase = "")
+        private void InitializeFirstAccount()
         {
-            var seed = DeriveSeed(mnemonic, passphrase);
-
             if (_seedMode == SeedMode.Ed25519Bip32)
             {
-                _ed25519Bip32 = new Ed25519Bip32(seed);
+                _ed25519Bip32 = new Ed25519Bip32(_seed);
                 Account = GetAccount(0);
             }
             else
             {
-                var (privateKey, publicKey) = EdKeyPairFromSeed(seed[..32]);
+                var (privateKey, publicKey) = EdKeyPairFromSeed(_seed[..32]);
                 Account = new Account(privateKey, publicKey);
             }
-
-            return seed;
         }
 
         /// <summary>
-        /// Derive a seed from the passed mnemonic and passphrase.
+        /// Derive the mnemonic seed and generate the key pair for the configured wallet.
         /// </summary>
-        /// <param name="mnemonic">The mnemonic</param>
-        /// <param name="passphrase">The passphrase.</param>
-        /// <returns>The seed.</returns>
-        private byte[] DeriveSeed(Mnemonic mnemonic, string passphrase = "")
+        private void InitializeSeed()
         {
-            switch (_seedMode)
-            {
-                case SeedMode.Ed25519Bip32:
-                    return mnemonic.DeriveSeed();
-                case SeedMode.Bip39:
-                    return mnemonic.DeriveSeed(passphrase);
-                default:
-                    return mnemonic.DeriveSeed();
-            }
+            _seed = DeriveMnemonicSeed();
+            
+            InitializeFirstAccount();
         }
 
         /// <summary>
         /// The key pair.
         /// </summary>
         public Account Account { get; private set; }
+        
+        
+        /// <summary>
+        /// The passphrase string.
+        /// </summary>
+        public string Passphrase { get; }
         
         /// <summary>
         /// The mnemonic words.

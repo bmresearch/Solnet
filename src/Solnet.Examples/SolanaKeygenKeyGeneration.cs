@@ -22,15 +22,10 @@ namespace Solnet.Examples
             Console.WriteLine($"SOLLET publicKey>b58 {solKeygenWallet.Account.EncodedPublicKey}");
             Console.WriteLine($"SOLLET privateKey>b58 {solKeygenWallet.Account.EncodedPrivateKey}");
             
-            Debug.Assert(solKeygenWallet.Account.EncodedPublicKey == expectedSolKeygenPublicKey && solKeygenWallet.Account.EncodedPrivateKey == expectedSolKeygenPrivateKey);
-
-            if (solKeygenWallet.Account.EncodedPublicKey != expectedSolKeygenPublicKey ||
-                solKeygenWallet.Account.EncodedPrivateKey != expectedSolKeygenPrivateKey)
-            {
+            if (solKeygenWallet.Account.EncodedPublicKey != expectedSolKeygenPublicKey || solKeygenWallet.Account.EncodedPrivateKey != expectedSolKeygenPrivateKey) {
                 Console.WriteLine("NOT GOOD FOR THE SOL");
             }
-            else
-            {
+            else {
                 Console.WriteLine("GOOD FOR THE SOL");
             }
 
