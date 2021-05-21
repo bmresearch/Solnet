@@ -1,5 +1,5 @@
 using System;
-using Solnet.KeyStore.Exceptions;
+using Solnet.KeyStore.Crypto;
 using Solnet.KeyStore.Model;
 using Solnet.KeyStore.Serialization;
 using Solnet.Util;
@@ -32,17 +32,18 @@ namespace Solnet.KeyStore.Services
 
         protected override ScryptParams GetDefaultParams()
         {
-            return new ScryptParams {Dklen = 32, N = 262144, R = 1, P = 8};
+            return new () {Dklen = 32, N = 262144, R = 1, P = 8};
         }
 
         public override KeyStore<ScryptParams> DeserializeKeyStoreFromJson(string json)
         {
-            return JsonKeyStoreScryptSerialiser.DeserialiseScrypt(json);
+            var keystore = JsonKeyStoreScryptSerializer.DeserializeScrypt(json);
+            return keystore;
         }
 
         public override string SerializeKeyStoreToJson(KeyStore<ScryptParams> keyStore)
         {
-            return JsonKeyStoreScryptSerialiser.SerialiseScrypt(keyStore);
+            return JsonKeyStoreScryptSerializer.SerializeScrypt(keyStore);
         }
 
         public override byte[] DecryptKeyStore(string password, KeyStore<ScryptParams> keyStore)

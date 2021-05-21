@@ -1,8 +1,8 @@
-namespace Solnet.KeyStore.Exceptions
+namespace Solnet.KeyStore.Crypto
 {
     public interface IRandomBytesGenerator
     {
-        byte[] GenerateRandomInitialisationVector();
+        byte[] GenerateRandomInitializationVector();
         byte[] GenerateRandomSalt();
     }
 }

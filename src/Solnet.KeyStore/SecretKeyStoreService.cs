@@ -1,67 +1,73 @@
 using System;
 using System.IO;
-using Newtonsoft.Json.Linq;
+using System.Runtime.Serialization;
+using System.Text.Json;
+using Solnet.KeyStore.Model;
 using Solnet.KeyStore.Services;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Solnet.KeyStore
 {
+    /// <summary>
+    /// Implements a keystore compatible with the web3 secret storage standard.
+    /// </summary>
     public class SecretKeyStoreService
     {
-        private readonly KeyStoreKdfChecker _keyStoreKdfChecker;
         private readonly KeyStoreScryptService _keyStoreScryptService;
         private readonly KeyStorePbkdf2Service _keyStorePbkdf2Service;
 
         public SecretKeyStoreService()
         {
-            _keyStoreKdfChecker = new KeyStoreKdfChecker();
             _keyStorePbkdf2Service = new KeyStorePbkdf2Service();
             _keyStoreScryptService = new KeyStoreScryptService();
         }
 
-        public SecretKeyStoreService(KeyStoreKdfChecker keyStoreKdfChecker, KeyStoreScryptService keyStoreScryptService,
-            KeyStorePbkdf2Service keyStorePbkdf2Service)
+        public SecretKeyStoreService(KeyStoreScryptService keyStoreScryptService, KeyStorePbkdf2Service keyStorePbkdf2Service)
         {
-            _keyStoreKdfChecker = keyStoreKdfChecker;
             _keyStoreScryptService = keyStoreScryptService;
             _keyStorePbkdf2Service = keyStorePbkdf2Service;
         }
 
-        public string GetAddressFromKeyStore(string json)
+        public static string GetAddressFromKeyStore(string json)
         {
             if (json == null) throw new ArgumentNullException(nameof(json));
-            var keyStoreDocument = JObject.Parse(json);
-            return keyStoreDocument["address"].Value<string>();
+            var keyStoreDocument = JsonSerializer.Deserialize<JsonDocument>(json);
+            if (keyStoreDocument == null) throw new SerializationException("could not process json");
+
+            var addrExist = keyStoreDocument.RootElement.TryGetProperty("address", out var address);
+            if (!addrExist) throw new JsonException("could not get address from json");
+            
+            return address.GetString();
         }
 
-        public string GenerateUTCFileName(string address)
+        public static string GenerateUtcFileName(string address)
         {
             if (address == null) throw new ArgumentNullException(nameof(address));
-            return "UTC--" + DateTime.UtcNow.ToString("O").Replace(":", "-") + "--" + address.Replace("0x", "");
+            return "utc--" + DateTime.UtcNow.ToString("O").Replace(":", "-") + "--" + address;
         }
-#if !PCL 
+        
         public byte[] DecryptKeyStoreFromFile(string password, string filePath)
         {
-            using (var file = File.OpenText(filePath))
-            {
-                var json = file.ReadToEnd();
-                return DecryptKeyStoreFromJson(password, json);
-            }
+            if (password == null) throw new ArgumentNullException(nameof(password));
+            if (filePath == null) throw new ArgumentNullException(nameof(filePath));
+            
+            using var file = File.OpenText(filePath);
+            var json = file.ReadToEnd();
+            return DecryptKeyStoreFromJson(password, json);
         }
-#endif
 
         public byte[] DecryptKeyStoreFromJson(string password, string json)
         {
             if (password == null) throw new ArgumentNullException(nameof(password));
             if (json == null) throw new ArgumentNullException(nameof(json));
 
-            var type = _keyStoreKdfChecker.GetKeyStoreKdfType(json);
-            if (type == KeyStoreKdfChecker.KdfType.pbkdf2)
-                return _keyStorePbkdf2Service.DecryptKeyStoreFromJson(password, json);
-
-            if (type == KeyStoreKdfChecker.KdfType.scrypt)
-                return _keyStoreScryptService.DecryptKeyStoreFromJson(password, json);
-            //shold not reach here, already handled by the checker
-            throw new Exception("Invalid kdf type");
+            var type = KeyStoreKdfChecker.GetKeyStoreKdfType(json);
+            return type switch
+            {
+                KdfType.Pbkdf2 => _keyStorePbkdf2Service.DecryptKeyStoreFromJson(password, json),
+                KdfType.Scrypt => _keyStoreScryptService.DecryptKeyStoreFromJson(password, json),
+                _ => throw new Exception("Invalid kdf type")
+            };
         }
 
         public string EncryptAndGenerateDefaultKeyStoreAsJson(string password, byte[] key, string address)

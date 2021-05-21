@@ -10,8 +10,7 @@ namespace Solnet.Examples
 {
     public class SolletKeygenKeystore
     {
-        
-        static void Main(string[] args)
+        static void Example(string[] args)
         {
             var expectedSolletAddresses = new List<string[]>
             {
@@ -39,18 +38,7 @@ namespace Solnet.Examples
             var seed = wallet.DeriveMnemonicSeed();
             Account account = null;
             bool flag = true; // to check if the keys are the expected ones
-            Console.WriteLine($"Seed: {seed.ToStringByteArray()}");
-            
-            // Mimic sollet key generation
-            for (int i = 0; i < 10; i++)
-            {
-                account = wallet.GetAccount(i);
-                
-                Console.WriteLine($"SOLLET publicKey>b58 {account.EncodedPublicKey}");
-                Console.WriteLine($"SOLLET privateKey>b58 {account.EncodedPrivateKey}");
-                
-                if (account.EncodedPublicKey != expectedSolletAddresses[i][0] || account.EncodedPrivateKey != expectedSolletAddresses[i][1]) flag = false;
-            }
+            Console.WriteLine($"Seed: {seed.ToStringByteArray()}\nAddress: {wallet.Account.GetPublicKey}");
             
             /* 1. Encrypt mnemonic derived seed and generate keystore as json 
             var keystoreJson = keystoreService.EncryptAndGenerateDefaultKeyStoreAsJson(_password, seed, wallet.Account.EncodedPublicKey);
@@ -58,9 +46,11 @@ namespace Solnet.Examples
             
             /* 2. Encrypt the mnemonic as bytes */
             var stringByteArray = Encoding.UTF8.GetBytes(mnemonic.ToString());
-            var encryptedKeystoreJson = keystoreService.EncryptAndGenerateDefaultKeyStoreAsJson(_password, stringByteArray, wallet.Account.EncodedPublicKey);             
-             
-            Console.WriteLine(encryptedKeystoreJson);
+            var encryptedKeystoreJson = keystoreService.EncryptAndGenerateDefaultKeyStoreAsJson(_password, stringByteArray, wallet.Account.GetPublicKey);
+
+            var keystoreJsonAddr = SecretKeyStoreService.GetAddressFromKeyStore(encryptedKeystoreJson);
+            
+            Console.WriteLine($"Keystore JSON: {encryptedKeystoreJson}\nKeystore Address: {keystoreJsonAddr}");
             
             /* 1. Decrypt mnemonic derived seed and generate wallet from it 
             var decryptedKeystore = keystoreService.DecryptKeyStoreFromJson(_password, keystoreJson);
@@ -85,10 +75,9 @@ namespace Solnet.Examples
             {
                 account = restoredWallet.GetAccount(i);
                 
-                Console.WriteLine($"SOLLET publicKey>b58 {account.EncodedPublicKey}");
-                Console.WriteLine($"SOLLET privateKey>b58 {account.EncodedPrivateKey}");
+                Console.WriteLine($"RESTORED SOLLET address {account.GetPublicKey}");
                 
-                if (account.EncodedPublicKey != expectedSolletAddresses[i][0] || account.EncodedPrivateKey != expectedSolletAddresses[i][1]) flag = false;
+                if (account.GetPublicKey != expectedSolletAddresses[i][0] || account.GetPrivateKey != expectedSolletAddresses[i][1]) flag = false;
             }
             Console.WriteLine(flag ? "GOOD RESTORE FOR THE SOLLET" : "NOT GOOD RESTORE FOR THE SOLLET");
         }

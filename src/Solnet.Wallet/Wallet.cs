@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Chaos.NaCl;
 using NBitcoin;
 
@@ -15,19 +16,35 @@ namespace Solnet.Wallet
         private const string DerivationPath = "m/44'/501'/x'/0'";
 
         /// <summary>
+        /// The seed mode used for key generation.
+        /// </summary>
+        private readonly SeedMode _seedMode;
+        
+        /// <summary>
         /// The seed derived from the mnemonic and/or passphrase.
         /// </summary>
         private byte[] _seed;
         
         /// <summary>
-        /// The seed mode used for key generation.
-        /// </summary>
-        private SeedMode _seedMode;
-
-        /// <summary>
         /// The method used for <see cref="SeedMode.Ed25519Bip32"/> key generation.
         /// </summary>
         private Ed25519Bip32 _ed25519Bip32;
+        
+        /// <summary>
+        /// The passphrase string.
+        /// </summary>
+        private string Passphrase { get; }
+        
+        /// <summary>
+        /// The key pair.
+        /// </summary>
+        public Account Account { get; private set; }
+        
+        /// <summary>
+        /// The mnemonic words.
+        /// </summary>
+        // ReSharper disable once MemberCanBePrivate.Global
+        public Mnemonic Mnemonic { get; }
         
         /// <summary>
         /// Initialize a wallet from passed word count and word list for the mnemonic and passphrase.
@@ -99,8 +116,7 @@ namespace Solnet.Wallet
                 throw new Exception("cannot verify bip39 signatures using ed25519 based bip32 keys");
             
             var account = GetAccount(accountIndex);
-            
-            return Ed25519.Verify(signature, message, account.PublicKey);
+            return account.Verify(message, signature);
         }
 
         /// <summary>
@@ -111,10 +127,10 @@ namespace Solnet.Wallet
         /// <returns></returns>
         public bool Verify(byte[] message, byte[] signature)
         {
-            if (_seedMode == SeedMode.Ed25519Bip32)
+            if (_seedMode != SeedMode.Bip39)
                 throw new Exception("cannot verify ed25519 based bip32 signatures using bip39 keys");
             
-            return Ed25519.Verify(signature, message, Account.PublicKey);
+            return Account.Verify(message, signature);
         }
         
         /// <summary>
@@ -129,9 +145,8 @@ namespace Solnet.Wallet
                 throw new Exception("cannot compute bip39 signature using ed25519 based bip32 keys ");
             
             var account = GetAccount(accountIndex);
+            var signature = account.Sign(message);
             
-            var signature = new ArraySegment<byte>();
-            Ed25519.Sign(signature, message, account.PrivateKey);
             return signature.ToArray();
         }
 
@@ -142,11 +157,10 @@ namespace Solnet.Wallet
         /// <returns>The signature of the data.</returns>
         public byte[] Sign(byte[] message)
         {
-            if (_seedMode == SeedMode.Ed25519Bip32)
+            if (_seedMode != SeedMode.Bip39)
                 throw new Exception("cannot compute ed25519 based bip32 signature using bip39 keys");
 
-            var signature = new ArraySegment<byte>();
-            Ed25519.Sign(signature, message, Account.PrivateKey);
+            var signature = Account.Sign(message);
             return signature.ToArray();
         }
 
@@ -160,7 +174,7 @@ namespace Solnet.Wallet
             var path = DerivationPath.Replace("x", index.ToString());
             var (account, chain) = _ed25519Bip32.DerivePath(path);
             var (privateKey, publicKey) = EdKeyPairFromSeed(account);
-            return new(privateKey, publicKey);
+            return new Account(privateKey, publicKey);
         }
 
         /// <summary>
@@ -212,21 +226,5 @@ namespace Solnet.Wallet
             
             InitializeFirstAccount();
         }
-
-        /// <summary>
-        /// The key pair.
-        /// </summary>
-        public Account Account { get; private set; }
-        
-        
-        /// <summary>
-        /// The passphrase string.
-        /// </summary>
-        public string Passphrase { get; }
-        
-        /// <summary>
-        /// The mnemonic words.
-        /// </summary>
-        public Mnemonic Mnemonic { get; }
     }
 }

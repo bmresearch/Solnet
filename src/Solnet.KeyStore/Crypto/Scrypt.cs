@@ -5,41 +5,41 @@ using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 
-namespace Solnet.KeyStore.Exceptions
+namespace Solnet.KeyStore.Crypto
 {
 public class Scrypt
     {
-        private static byte[] SingleIterationPBKDF2(byte[] P, byte[] S, int dkLen)
+        private static byte[] SingleIterationPbkdf2(byte[] p, byte[] s, int dkLen)
         {
             PbeParametersGenerator pGen = new Pkcs5S2ParametersGenerator(new Sha256Digest());
-            pGen.Init(P, S, 1);
+            pGen.Init(p, s, 1);
             KeyParameter key = (KeyParameter)pGen.GenerateDerivedMacParameters(dkLen * 8);
             return key.GetKey();
         }
 
-        public unsafe static byte[] CryptoScrypt(byte[] password, byte[] salt, int N, int r, int p, int dkLen)
+        public unsafe static byte[] CryptoScrypt(byte[] password, byte[] salt, int n, int r, int p, int dkLen)
         {
-            var Ba = new byte[128 * r * p + 63];
-            var XYa = new byte[256 * r + 63];
-            var Va = new byte[128 * r * N + 63];
+            var ba = new byte[128 * r * p + 63];
+            var xYa = new byte[256 * r + 63];
+            var va = new byte[128 * r * n + 63];
             var buf = new byte[32];
 
-            Ba = SingleIterationPBKDF2(password, salt, p * 128 * r);
+            ba = SingleIterationPbkdf2(password, salt, p * 128 * r);
 
-            fixed (byte* B = Ba)
-            fixed (void* V = Va)
-            fixed (void* XY = XYa)
+            fixed (byte* b = ba)
+            fixed (void* v = va)
+            fixed (void* xy = xYa)
             {
                 /* 2: for i = 0 to p - 1 do */
                 for (var i = 0; i < p; i++)
                 {
                     /* 3: B_i <-- MF(B_i, N) */
-                    SMix(&B[i * 128 * r], r, N, (uint*)V, (uint*)XY);
+                    SMix(&b[i * 128 * r], r, n, (uint*)v, (uint*)xy);
                 }
             }
 
             /* 5: DK <-- PBKDF2(P, B, 1, dkLen) */
-            return SingleIterationPBKDF2(password, Ba, dkLen);
+            return SingleIterationPbkdf2(password, ba, dkLen);
         }
 
 
@@ -140,24 +140,24 @@ public class Scrypt
         /// <summary>
         /// Apply the salsa20/8 core to the provided block.
         /// </summary>
-        private unsafe static void Salsa208(uint* B)
+        private unsafe static void Salsa208(uint* b)
         {
-            uint x0 = B[0];
-            uint x1 = B[1];
-            uint x2 = B[2];
-            uint x3 = B[3];
-            uint x4 = B[4];
-            uint x5 = B[5];
-            uint x6 = B[6];
-            uint x7 = B[7];
-            uint x8 = B[8];
-            uint x9 = B[9];
-            uint x10 = B[10];
-            uint x11 = B[11];
-            uint x12 = B[12];
-            uint x13 = B[13];
-            uint x14 = B[14];
-            uint x15 = B[15];
+            uint x0 = b[0];
+            uint x1 = b[1];
+            uint x2 = b[2];
+            uint x3 = b[3];
+            uint x4 = b[4];
+            uint x5 = b[5];
+            uint x6 = b[6];
+            uint x7 = b[7];
+            uint x8 = b[8];
+            uint x9 = b[9];
+            uint x10 = b[10];
+            uint x11 = b[11];
+            uint x12 = b[12];
+            uint x13 = b[13];
+            uint x14 = b[14];
+            uint x15 = b[15];
 
             for (var i = 0; i < 8; i += 2)
             {
@@ -189,22 +189,22 @@ public class Scrypt
                 x14 ^= R(x13 + x12, 13); x15 ^= R(x14 + x13, 18);
             }
 
-            B[0] += x0;
-            B[1] += x1;
-            B[2] += x2;
-            B[3] += x3;
-            B[4] += x4;
-            B[5] += x5;
-            B[6] += x6;
-            B[7] += x7;
-            B[8] += x8;
-            B[9] += x9;
-            B[10] += x10;
-            B[11] += x11;
-            B[12] += x12;
-            B[13] += x13;
-            B[14] += x14;
-            B[15] += x15;
+            b[0] += x0;
+            b[1] += x1;
+            b[2] += x2;
+            b[3] += x3;
+            b[4] += x4;
+            b[5] += x5;
+            b[6] += x6;
+            b[7] += x7;
+            b[8] += x8;
+            b[9] += x9;
+            b[10] += x10;
+            b[11] += x11;
+            b[12] += x12;
+            b[13] += x13;
+            b[14] += x14;
+            b[15] += x15;
         }
 
         /// <summary>
@@ -220,40 +220,40 @@ public class Scrypt
         /// bytes in length; the output Bout must also be the same size.
         /// The temporary space X must be 64 bytes.
         /// </summary>
-        private unsafe static void BlockMix(uint* Bin, uint* Bout, uint* X, int r)
+        private unsafe static void BlockMix(uint* bin, uint* bout, uint* x, int r)
         {
             /* 1: X <-- B_{2r - 1} */
-            BulkCopy(X, &Bin[(2 * r - 1) * 16], 64);
+            BulkCopy(x, &bin[(2 * r - 1) * 16], 64);
 
             /* 2: for i = 0 to 2r - 1 do */
             for (var i = 0; i < 2 * r; i += 2)
             {
                 /* 3: X <-- H(X \xor B_i) */
-                BulkXor(X, &Bin[i * 16], 64);
-                Salsa208(X);
+                BulkXor(x, &bin[i * 16], 64);
+                Salsa208(x);
 
                 /* 4: Y_i <-- X */
                 /* 6: B' <-- (Y_0, Y_2 ... Y_{2r-2}, Y_1, Y_3 ... Y_{2r-1}) */
-                BulkCopy(&Bout[i * 8], X, 64);
+                BulkCopy(&bout[i * 8], x, 64);
 
                 /* 3: X <-- H(X \xor B_i) */
-                BulkXor(X, &Bin[i * 16 + 16], 64);
-                Salsa208(X);
+                BulkXor(x, &bin[i * 16 + 16], 64);
+                Salsa208(x);
 
                 /* 4: Y_i <-- X */
                 /* 6: B' <-- (Y_0, Y_2 ... Y_{2r-2}, Y_1, Y_3 ... Y_{2r-1}) */
-                BulkCopy(&Bout[i * 8 + r * 16], X, 64);
+                BulkCopy(&bout[i * 8 + r * 16], x, 64);
             }
         }
 
         /// <summary>
         /// Return the result of parsing B_{2r-1} as a little-endian integer.
         /// </summary>
-        private unsafe static long Integerify(uint* B, int r)
+        private unsafe static long Integerify(uint* b, int r)
         {
-            var X = (uint*)(((byte*)B) + (2 * r - 1) * 64);
+            var x = (uint*)(((byte*)b) + (2 * r - 1) * 64);
 
-            return (((long)(X[1]) << 32) + X[0]);
+            return (((long)(x[1]) << 32) + x[0]);
         }
 
         /// <summary>
@@ -263,56 +263,56 @@ public class Scrypt
         /// power of 2 greater than 1.  The arrays B, V, and XY must be aligned to a
         /// multiple of 64 bytes.
         /// </summary>
-        private unsafe static void SMix(byte* B, int r, int N, uint* V, uint* XY)
+        private unsafe static void SMix(byte* b, int r, int n, uint* v, uint* xy)
         {
-            var X = XY;
-            var Y = &XY[32 * r];
-            var Z = &XY[64 * r];
+            var x = xy;
+            var y = &xy[32 * r];
+            var z = &xy[64 * r];
 
             /* 1: X <-- B */
             for (var k = 0; k < 32 * r; k++)
             {
-                X[k] = Decode32(&B[4 * k]);
+                x[k] = Decode32(&b[4 * k]);
             }
 
             /* 2: for i = 0 to N - 1 do */
-            for (var i = 0L; i < N; i += 2)
+            for (var i = 0L; i < n; i += 2)
             {
                 /* 3: V_i <-- X */
-                BulkCopy(&V[i * (32 * r)], X, 128 * r);
+                BulkCopy(&v[i * (32 * r)], x, 128 * r);
 
                 /* 4: X <-- H(X) */
-                BlockMix(X, Y, Z, r);
+                BlockMix(x, y, z, r);
 
                 /* 3: V_i <-- X */
-                BulkCopy(&V[(i + 1) * (32 * r)], Y, 128 * r);
+                BulkCopy(&v[(i + 1) * (32 * r)], y, 128 * r);
 
                 /* 4: X <-- H(X) */
-                BlockMix(Y, X, Z, r);
+                BlockMix(y, x, z, r);
             }
 
             /* 6: for i = 0 to N - 1 do */
-            for (var i = 0; i < N; i += 2)
+            for (var i = 0; i < n; i += 2)
             {
                 /* 7: j <-- Integerify(X) mod N */
-                var j = Integerify(X, r) & (N - 1);
+                var j = Integerify(x, r) & (n - 1);
 
                 /* 8: X <-- H(X \xor V_j) */
-                BulkXor(X, &V[j * (32 * r)], 128 * r);
-                BlockMix(X, Y, Z, r);
+                BulkXor(x, &v[j * (32 * r)], 128 * r);
+                BlockMix(x, y, z, r);
 
                 /* 7: j <-- Integerify(X) mod N */
-                j = Integerify(Y, r) & (N - 1);
+                j = Integerify(y, r) & (n - 1);
 
                 /* 8: X <-- H(X \xor V_j) */
-                BulkXor(Y, &V[j * (32 * r)], 128 * r);
-                BlockMix(Y, X, Z, r);
+                BulkXor(y, &v[j * (32 * r)], 128 * r);
+                BlockMix(y, x, z, r);
             }
 
             /* 10: B' <-- X */
             for (var k = 0; k < 32 * r; k++)
             {
-                Encode32(&B[4 * k], X[k]);
+                Encode32(&b[4 * k], x[k]);
             }
         }
 
@@ -498,29 +498,26 @@ public class Scrypt
         }
 
         /// <summary>Generate a key using the scrypt key derivation function.</summary>
-        /// <param name="P">the bytes of the pass phrase.</param>
-        /// <param name="S">the salt to use for this invocation.</param>
-        /// <param name="N">CPU/Memory cost parameter. Must be larger than 1, a power of 2 and less than
+        /// <param name="pBytes">the bytes of the pass phrase.</param>
+        /// <param name="s">the salt to use for this invocation.</param>
+        /// <param name="n">CPU/Memory cost parameter. Must be larger than 1, a power of 2 and less than
         ///     <code>2^(128 * r / 8)</code>.</param>
         /// <param name="r">the block size, must be >= 1.</param>
         /// <param name="p">Parallelization parameter. Must be a positive integer less than or equal to
         ///     <code>Int32.MaxValue / (128 * r * 8)</code>.</param>
         /// <param name="dkLen">the length of the key to generate.</param>
         /// <returns>the generated key.</returns>
-        public static byte[] Generate(byte[] P, byte[] S, int N, int r, int p, int dkLen)
+        public static byte[] Generate(byte[] pBytes, byte[] s, int n, int r, int p, int dkLen)
         {
-            if (P == null)
-                throw new ArgumentNullException("Passphrase P must be provided.");
-            if (S == null)
-                throw new ArgumentNullException("Salt S must be provided.");
-            if (N <= 1 || !IsPowerOf2(N))
+            if (pBytes == null)
+                throw new ArgumentNullException(nameof(pBytes));
+            if (s == null)
+                throw new ArgumentNullException(nameof(s));
+            if (n <= 1 || !IsPowerOf2(n))
                 throw new ArgumentException("Cost parameter N must be > 1 and a power of 2.");
             // Only value of r that cost (as an int) could be exceeded for is 1
-            if (r == 1 && N >= 65536)
-
-                // The spec says that 
-                // N CPU/ Memory cost parameter, must be larger than 1,
-                // a power of 2 and less than 2 ^ (128 * r / 8).
+            if (r == 1 && n >= 65536)
+                
                 if (r < 1)
                     throw new ArgumentException("Block size r must be >= 1.");
             int maxParallel = Int32.MaxValue / (128 * r * 8);
@@ -532,104 +529,104 @@ public class Scrypt
             if (dkLen < 1)
                 throw new ArgumentException("Generated key length dkLen must be >= 1.");
 
-            return MFcrypt(P, S, N, r, p, dkLen);
+            return MFcrypt(pBytes, s, n, r, p, dkLen);
         }
 
-        private static byte[] MFcrypt(byte[] P, byte[] S, int N, int r, int p, int dkLen)
+        private static byte[] MFcrypt(byte[] P, byte[] s, int n, int r, int p, int dkLen)
         {
-            int MFLenBytes = r * 128;
-            byte[] bytes = SingleIterationPBKDF2(P, S, p * MFLenBytes);
+            int mfLenBytes = r * 128;
+            byte[] bytes = SingleIterationPbkdf2(P, s, p * mfLenBytes);
 
-            uint[] B = null;
+            uint[] b = null;
 
             try
             {
-                int BLen = bytes.Length >> 2;
-                B = new uint[BLen];
+                int bLen = bytes.Length >> 2;
+                b = new uint[bLen];
 
-                LE_To_UInt32(bytes, 0, B);
+                LE_To_UInt32(bytes, 0, b);
 
-                int MFLenWords = MFLenBytes >> 2;
-                for (int BOff = 0; BOff < BLen; BOff += MFLenWords)
+                int mfLenWords = mfLenBytes >> 2;
+                for (int bOff = 0; bOff < bLen; bOff += mfLenWords)
                 {
                     // TODO These can be done in parallel threads
-                    SMix(B, BOff, N, r);
+                    SMix(b, bOff, n, r);
                 }
 
-                UInt32_To_LE(B, bytes, 0);
+                UInt32_To_LE(b, bytes, 0);
 
-                return SingleIterationPBKDF2(P, bytes, dkLen);
+                return SingleIterationPbkdf2(P, bytes, dkLen);
             }
             finally
             {
-                ClearAll(bytes, B);
+                ClearAll(bytes, b);
             }
         }
 
-        private static byte[] SingleIterationPBKDF2(byte[] P, byte[] S, int dkLen)
+        private static byte[] SingleIterationPbkdf2(byte[] p, byte[] s, int dkLen)
         {
             PbeParametersGenerator pGen = new Pkcs5S2ParametersGenerator(new Sha256Digest());
-            pGen.Init(P, S, 1);
+            pGen.Init(p, s, 1);
             KeyParameter key = (KeyParameter)pGen.GenerateDerivedMacParameters(dkLen * 8);
             return key.GetKey();
         }
 
-        private static void SMix(uint[] B, int BOff, int N, int r)
+        private static void SMix(uint[] b, int bOff, int n, int r)
         {
-            int BCount = r * 32;
+            int bCount = r * 32;
 
             uint[] blockX1 = new uint[16];
             uint[] blockX2 = new uint[16];
-            uint[] blockY = new uint[BCount];
+            uint[] blockY = new uint[bCount];
 
-            uint[] X = new uint[BCount];
-            uint[][] V = new uint[N][];
+            uint[] x = new uint[bCount];
+            uint[][] v = new uint[n][];
 
             try
             {
-                Array.Copy(B, BOff, X, 0, BCount);
+                Array.Copy(b, bOff, x, 0, bCount);
 
-                for (int i = 0; i < N; ++i)
+                for (int i = 0; i < n; ++i)
                 {
-                    V[i] = (uint[])X.Clone();
-                    BlockMix(X, blockX1, blockX2, blockY, r);
+                    v[i] = (uint[])x.Clone();
+                    BlockMix(x, blockX1, blockX2, blockY, r);
                 }
 
-                uint mask = (uint)N - 1;
-                for (int i = 0; i < N; ++i)
+                uint mask = (uint)n - 1;
+                for (int i = 0; i < n; ++i)
                 {
-                    uint j = X[BCount - 16] & mask;
-                    Xor(X, V[j], 0, X);
-                    BlockMix(X, blockX1, blockX2, blockY, r);
+                    uint j = x[bCount - 16] & mask;
+                    Xor(x, v[j], 0, x);
+                    BlockMix(x, blockX1, blockX2, blockY, r);
                 }
 
-                Array.Copy(X, 0, B, BOff, BCount);
+                Array.Copy(x, 0, b, bOff, bCount);
             }
             finally
             {
-                ClearAll(V);
-                ClearAll(X, blockX1, blockX2, blockY);
+                ClearAll(v);
+                ClearAll(x, blockX1, blockX2, blockY);
             }
         }
 
-        private static void BlockMix(uint[] B, uint[] X1, uint[] X2, uint[] Y, int r)
+        private static void BlockMix(uint[] b, uint[] x1, uint[] x2, uint[] y, int r)
         {
-            Array.Copy(B, B.Length - 16, X1, 0, 16);
+            Array.Copy(b, b.Length - 16, x1, 0, 16);
 
-            int BOff = 0, YOff = 0, halfLen = B.Length >> 1;
+            int bOff = 0, yOff = 0, halfLen = b.Length >> 1;
 
             for (int i = 2 * r; i > 0; --i)
             {
-                Xor(X1, B, BOff, X2);
+                Xor(x1, b, bOff, x2);
 
-                SalsaCore(8, X2, X1);
-                Array.Copy(X1, 0, Y, YOff, 16);
+                SalsaCore(8, x2, x1);
+                Array.Copy(x1, 0, y, yOff, 16);
 
-                YOff = halfLen + BOff - YOff;
-                BOff += 16;
+                yOff = halfLen + bOff - yOff;
+                bOff += 16;
             }
 
-            Array.Copy(Y, 0, B, 0, Y.Length);
+            Array.Copy(y, 0, b, 0, y.Length);
         }
 
         private static void Xor(uint[] a, uint[] b, int bOff, uint[] output)

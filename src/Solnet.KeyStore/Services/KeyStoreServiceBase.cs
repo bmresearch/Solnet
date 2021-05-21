@@ -1,13 +1,10 @@
 using System;
-using Org.BouncyCastle.Math;
-using Org.BouncyCastle.Utilities;
 using Solnet.KeyStore.Crypto;
-using Solnet.KeyStore.Exceptions;
 using Solnet.KeyStore.Model;
 
 namespace Solnet.KeyStore.Services
 {
-    public abstract class KeyStoreServiceBase<T> : ISecretKeyStore<T> where T : KdfParams
+    public abstract class KeyStoreServiceBase<T> : ISecretKeyStoreService<T> where T : KdfParams
     {
         public const int CurrentVersion = 3;
         protected readonly KeyStoreCrypto KeyStoreCrypto;
@@ -67,7 +64,7 @@ namespace Solnet.KeyStore.Services
 
             var cipherKey = KeyStoreCrypto.GenerateCipherKey(derivedKey);
 
-            var iv = RandomBytesGenerator.GenerateRandomInitialisationVector();
+            var iv = RandomBytesGenerator.GenerateRandomInitializationVector();
 
             var cipherText = GenerateCipher(privateKey, iv, cipherKey);
 

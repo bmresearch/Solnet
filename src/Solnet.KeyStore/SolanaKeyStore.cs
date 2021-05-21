@@ -1,15 +1,17 @@
 using System.IO;
 using System.Text;
+using Solnet.KeyStore.Services;
 using Solnet.Util;
 using Solnet.Wallet;
 
-namespace Solnet.KeyStore.Services
+namespace Solnet.KeyStore
 {
     /// <summary>
     /// Implements a keystore compatible with the solana-keygen made in rust.
     /// </summary>
-    public class SolanaKeyStore
+    public class SolanaKeyStoreService
     {
+        
         /// <summary>
         /// Restores a keypair from a keystore compatible with the solana-keygen made in rust.
         /// </summary>

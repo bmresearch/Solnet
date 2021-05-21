@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using Solnet.Util;
 
 namespace Solnet.KeyStore.Model
@@ -14,7 +14,8 @@ namespace Solnet.KeyStore.Model
             Iv = iv.ToHex();
         }
 
-        [JsonProperty("iv")]
-        public string Iv { get; set; }
+        [JsonPropertyName("iv")]
+        // ReSharper disable once MemberCanBePrivate.Global
+        public string Iv { get; init; }
     }
 }

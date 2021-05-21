@@ -1,10 +1,9 @@
 using Solnet.KeyStore.Model;
 
-namespace Solnet.KeyStore
+namespace Solnet.KeyStore.Services
 {
-    public interface ISecretKeyStore<T> where T : KdfParams
+    public interface ISecretKeyStoreService<T> where T : KdfParams
     {
-        
         /// <summary>
         /// Decrypt the keystore.
         /// </summary>
@@ -34,7 +33,7 @@ namespace Solnet.KeyStore
         /// </summary>
         /// <param name="password"></param>
         /// <param name="privateKey"></param>
-        /// <param name="addresss"></param>
+        /// <param name="address"></param>
         /// <returns></returns>
         string EncryptAndGenerateKeyStoreAsJson(string password, byte[] privateKey, string address);
         

@@ -19,10 +19,10 @@ namespace Solnet.Examples
 
             var solKeygenWallet = new Wallet.Wallet(mnemonic, passphrase, SeedMode.Bip39);
             
-            Console.WriteLine($"SOLLET publicKey>b58 {solKeygenWallet.Account.EncodedPublicKey}");
-            Console.WriteLine($"SOLLET privateKey>b58 {solKeygenWallet.Account.EncodedPrivateKey}");
+            Console.WriteLine($"SOLLET publicKey>b58 {solKeygenWallet.Account.GetPublicKey}");
+            Console.WriteLine($"SOLLET privateKey>b58 {solKeygenWallet.Account.GetPrivateKey}");
             
-            if (solKeygenWallet.Account.EncodedPublicKey != expectedSolKeygenPublicKey || solKeygenWallet.Account.EncodedPrivateKey != expectedSolKeygenPrivateKey) {
+            if (solKeygenWallet.Account.GetPublicKey != expectedSolKeygenPublicKey || solKeygenWallet.Account.GetPrivateKey != expectedSolKeygenPrivateKey) {
                 Console.WriteLine("NOT GOOD FOR THE SOL");
             }
             else {

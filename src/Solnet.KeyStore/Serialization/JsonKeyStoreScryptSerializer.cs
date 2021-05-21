@@ -1,61 +1,18 @@
-using Newtonsoft.Json;
+using System;
 using Solnet.KeyStore.Model;
 
 namespace Solnet.KeyStore.Serialization
 {
-public class JsonKeyStoreScryptSerialiser
+    public static class JsonKeyStoreScryptSerializer
     {
-        public static string SerialiseScrypt(KeyStore<ScryptParams> scryptKeyStore)
+        public static string SerializeScrypt(KeyStore<ScryptParams> scryptKeyStore)
         {
-            var dto = MapModelToDto(scryptKeyStore);
-            return JsonConvert.SerializeObject(scryptKeyStore);
+            return System.Text.Json.JsonSerializer.Serialize(scryptKeyStore);
         }
 
-        public static KeyStore<ScryptParams> DeserialiseScrypt(string json)
+        public static KeyStore<ScryptParams> DeserializeScrypt(string json)
         {
-            var dto = JsonConvert.DeserializeObject<KeyStoreScryptDto>(json);
-            return MapDtoToModel(dto);
-        }
-
-        public static KeyStoreScryptDto MapModelToDto(KeyStore<ScryptParams> scryptKeyStore)
-        {
-            var dto = new KeyStoreScryptDto();
-            dto.address = scryptKeyStore.Address;
-            dto.id = scryptKeyStore.Id;
-            dto.version = scryptKeyStore.Version;
-            dto.crypto.cipher = scryptKeyStore.Crypto.Cipher;
-            dto.crypto.cipherText = scryptKeyStore.Crypto.CipherText;
-            dto.crypto.kdf = scryptKeyStore.Crypto.Kdf;
-            dto.crypto.mac = scryptKeyStore.Crypto.Mac;
-            dto.crypto.kdfparams.r = scryptKeyStore.Crypto.Kdfparams.R;
-            dto.crypto.kdfparams.n = scryptKeyStore.Crypto.Kdfparams.N;
-            dto.crypto.kdfparams.p = scryptKeyStore.Crypto.Kdfparams.P;
-            dto.crypto.kdfparams.dklen = scryptKeyStore.Crypto.Kdfparams.Dklen;
-            dto.crypto.kdfparams.salt = scryptKeyStore.Crypto.Kdfparams.Salt;
-            dto.crypto.cipherparams.iv = scryptKeyStore.Crypto.CipherParams.Iv;
-            return dto;
-        }
-
-        public static KeyStore<ScryptParams> MapDtoToModel(KeyStoreScryptDto dto)
-        {
-            var scryptKeyStore = new KeyStore<ScryptParams>();
-            scryptKeyStore.Address = dto.address;
-            scryptKeyStore.Id = dto.id;
-            scryptKeyStore.Version = dto.version;
-            scryptKeyStore.Crypto = new CryptoInfo<ScryptParams>();
-            scryptKeyStore.Crypto.Cipher = dto.crypto.cipher;
-            scryptKeyStore.Crypto.CipherText = dto.crypto.cipherText;
-            scryptKeyStore.Crypto.Kdf = dto.crypto.kdf;
-            scryptKeyStore.Crypto.Mac = dto.crypto.mac;
-            scryptKeyStore.Crypto.Kdfparams = new ScryptParams();
-            scryptKeyStore.Crypto.Kdfparams.R = dto.crypto.kdfparams.r;
-            scryptKeyStore.Crypto.Kdfparams.N = dto.crypto.kdfparams.n;
-            scryptKeyStore.Crypto.Kdfparams.P = dto.crypto.kdfparams.p;
-            scryptKeyStore.Crypto.Kdfparams.Dklen = dto.crypto.kdfparams.dklen;
-            scryptKeyStore.Crypto.Kdfparams.Salt = dto.crypto.kdfparams.salt;
-            scryptKeyStore.Crypto.CipherParams = new CipherParams();
-            scryptKeyStore.Crypto.CipherParams.Iv = dto.crypto.cipherparams.iv;
-            return scryptKeyStore;
+            return System.Text.Json.JsonSerializer.Deserialize<KeyStore<ScryptParams>>(json);
         }
     }
 }

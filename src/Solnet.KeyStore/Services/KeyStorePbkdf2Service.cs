@@ -1,5 +1,5 @@
 using System;
-using Solnet.KeyStore.Exceptions;
+using Solnet.KeyStore.Crypto;
 using Solnet.KeyStore.Serialization;
 using Solnet.KeyStore.Model;
 using Solnet.Util;
@@ -30,17 +30,17 @@ namespace Solnet.KeyStore.Services
 
         protected override Pbkdf2Params GetDefaultParams()
         {
-            return new Pbkdf2Params{Dklen = 32, Count = 262144, Prf = "hmac-sha256"};
+            return new () {Dklen = 32, Count = 262144, Prf = "hmac-sha256"};
         }
 
         public override KeyStore<Pbkdf2Params> DeserializeKeyStoreFromJson(string json)
         {
-            return JsonKeyStorePbkdf2Serialiser.DeserialisePbkdf2(json);
+            return JsonKeyStorePbkdf2Serializer.DeserializePbkdf2(json);
         }
 
         public override string SerializeKeyStoreToJson(KeyStore<Pbkdf2Params> keyStore)
         {
-            return JsonKeyStorePbkdf2Serialiser.SerialisePbkdf2(keyStore);
+            return JsonKeyStorePbkdf2Serializer.SerialisePbkdf2(keyStore);
         }
 
         public override byte[] DecryptKeyStore(string password, KeyStore<Pbkdf2Params> keyStore)

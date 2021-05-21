@@ -5,9 +5,10 @@ using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
+using Solnet.KeyStore.Exceptions;
 using Solnet.Util;
 
-namespace Solnet.KeyStore.Exceptions
+namespace Solnet.KeyStore.Crypto
 {
     //https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition
     public class KeyStoreCrypto

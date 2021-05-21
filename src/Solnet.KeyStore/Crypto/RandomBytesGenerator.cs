@@ -1,5 +1,4 @@
 using Org.BouncyCastle.Security;
-using Solnet.KeyStore.Exceptions;
 
 namespace Solnet.KeyStore.Crypto
 {
@@ -7,7 +6,7 @@ namespace Solnet.KeyStore.Crypto
     {
         private static readonly SecureRandom Random = new SecureRandom();
 
-        public byte[] GenerateRandomInitialisationVector()
+        public byte[] GenerateRandomInitializationVector()
         {
             return GenerateRandomBytes(16);
         }
@@ -17,7 +16,7 @@ namespace Solnet.KeyStore.Crypto
             return GenerateRandomBytes(32);
         }
 
-        public byte[] GenerateRandomBytes(int size)
+        private static byte[] GenerateRandomBytes(int size)
         {
             var bytes = new byte[size];
             Random.NextBytes(bytes);
