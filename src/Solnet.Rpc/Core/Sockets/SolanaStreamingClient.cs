@@ -106,8 +106,7 @@ namespace Solnet.Rpc.Core.Sockets
 
         private void HandleNewMessage(Memory<byte> mem)
         {
-            JsonReaderOptions opts = new JsonReaderOptions() { MaxDepth = 1 };
-            Utf8JsonReader asd = new Utf8JsonReader(mem.Span, opts);
+            Utf8JsonReader asd = new Utf8JsonReader(mem.Span);
 
             asd.Read();
 
@@ -120,13 +119,9 @@ namespace Solnet.Rpc.Core.Sockets
                 {
                     case JsonTokenType.PropertyName:
                         prop = asd.GetString();
-                        break;
-                    case JsonTokenType.StartObject:
                         if (prop == "params")
                         {
                             HandleDataMessage(ref asd, method);
-                            // 
-                            //
                         }
                         break;
                     case JsonTokenType.String:
