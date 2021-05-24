@@ -46,20 +46,16 @@ namespace Solnet.Rpc.Core.Sockets
 
         private async Task StartListening()
         {
-            try
+            while (_clientSocket.State == WebSocketState.Open)
             {
-                while (_clientSocket.State == WebSocketState.Open)
+                try
                 {
                     await ReadNextMessage().ConfigureAwait(false);
                 }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                _clientSocket.Dispose();
+                catch (Exception e)
+                {
+                    Console.WriteLine("uh oh");
+                }
             }
         }
 
@@ -112,8 +108,9 @@ namespace Solnet.Rpc.Core.Sockets
 
             string prop = "", method = "";
             int id = -1, intResult = -1;
+            bool handled = false;
 
-            while (asd.Read())
+            while (!handled && asd.Read())
             {
                 switch (asd.TokenType)
                 {
@@ -122,6 +119,7 @@ namespace Solnet.Rpc.Core.Sockets
                         if (prop == "params")
                         {
                             HandleDataMessage(ref asd, method);
+                            handled = true;
                         }
                         break;
                     case JsonTokenType.String:
@@ -134,16 +132,17 @@ namespace Solnet.Rpc.Core.Sockets
                         if (prop == "id")
                         {
                             id = asd.GetInt32();
-                        } else if (prop == "result")
+                        }
+                        else if (prop == "result")
                         {
                             intResult = asd.GetInt32();
                         }
-                        if(id != -1 && intResult != -1)
+                        if (id != -1 && intResult != -1)
                         {
                             ConfirmSubscription(id, intResult);
+                            handled = true;
                         }
                         break;
-
                 }
             }
         }
@@ -153,9 +152,9 @@ namespace Solnet.Rpc.Core.Sockets
         private void ConfirmSubscription(int internalId, int resultId)
         {
             SubscriptionState sub = null;
-            lock(this)
+            lock (this)
             {
-                if(unconfirmedSubscriptions.Remove(internalId, out sub))
+                if (unconfirmedSubscriptions.Remove(internalId, out sub))
                 {
                     confirmedSubscriptions.Add(resultId, sub);
                 }
@@ -166,7 +165,7 @@ namespace Solnet.Rpc.Core.Sockets
 
         private void AddSubscription(SubscriptionState subscription, int internalId)
         {
-            lock(this)
+            lock (this)
             {
                 unconfirmedSubscriptions.Add(internalId, subscription);
             }
@@ -174,7 +173,7 @@ namespace Solnet.Rpc.Core.Sockets
 
         private SubscriptionState RetrieveSubscription(int subscriptionId)
         {
-            lock(this)
+            lock (this)
             {
                 return confirmedSubscriptions[subscriptionId];
             }
@@ -230,7 +229,7 @@ namespace Solnet.Rpc.Core.Sockets
 
         public async Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback)
         {
-            var sub = new SubscriptionState<ResponseValue<AccountInfo>>(SubscriptionChannel.Account, callback);
+            var sub = new SubscriptionState<ResponseValue<AccountInfo>>(SubscriptionChannel.Account, callback, new List<object>() { pubkey });
 
             var msg = new JsonRpcRequest(GetNextId(), "accountSubscribe", new List<object>() { pubkey, new Dictionary<string, string>() { { "encoding", "base64" } } });
 
