@@ -1,29 +1,19 @@
-﻿using Solnet.Rpc.Core.Sockets;
-using Solnet.Rpc.Messages;
-using Solnet.Rpc.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Solnet.Rpc.Core.Sockets;
+using Solnet.Rpc.Messages;
+using Solnet.Rpc.Models;
 
-namespace Solnet.Rpc.Core.Sockets
+namespace Solnet.Rpc
 {
-    public class SolanaStreamingClient
+    public class SolanaStreamingRpcClient : StreamingRpcClient
     {
-        IWebSocket _clientSocket;
-
-        string _socketUri;
-
         private int _id;
-
-        Dictionary<int, SubscriptionState> unconfirmedRequests = new Dictionary<int, SubscriptionState>();
-
-        Dictionary<int, SubscriptionState> confirmedSubscriptions = new Dictionary<int, SubscriptionState>();
         private int GetNextId()
         {
             lock (this)
@@ -31,76 +21,20 @@ namespace Solnet.Rpc.Core.Sockets
                 return _id++;
             }
         }
+        
+        Dictionary<int, SubscriptionState> unconfirmedRequests = new Dictionary<int, SubscriptionState>();
 
-        public SolanaStreamingClient(string nodeUri, IWebSocket socket = default)
+        Dictionary<int, SubscriptionState> confirmedSubscriptions = new Dictionary<int, SubscriptionState>();
+
+        public SolanaStreamingRpcClient(string url) : base(url)
         {
-            _clientSocket = socket ?? new WebSocketWrapper(new ClientWebSocket());
-            _socketUri = nodeUri ?? "wss://";
+        }
+        
+        public SolanaStreamingRpcClient(string url, IWebSocket websocket) : base(url, websocket)
+        {
         }
 
-        public async Task Init()
-        {
-            await _clientSocket.ConnectAsync(new Uri(_socketUri), CancellationToken.None).ConfigureAwait(false);
-            _ = Task.Run(StartListening);
-        }
-
-        private async Task StartListening()
-        {
-            while (_clientSocket.State == WebSocketState.Open)
-            {
-                try
-                {
-                    await ReadNextMessage().ConfigureAwait(false);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("uh oh");
-                }
-            }
-        }
-
-        private async Task ReadNextMessage(CancellationToken cancellationToken = default)
-        {
-            var buffer = new byte[32768];
-            Memory<byte> mem = new Memory<byte>(buffer);
-            var messageParts = new StringBuilder();
-            int count = 0;
-
-            ValueWebSocketReceiveResult result = await _clientSocket.ReceiveAsync(mem, cancellationToken).ConfigureAwait(false);
-            count = result.Count;
-            if (result.MessageType == WebSocketMessageType.Close)
-            {
-                await _clientSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, cancellationToken);
-            }
-            else
-            {
-                if (!result.EndOfMessage)
-                {
-                    MemoryStream ms = new MemoryStream();
-                    ms.Write(mem.Span);
-
-
-                    while (!result.EndOfMessage)
-                    {
-                        result = await _clientSocket.ReceiveAsync(mem, cancellationToken).ConfigureAwait(false);
-                        ms.Write(mem.Span);
-                        count += result.Count;
-                    }
-
-                    mem = new Memory<byte>(ms.ToArray());
-                }
-                else
-                {
-                    mem = mem.Slice(0, count);
-                }
-                Console.WriteLine("\n\n[" + DateTime.UtcNow.ToLongTimeString() + "][Received]\n" + UTF8Encoding.UTF8.GetString(mem.ToArray(), 0, count));
-
-
-                HandleNewMessage(mem);
-            }
-        }
-
-        private void HandleNewMessage(Memory<byte> mem)
+        protected override void HandleNewMessage(Memory<byte> mem)
         {
             Utf8JsonReader asd = new Utf8JsonReader(mem.Span);
 
@@ -162,8 +96,7 @@ namespace Solnet.Rpc.Core.Sockets
 
         private void RemoveSubscription(int id, bool value)
         {
-
-            SubscriptionState sub = null;
+            SubscriptionState sub;
             lock (this)
             {
                 if (!unconfirmedRequests.Remove(id, out sub))
@@ -185,7 +118,7 @@ namespace Solnet.Rpc.Core.Sockets
 
         private void ConfirmSubscription(int internalId, int resultId)
         {
-            SubscriptionState sub = null;
+            SubscriptionState sub;
             lock (this)
             {
                 if (unconfirmedRequests.Remove(internalId, out sub))
@@ -222,29 +155,35 @@ namespace Solnet.Rpc.Core.Sockets
             switch (method)
             {
                 case "accountNotification":
-                    var accNotif = JsonSerializer.Deserialize<JsonRpcStreamResponse<AccountInfo>>(ref reader, opts);
-                    NotifyData(accNotif.Subscription, accNotif.Result);
+                    var accNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<AccountInfo>>(ref reader, opts);
+                    if (accNotification == null) break;
+                    NotifyData(accNotification.Subscription, accNotification.Result);
                     break;
                 case "logsNotification":
-                    var logsNotif = JsonSerializer.Deserialize<JsonRpcStreamResponse<LogsInfo>>(ref reader, opts);
-                    NotifyData(logsNotif.Subscription, logsNotif.Result);
+                    var logsNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<LogsInfo>>(ref reader, opts);
+                    if (logsNotification == null) break;
+                    NotifyData(logsNotification.Subscription, logsNotification.Result);
                     break;
                 case "programNotification":
-                    var programNotif = JsonSerializer.Deserialize<JsonRpcStreamResponse<ProgramInfo>>(ref reader, opts);
-                    NotifyData(programNotif.Subscription, programNotif.Result);
+                    var programNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ProgramInfo>>(ref reader, opts);
+                    if (programNotification == null) break;
+                    NotifyData(programNotification.Subscription, programNotification.Result);
                     break;
                 case "signatureNotification":
-                    var signatureNotif = JsonSerializer.Deserialize<JsonRpcStreamResponse<string>>(ref reader, opts);
-                    NotifyData(signatureNotif.Subscription, signatureNotif.Result);
+                    var signatureNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<string>>(ref reader, opts);
+                    if (signatureNotification == null) break;
+                    NotifyData(signatureNotification.Subscription, signatureNotification.Result);
                     // remove subscription from map
                     break;
                 case "slotNotification":
-                    var slotNotif = JsonSerializer.Deserialize<JsonRpcStreamResponse<SlotInfo>>(ref reader, opts);
-                    NotifyData(slotNotif.Subscription, slotNotif.Result);
+                    var slotNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<SlotInfo>>(ref reader, opts);
+                    if (slotNotification == null) break;
+                    NotifyData(slotNotification.Subscription, slotNotification.Result);
                     break;
                 case "rootNotification":
-                    var rootNotif = JsonSerializer.Deserialize<JsonRpcStreamResponse<int>>(ref reader, opts);
-                    NotifyData(rootNotif.Subscription, rootNotif.Result);
+                    var rootNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<int>>(ref reader, opts);
+                    if (rootNotification == null) break;
+                    NotifyData(rootNotification.Subscription, rootNotification.Result);
                     break;
             }
         }
@@ -256,23 +195,17 @@ namespace Solnet.Rpc.Core.Sockets
             sub.HandleData(data);
         }
 
-        private Type GetTypeFromMethod(string method) => method switch
-        {
-            "accountNotification" => typeof(JsonRpcStreamResponse<ResponseValue<AccountInfo>>)
-        };
-
-
         public async Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback)
         {
-            var sub = new SubscriptionState<ResponseValue<AccountInfo>>(this, SubscriptionChannel.Account, callback, new List<object>() { pubkey });
+            var sub = new SubscriptionState<ResponseValue<AccountInfo>>(this, SubscriptionChannel.Account, callback, new List<object> { pubkey });
 
-            var msg = new JsonRpcRequest(GetNextId(), "accountSubscribe", new List<object>() { pubkey, new Dictionary<string, string>() { { "encoding", "base64" } } });
+            var msg = new JsonRpcRequest(GetNextId(), "accountSubscribe", new List<object> { pubkey, new Dictionary<string, string> { { "encoding", "base64" } } });
 
-            var json = JsonSerializer.SerializeToUtf8Bytes(msg, new JsonSerializerOptions() { WriteIndented = false, PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            var json = JsonSerializer.SerializeToUtf8Bytes(msg, new JsonSerializerOptions { WriteIndented = false, PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
 
             ReadOnlyMemory<byte> mem = new ReadOnlyMemory<byte>(json);
-            await _clientSocket.SendAsync(mem, WebSocketMessageType.Text, true, CancellationToken.None).ConfigureAwait(false);
+            await ClientSocket.SendAsync(mem, WebSocketMessageType.Text, true, CancellationToken.None).ConfigureAwait(false);
 
             AddSubscription(sub, msg.Id);
             return sub;
@@ -283,16 +216,16 @@ namespace Solnet.Rpc.Core.Sockets
 
         public async Task UnsubscribeAsync(SubscriptionState subscription)
         {
-            var req = new JsonRpcRequest(GetNextId(), GetUnsubscribeMethodName(subscription.Channel), new List<object>() { subscription.SubscriptionId });
+            var req = new JsonRpcRequest(GetNextId(), GetUnsubscribeMethodName(subscription.Channel), new List<object> { subscription.SubscriptionId });
 
-            var json = JsonSerializer.SerializeToUtf8Bytes(req, new JsonSerializerOptions() { WriteIndented = false, PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            var json = JsonSerializer.SerializeToUtf8Bytes(req, new JsonSerializerOptions { WriteIndented = false, PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
-            Console.WriteLine("\n\n[" + DateTime.UtcNow.ToLongTimeString() + "][Received]\n" + UTF8Encoding.UTF8.GetString(json, 0, json.Length));
+            Console.WriteLine("\n\n[" + DateTime.UtcNow.ToLongTimeString() + "][Received]\n" + Encoding.UTF8.GetString(json, 0, json.Length));
 
             AddSubscription(subscription, req.Id);
 
             ReadOnlyMemory<byte> mem = new ReadOnlyMemory<byte>(json);
-            await _clientSocket.SendAsync(mem, WebSocketMessageType.Text, true, CancellationToken.None).ConfigureAwait(false);
+            await ClientSocket.SendAsync(mem, WebSocketMessageType.Text, true, CancellationToken.None).ConfigureAwait(false);
         }
 
         private string GetUnsubscribeMethodName(SubscriptionChannel channel) => channel switch

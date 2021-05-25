@@ -1,23 +1,16 @@
-﻿using Solnet.Rpc.Messages;
-using Solnet.Rpc.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text.Json;
 using System.Threading.Tasks;
+using Solnet.Rpc.Http;
+using Solnet.Rpc.Messages;
+using Solnet.Rpc.Models;
 
-namespace Solnet.Rpc.Http
+namespace Solnet.Rpc
 {
-    public class SolanaJsonRpcClient
+    public class SolanaRpcClient : JsonRpcClient
     {
         private int _id;
-
-        private JsonSerializerOptions _serializerOptions;
-
-        private HttpClient _httpClient;
-
+        
         private int GetNextId()
         {
             lock (this)
@@ -25,36 +18,13 @@ namespace Solnet.Rpc.Http
                 return _id++;
             }
         }
-        //https://api.devnet.solana.com
-        //https://testnet.solana.com
-
-        public SolanaJsonRpcClient()
+        
+        public SolanaRpcClient(string url) : base(url)
         {
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("https://testnet.solana.com");
-            _serializerOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-        }
-
-        private async Task<RequestResult<T>> SendRequest<T>(JsonRpcRequest req)
-        {
-            HttpResponseMessage response = await _httpClient.PostAsJsonAsync("/", req, _serializerOptions);
-
-            var tmp = await response.Content.ReadAsStringAsync();
-
-            Console.WriteLine("Result:\n" + tmp );
-
-
-            RequestResult<T> result = new RequestResult<T>(response);
-            if (result.WasSuccessful)
-            {
-                var res = await response.Content.ReadFromJsonAsync<JsonRpcResponse<T>>(_serializerOptions);
-                result.Result = res.Result;
-            }
-
-            return result;
         }
 
         #region RequestBuilder
+        
         private JsonRpcRequest BuildRequest<T>(string method, IList<object> parameters)
             => new JsonRpcRequest(GetNextId(), method, parameters);
 
@@ -74,7 +44,7 @@ namespace Solnet.Rpc.Http
         {
             if (configurationObject == null)
             {
-                configurationObject = new Dictionary<string, object>()
+                configurationObject = new Dictionary<string, object>
                 {
                     { "encoding" , "jsonParsed" }
                 };
@@ -93,31 +63,24 @@ namespace Solnet.Rpc.Http
         {
             return await SendRequestAsync<ResponseValue<AccountInfo>>("getAccountInfo", new List<object>() { pubKey }, null);
         }
-
         public RequestResult<ResponseValue<AccountInfo>> GetAccountInfo(string pubkey) => GetAccountInfoAsync(pubkey).Result;
-
-
 
         public async Task<RequestResult<string>> GetGenesisHashAsync()
         {
             return await SendRequestAsync<string>("getGenesisHash");
         }
-
         public RequestResult<string> GetGenesisHash() => GetGenesisHashAsync().Result;
-
 
         public async Task<RequestResult<ResponseValue<ulong>>> GetBalanceAsync(string pubKey)
         {
             return await SendRequestAsync<ResponseValue<ulong>>("getBalance", new List<object>() { pubKey });
         }
-
         public RequestResult<ResponseValue<ulong>> GetBalance(string pubkey) => GetBalanceAsync(pubkey).Result;
 
         public async Task<RequestResult<BlockCommitment>> GetBlockCommitmentAsync(ulong block)
         {
             return await SendRequestAsync<BlockCommitment>("getBlockCommitment", new List<object>() { block });
         }
-
         public RequestResult<BlockCommitment> GetBlockCommitment(ulong block) => GetBlockCommitmentAsync(block).Result;
 
 
@@ -125,9 +88,7 @@ namespace Solnet.Rpc.Http
         {
             return await SendRequestAsync<ulong>("getBlockTime", new List<object>() { block });
         }
-
         public RequestResult<ulong> GetBlockTime(ulong block) => GetBlockTimeAsync(block).Result;
-
 
     }
 }

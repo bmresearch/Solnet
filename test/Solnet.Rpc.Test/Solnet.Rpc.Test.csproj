@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Solnet.Rpc\Solnet.Rpc.csproj" />
+    <ProjectReference Include="..\..\src\Solnet.Rpc\Solnet.Rpc.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +26,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\AccountSubscribeNotification.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\AccountSubUnsubscription.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

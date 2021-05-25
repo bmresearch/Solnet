@@ -85,7 +85,7 @@ namespace Solnet.Rpc.Test
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
 
             const string pubKey = "CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12";
 
@@ -125,7 +125,7 @@ namespace Solnet.Rpc.Test
                 subConfirmContent,
                 unsubContents);
 
-            var sut = new SolanaStreamingClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
 
             const string pubKey = "CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12";
 

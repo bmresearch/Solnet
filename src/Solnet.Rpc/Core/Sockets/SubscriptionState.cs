@@ -9,19 +9,19 @@ namespace Solnet.Rpc.Core.Sockets
 {
     public abstract class SubscriptionState
     {
-        private SolanaStreamingClient _client;
+        private readonly SolanaStreamingRpcClient _rpcClient;
         internal int SubscriptionId { get; set; }
         public SubscriptionChannel Channel { get; }
 
         public SubscriptionStatus State { get; private set; }
 
-        public ImmutableList<object> AdditionalParameters { get; }
+        private ImmutableList<object> AdditionalParameters { get; }
 
         public event EventHandler<SubscriptionEvent> SubscriptionChanged;
 
-        internal SubscriptionState(SolanaStreamingClient client, SubscriptionChannel chan, IList<object> aditionalParameters = default)
+        internal SubscriptionState(SolanaStreamingRpcClient rpcClient, SubscriptionChannel chan, IList<object> aditionalParameters = default)
         {
-            _client = client;
+            _rpcClient = rpcClient;
             Channel = chan;
             AdditionalParameters = aditionalParameters?.ToImmutableList();
         }
@@ -34,16 +34,16 @@ namespace Solnet.Rpc.Core.Sockets
 
         internal abstract void HandleData(object data);
 
-        public void Unsubscribe() => _client.Unsubscribe(this);
-        public async Task UnsubscribeAsync() => await _client.UnsubscribeAsync(this).ConfigureAwait(false);
+        public void Unsubscribe() => _rpcClient.Unsubscribe(this);
+        public async Task UnsubscribeAsync() => await _rpcClient.UnsubscribeAsync(this).ConfigureAwait(false);
     }
 
     internal class SubscriptionState<T> : SubscriptionState
     {
         internal Action<SubscriptionState<T>, T> DataHandler;
 
-        internal SubscriptionState(SolanaStreamingClient client, SubscriptionChannel chan, Action<SubscriptionState, T> handler, IList<object> aditionalParameters = default)
-            : base(client, chan, aditionalParameters)
+        internal SubscriptionState(SolanaStreamingRpcClient rpcClient, SubscriptionChannel chan, Action<SubscriptionState, T> handler, IList<object> aditionalParameters = default)
+            : base(rpcClient, chan, aditionalParameters)
         {
             DataHandler = handler;
         }

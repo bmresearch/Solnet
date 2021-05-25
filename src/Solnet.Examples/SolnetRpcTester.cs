@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Solnet.Rpc;
 using Solnet.Rpc.Core.Sockets;
 using Solnet.Rpc.Http;
 using Solnet.Rpc.Messages;
@@ -13,11 +14,10 @@ namespace Solnet.Examples
 {
     class SolnetRpcTester
     {
-
-        static void Main(string[] args)
+        static void Example(string[] args)
         {
 
-            SolanaJsonRpcClient c = new SolanaJsonRpcClient();
+            var c = new SolanaRpcClient("https://testnet.solana.com");
 
 
             var accInfo = c.GetAccountInfo("4K1oSvRCvALnJAaQdyxXLenV4fcxHyXDY2nYY6WDyKZT");
@@ -29,7 +29,7 @@ namespace Solnet.Examples
 
             //var blockTime = c.GetBlockTime(78561320);
 
-            SolanaStreamingClient c2 = new SolanaStreamingClient("wss://testnet.solana.com/");
+            SolanaStreamingRpcClient c2 = new SolanaStreamingRpcClient("wss://testnet.solana.com/");
 
             c2.Init().Wait();
 
