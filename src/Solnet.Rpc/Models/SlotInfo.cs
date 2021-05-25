@@ -13,6 +13,5 @@ namespace Solnet.Rpc.Models
         public int Root { get; set; }
 
         public int Slot { get; set; }
-
     }
 }

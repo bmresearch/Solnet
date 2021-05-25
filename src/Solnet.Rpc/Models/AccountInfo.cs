@@ -12,8 +12,6 @@ namespace Solnet.Rpc.Models
 
         public ulong RentEpoch { get; set; }
 
-
         public IList<string> Data { get; set; }
-
     }
 }

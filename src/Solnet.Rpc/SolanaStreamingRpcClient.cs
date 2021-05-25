@@ -160,7 +160,7 @@ namespace Solnet.Rpc
                     NotifyData(accNotification.Subscription, accNotification.Result);
                     break;
                 case "logsNotification":
-                    var logsNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<LogsInfo>>(ref reader, opts);
+                    var logsNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<LogInfo>>(ref reader, opts);
                     if (logsNotification == null) break;
                     NotifyData(logsNotification.Subscription, logsNotification.Result);
                     break;

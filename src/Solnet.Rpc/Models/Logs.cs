@@ -8,14 +8,16 @@ using System.Text.Json.Serialization;
 
 namespace Solnet.Rpc.Models
 {
-    public class LogsInfo
+    public class Log
     {
-        public string Signature { get; set; }
-
         [JsonPropertyName("err")]
         public string Error { get; set; }
 
         public string[] Logs { get; set; }
-
+    }
+    
+    public class LogInfo : Log
+    {
+        public string Signature { get; set; }
     }
 }

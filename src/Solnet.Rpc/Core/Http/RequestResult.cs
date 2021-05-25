@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http;
 
-namespace Solnet.Rpc.Http
+namespace Solnet.Rpc.Core.Http
 {
     public class RequestResult<T>
     {
