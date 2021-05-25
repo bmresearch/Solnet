@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Examples", "src\Soln
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Util", "src\Solnet.Util\Solnet.Util.csproj", "{5B8896C9-4B06-41C9-B0F9-05B9F6190CA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Rpc.Test", "Solnet.Rpc.Test\Solnet.Rpc.Test.csproj", "{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Rpc.Test", "test\Solnet.Rpc.Test\Solnet.Rpc.Test.csproj", "{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
