@@ -31,7 +31,7 @@ namespace Solnet.Rpc.Http
         public SolanaJsonRpcClient()
         {
             _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("https://api.mainnet-beta.solana.com");
+            _httpClient.BaseAddress = new Uri("https://testnet.solana.com");
             _serializerOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
         }
 

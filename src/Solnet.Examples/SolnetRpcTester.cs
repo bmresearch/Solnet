@@ -20,8 +20,8 @@ namespace Solnet.Examples
             SolanaJsonRpcClient c = new SolanaJsonRpcClient();
 
 
-            //var accInfo = c.GetAccountInfo("vines1vzrYbzLMRdu58ou5XTby4qAqVRLmqo36NKPTg");
-
+            var accInfo = c.GetAccountInfo("4K1oSvRCvALnJAaQdyxXLenV4fcxHyXDY2nYY6WDyKZT");
+            Console.WriteLine("acc info " + accInfo.Result.Value.Lamports);
             //var balance = c.GetBalance("9UGxCidmZtU1PM7Tbhv2twQ8ChsS6S3HdL1xo56fSVWn");
             //var accInfo = c.GetGenesisHash();
 
@@ -29,12 +29,12 @@ namespace Solnet.Examples
 
             //var blockTime = c.GetBlockTime(78561320);
 
-            SolanaStreamingClient c2 = new SolanaStreamingClient("wss://api.mainnet-beta.solana.com/");
+            SolanaStreamingClient c2 = new SolanaStreamingClient("wss://testnet.solana.com/");
 
             c2.Init().Wait();
 
 
-            var sub = c2.SubscribeAccountInfo("9UGxCidmZtU1PM7Tbhv2twQ8ChsS6S3HdL1xo56fSVWn", (s, data) =>
+            var sub = c2.SubscribeAccountInfo("4K1oSvRCvALnJAaQdyxXLenV4fcxHyXDY2nYY6WDyKZT", (s, data) =>
             {
                 Console.WriteLine("received data " + data.Value.Lamports);
             });
@@ -42,6 +42,9 @@ namespace Solnet.Examples
             sub.SubscriptionChanged += Sub_SubscriptionChanged;
 
             Console.ReadKey();
+
+            sub.Unsubscribe();
+
             Console.ReadKey();
         }
 

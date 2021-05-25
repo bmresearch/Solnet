@@ -21,7 +21,7 @@ namespace Solnet.Rpc.Core.Sockets
 
         private int _id;
 
-        Dictionary<int, SubscriptionState> unconfirmedSubscriptions = new Dictionary<int, SubscriptionState>();
+        Dictionary<int, SubscriptionState> unconfirmedRequests = new Dictionary<int, SubscriptionState>();
 
         Dictionary<int, SubscriptionState> confirmedSubscriptions = new Dictionary<int, SubscriptionState>();
         private int GetNextId()
@@ -93,7 +93,7 @@ namespace Solnet.Rpc.Core.Sockets
                 {
                     mem = mem.Slice(0, count);
                 }
-                //Console.WriteLine("\n\n[" + DateTime.UtcNow.ToLongTimeString() + "][Received]\n" + UTF8Encoding.UTF8.GetString(mem.ToArray(), 0, count));
+                Console.WriteLine("\n\n[" + DateTime.UtcNow.ToLongTimeString() + "][Received]\n" + UTF8Encoding.UTF8.GetString(mem.ToArray(), 0, count));
 
 
                 HandleNewMessage(mem);
@@ -109,6 +109,7 @@ namespace Solnet.Rpc.Core.Sockets
             string prop = "", method = "";
             int id = -1, intResult = -1;
             bool handled = false;
+            bool? boolResult = null;
 
             while (!handled && asd.Read())
             {
@@ -143,7 +144,40 @@ namespace Solnet.Rpc.Core.Sockets
                             handled = true;
                         }
                         break;
+                    case JsonTokenType.True:
+                    case JsonTokenType.False:
+                        if (prop == "result")
+                        {
+                            boolResult = asd.GetBoolean();
+                        }
+                        break;
                 }
+            }
+
+            if (boolResult.HasValue)
+            {
+                RemoveSubscription(id, boolResult.Value);
+            }
+        }
+
+        private void RemoveSubscription(int id, bool value)
+        {
+
+            SubscriptionState sub = null;
+            lock (this)
+            {
+                if (!unconfirmedRequests.Remove(id, out sub))
+                {
+                    // houston, we might have a problem?
+                }
+            }
+            if (value)
+            {
+                sub?.ChangeState(SubscriptionStatus.Unsubscribed);
+            }
+            else
+            {
+                sub?.ChangeState(sub.State, "Subscription doesnt exists");
             }
         }
 
@@ -154,20 +188,21 @@ namespace Solnet.Rpc.Core.Sockets
             SubscriptionState sub = null;
             lock (this)
             {
-                if (unconfirmedSubscriptions.Remove(internalId, out sub))
+                if (unconfirmedRequests.Remove(internalId, out sub))
                 {
+                    sub.SubscriptionId = resultId;
                     confirmedSubscriptions.Add(resultId, sub);
                 }
             }
 
-            sub.RaiseEvent(sub, new SubscriptionEvent(SubscriptionStatus.Subscribed));
+            sub?.ChangeState(SubscriptionStatus.Subscribed);
         }
 
         private void AddSubscription(SubscriptionState subscription, int internalId)
         {
             lock (this)
             {
-                unconfirmedSubscriptions.Add(internalId, subscription);
+                unconfirmedRequests.Add(internalId, subscription);
             }
         }
 
@@ -229,7 +264,7 @@ namespace Solnet.Rpc.Core.Sockets
 
         public async Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback)
         {
-            var sub = new SubscriptionState<ResponseValue<AccountInfo>>(SubscriptionChannel.Account, callback, new List<object>() { pubkey });
+            var sub = new SubscriptionState<ResponseValue<AccountInfo>>(this, SubscriptionChannel.Account, callback, new List<object>() { pubkey });
 
             var msg = new JsonRpcRequest(GetNextId(), "accountSubscribe", new List<object>() { pubkey, new Dictionary<string, string>() { { "encoding", "base64" } } });
 
@@ -238,12 +273,38 @@ namespace Solnet.Rpc.Core.Sockets
 
             ReadOnlyMemory<byte> mem = new ReadOnlyMemory<byte>(json);
             await _clientSocket.SendAsync(mem, WebSocketMessageType.Text, true, CancellationToken.None).ConfigureAwait(false);
-            
+
             AddSubscription(sub, msg.Id);
             return sub;
         }
 
         public SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback)
             => SubscribeAccountInfoAsync(pubkey, callback).Result;
+
+        public async Task UnsubscribeAsync(SubscriptionState subscription)
+        {
+            var req = new JsonRpcRequest(GetNextId(), GetUnsubscribeMethodName(subscription.Channel), new List<object>() { subscription.SubscriptionId });
+
+            var json = JsonSerializer.SerializeToUtf8Bytes(req, new JsonSerializerOptions() { WriteIndented = false, PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+            Console.WriteLine("\n\n[" + DateTime.UtcNow.ToLongTimeString() + "][Received]\n" + UTF8Encoding.UTF8.GetString(json, 0, json.Length));
+
+            AddSubscription(subscription, req.Id);
+
+            ReadOnlyMemory<byte> mem = new ReadOnlyMemory<byte>(json);
+            await _clientSocket.SendAsync(mem, WebSocketMessageType.Text, true, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private string GetUnsubscribeMethodName(SubscriptionChannel channel) => channel switch
+        {
+            SubscriptionChannel.Account => "accountUnsubscribe",
+            SubscriptionChannel.Logs => "logsUnsubscribe",
+            SubscriptionChannel.Program => "programUnsubscribe",
+            SubscriptionChannel.Root => "rootUnsubscribe",
+            SubscriptionChannel.Signature => "signatureUnsubscribe",
+            SubscriptionChannel.Slot => "slotUnsubscribe"
+        };
+
+        public void Unsubscribe(SubscriptionState subscription) => UnsubscribeAsync(subscription).Wait();
     }
 }
