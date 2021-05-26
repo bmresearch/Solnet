@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Solnet.Rpc.Core;
 using Solnet.Rpc.Core.Sockets;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
@@ -13,15 +14,11 @@ namespace Solnet.Rpc
 {
     public class SolanaStreamingRpcClient : StreamingRpcClient
     {
-        private int _id;
-        private int GetNextId()
-        {
-            lock (this)
-            {
-                return _id++;
-            }
-        }
-        
+        /// <summary>
+        /// Message Id generator.
+        /// </summary>
+        IdGenerator _idGenerator = new IdGenerator();
+
         Dictionary<int, SubscriptionState> unconfirmedRequests = new Dictionary<int, SubscriptionState>();
 
         Dictionary<int, SubscriptionState> confirmedSubscriptions = new Dictionary<int, SubscriptionState>();
@@ -199,7 +196,7 @@ namespace Solnet.Rpc
         {
             var sub = new SubscriptionState<ResponseValue<AccountInfo>>(this, SubscriptionChannel.Account, callback, new List<object> { pubkey });
 
-            var msg = new JsonRpcRequest(GetNextId(), "accountSubscribe", new List<object> { pubkey, new Dictionary<string, string> { { "encoding", "base64" } } });
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "accountSubscribe", new List<object> { pubkey, new Dictionary<string, string> { { "encoding", "base64" } } });
 
             var json = JsonSerializer.SerializeToUtf8Bytes(msg, new JsonSerializerOptions { WriteIndented = false, PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
@@ -216,7 +213,7 @@ namespace Solnet.Rpc
 
         public async Task UnsubscribeAsync(SubscriptionState subscription)
         {
-            var req = new JsonRpcRequest(GetNextId(), GetUnsubscribeMethodName(subscription.Channel), new List<object> { subscription.SubscriptionId });
+            var req = new JsonRpcRequest(_idGenerator.GetNextId(), GetUnsubscribeMethodName(subscription.Channel), new List<object> { subscription.SubscriptionId });
 
             var json = JsonSerializer.SerializeToUtf8Bytes(req, new JsonSerializerOptions { WriteIndented = false, PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 

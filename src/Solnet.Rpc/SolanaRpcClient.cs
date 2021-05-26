@@ -3,6 +3,7 @@ using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Solnet.Rpc.Core;
 using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
@@ -16,22 +17,10 @@ namespace Solnet.Rpc
     public class SolanaRpcClient : JsonRpcClient
     {
         /// <summary>
-        /// The id of the last request performed
+        /// Message Id generator.
         /// </summary>
-        private int _id;
-        
-        /// <summary>
-        /// Gets the id of the next request.
-        /// </summary>
-        /// <returns>The id.</returns>
-        private int GetNextId()
-        {
-            lock (this)
-            {
-                return _id++;
-            }
-        }
-        
+        IdGenerator _idGenerator = new IdGenerator();
+
         /// <summary>
         /// Initialize the Rpc Client with the passed url.
         /// </summary>
@@ -50,7 +39,7 @@ namespace Solnet.Rpc
         /// <typeparam name="T">The type of the request result.</typeparam>
         /// <returns>A task which may return a request result.</returns>
         private JsonRpcRequest BuildRequest<T>(string method, IList<object> parameters)
-            => new JsonRpcRequest(GetNextId(), method, parameters);
+            => new JsonRpcRequest(_idGenerator.GetNextId(), method, parameters);
 
         /// <summary>
         /// 
