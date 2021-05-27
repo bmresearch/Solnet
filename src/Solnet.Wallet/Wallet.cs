@@ -74,14 +74,15 @@ namespace Solnet.Wallet
         }
         
         /// <summary>
-        /// Initialize a wallet with the passed passphrase and seed mode.
-        /// <remarks>See <see cref="SeedMode"/>.</remarks>
+        /// Initialize a wallet from the passed mnemonic and passphrase.
         /// </summary>
+        /// <param name="mnemonicWords">The mnemonic words.</param>
+        /// <param name="wordlist">The language of the mnemonic words. Defaults to <see cref="Wordlist.English"/>.</param>
         /// <param name="passphrase">The passphrase.</param>
-        /// <param name="seedMode">The seed mode.</param>
-        public Wallet(string passphrase = "", SeedMode seedMode = SeedMode.Ed25519Bip32)
+        /// <param name="seedMode">The seed generation mode.</param>
+        public Wallet(string mnemonicWords, Wordlist wordlist = null, string passphrase = "", SeedMode seedMode = SeedMode.Ed25519Bip32)
         {
-            Mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
+            Mnemonic = new Mnemonic(mnemonicWords, wordlist ?? Wordlist.English);
             Passphrase = passphrase;
             
             _seedMode = seedMode;
@@ -173,7 +174,7 @@ namespace Solnet.Wallet
         {
             var path = DerivationPath.Replace("x", index.ToString());
             var (account, chain) = _ed25519Bip32.DerivePath(path);
-            var (privateKey, publicKey) = EdKeyPairFromSeed(account);
+            var (privateKey, publicKey) = Ed25519Extensions.EdKeyPairFromSeed(account);
             return new Account(privateKey, publicKey);
         }
 
@@ -193,14 +194,6 @@ namespace Solnet.Wallet
         }
         
         /// <summary>
-        /// Gets the corresponding ed25519 key pair from the passed seed.
-        /// </summary>
-        /// <param name="seed">The seed</param>
-        /// <returns>The key pair.</returns>
-        private static (byte[] privateKey, byte[] publicKey) EdKeyPairFromSeed(byte[] seed) =>
-            new(Ed25519.ExpandedPrivateKeyFromSeed(seed), Ed25519.PublicKeyFromSeed(seed));
-
-        /// <summary>
         /// Initializes the first account with a key pair derived from the initialized seed.
         /// </summary>
         private void InitializeFirstAccount()
@@ -212,7 +205,7 @@ namespace Solnet.Wallet
             }
             else
             {
-                var (privateKey, publicKey) = EdKeyPairFromSeed(_seed[..32]);
+                var (privateKey, publicKey) = Ed25519Extensions.EdKeyPairFromSeed(_seed[..32]);
                 Account = new Account(privateKey, publicKey);
             }
         }
