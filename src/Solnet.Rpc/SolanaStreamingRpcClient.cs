@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Solnet.Rpc.Core;
 using Solnet.Rpc.Core.Sockets;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
+using Solnet.Rpc.Types;
 
 namespace Solnet.Rpc
 {
@@ -192,13 +194,49 @@ namespace Solnet.Rpc
             sub.HandleData(data);
         }
 
+        #region AccountInfo
         public async Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback)
         {
             var sub = new SubscriptionState<ResponseValue<AccountInfo>>(this, SubscriptionChannel.Account, callback, new List<object> { pubkey });
 
             var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "accountSubscribe", new List<object> { pubkey, new Dictionary<string, string> { { "encoding", "jsonParsed" } } });
 
-            var json = JsonSerializer.SerializeToUtf8Bytes(msg, new JsonSerializerOptions { WriteIndented = false, PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            return await Subscribe(sub, msg).ConfigureAwait(false);
+        }
+
+        public SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback)
+            => SubscribeAccountInfoAsync(pubkey, callback).Result;
+        #endregion
+
+        #region Logs
+        public async Task<SubscriptionState> SubscribeLogInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback)
+        {
+            var sub = new SubscriptionState<ResponseValue<LogInfo>>(this, SubscriptionChannel.Logs, callback, new List<object> { pubkey });
+
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "logsSubscribe", new List<object> { new Dictionary<string, object> { { "mentions", new List<string>() { "pubkey" } } } });
+            return await Subscribe(sub, msg).ConfigureAwait(false);
+        }
+        public SubscriptionState SubscribeLogInfo(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback)
+            => SubscribeLogInfoAsync(pubkey, callback).Result;
+
+        public async Task<SubscriptionState> SubscribeLogInfoAsync(LogsSubscriptionType subscriptionType, Action<SubscriptionState, ResponseValue<LogInfo>> callback)
+        {
+            var sub = new SubscriptionState<ResponseValue<LogInfo>>(this, SubscriptionChannel.Logs, callback, new List<object> { subscriptionType });
+
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "logsSubscribe", new List<object> { subscriptionType });
+            return await Subscribe(sub, msg).ConfigureAwait(false);
+        }
+        public SubscriptionState SubscribeLogInfo(LogsSubscriptionType subscriptionType, Action<SubscriptionState, ResponseValue<LogInfo>> callback)
+            => SubscribeLogInfoAsync(subscriptionType, callback).Result;
+        #endregion
+
+        private async Task<SubscriptionState> Subscribe(SubscriptionState sub, JsonRpcRequest msg)
+        {
+            var json = JsonSerializer.SerializeToUtf8Bytes(msg, new JsonSerializerOptions { WriteIndented = false, PropertyNamingPolicy = JsonNamingPolicy.CamelCase, Converters =
+                {
+                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                }
+            });
 
 
             ReadOnlyMemory<byte> mem = new ReadOnlyMemory<byte>(json);
@@ -208,22 +246,7 @@ namespace Solnet.Rpc
             return sub;
         }
 
-        public SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback)
-            => SubscribeAccountInfoAsync(pubkey, callback).Result;
 
-        public async Task UnsubscribeAsync(SubscriptionState subscription)
-        {
-            var req = new JsonRpcRequest(_idGenerator.GetNextId(), GetUnsubscribeMethodName(subscription.Channel), new List<object> { subscription.SubscriptionId });
-
-            var json = JsonSerializer.SerializeToUtf8Bytes(req, new JsonSerializerOptions { WriteIndented = false, PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-
-            Console.WriteLine("\n\n[" + DateTime.UtcNow.ToLongTimeString() + "][Received]\n" + Encoding.UTF8.GetString(json, 0, json.Length));
-
-            AddSubscription(subscription, req.Id);
-
-            ReadOnlyMemory<byte> mem = new ReadOnlyMemory<byte>(json);
-            await ClientSocket.SendAsync(mem, WebSocketMessageType.Text, true, CancellationToken.None).ConfigureAwait(false);
-        }
 
         private string GetUnsubscribeMethodName(SubscriptionChannel channel) => channel switch
         {
@@ -234,6 +257,13 @@ namespace Solnet.Rpc
             SubscriptionChannel.Signature => "signatureUnsubscribe",
             SubscriptionChannel.Slot => "slotUnsubscribe"
         };
+
+        public async Task UnsubscribeAsync(SubscriptionState subscription)
+        {
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), GetUnsubscribeMethodName(subscription.Channel), new List<object> { subscription.SubscriptionId });
+
+            await Subscribe(subscription, msg).ConfigureAwait(false);
+        }
 
         public void Unsubscribe(SubscriptionState subscription) => UnsubscribeAsync(subscription).Wait();
     }
