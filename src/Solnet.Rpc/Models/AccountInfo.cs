@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Solnet.Rpc.Models
 {
@@ -12,6 +13,35 @@ namespace Solnet.Rpc.Models
 
         public ulong RentEpoch { get; set; }
 
-        public IList<string> Data { get; set; }
+        [JsonConverter(typeof(AccountDataJsonConverter))]
+        public object Data { get; set; }
+
+        /// <summary>
+        /// Tries to retrieve the Account data as a TokenAccountData encoded object.
+        /// </summary>
+        /// <param name="accData">The account data.</param>
+        /// <returns>Returns true if the account data was foud as a TokenAccountData object, false otherwise.</returns>
+        public bool TryGetAccountData(out TokenAccountData accData)
+        {
+            accData = (TokenAccountData)Data;
+            return accData != null;
+        }
+
+        /// <summary>
+        /// Tries to retrieve the Account data as a base64 encoded string.
+        /// </summary>
+        /// <param name="accData">The account data.</param>
+        /// <returns>Returns true if the account data was foud as a string, false otherwise.</returns>
+        public bool TryGetAccountData(out string accData)
+        {
+            accData = null;
+            var list = (IList<string>)Data;
+            if(list.Count > 0)
+            {
+                accData = list[0];
+                return true;
+            }
+            return false;
+        }
     }
 }
