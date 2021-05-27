@@ -169,7 +169,7 @@ namespace Solnet.Rpc
                     NotifyData(programNotification.Subscription, programNotification.Result);
                     break;
                 case "signatureNotification":
-                    var signatureNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<string>>(ref reader, opts);
+                    var signatureNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ErrorResult>>(ref reader, opts);
                     if (signatureNotification == null) break;
                     NotifyData(signatureNotification.Subscription, signatureNotification.Result);
                     // remove subscription from map
@@ -228,6 +228,18 @@ namespace Solnet.Rpc
         }
         public SubscriptionState SubscribeLogInfo(LogsSubscriptionType subscriptionType, Action<SubscriptionState, ResponseValue<LogInfo>> callback)
             => SubscribeLogInfoAsync(subscriptionType, callback).Result;
+        #endregion
+
+        #region Signature
+        public async Task<SubscriptionState> SubscribeSignatureAsync(string transactionSignature, Action<SubscriptionState, ResponseValue<ErrorResult>> callback)
+        {
+            var sub = new SubscriptionState<ResponseValue<ErrorResult>>(this, SubscriptionChannel.Logs, callback, new List<object> { transactionSignature });
+
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "signatureSubscribe", new List<object> { transactionSignature });
+            return await Subscribe(sub, msg).ConfigureAwait(false);
+        }
+        public SubscriptionState SubscribeSignature(string transactionSignature, Action<SubscriptionState, ResponseValue<ErrorResult>> callback)
+            => SubscribeSignatureAsync(transactionSignature, callback).Result;
         #endregion
 
         private async Task<SubscriptionState> Subscribe(SubscriptionState sub, JsonRpcRequest msg)
