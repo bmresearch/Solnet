@@ -73,4 +73,4 @@ See also the list of [contributors](https://github.com/bmresearch/Solnet/contrib
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/bmresearch/Solnet/LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/bmresearch/Solnet/LICENSE) file for details
