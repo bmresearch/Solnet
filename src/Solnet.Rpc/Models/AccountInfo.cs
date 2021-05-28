@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Solnet.Rpc.Models
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class AccountInfo
     {
         public ulong Lamports { get; set; }

@@ -196,6 +196,7 @@ namespace Solnet.Rpc
 
         #region AccountInfo
         public async Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback)
+
         {
             var sub = new SubscriptionState<ResponseValue<AccountInfo>>(this, SubscriptionChannel.Account, callback, new List<object> { pubkey });
 
@@ -222,6 +223,7 @@ namespace Solnet.Rpc
         public async Task<SubscriptionState> SubscribeLogInfoAsync(LogsSubscriptionType subscriptionType, Action<SubscriptionState, ResponseValue<LogInfo>> callback)
         {
             var sub = new SubscriptionState<ResponseValue<LogInfo>>(this, SubscriptionChannel.Logs, callback, new List<object> { subscriptionType });
+
 
             var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "logsSubscribe", new List<object> { subscriptionType });
             return await Subscribe(sub, msg).ConfigureAwait(false);

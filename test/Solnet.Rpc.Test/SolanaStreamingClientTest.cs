@@ -108,7 +108,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(false, resultNotification.Value.Executable);
             Assert.AreEqual(
                 "11116bv5nS2h3y12kD1yUKeMZvGcKLSjQgX6BeV7u1FrjeJcKfsHPXHRDEHrBesJhZyqnnq9qJeUuF7WHxiuLuL5twc38w2TXNLxnDbjmuR",
-                resultNotification.Value.Data[0]);
+                resultNotification.Value.Data);
         }
 
 

@@ -5,7 +5,7 @@ namespace Solnet.Util
 {
     public class BigEndianBuffer
     {
-        readonly List<byte> _bytes = new List<byte>();
+        readonly List<byte> _bytes = new ();
 
         public void WriteUInt(uint i)
         {

@@ -6,4 +6,8 @@
         <RootNamespace>Solnet.Rpc</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Solnet.Wallet\Solnet.Wallet.csproj" />
+    </ItemGroup>
+
 </Project>

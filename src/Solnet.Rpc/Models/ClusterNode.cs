@@ -8,7 +8,7 @@ namespace Solnet.Rpc.Models
         public string Gossip { get; set; }
         
         [JsonPropertyName("pubkey")]
-        public string PubKey { get; set; }
+        public string PublicKey { get; set; }
         
         public string Rpc { get; set; }
         

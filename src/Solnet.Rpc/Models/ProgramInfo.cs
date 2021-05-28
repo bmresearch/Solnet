@@ -10,6 +10,6 @@ namespace Solnet.Rpc.Models
     {
         public string PubKey { get; set; }
 
-        public AccountInfo Account { get; set; }
+        public AccountInfo<IList<string>> Account { get; set; }
     }
 }

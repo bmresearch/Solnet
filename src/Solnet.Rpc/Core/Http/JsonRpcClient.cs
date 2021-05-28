@@ -29,11 +29,13 @@ namespace Solnet.Rpc.Core.Http
 
         protected async Task<RequestResult<T>> SendRequest<T>(JsonRpcRequest req)
         {
+            JsonContent content = JsonContent.Create(req,  null, _serializerOptions);
+            Console.WriteLine($"\tRequest: {content.ReadAsStringAsync().Result}");
             HttpResponseMessage response = await _httpClient.PostAsJsonAsync("/", req, _serializerOptions);
 
             var tmp = await response.Content.ReadAsStringAsync();
 
-            Console.WriteLine("Result:\n" + tmp );
+            Console.WriteLine($"\tResult: {tmp}");
 
             RequestResult<T> result = new RequestResult<T>(response);
             if (result.WasSuccessful)
