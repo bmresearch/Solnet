@@ -1,35 +1,19 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Solnet.KeyStore.Model
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="TKdfParams"></typeparam>
     public class KeyStore<TKdfParams> where TKdfParams : KdfParams
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        [JsonProperty("crypto")]
+        [JsonPropertyName("crypto")]
         public CryptoInfo<TKdfParams> Crypto { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        [JsonProperty("address")]
+        [JsonPropertyName("address")]
         public string Address { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        [JsonProperty("version")]
+        [JsonPropertyName("version")]
         public int Version { get; set; }
     }
 }

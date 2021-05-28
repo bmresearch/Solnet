@@ -1,22 +1,15 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Solnet.KeyStore.Model
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class KdfParams
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        [JsonProperty("dklen")]
-        public int Dklen { get; set; }
+        // ReSharper disable once StringLiteralTypo
+        [JsonPropertyName("dklen")]
+        // ReSharper disable once IdentifierTypo
+        public int Dklen { get; init; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        [JsonProperty("salt")]
+        [JsonPropertyName("salt")]
         public string Salt { get; set; }
     }
 }

@@ -1,0 +1,19 @@
+{
+  "jsonrpc": "2.0",
+  "method": "accountNotification",
+  "params": {
+    "result": {
+      "context": {
+        "slot": 5199307
+      },
+      "value": {
+        "data": [ "11116bv5nS2h3y12kD1yUKeMZvGcKLSjQgX6BeV7u1FrjeJcKfsHPXHRDEHrBesJhZyqnnq9qJeUuF7WHxiuLuL5twc38w2TXNLxnDbjmuR", "base58" ],
+        "executable": false,
+        "lamports": 33594,
+        "owner": "11111111111111111111111111111111",
+        "rentEpoch": 635
+      }
+    },
+    "subscription": 23784
+  }
+}
