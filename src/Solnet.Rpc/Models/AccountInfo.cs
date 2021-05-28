@@ -1,19 +1,45 @@
-﻿using System.Collections.Generic;
+﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable ClassNeverInstantiated.Global
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Solnet.Rpc.Models
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
+    /// <summary>
+    /// Represents the account info.
+    /// </summary>
     public class AccountInfo
     {
+        /// <summary>
+        /// The lamports balance of the account.
+        /// </summary>
         public ulong Lamports { get; set; }
 
+        /// <summary>
+        /// The account owner.
+        /// <remarks>
+        /// This value could be another regular address or a program.
+        /// </remarks>
+        /// </summary>
         public string Owner { get; set; }
 
+        /// <summary>
+        /// Indicates whether the account contains a program (and is strictly read-only).
+        /// </summary>
         public bool Executable { get; set; }
 
+        /// <summary>
+        /// The epoch at which the account will next owe rent.
+        /// </summary>
         public ulong RentEpoch { get; set; }
 
+        /// <summary>
+        /// The actual account data.
+        /// <remarks>
+        /// This value is accessed via <see cref="TryGetAccountData(out string)"/> or <see cref="TryGetAccountData(out Solnet.Rpc.Models.TokenAccountData)"/>
+        /// in order to get the data according to the underlying encoding type requested, see <see cref="Types.BinaryEncoding"/>.
+        /// </remarks>
+        /// </summary>
         [JsonConverter(typeof(AccountDataJsonConverter))]
         public object Data { get; set; }
 

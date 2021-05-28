@@ -214,7 +214,7 @@ namespace Solnet.Rpc
         {
             var sub = new SubscriptionState<ResponseValue<LogInfo>>(this, SubscriptionChannel.Logs, callback, new List<object> { pubkey });
 
-            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "logsSubscribe", new List<object> { new Dictionary<string, object> { { "mentions", new List<string>() { "pubkey" } } } });
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "logsSubscribe", new List<object> { new Dictionary<string, object> { { "mentions", new List<string> { pubkey } } } });
             return await Subscribe(sub, msg).ConfigureAwait(false);
         }
         public SubscriptionState SubscribeLogInfo(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback)
@@ -251,6 +251,7 @@ namespace Solnet.Rpc
                     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
                 }
             });
+            Console.WriteLine($"\tRequest: {Encoding.UTF8.GetString(json)}");
 
 
             ReadOnlyMemory<byte> mem = new ReadOnlyMemory<byte>(json);

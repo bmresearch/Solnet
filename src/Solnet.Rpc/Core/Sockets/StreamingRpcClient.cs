@@ -41,7 +41,7 @@ namespace Solnet.Rpc.Core.Sockets
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("uh oh");
+                    Console.WriteLine($"Exception caught: {e.Message}");
                 }
             }
         }
@@ -80,7 +80,7 @@ namespace Solnet.Rpc.Core.Sockets
                 {
                     mem = mem.Slice(0, count);
                 }
-                Console.WriteLine("\n\n[" + DateTime.UtcNow.ToLongTimeString() + "][Received]\n" + UTF8Encoding.UTF8.GetString(mem.ToArray(), 0, count));
+                //Console.WriteLine("[" + DateTime.UtcNow.ToLongTimeString() + "][Received]\n" + Encoding.UTF8.GetString(mem.ToArray(), 0, count));
 
 
                 HandleNewMessage(mem);

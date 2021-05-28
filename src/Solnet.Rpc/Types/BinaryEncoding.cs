@@ -6,6 +6,10 @@ namespace Solnet.Rpc.Types
     public enum BinaryEncoding
     {
         /// <summary>
+        /// Request json parsed data, when a parser is available.
+        /// </summary>
+        JsonParsed,
+        /// <summary>
         /// Base58 encoding.
         /// </summary>
         Base58,

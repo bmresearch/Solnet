@@ -5,8 +5,12 @@ using System.Text.Json.Serialization;
 
 namespace Solnet.Rpc.Models
 {
+    /// <summary>
+    /// Implements a custom JSON converter to parse the different types of account data.
+    /// </summary>
     public class AccountDataJsonConverter : JsonConverter<object>
     {
+        /// <inheritdoc/>
         public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if(reader.TokenType == JsonTokenType.StartArray)
@@ -20,6 +24,7 @@ namespace Solnet.Rpc.Models
             return null;
         }
 
+        /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
         {
             throw new NotImplementedException();

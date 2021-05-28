@@ -1,8 +1,8 @@
 using System;
-using System.Text;
 using NBitcoin.DataEncoders;
 using Solnet.Rpc;
 using Solnet.Rpc.Core.Sockets;
+using Solnet.Rpc.Models;
 
 namespace Solnet.Examples
 {
@@ -15,11 +15,22 @@ namespace Solnet.Examples
             c.Init().Wait();
 
             var sub = c.SubscribeAccountInfo(
-                "4tSvZvnbyzHXLMTiFonMyxZoHmFqau1XArcRCVHLZ5gX", 
+                "4tSvZvnbyzHXLMTiFonMyxZoHmFqau1XArcRCVHLZ5gX",
                 (s, data) =>
                 {
-                    Console.WriteLine($"Channel: {s.Channel} Slot: {data.Context.Slot} Lamports: {data.Value.Lamports} AccountData: {data.Value.Data[0]} Encoding: {data.Value.Data[1]}");
-                    //Console.WriteLine($"AccountInfo Decoded: {Encoding.UTF8.GetString(b64Dec.DecodeData(data.Value.Data[0]))}");
+                    // In a case where account data is received as jsonParsed
+                    TokenAccountData tokenAcc = null;
+                    var accData = data.Value.TryGetAccountData(out tokenAcc);
+                    if (accData)
+                        Console.WriteLine(
+                            $"Channel: {s.Channel} Slot: {data.Context.Slot} Lamports: {data.Value.Lamports} Account Owner: {tokenAcc.Parsed.Info.Owner}");
+                    
+                    // In a case where account data is received as base64
+                    string encodedData = null;
+                    var dataString = data.Value.TryGetAccountData(out encodedData);
+                    if (dataString)
+                        Console.WriteLine(
+                            $"Channel: {s.Channel} Slot: {data.Context.Slot} Lamports: {data.Value.Lamports} AccountData: {encodedData}");
                 });
 
             sub.SubscriptionChanged += SubscriptionChanged;

@@ -2,6 +2,7 @@
 using Solnet.Rpc;
 using Solnet.Rpc.Core.Sockets;
 using Solnet.Rpc.Models;
+using Solnet.Rpc.Types;
 
 namespace Solnet.Examples
 {
@@ -38,7 +39,7 @@ namespace Solnet.Examples
             foreach (var acc in tokenAccounts.Result.Value)
             {
                 Console.WriteLine("--------------------------------------------------------------------");
-                var accInfo = c.GetAccountInfoJson(acc.PublicKey);
+                var accInfo = c.GetAccountInfo(acc.PublicKey, BinaryEncoding.JsonParsed);
                 TokenAccountData tokenAccData = null;
                 var data = accInfo.Result.Value.TryGetAccountData(out tokenAccData);
                 Console.WriteLine(

@@ -1,7 +1,11 @@
+// ReSharper disable ClassNeverInstantiated.Global
 using System.Collections.Generic;
 
 namespace Solnet.Rpc.Models
 {
+    /// <summary>
+    /// Represents supply info.
+    /// </summary>
     public class Supply
     {
         /// <summary>

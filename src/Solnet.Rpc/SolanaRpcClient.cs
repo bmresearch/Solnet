@@ -113,7 +113,7 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="pubKey">The account public key.</param>
         /// <returns>A task which may return a request result holding the context and account info.</returns>
-        public async Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey)
+        public async Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey, BinaryEncoding encoding = BinaryEncoding.Base64)
         {
             return await SendRequestAsync<ResponseValue<AccountInfo>>(
                 "getAccountInfo",
@@ -121,35 +121,14 @@ namespace Solnet.Rpc
                 new Dictionary<string, object>
                 {
                     {
-                        "encoding", "base64"
+                        "encoding", encoding
                     }
                 });
         }
         /// <inheritdoc cref="GetAccountInfoAsync"/>
-        public RequestResult<ResponseValue<AccountInfo>> GetAccountInfo(string pubKey) 
-            => GetAccountInfoAsync(pubKey).Result;
+        public RequestResult<ResponseValue<AccountInfo>> GetAccountInfo(string pubKey, BinaryEncoding encoding = BinaryEncoding.Base64)
+            => GetAccountInfoAsync(pubKey, encoding).Result;
         
-        /// <summary>
-        /// Gets the account info using jsonParsed encoding.
-        /// </summary>
-        /// <param name="pubKey">The account public key.</param>
-        /// <returns>A task which may return a request result holding the context and account info.</returns>
-        public async Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoJsonAsync(string pubKey)
-        {
-            return await SendRequestAsync<ResponseValue<AccountInfo>>(
-                "getAccountInfo",
-                new List<object> { pubKey },
-                new Dictionary<string, object>
-                {
-                    {
-                        "encoding", "jsonParsed"
-                    }
-                });
-        }
-        /// <inheritdoc cref="GetAccountInfoJsonAsync"/>
-        public RequestResult<ResponseValue<AccountInfo>> GetAccountInfoJson(string pubKey) 
-            => GetAccountInfoJsonAsync(pubKey).Result;
-
         /// <summary>
         /// Gets the balance for a certain public key.
         /// </summary>
@@ -168,26 +147,50 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="block">The block.</param>
         /// <returns>A task which may return a request result and block commitment information.</returns>
-        public async Task<RequestResult<BlockCommitment>> GetBlockCommitmentAsync(ulong block)
+        public async Task<RequestResult<BlockCommitment>> GetBlockCommitmentAsync(ulong slot)
         {
-            return await SendRequestAsync<BlockCommitment>("getBlockCommitment", new List<object> { block });
+            return await SendRequestAsync<BlockCommitment>("getBlockCommitment", new List<object> { slot });
         }
         /// <inheritdoc cref="GetBlockCommitmentAsync"/>
-        public RequestResult<BlockCommitment> GetBlockCommitment(ulong block) 
-            => GetBlockCommitmentAsync(block).Result;
+        public RequestResult<BlockCommitment> GetBlockCommitment(ulong slot) 
+            => GetBlockCommitmentAsync(slot).Result;
         
         /// <summary>
         /// Gets the estimated production time for a certain block, identified by slot.
         /// </summary>
         /// <param name="block">The block.</param>
         /// <returns>A task which may return a request result and block production time as Unix timestamp (seconds since Epoch).</returns>
-        public async Task<RequestResult<ulong>> GetBlockTimeAsync(ulong block)
+        public async Task<RequestResult<ulong>> GetBlockTimeAsync(ulong slot)
         {
-            return await SendRequestAsync<ulong>("getBlockTime", new List<object> { block });
+            return await SendRequestAsync<ulong>("getBlockTime", new List<object> { slot });
         }
         /// <inheritdoc cref="GetBlockTimeAsync"/>
-        public RequestResult<ulong> GetBlockTime(ulong block) 
-            => GetBlockTimeAsync(block).Result;
+        public RequestResult<ulong> GetBlockTime(ulong slot) 
+            => GetBlockTimeAsync(slot).Result;
+        
+        /// <summary>
+        /// Gets the cluster nodes.
+        /// </summary>
+        /// <returns>A task which may return a request result and information about the nodes participating in the cluster.</returns>
+        public async Task<RequestResult<ClusterNode[]>> GetClusterNodesAsync()
+        {
+            return await SendRequestAsync<ClusterNode[]>("getClusterNodes");
+        }
+        /// <inheritdoc cref="GetClusterNodesAsync"/>
+        public RequestResult<ClusterNode[]> GetClusterNodes() 
+            => GetClusterNodesAsync().Result;
+        
+        /// <summary>
+        /// Gets identity and transaction information about a confirmed block, identified by slot.
+        /// </summary>
+        /// <returns>A task which may return a request result and information about the nodes participating in the cluster.</returns>
+        public async Task<RequestResult<ClusterNode[]>> GetConfirmedBlockAsync(ulong slot)
+        {
+            return await SendRequestAsync<ClusterNode[]>("getConfirmedBlock", new List<object> { slot });
+        }
+        /// <inheritdoc cref="GetConfirmedBlockAsync"/>
+        public RequestResult<ClusterNode[]> GetConfirmedBlock(ulong slot) 
+            => GetConfirmedBlockAsync(slot).Result;
         
         /// <summary>
         /// Gets a recent block hash.
@@ -212,18 +215,6 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="GetMinimumBalanceForRentExemptionAsync"/>
         public RequestResult<ResponseValue<long>> GetMinimumBalanceForRentExemption(long accountDataSize)
             => GetMinimumBalanceForRentExemptionAsync(accountDataSize).Result;
-
-        /// <summary>
-        /// Gets the cluster nodes.
-        /// </summary>
-        /// <returns>A task which may return a request result and information about the nodes participating in the cluster.</returns>
-        public async Task<RequestResult<ClusterNode[]>> GetClusterNodesAsync()
-        {
-            return await SendRequestAsync<ClusterNode[]>("getClusterNodes");
-        }
-        /// <inheritdoc cref="GetClusterNodesAsync"/>
-        public RequestResult<ClusterNode[]> GetClusterNodes() 
-            => GetClusterNodesAsync().Result;
 
         /// <summary>
         /// Gets the genesis hash of the ledger.
