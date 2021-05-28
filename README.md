@@ -22,41 +22,41 @@ make it intuitive and easy to use the library.
 ### Initializing both wallets from Sollet and solana-keygen
 
 ```c#
-    // To initialize a wallet and have access to the same keys generated in solana-keygen
-    var wallet = new Wallet("mnemonic words ...", Wordlist.English, "passphrase");
-    
-    // To initialize a wallet and have access to the same keys generated in sollet
-    var sollet = new Wallet("mnemonic words ...", Wordlist.English);
-    // Retrieve accounts by derivation path index
-    var account = sollet.GetAccount(10);
-    
-    // Or initialize a mnemonic from NBitcoin before and use it
-    var mnemonic = new Mnemonic("mnemonic words ...");
-    var wallet = new Wallet(mnemonic);
+// To initialize a wallet and have access to the same keys generated in solana-keygen
+var wallet = new Wallet("mnemonic words ...", Wordlist.English, "passphrase");
+
+// To initialize a wallet and have access to the same keys generated in sollet
+var sollet = new Wallet("mnemonic words ...", Wordlist.English);
+// Retrieve accounts by derivation path index
+var account = sollet.GetAccount(10);
+
+// Or initialize a mnemonic from NBitcoin before and use it
+var mnemonic = new Mnemonic("mnemonic words ...");
+var wallet = new Wallet(mnemonic);
 
 ``` 
 
 ### Sending a transaction
 
 ```c#
-            // Initialize the rpc client and a wallet
-            var rpcClient = new SolanaRpcClient("https://testnet.solana.com");
-            var wallet = new Wallet.Wallet();
-            // Get the source account
-            var fromAccount = wallet.GetAccount(0);
-            // Get the destination account
-            var toAccount = wallet.GetAccount(1);
-            // Get a recent block hash to include in the transaction
-            var blockHash = rpcClient.GetRecentBlockHash();
-            
-            // Initialize a transaction builder and chain as many instructions as you want before building the message
-            var tx = new TransactionBuilder().
-                    SetRecentBlockHash(blockHash.Result.Value.Blockhash).
-                    AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)")).
-                    AddInstruction(SystemProgram.Transfer(fromAccount.GetPublicKey, toAccount.GetPublicKey, 100000)).
-                    Build(fromAccount);
-            
-            var firstSig = rpcClient.SendTransaction(tx);
+// Initialize the rpc client and a wallet
+var rpcClient = new SolanaRpcClient("https://testnet.solana.com");
+var wallet = new Wallet.Wallet();
+// Get the source account
+var fromAccount = wallet.GetAccount(0);
+// Get the destination account
+var toAccount = wallet.GetAccount(1);
+// Get a recent block hash to include in the transaction
+var blockHash = rpcClient.GetRecentBlockHash();
+
+// Initialize a transaction builder and chain as many instructions as you want before building the message
+var tx = new TransactionBuilder().
+        SetRecentBlockHash(blockHash.Result.Value.Blockhash).
+        AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)")).
+        AddInstruction(SystemProgram.Transfer(fromAccount.GetPublicKey, toAccount.GetPublicKey, 100000)).
+        Build(fromAccount);
+
+var firstSig = rpcClient.SendTransaction(tx);
 ```
 
 
