@@ -52,9 +52,9 @@ namespace Solnet.Wallet
         /// <summary>
         /// Computes the child key.
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="chainCode"></param>
-        /// <param name="index"></param>
+        /// <param name="key">The key used to derive from.</param>
+        /// <param name="chainCode">The chain code for derivation.</param>
+        /// <param name="index">The index of the key to the derive.</param>
         /// <returns>A tuple consisting of the key and corresponding chain code.</returns>
         private (byte[] Key, byte[] ChainCode) GetChildKeyDerivation(byte[] key, byte[] chainCode, uint index)
         {

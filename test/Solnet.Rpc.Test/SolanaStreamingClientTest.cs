@@ -100,7 +100,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne(500));
+            Assert.IsTrue(_notificationEvent.WaitOne(1000));
             Assert.AreEqual(5199307, resultNotification.Context.Slot);
             Assert.AreEqual("11111111111111111111111111111111", resultNotification.Value.Owner);
             Assert.AreEqual(33594UL, resultNotification.Value.Lamports);
