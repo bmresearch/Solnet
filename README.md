@@ -1,4 +1,5 @@
 ![solnet](docs/assets/solnet-horizontal.png)
+[![Build Status](https://dev.azure.com/bmresearch/solnet/_apis/build/status/bmresearch.solnet?branchName=master)](https://dev.azure.com/bmresearch/solnet/_build/latest?definitionId=1&branchName=master)
 
 # What is Solnet?
 
