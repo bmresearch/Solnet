@@ -25,7 +25,7 @@ jobs:
 
       - task: PublishCodeCoverageResults@1
         inputs:
-          summaryFileLocation: '$(System.DefaultWorkingDirectory)/code_coverage/results.cobertura.xml'
+          summaryFileLocation: '$(Build.SourcesDirectory)/**/results.cobertura.xml'
 
   - job: Windows
     pool:
@@ -41,4 +41,4 @@ jobs:
 
       - task: PublishCodeCoverageResults@1
         inputs:
-          summaryFileLocation: '$(System.DefaultWorkingDirectory)/code_coverage/results.cobertura.xml'
+          summaryFileLocation: '$(Build.SourcesDirectory)/**/results.cobertura.xml'
