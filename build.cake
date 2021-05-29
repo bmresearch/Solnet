@@ -43,7 +43,7 @@ Task("Test")
     
         var coverletSettings = new CoverletSettings {
             CollectCoverage = true,
-            CoverletOutputFormat = CoverletOutputFormat.cobertura,
+            CoverletOutputFormat = CoverletOutputFormat.cobertura | CoverletOutputFormat.opencover,
             CoverletOutputDirectory = coverageFolder,
             CoverletOutputName = coberturaFileName
         };
