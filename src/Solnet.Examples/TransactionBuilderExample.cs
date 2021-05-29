@@ -37,8 +37,8 @@ namespace Solnet.Examples
             
             var tx = new TransactionBuilder().
                     SetRecentBlockHash(blockHash.Result.Value.Blockhash).
-                    AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)")).
                     AddInstruction(SystemProgram.Transfer(fromAccount.GetPublicKey, toAccount.GetPublicKey, 10000000)).
+                    AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)")).
                     Build(fromAccount);
             
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
