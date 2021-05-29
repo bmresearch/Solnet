@@ -138,8 +138,8 @@ namespace Solnet.Rpc.Test
             {
                 if (e.Status == SubscriptionStatus.Unsubscribed)
                 {
-                    _notificationEvent.Set();
                     unsubscribed = true;
+                    _notificationEvent.Set();
                 }
             };
 
@@ -147,7 +147,7 @@ namespace Solnet.Rpc.Test
 
             sub.Unsubscribe();
 
-            Assert.IsTrue(_notificationEvent.WaitOne(500));
+            Assert.IsTrue(_notificationEvent.WaitOne(1000));
             Assert.IsTrue(unsubscribed);
         }
     }
