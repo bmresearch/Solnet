@@ -3,6 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{51A58CB2-4260-4913-9613-EB8E4E0C4771}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{F50FF069-5F92-4A01-A1F5-4463DB022C62}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A651E8AD-703B-4B21-B344-68F5F09CDA67}"
+	ProjectSection(SolutionItems) = preProject
+		build.cake = build.cake
+		README.md = README.md
+	EndProjectSection
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Rpc", "src\Solnet.Rpc\Solnet.Rpc.csproj", "{FE8D270F-30AE-4818-AC7B-030591820419}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Models", "src\Solnet.Models\Solnet.Models.csproj", "{8B503BC5-F1C8-4F87-8C53-AD4D6CEFFCF4}"
@@ -15,9 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Examples", "src\Soln
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Util", "src\Solnet.Util\Solnet.Util.csproj", "{5B8896C9-4B06-41C9-B0F9-05B9F6190CA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Rpc.Test", "test\Solnet.Rpc.Test\Solnet.Rpc.Test.csproj", "{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Programs", "src\Solnet.Programs\Solnet.Programs.csproj", "{45D7F47F-4807-4918-BD78-F9EB2863B5A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Rpc.Test", "test\Solnet.Rpc.Test\Solnet.Rpc.Test.csproj", "{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
