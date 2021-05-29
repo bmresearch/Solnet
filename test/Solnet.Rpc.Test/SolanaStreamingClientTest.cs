@@ -106,9 +106,12 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(33594UL, resultNotification.Value.Lamports);
             Assert.AreEqual(635UL, resultNotification.Value.RentEpoch);
             Assert.AreEqual(false, resultNotification.Value.Executable);
+
+            var data = resultNotification.Value.TryGetAccountData(out string accountDataString);
+            Assert.IsTrue(data);
             Assert.AreEqual(
                 "11116bv5nS2h3y12kD1yUKeMZvGcKLSjQgX6BeV7u1FrjeJcKfsHPXHRDEHrBesJhZyqnnq9qJeUuF7WHxiuLuL5twc38w2TXNLxnDbjmuR",
-                resultNotification.Value.Data);
+                accountDataString);
         }
 
 

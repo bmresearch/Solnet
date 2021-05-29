@@ -10,9 +10,9 @@ var reportTypes = "Html";
 var coverageFolder = "./code_coverage";
 
 
-var coverageFile = "results";
-var coverageFileExtension = ".coverage.xml";
-var coverageFilePath = Directory(coverageFolder) + File(coverageFile + coverageFileExtension);
+var coberturaFileName = "results";
+var coberturaFileExtension = ".cobertura.xml";
+var coverageFilePath = Directory(coverageFolder) + File(coberturaFileName + coberturaFileExtension);
 
 Task("Clean")
     .Does(() => {
@@ -39,12 +39,13 @@ Task("Build")
     
 Task("Test")
     .IsDependentOn("Build")
-    .Does(() => {    
+    .Does(() => {
+    
         var coverletSettings = new CoverletSettings {
             CollectCoverage = true,
             CoverletOutputFormat = CoverletOutputFormat.cobertura,
             CoverletOutputDirectory = coverageFolder,
-            CoverletOutputName = coverageFile
+            CoverletOutputName = coberturaFileName
         };
 
         var testSettings = new DotNetCoreTestSettings
