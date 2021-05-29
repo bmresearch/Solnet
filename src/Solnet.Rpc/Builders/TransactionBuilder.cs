@@ -21,7 +21,7 @@ namespace Solnet.Rpc.Builders
         /// <summary>
         /// The length of a signature.
         /// </summary>
-        private static int SignatureLength = 64;
+        private const int SignatureLength = 64;
 
         /// <summary>
         /// The builder of the message contained within the transaction.
@@ -51,7 +51,7 @@ namespace Solnet.Rpc.Builders
         private byte[] Serialize()
         {
             var signaturesLength = ShortVectorEncoding.EncodeLength(_signatures.Count);
-            var buffer = new MemoryStream(signaturesLength.Length + _signatures.Count * 64 + _serializedMessage.Length);
+            var buffer = new MemoryStream(signaturesLength.Length + _signatures.Count * SignatureLength + _serializedMessage.Length);
             
             buffer.Write(signaturesLength);
             foreach (var signature in _signatures)

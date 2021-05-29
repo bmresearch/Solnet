@@ -16,7 +16,7 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// A base-58 encoded public key of the delegate.
         /// </summary>
-        public string? Delegate { get; set; }
+        public string Delegate { get; set; }
 
         /// <summary>
         /// The delegated amount of tokens.

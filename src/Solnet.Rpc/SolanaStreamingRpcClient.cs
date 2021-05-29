@@ -270,7 +270,8 @@ namespace Solnet.Rpc
             SubscriptionChannel.Program => "programUnsubscribe",
             SubscriptionChannel.Root => "rootUnsubscribe",
             SubscriptionChannel.Signature => "signatureUnsubscribe",
-            SubscriptionChannel.Slot => "slotUnsubscribe"
+            SubscriptionChannel.Slot => "slotUnsubscribe",
+            _ => throw new ArgumentOutOfRangeException(nameof(channel), channel, "invalid message type")
         };
 
         public async Task UnsubscribeAsync(SubscriptionState subscription)
