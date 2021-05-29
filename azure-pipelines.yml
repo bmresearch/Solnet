@@ -28,6 +28,10 @@ jobs:
         inputs:
           command: 'test'
 
+      - task: PublishCodeCoverageResults@1
+        inputs:
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/code_coverage/results.cobertura.xml'
+
   - job: Windows
     pool:
       vmImage: 'windows-latest'
@@ -48,3 +52,7 @@ jobs:
         inputs:
           platform: '$(buildPlatform)'
           configuration: '$(buildConfiguration)'
+          
+      - task: PublishCodeCoverageResults@1
+        inputs:
+          summaryFileLocation: '$(System.DefaultWorkingDirectory)/code_coverage/results.cobertura.xml'
