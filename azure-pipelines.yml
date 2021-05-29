@@ -25,6 +25,7 @@ jobs:
 
       - task: PublishCodeCoverageResults@1
         inputs:
+          codeCoverageTool: 'cobertura'
           summaryFileLocation: '$(Build.SourcesDirectory)/**/results.cobertura.xml'
 
   - job: Windows
@@ -41,4 +42,5 @@ jobs:
 
       - task: PublishCodeCoverageResults@1
         inputs:
+          codeCoverageTool: 'cobertura'
           summaryFileLocation: '$(Build.SourcesDirectory)/**/results.cobertura.xml'
