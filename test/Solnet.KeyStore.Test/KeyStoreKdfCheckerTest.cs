@@ -23,12 +23,6 @@ namespace Solnet.KeyStore.Test
         private static readonly SecretKeyStoreService KeyStore = new ();
 
         [TestMethod]
-        public void TestValidKdf()
-        {
-            _ = KeyStore.DecryptKeyStoreFromFile("randomPassword", ValidKdfCheckerPath);
-        }
-        
-        [TestMethod]
         [ExpectedException(typeof(InvalidKdfException))]
         public void TestInvalidKdf()
         {
