@@ -128,9 +128,6 @@ namespace Solnet.Wallet
         /// <returns></returns>
         public bool Verify(byte[] message, byte[] signature)
         {
-            if (_seedMode != SeedMode.Bip39)
-                throw new Exception("cannot verify ed25519 based bip32 signatures using bip39 keys");
-            
             return Account.Verify(message, signature);
         }
         
@@ -158,9 +155,6 @@ namespace Solnet.Wallet
         /// <returns>The signature of the data.</returns>
         public byte[] Sign(byte[] message)
         {
-            if (_seedMode != SeedMode.Bip39)
-                throw new Exception("cannot compute ed25519 based bip32 signature using bip39 keys");
-
             var signature = Account.Sign(message);
             return signature.ToArray();
         }
@@ -172,6 +166,9 @@ namespace Solnet.Wallet
         /// <returns>The account.</returns>
         public Account GetAccount(int index)
         {
+            if (_seedMode != SeedMode.Ed25519Bip32)
+                throw new Exception($"seed mode: {_seedMode} cannot derive Ed25519 based BIP32 keys");
+
             var path = DerivationPath.Replace("x", index.ToString());
             var (account, chain) = _ed25519Bip32.DerivePath(path);
             var (privateKey, publicKey) = Ed25519Extensions.EdKeyPairFromSeed(account);

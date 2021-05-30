@@ -19,14 +19,14 @@ jobs:
         inputs:
           restoreSolution: '$(solution)'
 
-      - task: DotNetCoreCLI@2
+      - task: ShellScript@2
         inputs:
-          command: 'build'
-          projects: '$(solution)'
+          scriptPath: './build.sh'
 
-      - task: DotNetCoreCLI@2
+      - task: PublishCodeCoverageResults@1
         inputs:
-          command: 'test'
+          codeCoverageTool: 'cobertura'
+          summaryFileLocation: '$(Build.SourcesDirectory)/**/results.cobertura.xml'
 
   - job: Windows
     pool:
@@ -38,13 +38,9 @@ jobs:
         inputs:
           restoreSolution: '$(solution)'
 
-      - task: VSBuild@1
-        inputs:
-          solution: '$(solution)'
-          platform: '$(buildPlatform)'
-          configuration: '$(buildConfiguration)'
+      - powershell: ./build.ps1
 
-      - task: VSTest@2
+      - task: PublishCodeCoverageResults@1
         inputs:
-          platform: '$(buildPlatform)'
-          configuration: '$(buildConfiguration)'
+          codeCoverageTool: 'cobertura'
+          summaryFileLocation: '$(Build.SourcesDirectory)/**/results.cobertura.xml'

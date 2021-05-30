@@ -2,17 +2,22 @@
 #addin nuget:?package=Cake.Coverlet&version=2.5.4
 #tool dotnet:?package=dotnet-reportgenerator-globaltool&version=4.8.7
 
+var testProjectsRelativePaths = new string[]
+{
+    "./test/Solnet.Rpc.Test/Solnet.Rpc.Test.csproj",
+    "./test/Solnet.Wallet.Test/Solnet.Wallet.Test.csproj"
+};
+
 var target = Argument("target", "Publish");
 var configuration = Argument("configuration", "Release");
 var solutionFolder = "./";
 var outputFolder = "./artifacts";
-var reportTypes = "Html";
+var reportTypes = "HtmlInline_AzurePipelines";
 var coverageFolder = "./code_coverage";
 
-
 var coberturaFileName = "results";
-var coberturaFileExtension = ".cobertura.xml";
-var coverageFilePath = Directory(coverageFolder) + File(coberturaFileName + coberturaFileExtension);
+var coverageFilePath = Directory(coverageFolder) + File(coberturaFileName + ".cobertura.xml");
+var jsonFilePath = Directory(coverageFolder) + File(coberturaFileName + ".json");
 
 Task("Clean")
     .Does(() => {
@@ -43,7 +48,6 @@ Task("Test")
     
         var coverletSettings = new CoverletSettings {
             CollectCoverage = true,
-            CoverletOutputFormat = CoverletOutputFormat.cobertura | CoverletOutputFormat.opencover,
             CoverletOutputDirectory = coverageFolder,
             CoverletOutputName = coberturaFileName
         };
@@ -52,10 +56,21 @@ Task("Test")
         {
             NoRestore = true,
             Configuration = configuration,
-            NoBuild = true
+            NoBuild = true,
+            ArgumentCustomization = args => args.Append($"--logger trx")
         };
 
-        DotNetCoreTest("./test/Solnet.Rpc.Test/Solnet.Rpc.Test.csproj", testSettings, coverletSettings);
+        DotNetCoreTest(testProjectsRelativePaths[0], testSettings, coverletSettings);
+
+        coverletSettings.MergeWithFile = jsonFilePath;
+        for (int i = 1; i < testProjectsRelativePaths.Length; i++)
+        {
+            if (i == testProjectsRelativePaths.Length - 1)
+            {
+                coverletSettings.CoverletOutputFormat  = CoverletOutputFormat.cobertura;
+            }
+            DotNetCoreTest(testProjectsRelativePaths[i], testSettings, coverletSettings);
+        }
     });
 
 
