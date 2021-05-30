@@ -6,7 +6,6 @@ using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
 using Solnet.KeyStore.Exceptions;
-using Solnet.Util;
 
 namespace Solnet.KeyStore.Crypto
 {

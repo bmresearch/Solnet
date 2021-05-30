@@ -3,7 +3,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using Solnet.Util;
+using Solnet.Wallet.Utilities;
 
 namespace Solnet.Wallet
 { 
