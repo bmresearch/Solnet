@@ -5,7 +5,8 @@
 var testProjectsRelativePaths = new string[]
 {
     "./test/Solnet.Rpc.Test/Solnet.Rpc.Test.csproj",
-    "./test/Solnet.Wallet.Test/Solnet.Wallet.Test.csproj"
+    "./test/Solnet.Wallet.Test/Solnet.Wallet.Test.csproj",
+    "./test/Solnet.KeyStore.Test/Solnet.KeyStore.Test.csproj"
 };
 
 var target = Argument("target", "Publish");
