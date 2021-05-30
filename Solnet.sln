@@ -15,8 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Rpc", "src\Solnet.Rpc\Solnet.Rpc.csproj", "{FE8D270F-30AE-4818-AC7B-030591820419}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Models", "src\Solnet.Models\Solnet.Models.csproj", "{8B503BC5-F1C8-4F87-8C53-AD4D6CEFFCF4}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.KeyStore", "src\Solnet.KeyStore\Solnet.KeyStore.csproj", "{BA5BFA52-8010-4438-BC87-153A34464CAA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Wallet", "src\Solnet.Wallet\Solnet.Wallet.csproj", "{DA22B717-4FD7-4D08-A546-DFF3B21B7BAE}"
@@ -41,10 +39,6 @@ Global
 		{FE8D270F-30AE-4818-AC7B-030591820419}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE8D270F-30AE-4818-AC7B-030591820419}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE8D270F-30AE-4818-AC7B-030591820419}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8B503BC5-F1C8-4F87-8C53-AD4D6CEFFCF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8B503BC5-F1C8-4F87-8C53-AD4D6CEFFCF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8B503BC5-F1C8-4F87-8C53-AD4D6CEFFCF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8B503BC5-F1C8-4F87-8C53-AD4D6CEFFCF4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BA5BFA52-8010-4438-BC87-153A34464CAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BA5BFA52-8010-4438-BC87-153A34464CAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA5BFA52-8010-4438-BC87-153A34464CAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
