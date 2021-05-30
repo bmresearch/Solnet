@@ -74,7 +74,7 @@ namespace Solnet.Rpc.Test
         public void SubscribeAccountInfoTest()
         {
             var expected = File.ReadAllText("Resources/AccountSubscribe.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/AccountSubscribeConfirm.json");
+            var subConfirmContent = File.ReadAllBytes("Resources/SubscribeConfirm.json");
             var notificationContents = File.ReadAllBytes("Resources/AccountSubscribeNotification.json");
             ResponseValue<AccountInfo> resultNotification = null;
             var result = new ReadOnlyMemory<byte>();
@@ -100,7 +100,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne(1000));
+            Assert.IsTrue(_notificationEvent.WaitOne());
             Assert.AreEqual(5199307, resultNotification.Context.Slot);
             Assert.AreEqual("11111111111111111111111111111111", resultNotification.Value.Owner);
             Assert.AreEqual(33594UL, resultNotification.Value.Lamports);
@@ -118,7 +118,7 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void UnsubscribeTest()
         {
-            var subConfirmContent = File.ReadAllBytes("Resources/AccountSubscribeConfirm.json");
+            var subConfirmContent = File.ReadAllBytes("Resources/SubscribeConfirm.json");
             var unsubContents = File.ReadAllBytes("Resources/AccountSubUnsubscription.json");
             var unsubscribed = false;
 
@@ -147,8 +147,74 @@ namespace Solnet.Rpc.Test
 
             sub.Unsubscribe();
 
-            Assert.IsTrue(_notificationEvent.WaitOne(1000));
+            Assert.IsTrue(_notificationEvent.WaitOne());
             Assert.IsTrue(unsubscribed);
         }
+
+        [TestMethod]
+        public void SubscribeLogsMentionTest()
+        {
+            var expected = File.ReadAllText("Resources/LogsSubscribeMention.json");
+            var subConfirmContent = File.ReadAllBytes("Resources/SubscribeConfirm.json");
+            ResponseValue<LogInfo> resultNotification = null;
+            var result = new ReadOnlyMemory<byte>();
+
+            SetupAction(out Action<SubscriptionState, ResponseValue<LogInfo>> action,
+                (x) => resultNotification = x,
+                (x) => result = x,
+                subConfirmContent,
+                new byte[0]);
+
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
+
+            const string pubKey = "11111111111111111111111111111111";
+
+            sut.Init().Wait();
+            _ = sut.SubscribeLogInfo(pubKey, action);
+
+            _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
+                WebSocketMessageType.Text,
+                true,
+                It.IsAny<CancellationToken>()));
+            var res = Encoding.UTF8.GetString(result.Span);
+            Assert.AreEqual(expected, res);
+
+        }
+
+        [TestMethod]
+        public void SubscribeLogsAllTest()
+        {
+            var expected = File.ReadAllText("Resources/LogsSubscribeAll.json");
+            var subConfirmContent = File.ReadAllBytes("Resources/SubscribeConfirm.json");
+            var notificationContents = File.ReadAllBytes("Resources/LogsSubscribeNotification.json");
+            ResponseValue<LogInfo> resultNotification = null;
+            var result = new ReadOnlyMemory<byte>();
+
+            SetupAction(out Action<SubscriptionState, ResponseValue<LogInfo>> action,
+                (x) => resultNotification = x,
+                (x) => result = x,
+                subConfirmContent,
+                notificationContents);
+
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
+
+            sut.Init().Wait();
+            _ = sut.SubscribeLogInfo(Types.LogsSubscriptionType.All, action);
+            _subConfirmEvent.Set();
+
+            _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
+                WebSocketMessageType.Text,
+                true,
+                It.IsAny<CancellationToken>()));
+            var res = Encoding.UTF8.GetString(result.Span);
+            Assert.AreEqual(expected, res);
+
+            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.AreEqual(5208469, resultNotification.Context.Slot);
+            Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", resultNotification.Value.Signature);
+            Assert.IsNull(resultNotification.Value.Error);
+            Assert.AreEqual("BPF program 83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri success", resultNotification.Value.Logs[0]);
+        }
+
     }
 }
