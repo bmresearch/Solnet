@@ -1,7 +1,8 @@
 using System;
 
-namespace Solnet.Util
+namespace Solnet.Rpc.Utilities
 {
+
     public static class ShortVectorEncoding
     {
         public static byte[] EncodeLength(int len) {

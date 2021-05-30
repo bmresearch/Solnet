@@ -23,8 +23,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Wallet", "src\Solnet
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Examples", "src\Solnet.Examples\Solnet.Examples.csproj", "{1198ED67-B1F1-4DE9-BDE8-AE6C96DA33A6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Util", "src\Solnet.Util\Solnet.Util.csproj", "{5B8896C9-4B06-41C9-B0F9-05B9F6190CA5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Programs", "src\Solnet.Programs\Solnet.Programs.csproj", "{45D7F47F-4807-4918-BD78-F9EB2863B5A2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Rpc.Test", "test\Solnet.Rpc.Test\Solnet.Rpc.Test.csproj", "{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}"
@@ -59,10 +57,6 @@ Global
 		{1198ED67-B1F1-4DE9-BDE8-AE6C96DA33A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1198ED67-B1F1-4DE9-BDE8-AE6C96DA33A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1198ED67-B1F1-4DE9-BDE8-AE6C96DA33A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5B8896C9-4B06-41C9-B0F9-05B9F6190CA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5B8896C9-4B06-41C9-B0F9-05B9F6190CA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5B8896C9-4B06-41C9-B0F9-05B9F6190CA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5B8896C9-4B06-41C9-B0F9-05B9F6190CA5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}.Release|Any CPU.ActiveCfg = Release|Any CPU

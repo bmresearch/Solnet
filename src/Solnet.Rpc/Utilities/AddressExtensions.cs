@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using Solnet.Util;
 
 namespace Solnet.Rpc.Utilities
 {
-
     public static class AddressExtensions
     {
         /// <summary>

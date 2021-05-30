@@ -1,10 +1,10 @@
-using System;
-
-namespace Solnet.Util
+namespace Solnet.Programs
 {
-    public static class EndianBitConverter
+    /// <summary>
+    /// Utilities class for programs message encoding.
+    /// </summary>
+    public static class Utils
     {
-
         /// <summary>
         /// Write 4 bytes to the byte array (starting at the offset) as unsigned 32-bit integer in little endian format.
         /// </summary>

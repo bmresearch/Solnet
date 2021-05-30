@@ -1,13 +1,8 @@
 using System;
-using System.Linq;
-using System.Text;
 using Solnet.Programs;
 using Solnet.Rpc;
 using Solnet.Rpc.Builders;
-using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
-using Solnet.Util;
-using Solnet.Wallet;
 
 namespace Solnet.Examples
 {

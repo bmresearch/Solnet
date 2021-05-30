@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Solnet.Util
+namespace Solnet.Rpc.Utilities
 {
     public static class Ed25519Extensions
     {

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace Solnet.Util
+namespace Solnet.Wallet.Utilities
 {
+
     public class BigEndianBuffer
     {
         readonly List<byte> _bytes = new ();

@@ -4,7 +4,6 @@ using System.Text.Json;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Solnet.KeyStore.Exceptions;
 using Solnet.KeyStore.Services;
-using Solnet.Util;
 
 namespace Solnet.KeyStore.Test
 {

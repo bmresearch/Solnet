@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using NBitcoin;
 using Solnet.KeyStore;
-using Solnet.Util;
 using Solnet.Wallet;
 
 namespace Solnet.Examples

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using NBitcoin.DataEncoders;
 using Solnet.Rpc.Models;
-using Solnet.Util;
+using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
 
 namespace Solnet.Rpc.Builders
