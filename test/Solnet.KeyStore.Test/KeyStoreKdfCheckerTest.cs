@@ -22,6 +22,7 @@ namespace Solnet.KeyStore.Test
         
         private static readonly SecretKeyStoreService KeyStore = new ();
 
+        [TestMethod]
         [ExpectedException(typeof(InvalidKdfException))]
         public void TestInvalidKdf()
         {
