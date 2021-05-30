@@ -1,5 +1,18 @@
 ![solnet](docs/assets/solnet-horizontal.png)
-[![Build Status](https://dev.azure.com/bmresearch/solnet/_apis/build/status/bmresearch.solnet?branchName=master)](https://dev.azure.com/bmresearch/solnet/_build/latest?definitionId=1&branchName=master)
+
+<p align="center">
+    <a href="https://dev.azure.com/bmresearch/solnet/_build/latest?definitionId=2&branchName=refs%2Fpull%2F7%2Fmerge">
+        <img src="https://img.shields.io/azure-devops/build/bmresearch/solnet/2/master?style=flat-square"
+            alt="Azure DevOps Build Status (master)" ></a>
+    <a href="https://img.shields.io/azure-devops/coverage/bmresearch/solnet/2/master">
+        <img src="https://img.shields.io/azure-devops/coverage/bmresearch/solnet/2/master?style=flat-square"
+            alt="Azure DevOps Cobertura Code Coverage (master)"></a>
+    <a href="">
+        <img src="https://img.shields.io/github/license/bmresearch/solnet" alt="Github Code License"></a>
+    <a href="https://twitter.com/intent/follow?screen_name=blockmountainco">
+        <img src="https://img.shields.io/twitter/follow/blockmountainco?style=flat-square&logo=twitter"
+            alt="follow on Twitter"></a>
+</p>
 
 # What is Solnet?
 
