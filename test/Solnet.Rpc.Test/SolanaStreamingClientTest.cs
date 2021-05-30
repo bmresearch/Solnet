@@ -100,7 +100,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne(5000));
+            Assert.IsTrue(_notificationEvent.WaitOne());
             Assert.AreEqual(5199307, resultNotification.Context.Slot);
             Assert.AreEqual("11111111111111111111111111111111", resultNotification.Value.Owner);
             Assert.AreEqual(33594UL, resultNotification.Value.Lamports);
@@ -147,7 +147,7 @@ namespace Solnet.Rpc.Test
 
             sub.Unsubscribe();
 
-            Assert.IsTrue(_notificationEvent.WaitOne(5000));
+            Assert.IsTrue(_notificationEvent.WaitOne());
             Assert.IsTrue(unsubscribed);
         }
 
@@ -209,7 +209,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne(5000));
+            Assert.IsTrue(_notificationEvent.WaitOne());
             Assert.AreEqual(5208469, resultNotification.Context.Slot);
             Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", resultNotification.Value.Signature);
             Assert.IsNull(resultNotification.Value.Error);
