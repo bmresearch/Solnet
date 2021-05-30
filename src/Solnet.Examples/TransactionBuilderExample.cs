@@ -50,8 +50,9 @@ namespace Solnet.Examples
             var wallet = new Wallet.Wallet("route clerk disease box emerge airport loud waste attitude film army tray forward deal onion eight catalog surface unit card window walnut wealth medal");
 
             var blockHash = rpcClient.GetRecentBlockHash();
-            var minBalanceForExemption = rpcClient.GetMinimumBalanceForRentExemption(SystemProgram.AccountDataSize).Result.Value;
-
+            var minBalanceForExemption = rpcClient.GetMinimumBalanceForRentExemption(SystemProgram.AccountDataSize).Result;
+            Console.WriteLine($"MinBalanceForRentExemption >> {minBalanceForExemption}");
+            
             var mintAccount = wallet.GetAccount(3);
             var ownerAccount = wallet.GetAccount(4);
             var initialAccount = wallet.GetAccount(5);
@@ -60,7 +61,7 @@ namespace Solnet.Examples
                 .AddInstruction(SystemProgram.CreateAccount(
                     ownerAccount.GetPublicKey,
                     mintAccount.GetPublicKey,
-                    minBalanceForExemption,
+                    (long) minBalanceForExemption,
                     SystemProgram.AccountDataSize,
                     TokenProgram.ProgramId));
 
