@@ -4,9 +4,20 @@ using System;
 namespace Solnet.Rpc.Models
 {
     /// <summary>
-    /// Represents the token account info.
+    /// Represents the account info for a given token account.
     /// </summary>
-    public class TokenAccountInfo
+    public class TokenAccountInfo : AccountInfoBase
+    {
+        /// <summary>
+        /// The parsed token account data field.
+        /// </summary>
+        public TokenAccountData Data { get; set; }
+    }
+
+    /// <summary>
+    /// Represents the details of the info field of a token account.
+    /// </summary>
+    public class TokenAccountInfoDetails
     {
         /// <summary>
         /// The token balance data.
@@ -57,7 +68,7 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// The token account info, containing account balances, delegation and ownership info.
         /// </summary>
-        public TokenAccountInfo Info { get; set; }
+        public TokenAccountInfoDetails Info { get; set; }
     }
 
     /// <summary>

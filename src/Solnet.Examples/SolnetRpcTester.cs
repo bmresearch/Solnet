@@ -28,32 +28,40 @@ namespace Solnet.Examples
                 Console.WriteLine($"Acc: {acc.Address}  Balance: {acc.UiAmountString}");
             }
             */
-            
+
             /* Token balance for Account PubKey
             var tokenBalance = c.GetTokenAccountBalance("7247amxcSBamBSKZJrqbj373CiJSa1v21cRav56C3WfZ");
             Console.WriteLine($"Token Balance: {tokenBalance.Result.Value.UiAmountString}");
             */
 
+            //var tokenAccounts = c.GetTokenAccountsByOwner(
+            //    "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5",null, "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");            
+            //foreach (var acc in tokenAccounts.Result.Value)
+            //{
+            //    Console.WriteLine("--------------------------------------------------------------------");
+            //    var accInfo = c.GetAccountInfo(acc.PublicKey, BinaryEncoding.JsonParsed);
+            //    TokenAccountData tokenAccData = null;
+            //    var data = accInfo.Result.Value.TryGetAccountData(out tokenAccData);
+            //    Console.WriteLine(
+            //        $"Token Account:\n" +
+            //        $"\tAccount PubKey: {acc.PublicKey}\n" +
+            //        $"\tAccount Lamport Balance: {acc.Account.Lamports}\n" +
+            //        $"\tAccount Encoded Data: {acc.Account.Data}\n" +
+            //        $"Account Info for {acc.PublicKey}:\n" +
+            //        $"\tAccount Owner: {tokenAccData.Parsed.Info.Owner}\n" +
+            //        $"\tToken Balance: {tokenAccData.Parsed.Info.TokenAmount.UiAmountString}\n" +
+            //        $"\tToken Mint: {tokenAccData.Parsed.Info.Mint}"
+            //    );
+            //    Console.WriteLine("--------------------------------------------------------------------");
+            //}
             var tokenAccounts = c.GetTokenAccountsByOwner(
-                "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5",null, "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");            
-            foreach (var acc in tokenAccounts.Result.Value)
-            {
-                Console.WriteLine("--------------------------------------------------------------------");
-                var accInfo = c.GetAccountInfo(acc.PublicKey, BinaryEncoding.JsonParsed);
-                TokenAccountData tokenAccData = null;
-                var data = accInfo.Result.Value.TryGetAccountData(out tokenAccData);
-                Console.WriteLine(
-                    $"Token Account:\n" +
-                    $"\tAccount PubKey: {acc.PublicKey}\n" +
-                    $"\tAccount Lamport Balance: {acc.Account.Lamports}\n" +
-                    $"\tAccount Encoded Data: {acc.Account.Data}\n" +
-                    $"Account Info for {acc.PublicKey}:\n" +
-                    $"\tAccount Owner: {tokenAccData.Parsed.Info.Owner}\n" +
-                    $"\tToken Balance: {tokenAccData.Parsed.Info.TokenAmount.UiAmountString}\n" +
-                    $"\tToken Mint: {tokenAccData.Parsed.Info.Mint}"
-                );
-                Console.WriteLine("--------------------------------------------------------------------");
-            }
+                "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5",null, "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
+            
+
+
+            var res = c.GetTokenAccountsByOwner("SysvarRecentB1ockHashes11111111111111111111");
+
+            Console.ReadKey();
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// The token account info.
         /// </summary>
-        public AccountInfo Account { get; set; }
+        public TokenAccountInfo Account { get; set; }
         
         /// <summary>
         /// A base-58 encoded public key representing the account's public key.
