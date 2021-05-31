@@ -180,8 +180,6 @@ namespace Solnet.Rpc.Builders
             foreach (var accountMeta in keysList)
             {
                 accountKeysBuffer.Write(accountMeta.PublicKey);
-                //Console.WriteLine("Adding accountMeta.PublicKey to buffer: " + accountMeta.PublicKey.ToHex());
-
                 if (accountMeta.Signer)
                 {
                     _messageHeader.RequiredSignatures += 1;
@@ -204,28 +202,18 @@ namespace Solnet.Rpc.Builders
             var messageHeaderBytes = _messageHeader.ToBytes();
 
             buffer.Write(messageHeaderBytes);
-            //Console.WriteLine("Adding header to buffer: " + _messageHeader.ToBytes().ToHex());
             buffer.Write(accountAddressesLength);
-            //Console.WriteLine("Adding accountAddressesLength to buffer: " + accountAddressesLength.ToHex());
             buffer.Write(accountKeysBuffer.ToArray());
-            //Console.WriteLine("Adding accountkeys to buffer: " + accountKeysBuffer.ToArray().ToHex());
             buffer.Write(Encoder.DecodeData(RecentBlockHash));
-            //Console.WriteLine("Adding recentblockhash to buffer: " + Encoder.DecodeData(RecentBlockHash).ToHex());
             buffer.Write(instructionsLength);
-            //Console.WriteLine("Adding instructionsLength to buffer: " + instructionsLength.ToHex());
             
             foreach (var compiledInstruction in compiledInstructions)
             {
                 buffer.WriteByte(compiledInstruction.ProgramIdIndex);
-                //Console.WriteLine("Adding compiledInstruction.ProgramIdIndex to buffer: " + compiledInstruction.ProgramIdIndex);
                 buffer.Write(compiledInstruction.KeyIndicesCount);
-                //Console.WriteLine("Adding compiledInstruction.KeyIndicesCount to buffer: " + compiledInstruction.KeyIndicesCount.ToHex());
                 buffer.Write(compiledInstruction.KeyIndices);
-                //Console.WriteLine("Adding compiledInstruction.KeyIndices to buffer: " + compiledInstruction.KeyIndices.ToHex());
                 buffer.Write(compiledInstruction.DataLength);
-                //Console.WriteLine("Adding compiledInstruction.DataLength to buffer: " + compiledInstruction.DataLength.ToHex());
                 buffer.Write(compiledInstruction.Data);
-                //Console.WriteLine("Adding compiledInstruction.Data to buffer: " + compiledInstruction.Data.ToHex());
             }
 
             #endregion

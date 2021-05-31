@@ -208,12 +208,12 @@ namespace Solnet.Rpc
         /// Gets the minimum balance required to make account rent exempt.
         /// </summary>
         /// <returns>A task which may return a request result and the rent exemption value.</returns>
-        public async Task<RequestResult<ResponseValue<long>>> GetMinimumBalanceForRentExemptionAsync(long accountDataSize)
+        public async Task<RequestResult<ulong>> GetMinimumBalanceForRentExemptionAsync(long accountDataSize)
         {
-            return await SendRequestAsync<ResponseValue<long>>("getRecentBlockhash");
+            return await SendRequestAsync<ulong>("getMinimumBalanceForRentExemption", new List<object>{ accountDataSize });
         }
         /// <inheritdoc cref="GetMinimumBalanceForRentExemptionAsync"/>
-        public RequestResult<ResponseValue<long>> GetMinimumBalanceForRentExemption(long accountDataSize)
+        public RequestResult<ulong> GetMinimumBalanceForRentExemption(long accountDataSize)
             => GetMinimumBalanceForRentExemptionAsync(accountDataSize).Result;
 
         /// <summary>

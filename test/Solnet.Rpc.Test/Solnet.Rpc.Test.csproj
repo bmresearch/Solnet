@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Solnet.Programs\Solnet.Programs.csproj" />
     <ProjectReference Include="..\..\src\Solnet.Rpc\Solnet.Rpc.csproj" />
   </ItemGroup>
 

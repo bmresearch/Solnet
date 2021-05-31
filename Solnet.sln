@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Wallet.Test", "test\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.KeyStore.Test", "test\Solnet.KeyStore.Test\Solnet.KeyStore.Test.csproj", "{A02FDD4D-7096-4A43-B53C-5F5577F5B97C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Programs.Test", "test\Solnet.Programs.Test\Solnet.Programs.Test.csproj", "{44B262CE-3AA3-43CE-B483-F49605E80E7B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{A02FDD4D-7096-4A43-B53C-5F5577F5B97C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A02FDD4D-7096-4A43-B53C-5F5577F5B97C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A02FDD4D-7096-4A43-B53C-5F5577F5B97C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44B262CE-3AA3-43CE-B483-F49605E80E7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44B262CE-3AA3-43CE-B483-F49605E80E7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44B262CE-3AA3-43CE-B483-F49605E80E7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44B262CE-3AA3-43CE-B483-F49605E80E7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
