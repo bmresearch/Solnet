@@ -11,7 +11,8 @@ namespace Solnet.Programs.Test
         private static readonly Base58Encoder Encoder = new();
 
         private const string MnemonicWords =
-            "route clerk disease box emerge airport loud waste attitude film army tray forward deal onion eight catalog surface unit card window walnut wealth medal";
+            "route clerk disease box emerge airport loud waste attitude film army tray " +
+            "forward deal onion eight catalog surface unit card window walnut wealth medal";
 
         private const string CreateAccountInstructionBase64 =
             "AAAAAPAdHwAAAAAApQAAAAAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQ==";
@@ -31,7 +32,10 @@ namespace Solnet.Programs.Test
             55, 145, 58, 140, 245, 133, 126, 255, 0, 169
         };
 
-        private static readonly byte[] TransferInstructionBytes = {2, 0, 0, 0, 128, 150, 152, 0, 0, 0, 0, 0};
+        private static readonly byte[] TransferInstructionBytes =
+        {
+            2, 0, 0, 0, 128, 150, 152, 0, 0, 0, 0, 0
+        };
 
         private const long BalanceForRentExemption = 2039280L;
 
