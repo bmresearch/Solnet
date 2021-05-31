@@ -210,5 +210,37 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual("BPF program 83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri success", resultNotification.Value.Logs[0]);
         }
 
+
+        [TestMethod]
+        public void SubscribeProgramTest()
+        {
+            var expected = File.ReadAllText("Resources/ProgramSubscribe.json");
+            var subConfirmContent = File.ReadAllBytes("Resources/SubscribeConfirm.json");
+            var notificationContents = File.ReadAllBytes("Resources/ProgramSubscribeNotification.json");
+            ResponseValue<ProgramInfo> resultNotification = null;
+            var result = new ReadOnlyMemory<byte>();
+
+            SetupAction(out Action<SubscriptionState, ResponseValue<ProgramInfo>> action,
+                (x) => resultNotification = x,
+                (x) => result = x,
+                subConfirmContent,
+                notificationContents);
+
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
+
+            sut.Init().Wait();
+            _ = sut.SubscribeProgram("11111111111111111111111111111111", action);
+            _subConfirmEvent.Set();
+
+            _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
+                WebSocketMessageType.Text,
+                true,
+                It.IsAny<CancellationToken>()));
+            var res = Encoding.UTF8.GetString(result.Span);
+            Assert.AreEqual(expected, res);
+
+            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.AreEqual(80854485, resultNotification.Context.Slot);
+        }
     }
 }
