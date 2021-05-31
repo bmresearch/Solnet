@@ -10,6 +10,9 @@ namespace Solnet.Programs.Test
     {
         private static readonly Base58Encoder Encoder = new();
 
+        private const string MnemonicWords =
+            "route clerk disease box emerge airport loud waste attitude film army tray forward deal onion eight catalog surface unit card window walnut wealth medal";
+
         private const string CreateAccountInstructionBase64 =
             "AAAAAPAdHwAAAAAApQAAAAAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQ==";
 
@@ -32,20 +35,16 @@ namespace Solnet.Programs.Test
 
         private const long BalanceForRentExemption = 2039280L;
 
-        public static string ToStringByteArray(IEnumerable<byte> bytes) => "[" + string.Join(",", bytes) + "]";
-
         [TestMethod]
         public void TestSystemProgramTransfer()
         {
-            var wallet =
-                new Wallet.Wallet(
-                    "route clerk disease box emerge airport loud waste attitude film army tray forward deal onion eight catalog surface unit card window walnut wealth medal");
+            var wallet = new Wallet.Wallet(MnemonicWords);
 
             var fromAccount = wallet.GetAccount(0);
             var toAccount = wallet.GetAccount(1);
 
             var txInstruction = SystemProgram.Transfer(fromAccount.GetPublicKey, toAccount.GetPublicKey, 10000000);
-            
+
             Assert.AreEqual(2, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TransferInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
@@ -54,9 +53,7 @@ namespace Solnet.Programs.Test
         [TestMethod]
         public void TestSystemProgramCreateAccount()
         {
-            var wallet =
-                new Wallet.Wallet(
-                    "route clerk disease box emerge airport loud waste attitude film army tray forward deal onion eight catalog surface unit card window walnut wealth medal");
+            var wallet = new Wallet.Wallet(MnemonicWords);
 
             var mintAccount = wallet.GetAccount(3);
             var ownerAccount = wallet.GetAccount(4);

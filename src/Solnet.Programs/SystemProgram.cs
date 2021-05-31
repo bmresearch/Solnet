@@ -21,7 +21,7 @@ namespace Solnet.Programs
         /// <summary>
         /// The address of the System Program.
         /// </summary>
-        private static string ProgramId = "11111111111111111111111111111111";
+        public static string ProgramId = "11111111111111111111111111111111";
 
         /// <summary>
         /// 
@@ -38,24 +38,24 @@ namespace Solnet.Programs
         public const int AccountDataSize = 165;
 
         /// <summary>
-        /// 
+        /// Initialize a transaction to transfer lamports.
         /// </summary>
-        /// <param name="fromPublicKey"></param>
-        /// <param name="toPublicKey"></param>
-        /// <param name="lamports"></param>
-        /// <returns></returns>
+        /// <param name="fromPublicKey">The account to transfer from.</param>
+        /// <param name="toPublicKey">The account to transfer to.</param>
+        /// <param name="lamports">The amount of lamports</param>
+        /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Transfer(string fromPublicKey, string toPublicKey, long lamports)
         {
             return Transfer(Encoder.DecodeData(fromPublicKey), Encoder.DecodeData(toPublicKey), lamports);
         }
         
         /// <summary>
-        /// 
+        /// Initialize a transaction to transfer lamports.
         /// </summary>
-        /// <param name="fromPublicKey"></param>
-        /// <param name="toPublicKey"></param>
-        /// <param name="lamports"></param>
-        /// <returns></returns>
+        /// <param name="fromPublicKey">The account to transfer from.</param>
+        /// <param name="toPublicKey">The account to transfer to.</param>
+        /// <param name="lamports">The amount of lamports</param>
+        /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Transfer(byte[] fromPublicKey, byte[] toPublicKey, long lamports)
         {
             var keys = new List<AccountMeta>
