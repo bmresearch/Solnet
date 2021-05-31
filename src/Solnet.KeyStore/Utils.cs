@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Solnet.Util
+namespace Solnet.KeyStore
 {
-    /// <summary>
-    /// Implements extensions to encode and decode addresses and keys.
-    /// </summary>
-    public static class Extensions
+    public static class Utils
     {
+        
         /// <summary>
         /// Helper function to convert a character to byte.
         /// </summary>
@@ -99,45 +97,12 @@ namespace Solnet.Util
         }
         
         /// <summary>
-        /// Slices the array, returning a new array starting at <c>start</c> index and ending at <c>end</c> index.
-        /// </summary>
-        /// <param name="source">The array to slice.</param>
-        /// <param name="start">The starting index of the slicing.</param>
-        /// <param name="end">The ending index of the slicing.</param>
-        /// <typeparam name="T">The array type.</typeparam>
-        /// <returns>The sliced array.</returns>
-        public static T[] Slice<T>(this T[] source, int start, int end)
-        {
-            if (end < 0)
-                end = source.Length;
-
-            var len = end - start;
-
-            // Return new array.
-            var res = new T[len];
-            for (var i = 0; i < len; i++) res[i] = source[i + start];
-            return res;
-        }
-
-        /// <summary>
-        /// Slices the array, returning a new array starting at <c>start</c>.
-        /// </summary>
-        /// <param name="source">The array to slice.</param>
-        /// <param name="start">The starting index of the slicing.</param>
-        /// <typeparam name="T">The array type.</typeparam>
-        /// <returns>The sliced array.</returns>
-        public static T[] Slice<T>(this T[] source, int start)
-        {
-            return Slice<T>(source, start, -1);
-        }
-            
-        /// <summary>
         /// Formats a byte array into a string in order to be compatible with the original solana-keygen made in rust.
         /// </summary>
         /// <param name="bytes">The byte array to be formatted.</param>
         /// <returns>A formatted string.</returns>
         public static string ToStringByteArray(this IEnumerable<byte> bytes) => "[" + string.Join(",", bytes) + "]";
-        
+
         /// <summary>
         /// Formats a string into a byte array in order to be compatible with the original solana-keygen made in rust.
         /// </summary>
@@ -157,6 +122,8 @@ namespace Solnet.Util
             }
             
             bytes[index] = byte.Parse(newS[..^1]);
+            if (index != 63)
+                throw new ArgumentException("invalid string for conversion", nameof(data));
             return bytes;
         }
     }

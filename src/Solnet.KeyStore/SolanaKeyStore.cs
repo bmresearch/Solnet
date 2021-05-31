@@ -1,7 +1,5 @@
 using System.IO;
 using System.Text;
-using Solnet.KeyStore.Services;
-using Solnet.Util;
 using Solnet.Wallet;
 
 namespace Solnet.KeyStore

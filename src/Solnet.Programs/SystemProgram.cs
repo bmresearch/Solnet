@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using NBitcoin.DataEncoders;
 using Solnet.Rpc.Models;
-using Solnet.Util;
 
 namespace Solnet.Programs
 {
@@ -66,8 +65,8 @@ namespace Solnet.Programs
             };
             var data = new byte[12];
             
-            EndianBitConverter.Uint32ToByteArrayLe(ProgramIndexTransfer, data, 0);
-            EndianBitConverter.Int64ToByteArrayLe(lamports, data, 4);
+            Utils.Uint32ToByteArrayLe(ProgramIndexTransfer, data, 0);
+            Utils.Int64ToByteArrayLe(lamports, data, 4);
 
             return new TransactionInstruction
             {
@@ -119,9 +118,9 @@ namespace Solnet.Programs
             };
             var data = new byte[52];
             
-            EndianBitConverter.Uint32ToByteArrayLe(ProgramIndexCreateAccount, data, 0);
-            EndianBitConverter.Int64ToByteArrayLe(lamports, data, 4);
-            EndianBitConverter.Int64ToByteArrayLe(space, data, 12);
+            Utils.Uint32ToByteArrayLe(ProgramIndexCreateAccount, data, 0);
+            Utils.Int64ToByteArrayLe(lamports, data, 4);
+            Utils.Int64ToByteArrayLe(space, data, 12);
             Array.Copy(programId, 0, data, 20, 32);
 
             return new TransactionInstruction

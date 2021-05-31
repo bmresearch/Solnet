@@ -1,10 +1,6 @@
 using System.Collections.Generic;
-using System.IO;
-using System.Security.Cryptography.X509Certificates;
 using NBitcoin.DataEncoders;
 using Solnet.Rpc.Models;
-using Solnet.Util;
-using Solnet.Wallet;
 
 namespace Solnet.Programs
 {
@@ -164,8 +160,8 @@ namespace Solnet.Programs
         {
             var methodBuffer = new byte[66];
             
-            EndianBitConverter.Uint32ToByteArrayLe(TransferMethodId, methodBuffer, 0);
-            EndianBitConverter.Int64ToByteArrayLe(decimals, methodBuffer, 4);
+            Utils.Uint32ToByteArrayLe(TransferMethodId, methodBuffer, 0);
+            Utils.Int64ToByteArrayLe(decimals, methodBuffer, 4);
 
             return methodBuffer;
         }
@@ -180,8 +176,8 @@ namespace Solnet.Programs
         {
             var methodBuffer = new byte[12];
             
-            EndianBitConverter.Uint32ToByteArrayLe(TransferMethodId, methodBuffer, 0);
-            EndianBitConverter.Int64ToByteArrayLe(amount, methodBuffer, 4);
+            Utils.Uint32ToByteArrayLe(TransferMethodId, methodBuffer, 0);
+            Utils.Int64ToByteArrayLe(amount, methodBuffer, 4);
 
             return methodBuffer;
         }
@@ -196,8 +192,8 @@ namespace Solnet.Programs
         {
             var methodBuffer = new byte[13];
 
-            EndianBitConverter.Uint32ToByteArrayLe(TransferMethodCheckedId, methodBuffer, 0);
-            EndianBitConverter.Int64ToByteArrayLe(amount, methodBuffer, 4);
+            Utils.Uint32ToByteArrayLe(TransferMethodCheckedId, methodBuffer, 0);
+            Utils.Int64ToByteArrayLe(amount, methodBuffer, 4);
             methodBuffer[12] = decimals;
 
             return methodBuffer;

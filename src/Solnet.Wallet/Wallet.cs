@@ -97,6 +97,9 @@ namespace Solnet.Wallet
         /// <param name="seedMode">The seed mode.</param>
         public Wallet(byte[] seed, string passphrase = "", SeedMode seedMode = SeedMode.Ed25519Bip32)
         {
+            if (seed.Length != Ed25519.ExpandedPrivateKeySizeInBytes)
+                throw new ArgumentException("invalid seed length", nameof(seed));
+            
             Passphrase = passphrase;
             
             _seedMode = seedMode;

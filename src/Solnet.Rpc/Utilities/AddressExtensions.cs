@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Solnet.Util
+namespace Solnet.Rpc.Utilities
 {
     public static class AddressExtensions
     {

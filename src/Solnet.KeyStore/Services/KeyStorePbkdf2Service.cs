@@ -2,7 +2,6 @@ using System;
 using Solnet.KeyStore.Crypto;
 using Solnet.KeyStore.Serialization;
 using Solnet.KeyStore.Model;
-using Solnet.Util;
 
 namespace Solnet.KeyStore.Services
 {
