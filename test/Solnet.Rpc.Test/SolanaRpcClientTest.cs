@@ -126,7 +126,6 @@ namespace Solnet.Rpc.Test
         {
             var responseData = File.ReadAllText("Resources/Http/GetBlockCommitmentResponse.json");
             var requestData = File.ReadAllText("Resources/Http/GetBlockCommitmentRequest.json");
-
             var sentMessage = string.Empty;
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
