@@ -1,0 +1,12 @@
+{
+  "jsonrpc": "2.0",
+  "method": "slotNotification",
+  "params": {
+    "result": {
+      "parent": 75,
+      "root": 44,
+      "slot": 76
+    },
+    "subscription": 23784
+  }
+}

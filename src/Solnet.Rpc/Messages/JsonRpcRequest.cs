@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Solnet.Rpc.Messages
 {
@@ -6,6 +7,7 @@ namespace Solnet.Rpc.Messages
     {
         public string Method { get; }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public IList<object> Params { get; }
 
         internal JsonRpcRequest(int id, string method, IList<object> parameters)

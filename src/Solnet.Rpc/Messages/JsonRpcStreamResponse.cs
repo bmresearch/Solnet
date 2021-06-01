@@ -8,7 +8,7 @@ namespace Solnet.Rpc.Messages
 {
     public class JsonRpcStreamResponse <T>
     {
-        public ResponseValue<T> Result { get; set; }
+        public T Result { get; set; }
 
         public int Subscription { get; set; }
     }

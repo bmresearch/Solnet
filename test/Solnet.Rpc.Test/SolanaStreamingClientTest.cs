@@ -247,5 +247,39 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(187UL, resultNotification.Value.Account.RentEpoch);
             Assert.AreEqual(458553192193UL, resultNotification.Value.Account.Lamports);
         }
+
+        [TestMethod]
+        public void SubscribeSlotTest()
+        {
+            var expected = File.ReadAllText("Resources/SlotSubscribe.json");
+            var subConfirmContent = File.ReadAllBytes("Resources/SubscribeConfirm.json");
+            var notificationContents = File.ReadAllBytes("Resources/SlotSubscribeNotification.json");
+            SlotInfo resultNotification = null;
+            var result = new ReadOnlyMemory<byte>();
+
+            SetupAction(out Action<SubscriptionState, SlotInfo> action,
+                (x) => resultNotification = x,
+                (x) => result = x,
+                subConfirmContent,
+                notificationContents);
+
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
+
+            sut.Init().Wait();
+            _ = sut.SubscribeSlotInfo(action);
+            _subConfirmEvent.Set();
+
+            _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
+                WebSocketMessageType.Text,
+                true,
+                It.IsAny<CancellationToken>()));
+            var res = Encoding.UTF8.GetString(result.Span);
+            Assert.AreEqual(expected, res);
+
+            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.AreEqual(75, resultNotification.Parent);
+            Assert.AreEqual(44, resultNotification.Root);
+            Assert.AreEqual(76, resultNotification.Slot);
+        }
     }
 }
