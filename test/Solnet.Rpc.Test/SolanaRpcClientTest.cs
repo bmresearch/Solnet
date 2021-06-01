@@ -107,7 +107,6 @@ namespace Solnet.Rpc.Test
             var sut = new SolanaRpcClient(TestnetUrl, httpClient);
             
             var result = sut.GetAccountInfo("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
-
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
             Assert.IsTrue(result.WasSuccessful);
@@ -127,6 +126,7 @@ namespace Solnet.Rpc.Test
         {
             var responseData = File.ReadAllText("Resources/Http/GetBlockCommitmentResponse.json");
             var requestData = File.ReadAllText("Resources/Http/GetBlockCommitmentRequest.json");
+
             var sentMessage = string.Empty;
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
@@ -615,7 +615,6 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(79203980UL, result.Result.Context.Slot);
             Assert.AreEqual(3, result.Result.Value.Logs.Length);
             Assert.AreEqual(2, result.Result.Value.Error.InstructionError.Length);
-
             FinishTest(messageHandlerMock, TestnetUri);
         }
     }
