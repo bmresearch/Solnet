@@ -241,6 +241,11 @@ namespace Solnet.Rpc.Test
 
             Assert.IsTrue(_notificationEvent.WaitOne());
             Assert.AreEqual(80854485, resultNotification.Context.Slot);
+            Assert.AreEqual("9FXD1NXrK6xFU8i4gLAgjj2iMEWTqJhSuQN8tQuDfm2e", resultNotification.Value.PublicKey);
+            Assert.AreEqual("11111111111111111111111111111111", resultNotification.Value.Account.Owner);
+            Assert.AreEqual(false, resultNotification.Value.Account.Executable);
+            Assert.AreEqual(187, resultNotification.Value.Account.RentEpoch);
+            Assert.AreEqual(458553192193, resultNotification.Value.Account.Lamports);
         }
     }
 }
