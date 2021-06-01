@@ -1,0 +1,8 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "commitment": null,
+    "totalStake": 78380558524696194
+  },
+  "id": 0
+}

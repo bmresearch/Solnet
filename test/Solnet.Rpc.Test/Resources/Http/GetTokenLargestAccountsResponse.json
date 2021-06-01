@@ -1,0 +1,18 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "context": {
+      "slot": 79207653
+    },
+    "value": [
+      {
+        "address": "7247amxcSBamBSKZJrqbj373CiJSa1v21cRav56C3WfZ",
+        "amount": "1000",
+        "decimals": 2,
+        "uiAmount": 10.0,
+        "uiAmountString": "10"
+      }
+    ]
+  },
+  "id": 0
+}

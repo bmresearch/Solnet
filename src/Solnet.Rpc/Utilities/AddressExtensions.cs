@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -18,7 +19,7 @@ namespace Solnet.Rpc.Utilities
         /// <exception cref="Exception">Throws exception when the resulting address doesn't fall off the Ed25519 curve.</exception>
         public static byte[] CreateProgramAddress(IList<byte[]> seeds, byte[] programId)
         {
-            var buffer = new List<byte>();
+            var buffer = new MemoryStream();
 
             foreach (var seed in seeds)
             {
@@ -26,11 +27,11 @@ namespace Solnet.Rpc.Utilities
                 {
                     throw new ArgumentException("max seed length exceeded", nameof(seeds));
                 }
-                buffer.AddRange(seed);
+                buffer.Write(seed);
             }
             
-            buffer.AddRange(programId);
-            buffer.AddRange(Encoding.ASCII.GetBytes("ProgramDerivedAddress"));
+            buffer.Write(programId);
+            buffer.Write(Encoding.ASCII.GetBytes("ProgramDerivedAddress"));
 
             var hash = SHA256.HashData(buffer.ToArray());
 

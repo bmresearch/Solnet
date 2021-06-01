@@ -2,6 +2,7 @@ using System;
 using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Solnet.Rpc.Core;
 using NBitcoin.DataEncoders;
@@ -28,7 +29,8 @@ namespace Solnet.Rpc
         /// Initialize the Rpc Client with the passed url.
         /// </summary>
         /// <param name="url">The url of the node exposing the JSON RPC API.</param>
-        public SolanaRpcClient(string url) : base(url)
+        /// <param name="httpClient">An http client.</param>
+        public SolanaRpcClient(string url, HttpClient httpClient = default) : base(url, httpClient)
         {
         }
 
@@ -265,6 +267,8 @@ namespace Solnet.Rpc
         public async Task<RequestResult<ResponseValue<TokenAccount[]>>> GetTokenAccountsByDelegateAsync(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "")
         {
+            if (string.IsNullOrWhiteSpace(tokenMintPubKey) && string.IsNullOrWhiteSpace(tokenProgramId))
+                throw new ArgumentException("either tokenProgramId or tokenMintPubKey must be set");
             var options = new Dictionary<string, object>();
             if (!string.IsNullOrWhiteSpace(tokenMintPubKey)) options.Add("mint", tokenMintPubKey);
             if (!string.IsNullOrWhiteSpace(tokenProgramId)) options.Add("programId", tokenProgramId);
@@ -286,6 +290,8 @@ namespace Solnet.Rpc
         public async Task<RequestResult<ResponseValue<TokenAccount[]>>> GetTokenAccountsByOwnerAsync(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "")
         {
+            if (string.IsNullOrWhiteSpace(tokenMintPubKey) && string.IsNullOrWhiteSpace(tokenProgramId))
+                throw new ArgumentException("either tokenProgramId or tokenMintPubKey must be set");
             var options = new Dictionary<string, object>();
             if (!string.IsNullOrWhiteSpace(tokenMintPubKey)) options.Add("mint", tokenMintPubKey);
             if (!string.IsNullOrWhiteSpace(tokenProgramId)) options.Add("programId", tokenProgramId);

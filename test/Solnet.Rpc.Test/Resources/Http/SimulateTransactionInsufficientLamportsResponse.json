@@ -1,0 +1,25 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "context": {
+      "slot": 79203980
+    },
+    "value": {
+      "accounts": null,
+      "err": {
+        "InstructionError": [
+          0,
+          {
+            "Custom": 1
+          }
+        ]
+      },
+      "logs": [
+        "Program 11111111111111111111111111111111 invoke [1]",
+        "Transfer: insufficient lamports 2552360, need 10000000",
+        "Program 11111111111111111111111111111111 failed: custom program error: 0x1"
+      ]
+    }
+  },
+  "id": 1
+}

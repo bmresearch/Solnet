@@ -1,0 +1,6 @@
+{
+  "method": "getGenesisHash",
+  "params": null,
+  "jsonrpc": "2.0",
+  "id": 0
+}

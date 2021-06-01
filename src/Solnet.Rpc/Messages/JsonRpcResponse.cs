@@ -18,7 +18,7 @@
 
     public class ContextObj
     {
-        public int Slot { get; set; }
+        public ulong Slot { get; set; }
     }
 
     public class ResponseValue<T>
