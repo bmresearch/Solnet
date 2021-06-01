@@ -65,6 +65,7 @@ namespace Solnet.Rpc.Core.Http
                     if (res.Result != null)
                     {
                         result.Result = res.Result;
+                        result.WasRequestSuccessfullyHandled = true;
                     }
                     else
                     {
