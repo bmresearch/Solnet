@@ -25,19 +25,19 @@ namespace Solnet.Rpc
 
         Dictionary<int, SubscriptionState> confirmedSubscriptions = new Dictionary<int, SubscriptionState>();
 
-        public SolanaStreamingRpcClient(string url) : base(url)
-        {
-        }
-        
-        public SolanaStreamingRpcClient(string url, IWebSocket websocket) : base(url, websocket)
+
+        public SolanaStreamingRpcClient(string url, IWebSocket websocket = default) : base(url, websocket)
         {
         }
 
         protected override void HandleNewMessage(Memory<byte> mem)
         {
             Utf8JsonReader asd = new Utf8JsonReader(mem.Span);
-
             asd.Read();
+
+            //#TODO: remove and add proper logging
+            var str = Encoding.UTF8.GetString(mem.Span);
+            Console.WriteLine(str);
 
             string prop = "", method = "";
             int id = -1, intResult = -1;
@@ -244,9 +244,26 @@ namespace Solnet.Rpc
             => SubscribeSignatureAsync(transactionSignature, callback).Result;
         #endregion
 
+        #region Program
+        public async Task<SubscriptionState> SubscribeProgramAsync(string transactionSignature, Action<SubscriptionState, ResponseValue<ProgramInfo>> callback)
+        {
+            var sub = new SubscriptionState<ResponseValue<ProgramInfo>>(this, SubscriptionChannel.Logs, callback,
+                new List<object> { transactionSignature/*, new Dictionary<string, string> { { "encoding", "base64" } }*/ });
+
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "programSubscribe", new List<object> { transactionSignature });
+            return await Subscribe(sub, msg).ConfigureAwait(false);
+        }
+        public SubscriptionState SubscribeProgram(string transactionSignature, Action<SubscriptionState, ResponseValue<ProgramInfo>> callback)
+            => SubscribeProgramAsync(transactionSignature, callback).Result;
+        #endregion
+
         private async Task<SubscriptionState> Subscribe(SubscriptionState sub, JsonRpcRequest msg)
         {
-            var json = JsonSerializer.SerializeToUtf8Bytes(msg, new JsonSerializerOptions { WriteIndented = false, PropertyNamingPolicy = JsonNamingPolicy.CamelCase, Converters =
+            var json = JsonSerializer.SerializeToUtf8Bytes(msg, new JsonSerializerOptions
+            {
+                WriteIndented = false,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                Converters =
                 {
                     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
                 }

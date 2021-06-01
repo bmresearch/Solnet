@@ -1,5 +1,7 @@
 ﻿// ReSharper disable ClassNeverInstantiated.Global
 
+using System.Text.Json.Serialization;
+
 namespace Solnet.Rpc.Models
 {
     /// <summary>
@@ -10,11 +12,23 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// The base-58 encoded public key of the program.
         /// </summary>
-        public string PubKey { get; set; }
+        [JsonPropertyName("pubkey")]
+        public string PublicKey { get; set; }
 
         /// <summary>
         /// The account info associated with the program.
         /// </summary>
-        public AccountInfo Account { get; set; }
+        public ProgramData Account { get; set; }
+    }
+
+    /// <summary>
+    /// Represents a program account details.
+    /// </summary>
+    public class ProgramData : AccountInfoBase
+    {
+        /// <summary>
+        /// Contains the data associated with a given program.
+        /// </summary>
+        public string Data { get; set; }
     }
 }
