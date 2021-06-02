@@ -1,1 +1,1 @@
-{"method":"getTransactionCount","params":null,"jsonrpc":"2.0","id":0}
+{"method":"getTransactionCount","jsonrpc":"2.0","id":0}
