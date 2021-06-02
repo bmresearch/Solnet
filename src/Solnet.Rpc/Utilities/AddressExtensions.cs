@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Chaos.NaCl;
 
 namespace Solnet.Rpc.Utilities
 {
@@ -31,11 +32,11 @@ namespace Solnet.Rpc.Utilities
             }
             
             buffer.Write(programId);
-            buffer.Write(Encoding.ASCII.GetBytes("ProgramDerivedAddress"));
+            buffer.Write(Encoding.UTF8.GetBytes("ProgramDerivedAddress"));
 
             var hash = SHA256.HashData(buffer.ToArray());
-
-            if (hash.IsOnCurve() != 0)
+            
+            if (hash.IsOnCurve())
             {
                 throw new Exception("invalid seeds, address must fall off curve");
             }
