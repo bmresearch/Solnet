@@ -11,6 +11,8 @@ namespace Solnet.Examples
 {
     public class TransactionBuilderExample
     {
+        private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
+        
         private const string MnemonicWords =
             "route clerk disease box emerge airport loud waste attitude film army tray " +
             "forward deal onion eight catalog surface unit card window walnut wealth medal";
@@ -28,7 +30,7 @@ namespace Solnet.Examples
 
         static void TransactionAndMemoExample(string[] args)
         {
-            var rpcClient = new SolanaRpcClient("https://testnet.solana.com");
+            var rpcClient = ClientFactory.GetClient(Cluster.TestNet);
             var wallet = new Wallet.Wallet(MnemonicWords);
 
             var fromAccount = wallet.GetAccount(10);
@@ -51,7 +53,6 @@ namespace Solnet.Examples
 
         static void CreateInitializeAndMintToExample(string[] args)
         {
-            var rpcClient = new SolanaRpcClient("https://testnet.solana.com");
             var wallet = new Wallet.Wallet(MnemonicWords);
 
             var blockHash = rpcClient.GetRecentBlockHash();
@@ -114,7 +115,6 @@ namespace Solnet.Examples
 
         static void TransferTokenExample(string[] args)
         {
-            var rpcClient = new SolanaRpcClient("https://testnet.solana.com");
             var wallet = new Wallet.Wallet(MnemonicWords);
 
             var blockHash = rpcClient.GetRecentBlockHash();
@@ -167,7 +167,6 @@ namespace Solnet.Examples
 
         static void TransferTokenChecked(string[] args)
         {
-            var rpcClient = new SolanaRpcClient("https://testnet.solana.com");
             var wallet = new Wallet.Wallet(MnemonicWords);
 
             var blockHash = rpcClient.GetRecentBlockHash();

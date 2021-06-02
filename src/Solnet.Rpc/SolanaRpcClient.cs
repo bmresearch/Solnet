@@ -1,11 +1,10 @@
 using System;
-using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Solnet.Rpc.Core;
-using NBitcoin.DataEncoders;
 using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
@@ -16,23 +15,23 @@ namespace Solnet.Rpc
     /// <summary>
     /// Implements functionality to interact with the Solana JSON RPC API.
     /// </summary>
-    public class SolanaRpcClient : JsonRpcClient
+    public class SolanaRpcClient : JsonRpcClient, IRpcClient
     {
-        private static Base58Encoder Encoder = new();
-
         /// <summary>
         /// Message Id generator.
         /// </summary>
-        IdGenerator _idGenerator = new IdGenerator();
-
+        private readonly IdGenerator _idGenerator = new IdGenerator();
+        
         /// <summary>
         /// Initialize the Rpc Client with the passed url.
         /// </summary>
         /// <param name="url">The url of the node exposing the JSON RPC API.</param>
+        /// <param name="logger">The logger to use.</param>
         /// <param name="httpClient">An http client.</param>
-        public SolanaRpcClient(string url, HttpClient httpClient = default) : base(url, httpClient)
+        internal SolanaRpcClient(string url, ILogger logger, HttpClient httpClient = default) : base(url, logger, httpClient)
         {
         }
+        
 
         #region RequestBuilder
 
