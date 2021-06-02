@@ -15,7 +15,7 @@
         <img src="https://img.shields.io/twitter/follow/blockmountainco?style=flat-square&logo=twitter"
             alt="Follow on Twitter"></a>
     <a href="">
-       <img alt="Discord" src="https://img.shields.io/discord/849407317761064961"
+       <img alt="Discord" src="https://img.shields.io/discord/849407317761064961?style=flat-square"
             alt="Join the discussion!"></a>
 </p>
 
