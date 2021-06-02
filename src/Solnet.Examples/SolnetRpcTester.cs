@@ -24,6 +24,8 @@ namespace Solnet.Examples
 
             var bh = c.GetBlockHeight();
             Console.WriteLine(bh.Result);
+            var identity = c.GetIdentity();
+            Console.WriteLine(identity.Result.Identity);
             
             /* Large accounts for Token Mint PubKey
             var largeAccounts = c.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
