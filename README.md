@@ -8,10 +8,15 @@
         <img src="https://img.shields.io/azure-devops/coverage/bmresearch/solnet/2/master?style=flat-square"
             alt="Azure DevOps Cobertura Code Coverage (master)"></a>
     <a href="">
-        <img src="https://img.shields.io/github/license/bmresearch/solnet" alt="Github Code License"></a>
+        <img src="https://img.shields.io/github/license/bmresearch/solnet?style=flat-square"
+            alt="Code License"></a>
+    <br>
     <a href="https://twitter.com/intent/follow?screen_name=blockmountainco">
         <img src="https://img.shields.io/twitter/follow/blockmountainco?style=flat-square&logo=twitter"
-            alt="follow on Twitter"></a>
+            alt="Follow on Twitter"></a>
+    <a href="">
+       <img alt="Discord" src="https://img.shields.io/discord/849407317761064961"
+            alt="Join the discussion!"></a>
 </p>
 
 # What is Solnet?
