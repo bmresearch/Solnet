@@ -154,17 +154,17 @@ namespace Solnet.Rpc
             switch (method)
             {
                 case "accountNotification":
-                    var accNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<AccountInfo>>(ref reader, opts);
+                    var accNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<AccountInfo>>>(ref reader, opts);
                     if (accNotification == null) break;
                     NotifyData(accNotification.Subscription, accNotification.Result);
                     break;
                 case "logsNotification":
-                    var logsNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<LogInfo>>(ref reader, opts);
+                    var logsNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<LogInfo>>>(ref reader, opts);
                     if (logsNotification == null) break;
                     NotifyData(logsNotification.Subscription, logsNotification.Result);
                     break;
                 case "programNotification":
-                    var programNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ProgramInfo>>(ref reader, opts);
+                    var programNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<ProgramInfo>>>(ref reader, opts);
                     if (programNotification == null) break;
                     NotifyData(programNotification.Subscription, programNotification.Result);
                     break;
@@ -255,6 +255,19 @@ namespace Solnet.Rpc
         }
         public SubscriptionState SubscribeProgram(string transactionSignature, Action<SubscriptionState, ResponseValue<ProgramInfo>> callback)
             => SubscribeProgramAsync(transactionSignature, callback).Result;
+        #endregion
+
+        #region SlotInfo
+
+        public async Task<SubscriptionState> SubscribeSlotInfoAsync(Action<SubscriptionState, SlotInfo> callback)
+        {
+            var sub = new SubscriptionState<SlotInfo>(this, SubscriptionChannel.Logs, callback);
+
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "slotSubscribe", null);
+            return await Subscribe(sub, msg).ConfigureAwait(false);
+        }
+        public SubscriptionState SubscribeSlotInfo(Action<SubscriptionState, SlotInfo> callback)
+            => SubscribeSlotInfoAsync(callback).Result;
         #endregion
 
         private async Task<SubscriptionState> Subscribe(SubscriptionState sub, JsonRpcRequest msg)
