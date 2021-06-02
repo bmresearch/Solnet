@@ -1,5 +1,7 @@
 ﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable ClassNeverInstantiated.Global
+
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Solnet.Rpc.Models
@@ -33,5 +35,39 @@ namespace Solnet.Rpc.Models
         /// The signature of the transaction.
         /// </summary>
         public string Signature { get; set; }
+    }
+
+    public class InstructionError
+    {
+        public int ErrorCode { get; set; }
+        
+        public KeyValuePair<string, int> CustomError { get; set; }
+    }
+    
+    public class InstructionErrors
+    {
+        [JsonPropertyName("InstructionError")]
+        [JsonConverter(typeof(InstructionErrorJsonConverter))]
+        public InstructionError[] InstructionError { get; set; }
+    }
+
+    public class SimulationLogs
+    {
+        public object[] Accounts { get; set; }
+        
+        /// <summary>
+        /// The error associated with the transaction simulation.
+        /// </summary>
+        [JsonPropertyName("err")]
+        public InstructionErrors Error { get; set; }
+        
+        
+        /// <summary>
+        /// The log messages the transaction instructions output during execution.
+        /// <remarks>
+        /// This will be null if the simulation failed before the transaction was able to execute.
+        /// </remarks>
+        /// </summary>
+        public string[] Logs { get; set; }
     }
 }

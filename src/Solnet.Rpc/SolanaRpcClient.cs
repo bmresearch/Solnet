@@ -2,6 +2,7 @@ using System;
 using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Solnet.Rpc.Core;
 using NBitcoin.DataEncoders;
@@ -28,7 +29,8 @@ namespace Solnet.Rpc
         /// Initialize the Rpc Client with the passed url.
         /// </summary>
         /// <param name="url">The url of the node exposing the JSON RPC API.</param>
-        public SolanaRpcClient(string url) : base(url)
+        /// <param name="httpClient">An http client.</param>
+        public SolanaRpcClient(string url, HttpClient httpClient = default) : base(url, httpClient)
         {
         }
 
@@ -265,6 +267,8 @@ namespace Solnet.Rpc
         public async Task<RequestResult<ResponseValue<TokenAccount[]>>> GetTokenAccountsByDelegateAsync(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "")
         {
+            if (string.IsNullOrWhiteSpace(tokenMintPubKey) && string.IsNullOrWhiteSpace(tokenProgramId))
+                throw new ArgumentException("either tokenProgramId or tokenMintPubKey must be set");
             var options = new Dictionary<string, object>();
             if (!string.IsNullOrWhiteSpace(tokenMintPubKey)) options.Add("mint", tokenMintPubKey);
             if (!string.IsNullOrWhiteSpace(tokenProgramId)) options.Add("programId", tokenProgramId);
@@ -286,6 +290,8 @@ namespace Solnet.Rpc
         public async Task<RequestResult<ResponseValue<TokenAccount[]>>> GetTokenAccountsByOwnerAsync(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "")
         {
+            if (string.IsNullOrWhiteSpace(tokenMintPubKey) && string.IsNullOrWhiteSpace(tokenProgramId))
+                throw new ArgumentException("either tokenProgramId or tokenMintPubKey must be set");
             var options = new Dictionary<string, object>();
             if (!string.IsNullOrWhiteSpace(tokenMintPubKey)) options.Add("mint", tokenMintPubKey);
             if (!string.IsNullOrWhiteSpace(tokenProgramId)) options.Add("programId", tokenProgramId);
@@ -315,12 +321,12 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="tokenMintPubKey">Public key of Token Mint to query, as base-58 encoded string.</param>
         /// <returns>A task which may return a request result and information about the supply.</returns>
-        public async Task<RequestResult<ulong>> GetTokenSupplyAsync(string tokenMintPubKey)
+        public async Task<RequestResult<ResponseValue<TokenBalance>>> GetTokenSupplyAsync(string tokenMintPubKey)
         {
-            return await SendRequestAsync<ulong>("getTokenSupply", new List<object> { tokenMintPubKey });
+            return await SendRequestAsync<ResponseValue<TokenBalance>>("getTokenSupply", new List<object> { tokenMintPubKey });
         }
         /// <inheritdoc cref="GetTokenSupplyAsync"/>
-        public RequestResult<ulong> GetTokenSupply(string tokenMintPubKey)
+        public RequestResult<ResponseValue<TokenBalance>> GetTokenSupply(string tokenMintPubKey)
             => GetTokenSupplyAsync(tokenMintPubKey).Result;
 
         #endregion
@@ -416,9 +422,9 @@ namespace Solnet.Rpc
         /// <returns>
         /// A task which may return a request result and the transaction status.
         /// </returns>
-        public async Task<RequestResult<ResponseValue<Log>>> SimulateTransactionAsync(string transaction, BinaryEncoding encoding = BinaryEncoding.Base64)
+        public async Task<RequestResult<ResponseValue<SimulationLogs>>> SimulateTransactionAsync(string transaction, BinaryEncoding encoding = BinaryEncoding.Base64)
         {
-            return await SendRequestAsync<ResponseValue<Log>>("simulateTransaction",
+            return await SendRequestAsync<ResponseValue<SimulationLogs>>("simulateTransaction",
                 new List<object>
                 {
                     transaction
@@ -430,7 +436,7 @@ namespace Solnet.Rpc
                 });
         }
         /// <inheritdoc cref="SimulateTransactionAsync"/>
-        public RequestResult<ResponseValue<Log>> SimulateTransaction(string transaction, BinaryEncoding encoding = BinaryEncoding.Base64)
+        public RequestResult<ResponseValue<SimulationLogs>> SimulateTransaction(string transaction, BinaryEncoding encoding = BinaryEncoding.Base64)
             => SimulateTransactionAsync(transaction, encoding).Result;
         /// <summary>
         /// Simulate sending a transaction.
@@ -439,7 +445,7 @@ namespace Solnet.Rpc
         /// <returns>
         /// A task which may return a request result and the transaction status.
         /// </returns>
-        public RequestResult<ResponseValue<Log>> SimulateTransaction(byte[] transaction)
+        public RequestResult<ResponseValue<SimulationLogs>> SimulateTransaction(byte[] transaction)
             => SimulateTransactionAsync(Convert.ToBase64String(transaction)).Result;
 
         #endregion

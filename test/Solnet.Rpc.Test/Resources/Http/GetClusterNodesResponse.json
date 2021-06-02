@@ -1,0 +1,51 @@
+{
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "featureSet": 3533521759,
+      "gossip": "216.24.140.155:8001",
+      "pubkey": "5D1fNXzvv5NjV1ysLjirC4WY92RNsVH18vjmcszZd8on",
+      "rpc": "216.24.140.155:8899",
+      "shredVersion": 18122,
+      "tpu": "216.24.140.155:8004",
+      "version": "1.7.0"
+    },
+    {
+      "featureSet": 3533521759,
+      "gossip": "135.181.212.153:8201",
+      "pubkey": "BKQq7feS56yp1PvAcBQjb1zV2XYtASm8EGTLy7eGq3bN",
+      "rpc": "135.181.212.153:8899",
+      "shredVersion": 18122,
+      "tpu": "135.181.212.153:8203",
+      "version": "1.6.10"
+    },
+    {
+      "featureSet": 3533521759,
+      "gossip": "88.99.59.47:8001",
+      "pubkey": "C4N1bMSzbfDwHGMitxyufNZPaAkNYx8vJxHRnHWrptAT",
+      "rpc": null,
+      "shredVersion": 18122,
+      "tpu": "88.99.59.47:8004",
+      "version": "1.6.10"
+    },
+    {
+      "featureSet": 3533521759,
+      "gossip": "178.210.129.236:8001",
+      "pubkey": "VTAZqz5HadKsUWyavErx3hhUeaDPerPVDssjB69hP8b",
+      "rpc": "178.210.129.236:8899",
+      "shredVersion": 18122,
+      "tpu": "178.210.129.236:8003",
+      "version": "1.6.10"
+    },
+    {
+      "featureSet": 2960423209,
+      "gossip": "135.181.58.47:8000",
+      "pubkey": "2BT25HZHpyzYmTbqyqzxBK7YjjH4a6aZ783TEgTTGYo5",
+      "rpc": "135.181.58.47:8899",
+      "shredVersion": 18122,
+      "tpu": "135.181.58.47:8003",
+      "version": "1.6.9"
+    }
+  ],
+  "id": 0
+}

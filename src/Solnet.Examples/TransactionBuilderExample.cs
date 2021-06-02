@@ -15,10 +15,10 @@ namespace Solnet.Examples
             "route clerk disease box emerge airport loud waste attitude film army tray " +
             "forward deal onion eight catalog surface unit card window walnut wealth medal";
 
-        public static string PrettyPrintTransactionSimulationLogs(Log logMessage)
+        public static string PrettyPrintTransactionSimulationLogs(string[] logMessages)
         {
             var logString = "";
-            foreach (var log in logMessage.Logs)
+            foreach (var log in logMessages)
             {
                 logString += $"\t\t{log}\n";
             }
@@ -31,8 +31,8 @@ namespace Solnet.Examples
             var rpcClient = new SolanaRpcClient("https://testnet.solana.com");
             var wallet = new Wallet.Wallet(MnemonicWords);
 
-            var fromAccount = wallet.GetAccount(0);
-            var toAccount = wallet.GetAccount(1);
+            var fromAccount = wallet.GetAccount(10);
+            var toAccount = wallet.GetAccount(8);
 
             var blockHash = rpcClient.GetRecentBlockHash();
             //Console.WriteLine($"BlockHash >> {blockHash.Blockhash}");
@@ -43,7 +43,7 @@ namespace Solnet.Examples
 
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
             var txSim = rpcClient.SimulateTransaction(tx);
-            var logs = PrettyPrintTransactionSimulationLogs(txSim.Result.Value);
+            var logs = PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
             var firstSig = rpcClient.SendTransaction(tx);
             Console.WriteLine($"First Tx Signature: {firstSig.Result}");
@@ -104,7 +104,7 @@ namespace Solnet.Examples
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
             var txSim = rpcClient.SimulateTransaction(tx);
-            var logs = PrettyPrintTransactionSimulationLogs(txSim.Result.Value);
+            var logs = PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
 
             var txReq = rpcClient.SendTransaction(tx);
@@ -158,7 +158,7 @@ namespace Solnet.Examples
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
             var txSim = rpcClient.SimulateTransaction(tx);
-            var logs = PrettyPrintTransactionSimulationLogs(txSim.Result.Value);
+            var logs = PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
 
             var txReq = rpcClient.SendTransaction(tx);
@@ -213,7 +213,7 @@ namespace Solnet.Examples
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
             var txSim = rpcClient.SimulateTransaction(tx);
-            var logs = PrettyPrintTransactionSimulationLogs(txSim.Result.Value);
+            var logs = PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
 
             var txReq = rpcClient.SendTransaction(tx);

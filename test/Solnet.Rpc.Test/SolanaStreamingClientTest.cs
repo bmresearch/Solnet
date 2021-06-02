@@ -101,7 +101,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
-            Assert.AreEqual(5199307, resultNotification.Context.Slot);
+            Assert.AreEqual(5199307UL, resultNotification.Context.Slot);
             Assert.AreEqual("11111111111111111111111111111111", resultNotification.Value.Owner);
             Assert.AreEqual(33594UL, resultNotification.Value.Lamports);
             Assert.AreEqual(635UL, resultNotification.Value.RentEpoch);
@@ -204,7 +204,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
-            Assert.AreEqual(5208469, resultNotification.Context.Slot);
+            Assert.AreEqual(5208469UL, resultNotification.Context.Slot);
             Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", resultNotification.Value.Signature);
             Assert.IsNull(resultNotification.Value.Error);
             Assert.AreEqual("BPF program 83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri success", resultNotification.Value.Logs[0]);
@@ -240,7 +240,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
-            Assert.AreEqual(80854485, resultNotification.Context.Slot);
+            Assert.AreEqual(80854485UL, resultNotification.Context.Slot);
             Assert.AreEqual("9FXD1NXrK6xFU8i4gLAgjj2iMEWTqJhSuQN8tQuDfm2e", resultNotification.Value.PublicKey);
             Assert.AreEqual("11111111111111111111111111111111", resultNotification.Value.Account.Owner);
             Assert.AreEqual(false, resultNotification.Value.Account.Executable);

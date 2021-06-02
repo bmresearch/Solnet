@@ -1,0 +1,32 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "context": {
+      "slot": 79266564
+    },
+    "value": {
+      "circulating": 1359481823340465122,
+      "nonCirculating": 122260000000,
+      "nonCirculatingAccounts": [
+        "GhsotwFMH6XUrRLJCxcx62h7748N2Uq8mf87hUGkmPhg",
+        "nGME7HgBT6tAJN1f6YuCCngpqT5cvSTndZUVLjQ4jwA",
+        "3jnknRabs7G2V9dKhxd2KP85pNWXKXiedYnYxtySnQMs",
+        "4bDVNTq2xJKK4WjKQ214DaYBh1NE5s2H1PvcoRuPdnSf",
+        "5smrYwb1Hr2T8XMnvsqccTgXxuqQs14iuE8RbHFYf2Cf",
+        "5D5NxsNVTgXHyVziwV7mDFwVDS6voaBsyyGxUbhQrhNW",
+        "9LJrasfs648fi2uzmFqNVSrcCtz6xQaYC5E1BeyPHTJM",
+        "FgnjRCqdtAhdLxNmhMN2zGdUjm364QQhPR2Z9C5d9wut",
+        "EziVYi3Sv5kJWxmU77PnbrT8jmkVuqwdiFLLzZpLVEn7",
+        "HCV5dGFJXRrJ3jhDYA4DCeb9TEDTwGGYXtT3wHksu2Zr",
+        "AzVV9ZZDxTgW4wWfJmsG6ytaHpQGSe1yz76Nyy84VbQF",
+        "DUS1KxwUhUyDKB4A81E8vdnTe3hSahd92Abtn9CXsEcj",
+        "F9MWFw8cnYVwsRq8Am1PGfFL3cQUZV37mbGoxZftzLjN",
+        "Es13uD2p64UVPFpEWfDtd6SERdoNR2XVgqBQBZcZSLqW",
+        "5XdtyEDREHJXXW1CTtCsVjJRjBapAwK78ZquzvnNVRrV",
+        "8W58E8JVJjH1jCy5CeHJQgvwFXTyAVyesuXRZGbcSUGG"
+      ],
+      "total": 1359481945600465122
+    }
+  },
+  "id": 0
+}

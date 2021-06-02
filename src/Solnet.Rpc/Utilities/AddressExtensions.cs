@@ -1,13 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Chaos.NaCl;
 
 namespace Solnet.Rpc.Utilities
 {
     public static class AddressExtensions
     {
+        /// <summary>
+        /// The bytes of the `ProgramDerivedAddress` string.
+        /// </summary>
+        private static readonly byte[] ProgramDerivedAddressBytes = Encoding.UTF8.GetBytes("ProgramDerivedAddress");
+
         /// <summary>
         /// Derives a program address.
         /// </summary>
@@ -18,7 +25,7 @@ namespace Solnet.Rpc.Utilities
         /// <exception cref="Exception">Throws exception when the resulting address doesn't fall off the Ed25519 curve.</exception>
         public static byte[] CreateProgramAddress(IList<byte[]> seeds, byte[] programId)
         {
-            var buffer = new List<byte>();
+            var buffer = new MemoryStream(32 * seeds.Count + ProgramDerivedAddressBytes.Length + programId.Length);
 
             foreach (var seed in seeds)
             {
@@ -26,22 +33,23 @@ namespace Solnet.Rpc.Utilities
                 {
                     throw new ArgumentException("max seed length exceeded", nameof(seeds));
                 }
-                buffer.AddRange(seed);
+
+                buffer.Write(seed);
             }
-            
-            buffer.AddRange(programId);
-            buffer.AddRange(Encoding.ASCII.GetBytes("ProgramDerivedAddress"));
+
+            buffer.Write(programId);
+            buffer.Write(ProgramDerivedAddressBytes);
 
             var hash = SHA256.HashData(buffer.ToArray());
 
-            if (hash.IsOnCurve() != 0)
+            if (hash.IsOnCurve())
             {
                 throw new Exception("invalid seeds, address must fall off curve");
             }
 
             return hash;
         }
-        
+
         /// <summary>
         /// Attempts to find a program address for the passed seeds and program Id.
         /// </summary>
@@ -59,7 +67,7 @@ namespace Solnet.Rpc.Utilities
                 byte[] address;
                 try
                 {
-                    buffer.Add(new [] { (byte) nonce });
+                    buffer.Add(new[] {(byte) nonce});
                     address = CreateProgramAddress(buffer, programId);
                 }
                 catch (Exception)
@@ -67,7 +75,7 @@ namespace Solnet.Rpc.Utilities
                     buffer.RemoveAt(buffer.Count - 1);
                     continue;
                 }
-                
+
                 return (address, nonce);
             }
 
