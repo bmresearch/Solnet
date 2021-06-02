@@ -4,9 +4,12 @@
         <TargetFramework>net5.0</TargetFramework>
         <AssemblyName>Solnet.Rpc</AssemblyName>
         <RootNamespace>Solnet.Rpc</RootNamespace>
-    </PropertyGroup>
+    </PropertyGroup>    
 
     <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Solnet.Rpc.Test</_Parameter1>
+        </AssemblyAttribute>
       <ProjectReference Include="..\Solnet.Wallet\Solnet.Wallet.csproj" />
     </ItemGroup>
 

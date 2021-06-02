@@ -10,7 +10,7 @@ namespace Solnet.Examples
     {
         static void Main(string[] args)
         {
-            var c = new SolanaRpcClient("https://testnet.solana.com");
+            var c = ClientFactory.GetClient(Cluster.TestNet);
 
             //var accInfo = c.GetGenesisHash();
 
@@ -18,7 +18,7 @@ namespace Solnet.Examples
 
             //var blockTime = c.GetBlockTime(78561320);
 
-            //var cn = c.GetClusterNodes();
+            var cn = c.GetClusterNodes();
 
             /* Large accounts for Token Mint PubKey
             var largeAccounts = c.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
@@ -55,12 +55,8 @@ namespace Solnet.Examples
             //    Console.WriteLine("--------------------------------------------------------------------");
             //}
             var tokenAccounts = c.GetTokenAccountsByOwner(
-                "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5",null, "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
+                "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", tokenProgramId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
             
-
-
-            var res = c.GetTokenAccountsByOwner("SysvarRecentB1ockHashes11111111111111111111");
-
             Console.ReadKey();
         }
     }

@@ -14,7 +14,7 @@ using Solnet.Rpc.Types;
 
 namespace Solnet.Rpc
 {
-    public class SolanaStreamingRpcClient : StreamingRpcClient
+    public class SolanaStreamingRpcClient : StreamingRpcClient, IStreamingRpcClient
     {
         /// <summary>
         /// Message Id generator.
