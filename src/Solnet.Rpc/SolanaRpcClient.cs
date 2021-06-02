@@ -144,6 +144,18 @@ namespace Solnet.Rpc
             => GetBalanceAsync(pubKey).Result;
 
         /// <summary>
+        /// Gets the current block height of the node.
+        /// </summary>
+        /// <returns>A task which may return a request result and a block height.</returns>
+        public async Task<RequestResult<ulong>> GetBlockHeightAsync()
+        {
+            return await SendRequestAsync<ulong>("getBlockHeight");
+        }
+        /// <inheritdoc cref="GetBlockHeightAsync"/>
+        public RequestResult<ulong> GetBlockHeight()
+            => GetBlockHeightAsync().Result;
+
+        /// <summary>
         /// Gets the block commitment of a certain block, identified by slot.
         /// </summary>
         /// <param name="block">The block.</param>

@@ -121,6 +121,32 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
+        
+        [TestMethod]
+        public void TestGetBlockHeight()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetBlockHeightResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetBlockHeightRequest.json");
+
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var result = sut.GetBlockHeight();
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(1233UL, result.Result);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
 
         [TestMethod]
         public void TestGetBlockCommitment()
