@@ -19,8 +19,10 @@ namespace Solnet.Rpc.Test
         private ManualResetEvent _notificationEvent;
         private ManualResetEvent _subConfirmEvent;
         private bool _isSubConfirmed;
+        private bool _hasNotified;
         private ValueTask<ValueWebSocketReceiveResult> _valueTaskConfirmation;
         private ValueTask<ValueWebSocketReceiveResult> _valueTaskNotification;
+        private ValueTask<ValueWebSocketReceiveResult> _valueTaskEnd;
 
         private void SetupAction<T>(out Action<SubscriptionState, T> action, Action<T> resultCaptureCallback, Action<ReadOnlyMemory<byte>> sentPayloadCaptureCallback, byte[] subConfirmContent, byte[] notificationContents)
         {
@@ -38,6 +40,9 @@ namespace Solnet.Rpc.Test
             _valueTaskNotification = new ValueTask<ValueWebSocketReceiveResult>(
                                                         new ValueWebSocketReceiveResult(notificationContents.Length, WebSocketMessageType.Text, true));
 
+            _valueTaskEnd = new ValueTask<ValueWebSocketReceiveResult>(
+                                                        new ValueWebSocketReceiveResult(0, WebSocketMessageType.Close, true));
+
             _socketMock.Setup(_ => _.ConnectAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
                 .Callback(() => _socketMock.SetupGet(s => s.State).Returns(WebSocketState.Open));
 
@@ -53,12 +58,16 @@ namespace Solnet.Rpc.Test
                         subConfirmContent.CopyTo(mem);
                         _isSubConfirmed = true;
                     }
-                    else
+                    else if(!_hasNotified)
                     {
                         notificationContents.CopyTo(mem);
+                        _hasNotified = true;
+
+                        _socketMock.SetupGet(s => s.State).Returns(WebSocketState.Closed);
                     }
 
-                }).Returns(() => _isSubConfirmed ? _valueTaskNotification : _valueTaskConfirmation);
+                }).Returns(() => _isSubConfirmed ? _valueTaskNotification : _hasNotified ? _valueTaskEnd : _valueTaskConfirmation);
+
         }
 
         [TestInitialize]
@@ -68,6 +77,7 @@ namespace Solnet.Rpc.Test
             _notificationEvent = new ManualResetEvent(false);
             _subConfirmEvent = new ManualResetEvent(false);
             _isSubConfirmed = false;
+            _hasNotified = false;
         }
 
         [TestMethod]
@@ -280,6 +290,39 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(75, resultNotification.Parent);
             Assert.AreEqual(44, resultNotification.Root);
             Assert.AreEqual(76, resultNotification.Slot);
+        }
+
+
+        [TestMethod]
+        public void SubscribeRootTest()
+        {
+            var expected = File.ReadAllText("Resources/RootSubscribe.json");
+            var subConfirmContent = File.ReadAllBytes("Resources/SubscribeConfirm.json");
+            var notificationContents = File.ReadAllBytes("Resources/RootSubscribeNotification.json");
+            int resultNotification = 0;
+            var result = new ReadOnlyMemory<byte>();
+
+            SetupAction(out Action<SubscriptionState, int> action,
+                (x) => resultNotification = x,
+                (x) => result = x,
+                subConfirmContent,
+                notificationContents);
+
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
+
+            sut.Init().Wait();
+            var sub = sut.SubscribeRoot(action);
+            _subConfirmEvent.Set();
+
+            _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
+                WebSocketMessageType.Text,
+                true,
+                It.IsAny<CancellationToken>()));
+            var res = Encoding.UTF8.GetString(result.Span);
+            Assert.AreEqual(expected, res);
+
+            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.AreEqual(42, resultNotification);
         }
     }
 }

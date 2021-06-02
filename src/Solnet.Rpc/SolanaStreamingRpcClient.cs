@@ -98,7 +98,7 @@ namespace Solnet.Rpc
             SubscriptionState sub;
             lock (this)
             {
-                if (!unconfirmedRequests.Remove(id, out sub))
+                if (!confirmedSubscriptions.Remove(id, out sub))
                 {
                     // houston, we might have a problem?
                 }
@@ -235,7 +235,7 @@ namespace Solnet.Rpc
         #region Signature
         public async Task<SubscriptionState> SubscribeSignatureAsync(string transactionSignature, Action<SubscriptionState, ResponseValue<ErrorResult>> callback)
         {
-            var sub = new SubscriptionState<ResponseValue<ErrorResult>>(this, SubscriptionChannel.Logs, callback, new List<object> { transactionSignature });
+            var sub = new SubscriptionState<ResponseValue<ErrorResult>>(this, SubscriptionChannel.Signature, callback, new List<object> { transactionSignature });
 
             var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "signatureSubscribe", new List<object> { transactionSignature });
             return await Subscribe(sub, msg).ConfigureAwait(false);
@@ -247,7 +247,7 @@ namespace Solnet.Rpc
         #region Program
         public async Task<SubscriptionState> SubscribeProgramAsync(string transactionSignature, Action<SubscriptionState, ResponseValue<ProgramInfo>> callback)
         {
-            var sub = new SubscriptionState<ResponseValue<ProgramInfo>>(this, SubscriptionChannel.Logs, callback,
+            var sub = new SubscriptionState<ResponseValue<ProgramInfo>>(this, SubscriptionChannel.Program, callback,
                 new List<object> { transactionSignature/*, new Dictionary<string, string> { { "encoding", "base64" } }*/ });
 
             var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "programSubscribe", new List<object> { transactionSignature });
@@ -261,13 +261,26 @@ namespace Solnet.Rpc
 
         public async Task<SubscriptionState> SubscribeSlotInfoAsync(Action<SubscriptionState, SlotInfo> callback)
         {
-            var sub = new SubscriptionState<SlotInfo>(this, SubscriptionChannel.Logs, callback);
+            var sub = new SubscriptionState<SlotInfo>(this, SubscriptionChannel.Slot, callback);
 
             var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "slotSubscribe", null);
             return await Subscribe(sub, msg).ConfigureAwait(false);
         }
         public SubscriptionState SubscribeSlotInfo(Action<SubscriptionState, SlotInfo> callback)
             => SubscribeSlotInfoAsync(callback).Result;
+        #endregion
+
+
+        #region Root
+        public async Task<SubscriptionState> SubscribeRootAsync(Action<SubscriptionState, int> callback)
+        {
+            var sub = new SubscriptionState<int>(this, SubscriptionChannel.Root, callback);
+
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "rootSubscribe", null);
+            return await Subscribe(sub, msg).ConfigureAwait(false);
+        }
+        public SubscriptionState SubscribeRoot(Action<SubscriptionState, int> callback)
+            => SubscribeRootAsync(callback).Result;
         #endregion
 
         private async Task<SubscriptionState> Subscribe(SubscriptionState sub, JsonRpcRequest msg)
