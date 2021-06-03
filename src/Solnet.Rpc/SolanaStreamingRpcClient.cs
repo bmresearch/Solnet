@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Solnet.Rpc.Core;
 using Solnet.Rpc.Core.Sockets;
 using Solnet.Rpc.Messages;
@@ -25,8 +26,7 @@ namespace Solnet.Rpc
 
         Dictionary<int, SubscriptionState> confirmedSubscriptions = new Dictionary<int, SubscriptionState>();
 
-
-        public SolanaStreamingRpcClient(string url, IWebSocket websocket = default) : base(url, websocket)
+        internal SolanaStreamingRpcClient(string url, ILogger logger = null, IWebSocket websocket = default) : base(url, logger, websocket)
         {
         }
 
@@ -35,9 +35,11 @@ namespace Solnet.Rpc
             Utf8JsonReader asd = new Utf8JsonReader(mem.Span);
             asd.Read();
 
-            //#TODO: remove and add proper logging
+            if (_logger?.IsEnabled(LogLevel.Information) ?? false)
+            {
             var str = Encoding.UTF8.GetString(mem.Span);
-            Console.WriteLine(str);
+                _logger?.LogInformation($"[Received]{str}");
+            }
 
             string prop = "", method = "";
             int id = -1, intResult = -1;
@@ -100,7 +102,7 @@ namespace Solnet.Rpc
             {
                 if (!confirmedSubscriptions.Remove(id, out sub))
                 {
-                    // houston, we might have a problem?
+                    _logger.LogDebug(new EventId(), $"No subscription found with ID:{id}");
                 }
             }
             if (value)
@@ -270,7 +272,6 @@ namespace Solnet.Rpc
             => SubscribeSlotInfoAsync(callback).Result;
         #endregion
 
-
         #region Root
         public async Task<SubscriptionState> SubscribeRootAsync(Action<SubscriptionState, int> callback)
         {
@@ -294,17 +295,27 @@ namespace Solnet.Rpc
                     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
                 }
             });
-            Console.WriteLine($"\tRequest: {Encoding.UTF8.GetString(json)}");
 
+            if(_logger?.IsEnabled(LogLevel.Information) ?? false)
+            {
+                var jsonString = Encoding.UTF8.GetString(json);
+                _logger?.LogInformation(new EventId(msg.Id, msg.Method), $"[Sending]{jsonString}");
+            }
 
             ReadOnlyMemory<byte> mem = new ReadOnlyMemory<byte>(json);
-            await ClientSocket.SendAsync(mem, WebSocketMessageType.Text, true, CancellationToken.None).ConfigureAwait(false);
 
+            try
+            {
+                await ClientSocket.SendAsync(mem, WebSocketMessageType.Text, true, CancellationToken.None).ConfigureAwait(false);
             AddSubscription(sub, msg.Id);
-            return sub;
+            }
+            catch (Exception e)
+            {
+                _logger?.LogDebug(new EventId(msg.Id, msg.Method), e, $"Unable to send message");
         }
 
-
+            return sub;
+        }
 
         private string GetUnsubscribeMethodName(SubscriptionChannel channel) => channel switch
         {

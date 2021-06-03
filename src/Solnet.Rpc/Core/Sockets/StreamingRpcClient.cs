@@ -1,4 +1,5 @@
-﻿using Solnet.Rpc.Core.Sockets;
+﻿using Microsoft.Extensions.Logging;
+using Solnet.Rpc.Core.Sockets;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using System;
@@ -19,10 +20,13 @@ namespace Solnet.Rpc.Core.Sockets
 
         private readonly string _socketUri;
 
-        protected StreamingRpcClient(string nodeUri, IWebSocket socket = default)
+        protected readonly ILogger _logger;
+
+        protected StreamingRpcClient(string nodeUri, ILogger logger, IWebSocket socket = default)
         {
             ClientSocket = socket ?? new WebSocketWrapper(new ClientWebSocket());
             _socketUri = nodeUri;
+            _logger = logger;
         }
 
         public async Task Init()
@@ -41,9 +45,10 @@ namespace Solnet.Rpc.Core.Sockets
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"Exception caught: {e.Message}");
+                    _logger?.LogDebug(new EventId(), e, "Exception trying to read next message.");
                 }
             }
+            _logger?.LogDebug(new EventId(), $"Stopped reading messages. ClientSocket.State changed to {ClientSocket.State}");
         }
 
         private async Task ReadNextMessage(CancellationToken cancellationToken = default)
@@ -86,7 +91,7 @@ namespace Solnet.Rpc.Core.Sockets
                 HandleNewMessage(mem);
             }
         }
-        
+
         protected abstract void HandleNewMessage(Memory<byte> mem);
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 namespace Solnet.Rpc
 {
@@ -22,8 +23,8 @@ namespace Solnet.Rpc
         /// The main net cluster.
         /// </summary>
         private const string RpcMainNet = "https://api.mainnet-beta.solana.com";
-        
-        
+
+
         /// <summary>
         /// The dev net cluster.
         /// </summary>
@@ -38,7 +39,7 @@ namespace Solnet.Rpc
         /// The main net cluster.
         /// </summary>
         private const string StreamingRpcMainNet = "wss://api.mainnet-beta.solana.com";
-        
+
         /// <summary>
         /// Instantiate a http client.
         /// </summary>
@@ -53,6 +54,21 @@ namespace Solnet.Rpc
                 Cluster.TestNet => RpcTestNet,
                 Cluster.MainNet => RpcMainNet,
             };
+
+#if DEBUG
+            logger = logger ?? LoggerFactory.Create(x =>
+            {
+                x.AddSimpleConsole(o =>
+                {
+                    o.UseUtcTimestamp = true;
+                    o.IncludeScopes = true;
+                    o.ColorBehavior = LoggerColorBehavior.Enabled;
+                    o.TimestampFormat = "HH:mm:ss ";
+                })
+                .SetMinimumLevel(LogLevel.Debug);
+            }).CreateLogger<IRpcClient>();
+#endif
+
             return GetClient(url, logger);
         }
 
@@ -67,7 +83,7 @@ namespace Solnet.Rpc
 
             return new SolanaRpcClient(url, logger);
         }
-        
+
         /// <summary>
         /// Instantiate a streaming client.
         /// </summary>
@@ -82,9 +98,22 @@ namespace Solnet.Rpc
                 Cluster.TestNet => StreamingRpcTestNet,
                 Cluster.MainNet => StreamingRpcMainNet,
             };
+#if DEBUG
+            logger = logger ?? LoggerFactory.Create(x =>
+            {
+                x.AddSimpleConsole( o =>
+                {
+                    o.UseUtcTimestamp = true;
+                    o.IncludeScopes = true;
+                    o.ColorBehavior = LoggerColorBehavior.Enabled;
+                    o.TimestampFormat = "HH:mm:ss ";
+                    })
+                .SetMinimumLevel(LogLevel.Debug);
+            }).CreateLogger<IStreamingRpcClient>();
+#endif
             return GetStreamingClient(url, logger);
         }
-        
+
         /// <summary>
         /// Instantiate a streaming client.
         /// </summary>
@@ -93,7 +122,7 @@ namespace Solnet.Rpc
         /// <returns>The streaming client.</returns>
         public static IStreamingRpcClient GetStreamingClient(string url, ILogger logger = null)
         {
-            return new SolanaStreamingRpcClient(url);
+            return new SolanaStreamingRpcClient(url, logger);
         }
     }
 }
