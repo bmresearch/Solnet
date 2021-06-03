@@ -131,6 +131,15 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetInflationRateAsync"/>
         RequestResult<InflationRate> GetInflationRate();
+        
+        /// <summary>
+        /// Gets the inflation reward for a list of addresses for an epoch.
+        /// </summary>
+        /// <returns>A task which may return a request result and a list of objects representing the inflation reward.</returns>
+        Task<RequestResult<InflationReward[]>> GetInflationRewardAsync(string[] addresses, ulong epoch = 0);
+
+        /// <inheritdoc cref="SolanaRpcClient.GetInflationRewardAsync"/>
+        RequestResult<InflationReward[]> GetInflationReward(string[] addresses, ulong epoch = 0);
 
         /// <summary>
         /// Gets information about the current supply.

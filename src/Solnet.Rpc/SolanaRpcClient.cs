@@ -278,6 +278,21 @@ namespace Solnet.Rpc
         public RequestResult<InflationRate> GetInflationRate()
             => GetInflationRateAsync().Result;
 
+        /// <summary>
+        /// Gets the inflation reward for a list of addresses for an epoch.
+        /// </summary>
+        /// <returns>A task which may return a request result and a list of objects representing the inflation reward.</returns>
+        public async Task<RequestResult<InflationReward[]>> GetInflationRewardAsync(string[] addresses, ulong epoch = 0)
+        {
+            if (epoch != 0) 
+                return await SendRequestAsync<InflationReward[]>("getInflationReward", new List<object> { addresses, epoch });
+            return await SendRequestAsync<InflationReward[]>("getInflationReward", new List<object> { addresses });
+        }
+
+        /// <inheritdoc cref="GetInflationRewardAsync"/>
+        public RequestResult<InflationReward[]> GetInflationReward(string[] addresses, ulong epoch = 0)
+            => GetInflationRewardAsync(addresses, epoch).Result;
+
         #region Token Supply and Balances
 
         /// <summary>
