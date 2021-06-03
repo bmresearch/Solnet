@@ -31,4 +31,30 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public decimal FoundationTerm { get; set; }
     }
+    
+    /// <summary>
+    /// Represents the inflation rate information.
+    /// </summary>
+    public class InflationRate
+    {
+        /// <summary>
+        /// Epoch for which these values are valid.
+        /// </summary>
+        public decimal Epoch { get; set; }
+        
+        /// <summary>
+        /// Percentage of total inflation allocated to the foundation.
+        /// </summary>
+        public decimal Foundation { get; set; }
+        
+        /// <summary>
+        /// Percentage of total inflation.
+        /// </summary>
+        public decimal Total { get; set; }
+        
+        /// <summary>
+        /// Percentage of total inflation allocated to validators.
+        /// </summary>
+        public decimal Validator { get; set; }
+    }
 }

@@ -28,6 +28,9 @@ namespace Solnet.Examples
             
             var inflationGov = c.GetInflationGovernor();
             Console.WriteLine(inflationGov.Result.Terminal);
+            
+            var inflationRate = c.GetInflationRate();
+            Console.WriteLine(inflationRate.Result.Total);
 
             /* Large accounts for Token Mint PubKey
             var largeAccounts = c.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
