@@ -36,6 +36,11 @@ namespace Solnet.Examples
             
             Console.WriteLine(v.Result.SolanaCore);
             Console.WriteLine(v.Result.FeatureSet);
+          
+            var va = c.GetVoteAccounts();
+            
+            Console.WriteLine(va.Result.Current.Length);
+            Console.WriteLine(va.Result.Delinquent.Length);
             
             /* Large accounts for Token Mint PubKey
             var largeAccounts = c.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
