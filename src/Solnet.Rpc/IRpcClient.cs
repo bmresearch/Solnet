@@ -111,8 +111,10 @@ namespace Solnet.Rpc
         /// <returns>A task which may return a request result and an object with the identity public key.</returns>
         Task<RequestResult<NodeIdentity>> GetIdentityAsync();
 
-        /// <inheritdoc cref="SolanaRpcClient.GetGenesisHashAsync"/>
+        /// <inheritdoc cref="SolanaRpcClient.GetIdentityAsync"/>
         RequestResult<NodeIdentity> GetIdentity();
+        
+        /// <summary>
         /// Gets the current inflation governor.
         /// </summary>
         /// <returns>A task which may return a request result and an object representing the current inflation governor.</returns>
@@ -120,6 +122,15 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetInflationGovernorAsync"/>
         RequestResult<InflationGovernor> GetInflationGovernor();
+        
+        /// <summary>
+        /// Gets the specific inflation values for the current epoch.
+        /// </summary>
+        /// <returns>A task which may return a request result and an object representing the current inflation rate.</returns>
+        Task<RequestResult<InflationRate>> GetInflationRateAsync();
+
+        /// <inheritdoc cref="SolanaRpcClient.GetInflationRateAsync"/>
+        RequestResult<InflationRate> GetInflationRate();
 
         /// <summary>
         /// Gets information about the current supply.

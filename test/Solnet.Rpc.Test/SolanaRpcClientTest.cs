@@ -335,6 +335,34 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
+        
+        [TestMethod]
+        public void TestGetInflationRate()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetInflationRateResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetInflationRateRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetInflationRate();
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(100, result.Result.Epoch);
+            Assert.AreEqual((decimal) 0.149, result.Result.Total);
+            Assert.AreEqual((decimal) 0.148, result.Result.Validator);
+            Assert.AreEqual((decimal) 0.001, result.Result.Foundation);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
 
         [TestMethod]
         public void TestGetRecentBlockHash()

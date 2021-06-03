@@ -253,6 +253,7 @@ namespace Solnet.Rpc
         public RequestResult<NodeIdentity> GetIdentity()
             => GetIdentityAsync().Result;
         
+        /// <summary>
         /// Gets the current inflation governor.
         /// </summary>
         /// <returns>A task which may return a request result and an object representing the current inflation governor.</returns>
@@ -263,6 +264,19 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="GetInflationGovernorAsync"/>
         public RequestResult<InflationGovernor> GetInflationGovernor()
             => GetInflationGovernorAsync().Result;
+
+        /// <summary>
+        /// Gets the specific inflation values for the current epoch.
+        /// </summary>
+        /// <returns>A task which may return a request result and an object representing the current inflation rate.</returns>
+        public async Task<RequestResult<InflationRate>> GetInflationRateAsync()
+        {
+            return await SendRequestAsync<InflationRate>("getInflationRate");
+        }
+
+        /// <inheritdoc cref="GetInflationRateAsync"/>
+        public RequestResult<InflationRate> GetInflationRate()
+            => GetInflationRateAsync().Result;
 
         #region Token Supply and Balances
 
