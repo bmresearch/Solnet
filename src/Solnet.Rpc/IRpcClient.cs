@@ -104,6 +104,15 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetGenesisHashAsync"/>
         RequestResult<string> GetGenesisHash();
+        
+        /// <summary>
+        /// Gets the identity pubkey for the current node.
+        /// </summary>
+        /// <returns>A task which may return a request result and an object with the identity public key.</returns>
+        Task<RequestResult<NodeIdentity>> GetIdentityAsync();
+
+        /// <inheritdoc cref="SolanaRpcClient.GetGenesisHashAsync"/>
+        RequestResult<NodeIdentity> GetIdentity();
 
         /// <summary>
         /// Gets information about the current supply.

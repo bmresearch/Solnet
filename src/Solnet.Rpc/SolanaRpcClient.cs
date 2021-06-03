@@ -240,6 +240,18 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="GetGenesisHashAsync"/>
         public RequestResult<string> GetGenesisHash()
             => GetGenesisHashAsync().Result;
+        
+        /// <summary>
+        /// Gets the identity pubkey for the current node.
+        /// </summary>
+        /// <returns>A task which may return a request result and a string representing the genesis hash.</returns>
+        public async Task<RequestResult<NodeIdentity>> GetIdentityAsync()
+        {
+            return await SendRequestAsync<NodeIdentity>("getIdentity");
+        }
+        /// <inheritdoc cref="GetGenesisHashAsync"/>
+        public RequestResult<NodeIdentity> GetIdentity()
+            => GetIdentityAsync().Result;
 
         #region Token Supply and Balances
 
