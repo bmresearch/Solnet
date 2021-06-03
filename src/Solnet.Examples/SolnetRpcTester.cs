@@ -32,10 +32,10 @@ namespace Solnet.Examples
             //var inflationRate = c.GetInflationRate();
             //Console.WriteLine(inflationRate.Result.Total);
 
-            var va = c.GetVoteAccounts();
+            var v = c.GetVersion();
             
-            Console.WriteLine(va.Result.Current.Length);
-            Console.WriteLine(va.Result.Delinquent.Length);
+            Console.WriteLine(v.Result.SolanaCore);
+            Console.WriteLine(v.Result.FeatureSet);
             
             /* Large accounts for Token Mint PubKey
             var largeAccounts = c.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");

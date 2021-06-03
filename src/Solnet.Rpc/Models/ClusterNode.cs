@@ -34,6 +34,9 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public string Version { get; set; }
         
+        /// <summary>
+        /// Unique identifier of the current software's feature set.
+        /// </summary>
         public ulong? FeatureSet { get; set; }
         public ulong ShredVersion { get; set; }
     }

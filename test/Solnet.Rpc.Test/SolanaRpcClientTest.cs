@@ -704,6 +704,32 @@ namespace Solnet.Rpc.Test
         }
         
         [TestMethod]
+        public void TestGetVersion()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetVersionResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetVersionRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetVersion();
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(1082270801UL, result.Result.FeatureSet);
+            Assert.AreEqual("1.6.11", result.Result.SolanaCore);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        [TestMethod]
         public void TestGetVoteAccounts()
         {
             var responseData = File.ReadAllText("Resources/Http/GetVoteAccountsResponse.json");

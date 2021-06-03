@@ -223,6 +223,16 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="SolanaRpcClient.GetTransactionCountAsync"/>
         RequestResult<ulong> GetTransactionCount();
 
+        
+        /// <summary>
+        /// Gets the account info and associated stake for all voting accounts in the current bank.
+        /// </summary>
+        /// <returns>A task which may return a request result and information about the vote accounts.</returns>
+        Task<RequestResult<NodeVersion>> GetVersionAsync();
+
+        /// <inheritdoc cref="SolanaRpcClient.GetVersionAsync"/>
+        RequestResult<NodeVersion> GetVersion();
+        
         /// <summary>
         /// Gets the account info and associated stake for all voting accounts in the current bank.
         /// </summary>
