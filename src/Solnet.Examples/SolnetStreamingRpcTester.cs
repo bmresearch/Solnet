@@ -10,7 +10,7 @@ namespace Solnet.Examples
     {
         static void Example(string[] args)
         {
-            SolanaStreamingRpcClient c = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/");
+            IStreamingRpcClient c = ClientFactory.GetStreamingClient(Cluster.MainNet);
             var b64Dec = new Base64Encoder();
             c.Init().Wait();
 

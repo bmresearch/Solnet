@@ -95,7 +95,7 @@ namespace Solnet.Rpc.Test
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             const string pubKey = "CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12";
 
@@ -132,7 +132,7 @@ namespace Solnet.Rpc.Test
                 subConfirmContent,
                 unsubContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             const string pubKey = "CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12";
 
@@ -169,7 +169,7 @@ namespace Solnet.Rpc.Test
                 subConfirmContent,
                 new byte[0]);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             const string pubKey = "11111111111111111111111111111111";
 
@@ -200,7 +200,7 @@ namespace Solnet.Rpc.Test
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.Init().Wait();
             _ = sut.SubscribeLogInfo(Types.LogsSubscriptionType.All, action);
@@ -236,7 +236,7 @@ namespace Solnet.Rpc.Test
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.Init().Wait();
             _ = sut.SubscribeProgram("11111111111111111111111111111111", action);
@@ -273,7 +273,7 @@ namespace Solnet.Rpc.Test
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.Init().Wait();
             _ = sut.SubscribeSlotInfo(action);
@@ -308,7 +308,7 @@ namespace Solnet.Rpc.Test
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", _socketMock.Object);
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.Init().Wait();
             var sub = sut.SubscribeRoot(action);
