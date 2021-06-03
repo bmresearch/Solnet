@@ -14,7 +14,7 @@
     <a href="https://twitter.com/intent/follow?screen_name=blockmountainco">
         <img src="https://img.shields.io/twitter/follow/blockmountainco?style=flat-square&logo=twitter"
             alt="Follow on Twitter"></a>
-    <a href="">
+    <a href="https://discord.gg/YHMbpuS3Tx">
        <img alt="Discord" src="https://img.shields.io/discord/849407317761064961?style=flat-square"
             alt="Join the discussion!"></a>
 </p>
