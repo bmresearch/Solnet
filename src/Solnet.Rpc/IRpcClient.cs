@@ -225,9 +225,9 @@ namespace Solnet.Rpc
 
         
         /// <summary>
-        /// Gets the account info and associated stake for all voting accounts in the current bank.
+        /// Gets the current node's software version info.
         /// </summary>
-        /// <returns>A task which may return a request result and information about the vote accounts.</returns>
+        /// <returns>A task which may return a request result and information about the current node's software.</returns>
         Task<RequestResult<NodeVersion>> GetVersionAsync();
 
         /// <inheritdoc cref="SolanaRpcClient.GetVersionAsync"/>
