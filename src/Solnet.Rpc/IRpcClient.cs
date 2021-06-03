@@ -110,7 +110,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetGenesisHashAsync"/>
         RequestResult<string> GetGenesisHash();
-        
+
         /// <summary>
         /// Gets the identity pubkey for the current node.
         /// </summary>
@@ -119,7 +119,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetIdentityAsync"/>
         RequestResult<NodeIdentity> GetIdentity();
-        
+
         /// <summary>
         /// Gets the current inflation governor.
         /// </summary>
@@ -128,7 +128,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetInflationGovernorAsync"/>
         RequestResult<InflationGovernor> GetInflationGovernor();
-        
+
         /// <summary>
         /// Gets the specific inflation values for the current epoch.
         /// </summary>
@@ -137,7 +137,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetInflationRateAsync"/>
         RequestResult<InflationRate> GetInflationRate();
-        
+
         /// <summary>
         /// Gets the inflation reward for a list of addresses for an epoch.
         /// </summary>
@@ -224,6 +224,15 @@ namespace Solnet.Rpc
         RequestResult<ulong> GetTransactionCount();
 
         /// <summary>
+        /// Gets the account info and associated stake for all voting accounts in the current bank.
+        /// </summary>
+        /// <returns>A task which may return a request result and information about the vote accounts.</returns>
+        Task<RequestResult<VoteAccounts>> GetVoteAccountsAsync();
+
+        /// <inheritdoc cref="SolanaRpcClient.GetVoteAccountsAsync"/>
+        RequestResult<VoteAccounts> GetVoteAccounts();
+
+        /// <summary>
         /// Gets the lowest slot that the node has information about in its ledger.
         /// <remarks>
         /// This value may decrease over time if a node is configured to purging data.
@@ -245,10 +254,12 @@ namespace Solnet.Rpc
         /// <param name="lamports">The amount of lamports to request.</param>
         /// <param name="commitment">The block commitment used to retrieve block hashes and verify success.</param>
         /// <returns>A task which may return a request result and the transaction signature of the airdrop, as base-58 encoded string..</returns>
-        Task<RequestResult<string>> RequestAirdropAsync(string pubKey, ulong lamports, Commitment commitment = Commitment.Finalized);
+        Task<RequestResult<string>> RequestAirdropAsync(string pubKey, ulong lamports,
+            Commitment commitment = Commitment.Finalized);
 
         /// <inheritdoc cref="SolanaRpcClient.RequestAirdropAsync"/>
-        RequestResult<string> RequestAirdrop(string pubKey, ulong lamports, Commitment commitment = Commitment.Finalized);
+        RequestResult<string> RequestAirdrop(string pubKey, ulong lamports,
+            Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Sends a transaction.
@@ -258,7 +269,8 @@ namespace Solnet.Rpc
         /// <returns>
         /// A task which may return a request result and the first transaction signature embedded in the transaction, as base-58 encoded string.
         /// </returns>
-        Task<RequestResult<string>> SendTransactionAsync(string transaction, BinaryEncoding encoding = BinaryEncoding.Base64);
+        Task<RequestResult<string>> SendTransactionAsync(string transaction,
+            BinaryEncoding encoding = BinaryEncoding.Base64);
 
         /// <inheritdoc cref="SolanaRpcClient.SendTransactionAsync"/>
         RequestResult<string> SendTransaction(string transaction, BinaryEncoding encoding = BinaryEncoding.Base64);
@@ -280,10 +292,12 @@ namespace Solnet.Rpc
         /// <returns>
         /// A task which may return a request result and the transaction status.
         /// </returns>
-        Task<RequestResult<ResponseValue<SimulationLogs>>> SimulateTransactionAsync(string transaction, BinaryEncoding encoding = BinaryEncoding.Base64);
+        Task<RequestResult<ResponseValue<SimulationLogs>>> SimulateTransactionAsync(string transaction,
+            BinaryEncoding encoding = BinaryEncoding.Base64);
 
         /// <inheritdoc cref="SolanaRpcClient.SimulateTransactionAsync"/>
-        RequestResult<ResponseValue<SimulationLogs>> SimulateTransaction(string transaction, BinaryEncoding encoding = BinaryEncoding.Base64);
+        RequestResult<ResponseValue<SimulationLogs>> SimulateTransaction(string transaction,
+            BinaryEncoding encoding = BinaryEncoding.Base64);
 
         /// <summary>
         /// Simulate sending a transaction.
