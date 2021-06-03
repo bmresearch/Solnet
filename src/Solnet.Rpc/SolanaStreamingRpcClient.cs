@@ -311,7 +311,6 @@ namespace Solnet.Rpc
             }
             catch (Exception e)
             {
-                sub.ChangeState(SubscriptionStatus.ErrorSubscribing, e.Message);
                 _logger?.LogDebug(new EventId(msg.Id, msg.Method), e, $"Unable to send message");
         }
 
