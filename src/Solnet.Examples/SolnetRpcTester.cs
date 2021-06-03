@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
+using NBitcoin.Logging;
 using Solnet.Rpc;
 using Solnet.Rpc.Core.Sockets;
 using Solnet.Rpc.Models;
@@ -20,6 +22,9 @@ namespace Solnet.Examples
 
             var cn = c.GetClusterNodes();
 
+            var bh = c.GetBlockHeight();
+            Console.WriteLine(bh.Result);
+            
             /* Large accounts for Token Mint PubKey
             var largeAccounts = c.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
 

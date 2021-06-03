@@ -6,6 +6,9 @@ using Solnet.Rpc.Types;
 
 namespace Solnet.Rpc
 {
+    /// <summary>
+    /// Specifies the methods to interact with the JSON RPC API.
+    /// </summary>
     public interface IRpcClient
     {
         /// <summary>
@@ -31,7 +34,7 @@ namespace Solnet.Rpc
         /// <summary>
         /// Gets the block commitment of a certain block, identified by slot.
         /// </summary>
-        /// <param name="block">The block.</param>
+        /// <param name="slot">The slot.</param>
         /// <returns>A task which may return a request result and block commitment information.</returns>
         Task<RequestResult<BlockCommitment>> GetBlockCommitmentAsync(ulong slot);
 
@@ -41,12 +44,21 @@ namespace Solnet.Rpc
         /// <summary>
         /// Gets the estimated production time for a certain block, identified by slot.
         /// </summary>
-        /// <param name="block">The block.</param>
+        /// <param name="slot">The slot.</param>
         /// <returns>A task which may return a request result and block production time as Unix timestamp (seconds since Epoch).</returns>
         Task<RequestResult<ulong>> GetBlockTimeAsync(ulong slot);
 
         /// <inheritdoc cref="SolanaRpcClient.GetBlockTimeAsync"/>
         RequestResult<ulong> GetBlockTime(ulong slot);
+
+        /// <summary>
+        /// Gets the current block height of the node.
+        /// </summary>
+        /// <returns>A task which may return a request result and a block height.</returns>
+        Task<RequestResult<ulong>> GetBlockHeightAsync();
+
+        /// <inheritdoc cref="SolanaRpcClient.GetBlockHeightAsync"/>
+        RequestResult<ulong> GetBlockHeight();
 
         /// <summary>
         /// Gets the cluster nodes.
