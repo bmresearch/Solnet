@@ -20,6 +20,7 @@ namespace Solnet.Rpc.Test
         private ManualResetEvent _subConfirmEvent;
         private bool _isSubConfirmed;
         private bool _hasNotified;
+        private bool _hasEnded;
         private ValueTask<ValueWebSocketReceiveResult> _valueTaskConfirmation;
         private ValueTask<ValueWebSocketReceiveResult> _valueTaskNotification;
         private ValueTask<ValueWebSocketReceiveResult> _valueTaskEnd;
@@ -64,9 +65,12 @@ namespace Solnet.Rpc.Test
                         _hasNotified = true;
 
                         _socketMock.SetupGet(s => s.State).Returns(WebSocketState.Closed);
+                    } else if(!_hasEnded)
+                    {
+                        _hasEnded = true;
                     }
 
-                }).Returns(() => _isSubConfirmed ? _valueTaskNotification : _hasNotified ? _valueTaskEnd : _valueTaskConfirmation);
+                }).Returns(() => _hasEnded ? _valueTaskEnd : _hasNotified ? _valueTaskNotification :  _valueTaskConfirmation);
 
         }
 
@@ -78,6 +82,7 @@ namespace Solnet.Rpc.Test
             _subConfirmEvent = new ManualResetEvent(false);
             _isSubConfirmed = false;
             _hasNotified = false;
+            _hasEnded = false;
         }
 
         [TestMethod]
@@ -323,6 +328,49 @@ namespace Solnet.Rpc.Test
 
             Assert.IsTrue(_notificationEvent.WaitOne());
             Assert.AreEqual(42, resultNotification);
+        }
+
+        [TestMethod]
+        public void SubscribeBadAccountTest()
+        {
+            var expected = File.ReadAllText("Resources/BadAccountSubscribe.json");
+            var subConfirmContent = File.ReadAllBytes("Resources/BadAccountSubscribeResult.json");
+            var result = new ReadOnlyMemory<byte>();
+            AutoResetEvent subscriptionEvent = new AutoResetEvent(false);
+            SetupAction(out Action<SubscriptionState, ResponseValue<AccountInfo>> action,
+                _ => { },
+                (x) => result = x,
+                subConfirmContent,
+                new byte[0]);
+
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+
+            const string pubKey = "invalidkey1";
+
+            sut.Init().Wait();
+            var sub = sut.SubscribeAccountInfo(pubKey, action);
+            SubscriptionEvent subEvent = null;
+            sub.SubscriptionChanged += (sub, evt) =>
+            {
+                subEvent = evt;
+                subscriptionEvent.Set();
+            };
+
+            _subConfirmEvent.Set();
+
+            _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
+                WebSocketMessageType.Text,
+                true,
+                It.IsAny<CancellationToken>()));
+            var res = Encoding.UTF8.GetString(result.Span);
+            Assert.AreEqual(expected, res);
+
+            Assert.IsTrue(subscriptionEvent.WaitOne());
+            Assert.AreEqual("-32602", subEvent.Code);
+            Assert.AreEqual(SubscriptionStatus.ErrorSubscribing, subEvent.Status);
+            Assert.AreEqual("Invalid Request: Invalid pubkey provided", subEvent.Error);
+
+            Assert.AreEqual(SubscriptionStatus.ErrorSubscribing, sub.State);
         }
     }
 }

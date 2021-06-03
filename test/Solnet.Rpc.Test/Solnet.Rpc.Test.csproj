@@ -24,7 +24,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Resources\BadAccountSubscribe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\AccountSubscribe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\BadAccountSubscribeResult.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\ProgramSubscribe.json">
