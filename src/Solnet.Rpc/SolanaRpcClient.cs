@@ -434,6 +434,19 @@ namespace Solnet.Rpc
             => GetTransactionCountAsync().Result;
 
         /// <summary>
+        /// Gets the current node's software version.
+        /// </summary>
+        /// <returns>A task which may return a request result and information about the node's software version.</returns>
+        public async Task<RequestResult<NodeVersion>> GetVersionAsync()
+        {
+            return await SendRequestAsync<NodeVersion>("getVersion");
+        }
+
+        /// <inheritdoc cref="GetVersionAsync"/>
+        public RequestResult<NodeVersion> GetVersion()
+            => GetVersionAsync().Result;
+        
+        /// <summary>
         /// Gets the account info and associated stake for all voting accounts in the current bank.
         /// </summary>
         /// <returns>A task which may return a request result and information about the vote accounts.</returns>

@@ -32,6 +32,11 @@ namespace Solnet.Examples
             //var inflationRate = c.GetInflationRate();
             //Console.WriteLine(inflationRate.Result.Total);
 
+            var v = c.GetVersion();
+            
+            Console.WriteLine(v.Result.SolanaCore);
+            Console.WriteLine(v.Result.FeatureSet);
+          
             var va = c.GetVoteAccounts();
             
             Console.WriteLine(va.Result.Current.Length);
