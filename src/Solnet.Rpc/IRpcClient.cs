@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
@@ -11,6 +12,11 @@ namespace Solnet.Rpc
     /// </summary>
     public interface IRpcClient
     {
+        /// <summary>
+        /// The address this client connects to.
+        /// </summary>
+        Uri NodeAddress { get; }
+
         /// <summary>
         /// Gets the account info using base64 encoding.
         /// </summary>

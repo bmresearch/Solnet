@@ -9,22 +9,40 @@ using Microsoft.Extensions.Logging;
 
 namespace Solnet.Rpc.Core.Http
 {
+    /// <summary>
+    /// Base Rpc client class that abstracts the HttpClient handling.
+    /// </summary>
     public abstract class JsonRpcClient
     {
+        /// <summary>
+        /// The Json serializer options to be reused between calls.
+        /// </summary>
         private readonly JsonSerializerOptions _serializerOptions;
 
+        /// <summary>
+        /// The HttpClient.
+        /// </summary>
         private readonly HttpClient _httpClient;
 
+        /// <summary>
+        /// The logger instance.
+        /// </summary>
         private readonly ILogger _logger;
 
-        protected JsonRpcClient(string url, ILogger logger, HttpClient httpClient = default) : this(url, httpClient)
+        /// <inheritdoc cref="IRpcClient.NodeAddress"/>
+        public Uri NodeAddress { get; }
+
+        /// <summary>
+        /// The internal constructor that setups the client.
+        /// </summary>
+        /// <param name="url">The url of the RPC server.</param>
+        /// <param name="logger">The possible logger instance.</param>
+        /// <param name="httpClient">The possible HttpClient instance. If null, a new instance will be created.</param>
+        protected JsonRpcClient(string url, ILogger logger = default, HttpClient httpClient = default)
         {
             _logger = logger;
-        }
-
-        protected JsonRpcClient(string url, HttpClient httpClient = default)
-        {
-            _httpClient = httpClient ?? new HttpClient {BaseAddress = new Uri(url)};
+            NodeAddress = new Uri(url);
+            _httpClient = httpClient ?? new HttpClient { BaseAddress = NodeAddress };
             _serializerOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -35,6 +53,12 @@ namespace Solnet.Rpc.Core.Http
             };
         }
 
+        /// <summary>
+        /// Sends a given message as a POST method and returns the deserialized message result based on the type parameter.
+        /// </summary>
+        /// <typeparam name="T">The type of the result to deserialize from json.</typeparam>
+        /// <param name="req">The message request.</param>
+        /// <returns>A task that represents the asynchronous operation that holds the request result.</returns>
         protected async Task<RequestResult<T>> SendRequest<T>(JsonRpcRequest req)
         {
             HttpResponseMessage response;
@@ -45,7 +69,9 @@ namespace Solnet.Rpc.Core.Http
             {
                 _logger?.LogInformation(new EventId(req.Id, req.Method), $"Sending request: {requestJson}");
                 response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Post, "/")
-                    {Content = new StringContent(requestJson, Encoding.UTF8, "application/json")});
+                {
+                    Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
+                });
             }
             catch (HttpRequestException e)
             {
@@ -62,7 +88,7 @@ namespace Solnet.Rpc.Core.Http
 
             result = new RequestResult<T>(response);
             if (!result.WasHttpRequestSuccessful) return result;
-            
+
             try
             {
                 var requestRes = await response.Content.ReadAsStringAsync();
@@ -79,7 +105,7 @@ namespace Solnet.Rpc.Core.Http
                 else
                 {
                     var errorRes = JsonSerializer.Deserialize<JsonRpcErrorResponse>(requestRes, _serializerOptions);
-                    if (errorRes is {Error: { }})
+                    if (errorRes is { Error: { } })
                     {
                         result.Reason = errorRes.Error.Message;
                         result.ServerErrorCode = errorRes.Error.Code;

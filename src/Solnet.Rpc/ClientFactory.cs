@@ -101,13 +101,13 @@ namespace Solnet.Rpc
 #if DEBUG
             logger = logger ?? LoggerFactory.Create(x =>
             {
-                x.AddSimpleConsole( o =>
-                {
-                    o.UseUtcTimestamp = true;
-                    o.IncludeScopes = true;
-                    o.ColorBehavior = LoggerColorBehavior.Enabled;
-                    o.TimestampFormat = "HH:mm:ss ";
-                    })
+                x.AddSimpleConsole(o =>
+               {
+                   o.UseUtcTimestamp = true;
+                   o.IncludeScopes = true;
+                   o.ColorBehavior = LoggerColorBehavior.Enabled;
+                   o.TimestampFormat = "HH:mm:ss ";
+               })
                 .SetMinimumLevel(LogLevel.Debug);
             }).CreateLogger<IStreamingRpcClient>();
 #endif
