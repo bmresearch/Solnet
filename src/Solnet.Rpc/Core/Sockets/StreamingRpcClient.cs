@@ -14,27 +14,51 @@ using System.Threading.Tasks;
 
 namespace Solnet.Rpc.Core.Sockets
 {
+    /// <summary>
+    /// Base streaming Rpc client class that abstracts the websocket handling.
+    /// </summary>
     public abstract class StreamingRpcClient
     {
+        /// <summary>
+        /// The web socket client abstraction.
+        /// </summary>
         protected readonly IWebSocket ClientSocket;
 
-        private readonly string _socketUri;
-
+        /// <summary>
+        /// The logger instance.
+        /// </summary>
         protected readonly ILogger _logger;
 
-        protected StreamingRpcClient(string nodeUri, ILogger logger, IWebSocket socket = default)
+        /// <inheritdoc cref="IStreamingRpcClient.NodeAddress"/>
+        public Uri NodeAddress { get; }
+
+        /// <summary>
+        /// The internal constructor that setups the client.
+        /// </summary>
+        /// <param name="url">The url of the streaming RPC server.</param>
+        /// <param name="logger">The possible logger instance.</param>
+        /// <param name="socket">The possible websocket instance. A new instance will be created if null.</param>
+        protected StreamingRpcClient(string url, ILogger logger, IWebSocket socket = default)
         {
+            NodeAddress = new Uri(url);
             ClientSocket = socket ?? new WebSocketWrapper(new ClientWebSocket());
-            _socketUri = nodeUri;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Initializes the websocket connection and starts receiving messages asynchronously.
+        /// </summary>
+        /// <returns>Returns the task representing the asynchronous task.</returns>
         public async Task Init()
         {
-            await ClientSocket.ConnectAsync(new Uri(_socketUri), CancellationToken.None).ConfigureAwait(false);
+            await ClientSocket.ConnectAsync(NodeAddress, CancellationToken.None).ConfigureAwait(false);
             _ = Task.Run(StartListening);
         }
 
+        /// <summary>
+        /// Starts listeing to new messages.
+        /// </summary>
+        /// <returns>Returns the task representing the asynchronous task.</returns>
         private async Task StartListening()
         {
             while (ClientSocket.State == WebSocketState.Open)
@@ -51,6 +75,11 @@ namespace Solnet.Rpc.Core.Sockets
             _logger?.LogDebug(new EventId(), $"Stopped reading messages. ClientSocket.State changed to {ClientSocket.State}");
         }
 
+        /// <summary>
+        /// Reads the next message from the socket.
+        /// </summary>
+        /// <param name="cancellationToken">The cancelation token.</param>
+        /// <returns>Returns the task representing the asynchronous task.</returns>
         private async Task ReadNextMessage(CancellationToken cancellationToken = default)
         {
             var buffer = new byte[32768];
@@ -88,6 +117,10 @@ namespace Solnet.Rpc.Core.Sockets
             }
         }
 
-        protected abstract void HandleNewMessage(Memory<byte> mem);
+        /// <summary>
+        /// Handless a new message payload.
+        /// </summary>
+        /// <param name="messagePayload">The message payload.</param>
+        protected abstract void HandleNewMessage(Memory<byte> messagePayload);
     }
 }

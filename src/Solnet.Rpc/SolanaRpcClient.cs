@@ -14,14 +14,13 @@ namespace Solnet.Rpc
 {
     /// <summary>
     /// Implements functionality to interact with the Solana JSON RPC API.
-    /// </summary>
     public class SolanaRpcClient : JsonRpcClient, IRpcClient
     {
         /// <summary>
         /// Message Id generator.
         /// </summary>
         private readonly IdGenerator _idGenerator = new IdGenerator();
-        
+
         /// <summary>
         /// Initialize the Rpc Client with the passed url.
         /// </summary>
@@ -31,10 +30,8 @@ namespace Solnet.Rpc
         internal SolanaRpcClient(string url, ILogger logger, HttpClient httpClient = default) : base(url, logger, httpClient)
         {
         }
-        
 
         #region RequestBuilder
-
         /// <summary>
         /// Build the request for the passed RPC method and parameters.
         /// </summary>
@@ -106,7 +103,6 @@ namespace Solnet.Rpc
             var req = BuildRequest<T>(method, newList);
             return await SendRequest<T>(req);
         }
-
         #endregion
 
         /// <summary>
@@ -223,7 +219,7 @@ namespace Solnet.Rpc
         /// <returns>A task which may return a request result and the rent exemption value.</returns>
         public async Task<RequestResult<ulong>> GetMinimumBalanceForRentExemptionAsync(long accountDataSize)
         {
-            return await SendRequestAsync<ulong>("getMinimumBalanceForRentExemption", new List<object>{ accountDataSize });
+            return await SendRequestAsync<ulong>("getMinimumBalanceForRentExemption", new List<object> { accountDataSize });
         }
         /// <inheritdoc cref="GetMinimumBalanceForRentExemptionAsync"/>
         public RequestResult<ulong> GetMinimumBalanceForRentExemption(long accountDataSize)
@@ -240,7 +236,7 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="GetGenesisHashAsync"/>
         public RequestResult<string> GetGenesisHash()
             => GetGenesisHashAsync().Result;
-        
+
         /// <summary>
         /// Gets the identity pubkey for the current node.
         /// </summary>
@@ -252,7 +248,7 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="GetGenesisHashAsync"/>
         public RequestResult<NodeIdentity> GetIdentity()
             => GetIdentityAsync().Result;
-        
+
         /// <summary>
         /// Gets the current inflation governor.
         /// </summary>
@@ -284,7 +280,7 @@ namespace Solnet.Rpc
         /// <returns>A task which may return a request result and a list of objects representing the inflation reward.</returns>
         public async Task<RequestResult<InflationReward[]>> GetInflationRewardAsync(string[] addresses, ulong epoch = 0)
         {
-            if (epoch != 0) 
+            if (epoch != 0)
                 return await SendRequestAsync<InflationReward[]>("getInflationReward", new List<object> { addresses, epoch });
             return await SendRequestAsync<InflationReward[]>("getInflationReward", new List<object> { addresses });
         }
