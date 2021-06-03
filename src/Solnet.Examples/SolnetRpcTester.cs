@@ -12,7 +12,7 @@ namespace Solnet.Examples
     {
         static void Main(string[] args)
         {
-            var c = ClientFactory.GetClient(Cluster.TestNet);
+            var c = ClientFactory.GetClient(Cluster.MainNet);
 
             //var accInfo = c.GetGenesisHash();
 
@@ -21,12 +21,14 @@ namespace Solnet.Examples
             //var blockTime = c.GetBlockTime(78561320);
 
             var cn = c.GetClusterNodes();
-
             var bh = c.GetBlockHeight();
             Console.WriteLine(bh.Result);
             var identity = c.GetIdentity();
             Console.WriteLine(identity.Result.Identity);
             
+            var inflationGov = c.GetInflationGovernor();
+            Console.WriteLine(inflationGov.Result.Terminal);
+
             /* Large accounts for Token Mint PubKey
             var largeAccounts = c.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
 

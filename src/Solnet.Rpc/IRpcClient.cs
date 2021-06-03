@@ -113,6 +113,13 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetGenesisHashAsync"/>
         RequestResult<NodeIdentity> GetIdentity();
+        /// Gets the current inflation governor.
+        /// </summary>
+        /// <returns>A task which may return a request result and an object representing the current inflation governor.</returns>
+        Task<RequestResult<InflationGovernor>> GetInflationGovernorAsync();
+
+        /// <inheritdoc cref="SolanaRpcClient.GetInflationGovernorAsync"/>
+        RequestResult<InflationGovernor> GetInflationGovernor();
 
         /// <summary>
         /// Gets information about the current supply.
