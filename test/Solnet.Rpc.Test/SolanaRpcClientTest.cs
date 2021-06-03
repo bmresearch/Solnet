@@ -363,6 +363,41 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
+        
+        [TestMethod]
+        public void TestGetInflationReward()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetInflationRewardResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetInflationRewardRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetInflationReward(
+                new string[]
+                {
+                    "6dmNQ5jwLeLk5REvio1JcMshcbvkYMwy26sJ8pbkvStu",
+                    "BGsqMegLpV6n6Ve146sSX2dTjUMj3M92HnU8BbNRMhF2"
+                }, 2);
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(2, result.Result.Length);
+            Assert.AreEqual(2500UL, result.Result[0].Amount);
+            Assert.AreEqual(224UL, result.Result[0].EffectiveSlot);
+            Assert.AreEqual(2UL, result.Result[0].Epoch);
+            Assert.AreEqual(499999442500UL, result.Result[0].PostBalance);
+            Assert.AreEqual(null, result.Result[1]);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
 
         [TestMethod]
         public void TestGetRecentBlockHash()

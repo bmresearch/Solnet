@@ -57,4 +57,30 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public decimal Validator { get; set; }
     }
+
+    /// <summary>
+    /// Represents the inflation reward for a certain address.
+    /// </summary>
+    public class InflationReward
+    {
+        /// <summary>
+        /// Epoch for which a reward occurred.
+        /// </summary>
+        public ulong Epoch { get; set; }
+        
+        /// <summary>
+        /// The slot in which the rewards are effective.
+        /// </summary>
+        public ulong EffectiveSlot { get; set; }
+        
+        /// <summary>
+        /// The reward amount in lamports.
+        /// </summary>
+        public ulong Amount { get; set; }
+        
+        /// <summary>
+        /// Post balance of the account in lamports.
+        /// </summary>
+        public ulong PostBalance { get; set; }
+    }
 }
