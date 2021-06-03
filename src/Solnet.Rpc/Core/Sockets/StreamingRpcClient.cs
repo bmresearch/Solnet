@@ -55,11 +55,9 @@ namespace Solnet.Rpc.Core.Sockets
         {
             var buffer = new byte[32768];
             Memory<byte> mem = new Memory<byte>(buffer);
-            var messageParts = new StringBuilder();
-            int count = 0;
-
             ValueWebSocketReceiveResult result = await ClientSocket.ReceiveAsync(mem, cancellationToken).ConfigureAwait(false);
-            count = result.Count;
+            int count = result.Count;
+
             if (result.MessageType == WebSocketMessageType.Close)
             {
                 await ClientSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, cancellationToken);
@@ -75,7 +73,7 @@ namespace Solnet.Rpc.Core.Sockets
                     while (!result.EndOfMessage)
                     {
                         result = await ClientSocket.ReceiveAsync(mem, cancellationToken).ConfigureAwait(false);
-                        ms.Write(mem.Span);
+                        ms.Write(mem.Slice(0, result.Count).Span);
                         count += result.Count;
                     }
 
@@ -85,8 +83,6 @@ namespace Solnet.Rpc.Core.Sockets
                 {
                     mem = mem.Slice(0, count);
                 }
-                //Console.WriteLine("[" + DateTime.UtcNow.ToLongTimeString() + "][Received]\n" + Encoding.UTF8.GetString(mem.ToArray(), 0, count));
-
 
                 HandleNewMessage(mem);
             }

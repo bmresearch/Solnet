@@ -37,7 +37,7 @@ namespace Solnet.Rpc
 
             if (_logger?.IsEnabled(LogLevel.Information) ?? false)
             {
-            var str = Encoding.UTF8.GetString(mem.Span);
+                var str = Encoding.UTF8.GetString(mem.Span);
                 _logger?.LogInformation($"[Received]{str}");
             }
 
@@ -55,6 +55,11 @@ namespace Solnet.Rpc
                         if (prop == "params")
                         {
                             HandleDataMessage(ref asd, method);
+                            handled = true;
+                        }
+                        if (prop == "error")
+                        {
+                            HandleError(ref asd);
                             handled = true;
                         }
                         break;
@@ -95,6 +100,39 @@ namespace Solnet.Rpc
             }
         }
 
+        private void HandleError(ref Utf8JsonReader reader)
+        {
+            JsonSerializerOptions opts = new JsonSerializerOptions() { MaxDepth = 64, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var err = JsonSerializer.Deserialize<ErrorContent>(ref reader, opts);
+
+            reader.Read();
+
+            //var prop = reader.GetString(); //don't care about property name
+
+            reader.Read();
+
+            var id = reader.GetInt32();
+
+            var sub = RemoveUnconfirmedSubscription(id);
+
+            sub?.ChangeState(SubscriptionStatus.ErrorSubscribing, err.Message, err.Code.ToString());
+        }
+
+
+        #region SubscriptionMapHandling
+        private SubscriptionState RemoveUnconfirmedSubscription(int id)
+        {
+            SubscriptionState sub;
+            lock (this)
+            {
+                if (!unconfirmedRequests.Remove(id, out sub))
+                {
+                    _logger.LogDebug(new EventId(), $"No unconfirmed subscription found with ID:{id}");
+                }
+            }
+            return sub;
+        }
+
         private void RemoveSubscription(int id, bool value)
         {
             SubscriptionState sub;
@@ -109,13 +147,7 @@ namespace Solnet.Rpc
             {
                 sub?.ChangeState(SubscriptionStatus.Unsubscribed);
             }
-            else
-            {
-                sub?.ChangeState(sub.State, "Subscription doesnt exists");
-            }
         }
-
-        #region SubscriptionMapHandling
 
         private void ConfirmSubscription(int internalId, int resultId)
         {
@@ -202,7 +234,7 @@ namespace Solnet.Rpc
         {
             var sub = new SubscriptionState<ResponseValue<AccountInfo>>(this, SubscriptionChannel.Account, callback, new List<object> { pubkey });
 
-            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "accountSubscribe", new List<object> { pubkey, new Dictionary<string, string> { { "encoding", "jsonParsed" } } });
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "accountSubscribe", new List<object> { pubkey, new Dictionary<string, string> { { "encoding", "base64" } } });
 
             return await Subscribe(sub, msg).ConfigureAwait(false);
         }
@@ -296,7 +328,7 @@ namespace Solnet.Rpc
                 }
             });
 
-            if(_logger?.IsEnabled(LogLevel.Information) ?? false)
+            if (_logger?.IsEnabled(LogLevel.Information) ?? false)
             {
                 var jsonString = Encoding.UTF8.GetString(json);
                 _logger?.LogInformation(new EventId(msg.Id, msg.Method), $"[Sending]{jsonString}");
@@ -307,12 +339,13 @@ namespace Solnet.Rpc
             try
             {
                 await ClientSocket.SendAsync(mem, WebSocketMessageType.Text, true, CancellationToken.None).ConfigureAwait(false);
-            AddSubscription(sub, msg.Id);
+                AddSubscription(sub, msg.Id);
             }
             catch (Exception e)
             {
+                sub.ChangeState(SubscriptionStatus.ErrorSubscribing, e.Message);
                 _logger?.LogDebug(new EventId(msg.Id, msg.Method), e, $"Unable to send message");
-        }
+            }
 
             return sub;
         }

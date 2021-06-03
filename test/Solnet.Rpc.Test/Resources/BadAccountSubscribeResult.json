@@ -1,0 +1,8 @@
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32602,
+    "message": "Invalid Request: Invalid pubkey provided"
+  },
+  "id": 0
+}
