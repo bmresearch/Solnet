@@ -10,6 +10,7 @@ namespace Solnet.Rpc.Core.Sockets
     {
         WaitingResult,
         Unsubscribed,
-        Subscribed
+        Subscribed,
+        ErrorSubscribing
     }
 }
