@@ -1,0 +1,11 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "foundation": 0.05,
+    "foundationTerm": 7,
+    "initial": 0.15,
+    "taper": 0.15,
+    "terminal": 0.015
+  },
+  "id": 1
+}

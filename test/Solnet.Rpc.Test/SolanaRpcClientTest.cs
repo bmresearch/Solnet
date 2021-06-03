@@ -297,12 +297,41 @@ namespace Solnet.Rpc.Test
             };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            
             var result = sut.GetIdentity();
-
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual("2r1F4iWqVcb8M1DbAjQuFpebkQHY9hcVU4WuW2DJBppN", result.Result.Identity);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        [TestMethod]
+        public void TestGetInflationGovernor()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetInflationGovernorResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetInflationGovernorRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetInflationGovernor();
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual((decimal) 0.05, result.Result.Foundation);
+            Assert.AreEqual(7, result.Result.FoundationTerm);
+            Assert.AreEqual((decimal) 0.15, result.Result.Initial);
+            Assert.AreEqual((decimal) 0.15, result.Result.Taper);
+            Assert.AreEqual((decimal) 0.015, result.Result.Terminal);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
