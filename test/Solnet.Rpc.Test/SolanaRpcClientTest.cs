@@ -640,6 +640,50 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
+        
+        [TestMethod]
+        public void TestGetVoteAccounts()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetVoteAccountsResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetVoteAccountsRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetVoteAccounts();
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(1, result.Result.Current.Length);
+            Assert.AreEqual(1, result.Result.Delinquent.Length);
+            
+            Assert.AreEqual(81274518UL, result.Result.Current[0].RootSlot);
+            Assert.AreEqual("3ZT31jkAGhUaw8jsy4bTknwBMP8i4Eueh52By4zXcsVw", result.Result.Current[0].VotePublicKey);
+            Assert.AreEqual("B97CCUW3AEZFGy6uUg6zUdnNYvnVq5VG8PUtb2HayTDD", result.Result.Current[0].NodePublicKey);
+            Assert.AreEqual(42UL, result.Result.Current[0].ActivatedStake);
+            Assert.AreEqual(0, result.Result.Current[0].Commission);
+            Assert.AreEqual(147UL, result.Result.Current[0].LastVote);
+            Assert.AreEqual(true, result.Result.Current[0].EpochVoteAccount);
+            Assert.AreEqual(2, result.Result.Current[0].EpochCredits.Length);
+            
+            Assert.AreEqual(1234UL, result.Result.Delinquent[0].RootSlot);
+            Assert.AreEqual("CmgCk4aMS7KW1SHX3s9K5tBJ6Yng2LBaC8MFov4wx9sm", result.Result.Delinquent[0].VotePublicKey);
+            Assert.AreEqual("6ZPxeQaDo4bkZLRsdNrCzchNQr5LN9QMc9sipXv9Kw8f", result.Result.Delinquent[0].NodePublicKey);
+            Assert.AreEqual(0UL, result.Result.Delinquent[0].ActivatedStake);
+            Assert.AreEqual(false, result.Result.Delinquent[0].EpochVoteAccount);
+            Assert.AreEqual(127UL, result.Result.Delinquent[0].Commission);
+            Assert.AreEqual(0UL, result.Result.Delinquent[0].LastVote);
+            Assert.AreEqual(0, result.Result.Delinquent[0].EpochCredits.Length);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
 
         [TestMethod]
         public void TestGetTransactionCount()
