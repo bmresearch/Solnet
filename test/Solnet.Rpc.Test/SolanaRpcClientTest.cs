@@ -91,6 +91,68 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
+        public void TestBadAddressExceptionRequest()
+        {
+            var msg = "something bad happenned";
+            var responseData = File.ReadAllText("Resources/Http/EmptyPayloadResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/EmptyPayloadRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            messageHandlerMock.Protected().Setup(
+                    "SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>()
+                ).Throws(new HttpRequestException(msg));
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient("https://non.existing.adddress.com", null, httpClient);
+
+            var result = sut.GetBalance("");
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.HttpStatusCode);
+            Assert.AreEqual(msg, result.Reason);
+            Assert.IsFalse(result.WasHttpRequestSuccessful);
+            Assert.IsFalse(result.WasRequestSuccessfullyHandled);
+        }
+
+
+        [TestMethod]
+        public void TestBadAddress2ExceptionRequest()
+        {
+            var msg = "not found bro";
+            var responseData = File.ReadAllText("Resources/Http/EmptyPayloadResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/EmptyPayloadRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            messageHandlerMock.Protected().Setup(
+                    "SendAsync",
+                    ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>()
+                ).Throws(new HttpRequestException(msg, null, HttpStatusCode.NotFound));
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient("https://valid.server.but.invalid.endpoint.com", null, httpClient);
+
+            var result = sut.GetBalance("");
+            Assert.AreEqual(HttpStatusCode.NotFound, result.HttpStatusCode);
+            Assert.AreEqual(msg, result.Reason);
+            Assert.IsFalse(result.WasHttpRequestSuccessful);
+            Assert.IsFalse(result.WasRequestSuccessfullyHandled);
+        }
+
+
+        [TestMethod]
         public void TestGetAccountInfo()
         {
             var responseData = File.ReadAllText("Resources/Http/GetAccountInfoResponse.json");
