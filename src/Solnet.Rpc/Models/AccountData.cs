@@ -90,8 +90,25 @@ namespace Solnet.Rpc.Models
     /// <summary>
     /// Represents a large token account.
     /// </summary>
-    public class LargeAccount : TokenBalance
+    public class LargeTokenAccount : TokenBalance
     {
+        /// <summary>
+        /// The address of the token account.
+        /// </summary>
+        public string Address { get; set; }
+    }
+    
+    /// <summary>
+    /// Represents a large account.
+    /// </summary>
+    public class LargeAccount
+    {
+        /// <summary>
+        /// The lamports balance of the account.
+        /// </summary>
+        public ulong Lamports { get; set; }
+
+        
         /// <summary>
         /// The address of the token account.
         /// </summary>

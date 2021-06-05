@@ -76,15 +76,6 @@ namespace Solnet.Rpc
         RequestResult<ClusterNode[]> GetClusterNodes();
 
         /// <summary>
-        /// Gets identity and transaction information about a confirmed block, identified by slot.
-        /// </summary>
-        /// <returns>A task which may return a request result and information about the nodes participating in the cluster.</returns>
-        Task<RequestResult<ClusterNode[]>> GetConfirmedBlockAsync(ulong slot);
-
-        /// <inheritdoc cref="SolanaRpcClient.GetConfirmedBlockAsync"/>
-        RequestResult<ClusterNode[]> GetConfirmedBlock(ulong slot);
-
-        /// <summary>
         /// Gets a recent block hash.
         /// </summary>
         /// <returns>A task which may return a request result and recent block hash.</returns>
@@ -92,10 +83,11 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetBlockTimeAsync"/>
         RequestResult<ResponseValue<BlockHash>> GetRecentBlockHash();
-
+        
         /// <summary>
         /// Gets the minimum balance required to make account rent exempt.
         /// </summary>
+        /// <param name="accountDataSize">The account data size.</param>
         /// <returns>A task which may return a request result and the rent exemption value.</returns>
         Task<RequestResult<ulong>> GetMinimumBalanceForRentExemptionAsync(long accountDataSize);
 
@@ -141,11 +133,80 @@ namespace Solnet.Rpc
         /// <summary>
         /// Gets the inflation reward for a list of addresses for an epoch.
         /// </summary>
+        /// <param name="addresses">The list of addresses to query, as base-58 encoded strings.</param>
+        /// <param name="epoch">The epoch.</param>
         /// <returns>A task which may return a request result and a list of objects representing the inflation reward.</returns>
         Task<RequestResult<InflationReward[]>> GetInflationRewardAsync(string[] addresses, ulong epoch = 0);
 
         /// <inheritdoc cref="SolanaRpcClient.GetInflationRewardAsync"/>
         RequestResult<InflationReward[]> GetInflationReward(string[] addresses, ulong epoch = 0);
+        
+        /// <summary>
+        /// Gets the 20 largest accounts, by lamport balance.
+        /// </summary>
+        /// <param name="filter">Filter results by account type.</param>
+        /// <returns>A task which may return a request result and a list about the largest accounts.</returns>
+        /// <remarks>Results may be cached up to two hours.</remarks>
+        Task<RequestResult<ResponseValue<LargeAccount[]>>> GetLargestAccountsAsync(string filter);
+
+        /// <inheritdoc cref="SolanaRpcClient.GetInflationRewardAsync"/>
+        RequestResult<ResponseValue<LargeAccount[]>> GetLargestAccounts(string filter);
+        
+        /// <summary>
+        /// Gets the maximum slot seen from retransmit stage.
+        /// </summary>
+        /// <returns>A task which may return a request result the maximum slot.</returns>
+        Task<RequestResult<ulong>> GetMaxRetransmitSlotAsync();
+
+        /// <inheritdoc cref="SolanaRpcClient.GetMaxRetransmitSlotAsync"/>
+        RequestResult<ulong> GetMaxRetransmitSlot();
+        
+        /// <summary>
+        /// Gets the maximum slot seen from after shred insert.
+        /// </summary>
+        /// <returns>A task which may return a request result the maximum slot.</returns>
+        Task<RequestResult<ulong>> GetMaxShredInsertSlotAsync();
+
+        /// <inheritdoc cref="SolanaRpcClient.GetMaxShredInsertSlotAsync"/>
+        RequestResult<ulong> GetMaxShredInsertSlot();
+
+        /// <summary>
+        /// Gets the highest slot that the node has a snapshot for.
+        /// </summary>
+        /// <returns>A task which may return a request result the highest slot with a snapshot.</returns>
+        Task<RequestResult<ulong>> GetSnapshotSlotAsync();
+
+        /// <inheritdoc cref="SolanaRpcClient.GetSnapshotSlotAsync"/>
+        RequestResult<ulong> GetSnapshotSlot();
+
+        /// <summary>
+        /// Gets the current slot the node is processing
+        /// </summary>
+        /// <returns>A task which may return a request result the current slot.</returns>
+        Task<RequestResult<ulong>> GetSlotAsync();
+
+        /// <inheritdoc cref="SolanaRpcClient.GetSlotAsync"/>
+        RequestResult<ulong> GetSlot();
+        
+        /// <summary>
+        /// Gets the current slot leader.
+        /// </summary>
+        /// <returns>A task which may return a request result the slot leader.</returns>
+        Task<RequestResult<string>> GetSlotLeaderAsync();
+
+        /// <inheritdoc cref="SolanaRpcClient.GetSlotLeaderAsync"/>
+        RequestResult<string> GetSlotLeader();
+        
+        /// <summary>
+        /// Gets the slot leaders for a given slot range.
+        /// </summary>
+        /// <param name="start">The start slot.</param>
+        /// <param name="limit">The result limit.</param>
+        /// <returns>A task which may return a request result and a list slot leaders.</returns>
+        Task<RequestResult<string[]>> GetSlotLeadersAsync(ulong start, ulong limit);
+
+        /// <inheritdoc cref="SolanaRpcClient.GetSlotLeadersAsync"/>
+        RequestResult<string[]> GetSlotLeaders(ulong start, ulong limit);
 
         /// <summary>
         /// Gets information about the current supply.
@@ -160,7 +221,7 @@ namespace Solnet.Rpc
         /// Gets the token balance of an SPL Token account.
         /// </summary>
         /// <param name="splTokenAccountPublicKey">Public key of Token account to query, as base-58 encoded string.</param>
-        /// <returns>A task which may return a request result and information about largest accounts.</returns>
+        /// <returns>A task which may return a request result and information about the token account balance.</returns>
         Task<RequestResult<ResponseValue<TokenBalance>>> GetTokenAccountBalanceAsync(string splTokenAccountPublicKey);
 
         /// <inheritdoc cref="SolanaRpcClient.GetTokenAccountBalanceAsync"/>
@@ -172,7 +233,7 @@ namespace Solnet.Rpc
         /// <param name="ownerPubKey">Public key of account owner query, as base-58 encoded string.</param>
         /// <param name="tokenMintPubKey">Public key of the specific token Mint to limit accounts to, as base-58 encoded string.</param>
         /// <param name="tokenProgramId">Public key of the Token program ID that owns the accounts, as base-58 encoded string.</param>
-        /// <returns>A task which may return a request result and information about largest accounts.</returns>
+        /// <returns>A task which may return a request result and information about token accounts by delegate</returns>
         Task<RequestResult<ResponseValue<TokenAccount[]>>> GetTokenAccountsByDelegateAsync(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "");
 
@@ -186,7 +247,7 @@ namespace Solnet.Rpc
         /// <param name="ownerPubKey">Public key of account owner query, as base-58 encoded string.</param>
         /// <param name="tokenMintPubKey">Public key of the specific token Mint to limit accounts to, as base-58 encoded string.</param>
         /// <param name="tokenProgramId">Public key of the Token program ID that owns the accounts, as base-58 encoded string.</param>
-        /// <returns>A task which may return a request result and information about largest accounts.</returns>
+        /// <returns>A task which may return a request result and information about token accounts by owner.</returns>
         Task<RequestResult<ResponseValue<TokenAccount[]>>> GetTokenAccountsByOwnerAsync(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "");
 
@@ -195,14 +256,14 @@ namespace Solnet.Rpc
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "");
 
         /// <summary>
-        /// Gets the 20 largest accounts of a particular SPL Token.
+        /// Gets the 20 largest token accounts of a particular SPL Token.
         /// </summary>
         /// <param name="tokenMintPubKey">Public key of Token Mint to query, as base-58 encoded string.</param>
-        /// <returns>A task which may return a request result and information about largest accounts.</returns>
-        Task<RequestResult<ResponseValue<LargeAccount[]>>> GetTokenLargestAccountsAsync(string tokenMintPubKey);
+        /// <returns>A task which may return a request result and information about largest token accounts.</returns>
+        Task<RequestResult<ResponseValue<LargeTokenAccount[]>>> GetTokenLargestAccountsAsync(string tokenMintPubKey);
 
         /// <inheritdoc cref="SolanaRpcClient.GetTokenLargestAccountsAsync"/>
-        RequestResult<ResponseValue<LargeAccount[]>> GetTokenLargestAccounts(string tokenMintPubKey);
+        RequestResult<ResponseValue<LargeTokenAccount[]>> GetTokenLargestAccounts(string tokenMintPubKey);
 
         /// <summary>
         /// Get the token supply of an SPL Token type.

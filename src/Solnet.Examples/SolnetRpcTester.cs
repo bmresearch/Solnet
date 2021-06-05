@@ -41,7 +41,15 @@ namespace Solnet.Examples
             
             Console.WriteLine(va.Result.Current.Length);
             Console.WriteLine(va.Result.Delinquent.Length);
+
+            var inflation = c.GetInflationReward(
+                new []{ "25xzEf8cqLLEm2wyZTEBtCDchsUFm3SVESjs6eEFHJWe", "GPQdoUUDQXM1gWgRVwBbYmDqAgxoZN3bhVeKr1P8jd4c"});
+
             
+            Console.WriteLine(inflation.Result.Length);
+            var res = c.GetLargestAccounts("circulating");
+            
+            Console.WriteLine(res.Result.Value.Length);
             /* Large accounts for Token Mint PubKey
             var largeAccounts = c.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
 

@@ -460,6 +460,121 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
+        
+        [TestMethod]
+        public void TestGetInflationRewardNoEpoch()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetInflationRewardNoEpochResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetInflationRewardNoEpochRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetInflationReward(
+                new string[]
+                {
+                    "25xzEf8cqLLEm2wyZTEBtCDchsUFm3SVESjs6eEFHJWe",
+                    "GPQdoUUDQXM1gWgRVwBbYmDqAgxoZN3bhVeKr1P8jd4c"
+                });
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(2, result.Result.Length);
+            Assert.AreEqual(1758149777313UL, result.Result[0].Amount);
+            Assert.AreEqual(81216004UL, result.Result[0].EffectiveSlot);
+            Assert.AreEqual(187UL, result.Result[0].Epoch);
+            Assert.AreEqual(1759149777313UL, result.Result[0].PostBalance);
+            Assert.AreEqual(null, result.Result[1]);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        [TestMethod]
+        public void TestGetLargestAccounts()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetLargestAccountsResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetLargestAccountsRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetLargestAccounts("circulating");
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(20, result.Result.Value.Length);
+            Assert.AreEqual("6caH6ayzofHnP8kcPQTEBrDPG4A2qDo1STE5xTMJ52k8", result.Result.Value[0].Address);
+            Assert.AreEqual(20161157050000000UL, result.Result.Value[0].Lamports);
+            Assert.AreEqual("gWgqQ4udVxE3uNxRHEwvftTHwpEmPHAd8JR9UzaHbR2", result.Result.Value[19].Address);
+            Assert.AreEqual(2499999990454560UL, result.Result.Value[19].Lamports);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        
+        [TestMethod]
+        public void TestGetMaxRetransmitSlot()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetMaxRetransmitSlotResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetMaxRetransmitSlotRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetMaxRetransmitSlot();
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(1234UL, result.Result);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        [TestMethod]
+        public void TestGetShredInsertSlot()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetMaxShredInsertSlotResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetMaxShredInsertSlotRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetMaxShredInsertSlot();
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(1234UL, result.Result);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
 
         [TestMethod]
         public void TestGetRecentBlockHash()
@@ -484,6 +599,133 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(79206433UL, result.Result.Context.Slot);
             Assert.AreEqual("FJGZeJiYkwCZCnFbGujHxfVGnFgrgZiomczHr247Tn2p", result.Result.Value.Blockhash);
             Assert.AreEqual(5000UL, result.Result.Value.FeeCalculator.LamportsPerSignature);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        [TestMethod]
+        public void TestGetSlotLeadersEmpty()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetSlotLeadersEmptyResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetSlotLeadersEmptyRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetSlotLeaders(0, 0);
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        [TestMethod]
+        public void TestGetSlotLeaders()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetSlotLeadersResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetSlotLeadersRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetSlotLeaders(100, 10);
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(10, result.Result.Length);
+            Assert.AreEqual("ChorusmmK7i1AxXeiTtQgQZhQNiXYU84ULeaYF1EH15n", result.Result[0]);
+            Assert.AreEqual("Awes4Tr6TX8JDzEhCZY2QVNimT6iD1zWHzf1vNyGvpLM", result.Result[4]);
+            Assert.AreEqual("DWvDTSh3qfn88UoQTEKRV2JnLt5jtJAVoiCo3ivtMwXP", result.Result[8]);
+            
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        [TestMethod]
+        public void TestGetSlotLeader()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetSlotLeaderResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetSlotLeaderRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetSlotLeader();
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual("ENvAW7JScgYq6o4zKZwewtkzzJgDzuJAFxYasvmEQdpS", result.Result);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        [TestMethod]
+        public void TestGetSlot()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetSlotResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetSlotRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetSlot();
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(1234UL, result.Result);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        [TestMethod]
+        public void TestGetSnapshotSlot()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetSnapshotSlotResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetSnapshotSlotRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetSnapshotSlot();
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(100UL, result.Result);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
