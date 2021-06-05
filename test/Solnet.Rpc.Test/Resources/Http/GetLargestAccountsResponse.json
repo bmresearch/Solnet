@@ -1,0 +1,91 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "context": {
+      "slot": 81411075
+    },
+    "value": [
+      {
+        "address": "6caH6ayzofHnP8kcPQTEBrDPG4A2qDo1STE5xTMJ52k8",
+        "lamports": 20161157050000000
+      },
+      {
+        "address": "3yFwqXBfZY4jBVUafQ1YEXw189y2dN3V5KQq9uzBDy1E",
+        "lamports": 15631178117851234
+      },
+      {
+        "address": "6ZRCB7AAqGre6c72PRz3MHLC73VMYvJ8bi9KHf1HFpNk",
+        "lamports": 13122962264444745
+      },
+      {
+        "address": "445zS9jNYW4ki1uKQ9m1hSnYvFhJPBY7a7EFJZj6JaQr",
+        "lamports": 5974598991160300
+      },
+      {
+        "address": "2LFuenHsgr7nk5CrDsUpEZFiTsjwsUJgGyYzYZzPB6hZ",
+        "lamports": 5145738328049633
+      },
+      {
+        "address": "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+        "lamports": 4502443310734161
+      },
+      {
+        "address": "8BseXT9EtoEhBTKFFYkwTnjKSUZwhtmdKY2Jrj8j45Rt",
+        "lamports": 4409831684685398
+      },
+      {
+        "address": "H8VT3V6EDiYiQqmeDgqZJf4Tt76Qe6WZjPhighAGPL5T",
+        "lamports": 4114042196611021
+      },
+      {
+        "address": "Amf2mf2Ciap5wYAEKDtGoQHfHPWaKbyFYhutMK46hTRF",
+        "lamports": 3886159958984435
+      },
+      {
+        "address": "JBpj7yp4Afvb71TmanVwJZXGeX4kqbGFvjCFCRo3EbTM",
+        "lamports": 3384514208028365
+      },
+      {
+        "address": "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S",
+        "lamports": 2655552065353044
+      },
+      {
+        "address": "8PjJTv657aeN9p5R2WoM6pPSz385chvTTytUWaEjSjkq",
+        "lamports": 2502414688140917
+      },
+      {
+        "address": "AHB94zKUASftTdqgdfiDSdnPJHkEFp7zX3yMrcSxABsv",
+        "lamports": 2502414681044326
+      },
+      {
+        "address": "3D91zLQPRLamwJfGR5ZYMKQb4C18gsJNaSdmB6b2wLhw",
+        "lamports": 2502395550979704
+      },
+      {
+        "address": "AogcwQ1ubM76EPMhSD5cw1ES4W5econvQCFmBL6nTW1",
+        "lamports": 2502390137389273
+      },
+      {
+        "address": "3bHbMa5VW3np5AJazuacidrN4xPZgwhcXigmjwHmBg5e",
+        "lamports": 2502383452781620
+      },
+      {
+        "address": "AAvhZcibt4Ned7dmXDDGeHbd1wfDTo9Di3WiFJbXkBaL",
+        "lamports": 2500000009995000
+      },
+      {
+        "address": "AYgECURrvuX6GtFe4tX7aAj87Xc5r5Znx96ntNk1nCv",
+        "lamports": 2500000000000000
+      },
+      {
+        "address": "Hc36Wh1ZqYGzGAnsJWNT9r2gY3h9n89uDpxZPsmEsiE3",
+        "lamports": 2499999990454560
+      },
+      {
+        "address": "gWgqQ4udVxE3uNxRHEwvftTHwpEmPHAd8JR9UzaHbR2",
+        "lamports": 2499999990454560
+      }
+    ]
+  },
+  "id": 0
+}

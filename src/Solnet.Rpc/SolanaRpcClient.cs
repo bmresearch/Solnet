@@ -160,7 +160,7 @@ namespace Solnet.Rpc
         /// <summary>
         /// Gets the block commitment of a certain block, identified by slot.
         /// </summary>
-        /// <param name="block">The block.</param>
+        /// <param name="slot">The slot.</param>
         /// <returns>A task which may return a request result and block commitment information.</returns>
         public async Task<RequestResult<BlockCommitment>> GetBlockCommitmentAsync(ulong slot)
         {
@@ -174,7 +174,7 @@ namespace Solnet.Rpc
         /// <summary>
         /// Gets the estimated production time for a certain block, identified by slot.
         /// </summary>
-        /// <param name="block">The block.</param>
+        /// <param name="slot">The slot.</param>
         /// <returns>A task which may return a request result and block production time as Unix timestamp (seconds since Epoch).</returns>
         public async Task<RequestResult<ulong>> GetBlockTimeAsync(ulong slot)
         {
@@ -199,19 +199,6 @@ namespace Solnet.Rpc
             => GetClusterNodesAsync().Result;
 
         /// <summary>
-        /// Gets identity and transaction information about a confirmed block, identified by slot.
-        /// </summary>
-        /// <returns>A task which may return a request result and information about the nodes participating in the cluster.</returns>
-        public async Task<RequestResult<ClusterNode[]>> GetConfirmedBlockAsync(ulong slot)
-        {
-            return await SendRequestAsync<ClusterNode[]>("getConfirmedBlock", new List<object> {slot});
-        }
-
-        /// <inheritdoc cref="GetConfirmedBlockAsync"/>
-        public RequestResult<ClusterNode[]> GetConfirmedBlock(ulong slot)
-            => GetConfirmedBlockAsync(slot).Result;
-
-        /// <summary>
         /// Gets a recent block hash.
         /// </summary>
         /// <returns>A task which may return a request result and recent block hash.</returns>
@@ -225,8 +212,35 @@ namespace Solnet.Rpc
             => GetRecentBlockHashAsync().Result;
 
         /// <summary>
+        /// Gets the maximum slot seen from retransmit stage.
+        /// </summary>
+        /// <returns>A task which may return a request result the maximum slot.</returns>
+        public async Task<RequestResult<ulong>> GetMaxRetransmitSlotAsync()
+        {
+            return await SendRequestAsync<ulong>("getMaxRetransmitSlot");
+        }
+
+        /// <inheritdoc cref="GetMaxRetransmitSlotAsync"/>
+        public RequestResult<ulong> GetMaxRetransmitSlot()
+            => GetMaxRetransmitSlotAsync().Result;
+
+        /// <summary>
+        /// Gets the maximum slot seen from after shred insert.
+        /// </summary>
+        /// <returns>A task which may return a request result the maximum slot.</returns>
+        public async Task<RequestResult<ulong>> GetMaxShredInsertSlotAsync()
+        {
+            return await SendRequestAsync<ulong>("getMaxShredInsertSlot");
+        }
+
+        /// <inheritdoc cref="GetMaxShredInsertSlotAsync"/>
+        public RequestResult<ulong> GetMaxShredInsertSlot()
+            => GetMaxShredInsertSlotAsync().Result;
+
+        /// <summary>
         /// Gets the minimum balance required to make account rent exempt.
         /// </summary>
+        /// <param name="accountDataSize">The account data size.</param>
         /// <returns>A task which may return a request result and the rent exemption value.</returns>
         public async Task<RequestResult<ulong>> GetMinimumBalanceForRentExemptionAsync(long accountDataSize)
         {
@@ -293,6 +307,8 @@ namespace Solnet.Rpc
         /// <summary>
         /// Gets the inflation reward for a list of addresses for an epoch.
         /// </summary>
+        /// <param name="addresses">The list of addresses to query for, as base-58 encoded strings.</param>
+        /// <param name="epoch">The epoch.</param>
         /// <returns>A task which may return a request result and a list of objects representing the inflation reward.</returns>
         public async Task<RequestResult<InflationReward[]>> GetInflationRewardAsync(string[] addresses, ulong epoch = 0)
         {
@@ -305,6 +321,73 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="GetInflationRewardAsync"/>
         public RequestResult<InflationReward[]> GetInflationReward(string[] addresses, ulong epoch = 0)
             => GetInflationRewardAsync(addresses, epoch).Result;
+
+        /// <summary>
+        /// Gets the 20 largest accounts, by lamport balance.
+        /// </summary>
+        /// <param name="filter">Filter results by account type. Available types: circulating/nonCirculating </param>
+        /// <returns>A task which may return a request result the current slot.</returns>
+        /// <remarks>Results may be cached up to two hours.</remarks>
+        public async Task<RequestResult<ResponseValue<LargeAccount[]>>> GetLargestAccountsAsync(string filter)
+        {
+            return await SendRequestAsync<ResponseValue<LargeAccount[]>>("getLargestAccounts",
+                new List<object>{new Dictionary<string, string> {{"filter", filter}}});
+        }
+
+        /// <inheritdoc cref="GetSlotAsync"/>
+        public RequestResult<ResponseValue<LargeAccount[]>> GetLargestAccounts(string filter) =>
+            GetLargestAccountsAsync(filter).Result;
+
+        /// <summary>
+        /// Gets the highest slot that the node has a snapshot for.
+        /// </summary>
+        /// <returns>A task which may return a request result the highest slot with a snapshot.</returns>
+        public async Task<RequestResult<ulong>> GetSnapshotSlotAsync()
+        {
+            return await SendRequestAsync<ulong>("getSnapshotSlot");
+        }
+
+        /// <inheritdoc cref="GetSnapshotSlotAsync"/>
+        public RequestResult<ulong> GetSnapshotSlot() => GetSnapshotSlotAsync().Result;
+        
+        /// <summary>
+        /// Gets the current slot the node is processing
+        /// </summary>
+        /// <returns>A task which may return a request result the current slot.</returns>
+        public async Task<RequestResult<ulong>> GetSlotAsync()
+        {
+            return await SendRequestAsync<ulong>("getSlot");
+        }
+
+        /// <inheritdoc cref="GetSlotAsync"/>
+        public RequestResult<ulong> GetSlot() => GetSlotAsync().Result;
+
+        /// <summary>
+        /// Gets the current slot leader.
+        /// </summary>
+        /// <returns>A task which may return a request result the slot leader.</returns>
+        public async Task<RequestResult<string>> GetSlotLeaderAsync()
+        {
+            return await SendRequestAsync<string>("getSlotLeader");
+        }
+
+        /// <inheritdoc cref="GetSlotLeaderAsync"/>
+        public RequestResult<string> GetSlotLeader() => GetSlotLeaderAsync().Result;
+
+        /// <summary>
+        /// Gets the slot leaders for a given slot range.
+        /// </summary>
+        /// <param name="start">The start slot.</param>
+        /// <param name="limit">The result limit.</param>
+        /// <returns>A task which may return a request result and a list slot leaders.</returns>
+        public async Task<RequestResult<string[]>> GetSlotLeadersAsync(ulong start, ulong limit)
+        {
+            return await SendRequestAsync<string[]>("getSlotLeaders", new List<object> {start, limit});
+        }
+
+        /// <inheritdoc cref="GetSlotLeadersAsync"/>
+        public RequestResult<string[]> GetSlotLeaders(ulong start, ulong limit)
+            => GetSlotLeadersAsync(start, limit).Result;
 
         #region Token Supply and Balances
 
@@ -325,7 +408,7 @@ namespace Solnet.Rpc
         /// Gets the token balance of an SPL Token account.
         /// </summary>
         /// <param name="splTokenAccountPublicKey">Public key of Token account to query, as base-58 encoded string.</param>
-        /// <returns>A task which may return a request result and information about largest accounts.</returns>
+        /// <returns>A task which may return a request result and information about token account balance.</returns>
         public async Task<RequestResult<ResponseValue<TokenBalance>>> GetTokenAccountBalanceAsync(
             string splTokenAccountPublicKey)
         {
@@ -343,7 +426,7 @@ namespace Solnet.Rpc
         /// <param name="ownerPubKey">Public key of account owner query, as base-58 encoded string.</param>
         /// <param name="tokenMintPubKey">Public key of the specific token Mint to limit accounts to, as base-58 encoded string.</param>
         /// <param name="tokenProgramId">Public key of the Token program ID that owns the accounts, as base-58 encoded string.</param>
-        /// <returns>A task which may return a request result and information about largest accounts.</returns>
+        /// <returns>A task which may return a request result and information about token accounts by delegate.</returns>
         public async Task<RequestResult<ResponseValue<TokenAccount[]>>> GetTokenAccountsByDelegateAsync(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "")
         {
@@ -368,7 +451,7 @@ namespace Solnet.Rpc
         /// <param name="ownerPubKey">Public key of account owner query, as base-58 encoded string.</param>
         /// <param name="tokenMintPubKey">Public key of the specific token Mint to limit accounts to, as base-58 encoded string.</param>
         /// <param name="tokenProgramId">Public key of the Token program ID that owns the accounts, as base-58 encoded string.</param>
-        /// <returns>A task which may return a request result and information about largest accounts.</returns>
+        /// <returns>A task which may return a request result and information about token accounts by owner.</returns>
         public async Task<RequestResult<ResponseValue<TokenAccount[]>>> GetTokenAccountsByOwnerAsync(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "")
         {
@@ -392,15 +475,15 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="tokenMintPubKey">Public key of Token Mint to query, as base-58 encoded string.</param>
         /// <returns>A task which may return a request result and information about largest accounts.</returns>
-        public async Task<RequestResult<ResponseValue<LargeAccount[]>>> GetTokenLargestAccountsAsync(
+        public async Task<RequestResult<ResponseValue<LargeTokenAccount[]>>> GetTokenLargestAccountsAsync(
             string tokenMintPubKey)
         {
-            return await SendRequestAsync<ResponseValue<LargeAccount[]>>("getTokenLargestAccounts",
+            return await SendRequestAsync<ResponseValue<LargeTokenAccount[]>>("getTokenLargestAccounts",
                 new List<object> {tokenMintPubKey});
         }
 
         /// <inheritdoc cref="GetTokenLargestAccountsAsync"/>
-        public RequestResult<ResponseValue<LargeAccount[]>> GetTokenLargestAccounts(string tokenMintPubKey)
+        public RequestResult<ResponseValue<LargeTokenAccount[]>> GetTokenLargestAccounts(string tokenMintPubKey)
             => GetTokenLargestAccountsAsync(tokenMintPubKey).Result;
 
         /// <summary>
@@ -445,7 +528,7 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="GetVersionAsync"/>
         public RequestResult<NodeVersion> GetVersion()
             => GetVersionAsync().Result;
-        
+
         /// <summary>
         /// Gets the account info and associated stake for all voting accounts in the current bank.
         /// </summary>
