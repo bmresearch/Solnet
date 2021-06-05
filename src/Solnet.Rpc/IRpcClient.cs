@@ -389,6 +389,17 @@ namespace Solnet.Rpc
         RequestResult<string[]> GetSlotLeaders(ulong start, ulong limit);
 
         /// <summary>
+        /// Gets the epoch activation information for a stake account.
+        /// </summary>
+        /// <param name="publicKey">Public key of account to query, as base-58 encoded string</param>
+        /// <param name="epoch">Epoch for which to calculate activation details.</param>
+        /// <returns>A task which may return a request result and information about the stake activation.</returns>
+        Task<RequestResult<StakeActivationInfo>> GetStakeActivationAsync(string publicKey, ulong epoch = 0);
+
+        /// <inheritdoc cref="SolanaRpcClient.GetStakeActivationAsync"/>
+        RequestResult<StakeActivationInfo> GetStakeActivation(string publicKey, ulong epoch = 0);
+
+        /// <summary>
         /// Gets information about the current supply.
         /// </summary>
         /// <returns>A task which may return a request result and information about the supply.</returns>
