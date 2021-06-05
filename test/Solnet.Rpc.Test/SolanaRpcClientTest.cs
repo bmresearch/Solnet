@@ -926,6 +926,129 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
+                
+        [TestMethod]
+        public void TestGetRecentPerformanceSamples()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetRecentPerformanceSamplesResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetRecentPerformanceSamplesRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetRecentPerformanceSamples(4);
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(4, result.Result.Length);
+            Assert.AreEqual(126UL, result.Result[0].NumSlots);
+            Assert.AreEqual(348125UL, result.Result[0].Slot);
+            Assert.AreEqual(126UL, result.Result[0].NumTransactions);
+            Assert.AreEqual(60, result.Result[0].SamplePeriodSecs);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        [TestMethod]
+        public void TestGetSignaturesForAddress()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetSignaturesForAddress("4Rf9mGD7FeYknun5JczX5nGLTfQuS1GRjNVfkEMKE92b", limit: 3);
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(3, result.Result.Length);
+            Assert.AreEqual(1616245823UL, result.Result[0].BlockTime);
+            Assert.AreEqual(68710495UL, result.Result[0].Slot);
+            Assert.AreEqual("5Jofwx5JcPT1dMsgo6DkyT6x61X5chS9K7hM7huGKAnUq8xxHwGKuDnnZmPGoapWVZcN4cPvQtGNCicnWZfPHowr", result.Result[0].Signature);
+            Assert.AreEqual(null, result.Result[0].Memo);
+            Assert.AreEqual(null, result.Result[0].Error);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        [TestMethod]
+        public void TestGetSignaturesForAddressUntil()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressUntilResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressUntilRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetSignaturesForAddress(
+                "Vote111111111111111111111111111111111111111", 
+                1, until: "Vote111111111111111111111111111111111111111");
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(1, result.Result.Length);
+            Assert.AreEqual(null, result.Result[0].BlockTime);
+            Assert.AreEqual(114UL, result.Result[0].Slot);
+            Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", result.Result[0].Signature);
+            Assert.AreEqual(null, result.Result[0].Memo);
+            Assert.AreEqual(null, result.Result[0].Error);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        [TestMethod]
+        public void TestGetSignaturesForAddressBefore()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressBeforeResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressBeforeRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetSignaturesForAddress(
+                "Vote111111111111111111111111111111111111111", 
+                1, before: "Vote111111111111111111111111111111111111111");
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(1, result.Result.Length);
+            Assert.AreEqual(null, result.Result[0].BlockTime);
+            Assert.AreEqual(114UL, result.Result[0].Slot);
+            Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", result.Result[0].Signature);
+            Assert.AreEqual(null, result.Result[0].Memo);
+            Assert.AreEqual(null, result.Result[0].Error);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
         
         [TestMethod]
         public void TestGetSignatureStatuses()
@@ -1022,7 +1145,7 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
-
+        
         [TestMethod]
         public void TestGetSupply()
         {

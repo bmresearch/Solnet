@@ -1,0 +1,13 @@
+{
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "err": null,
+      "memo": null,
+      "signature": "5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv",
+      "slot": 114,
+      "blockTime": null
+    }
+  ],
+  "id": 1
+}

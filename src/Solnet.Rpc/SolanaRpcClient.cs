@@ -602,7 +602,56 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="GetSnapshotSlotAsync"/>
         public RequestResult<ulong> GetSnapshotSlot() => GetSnapshotSlotAsync().Result;
+        
+        /// <summary>
+        /// Gets a list of recent performance samples.
+        /// <remarks>
+        /// Unless <c>searchTransactionHistory</c> is included, this method only searches the recent status cache of signatures.
+        /// </remarks>
+        /// </summary>
+        /// <param name="limit">Maximum transaction signatures to return, between 1-720. Default is 720.</param>
+        /// <returns>A task which may return a request result the signatures for the transactions.</returns>
+        public async Task<RequestResult<PerformanceSample[]>> GetRecentPerformanceSamplesAsync(ulong limit = 720)
+        {
+            return await SendRequestAsync<PerformanceSample[]>("getRecentPerformanceSamples" , 
+                new List<object>{limit});
+        }
 
+        /// <inheritdoc cref="GetRecentPerformanceSamplesAsync"/>
+        public RequestResult<PerformanceSample[]> GetRecentPerformanceSamples(ulong limit = 720)
+            => GetRecentPerformanceSamplesAsync(limit).Result;
+        
+        /// <summary>
+        /// Gets confirmed signatures for transactions involving the address.
+        /// <remarks>
+        /// Unless <c>searchTransactionHistory</c> is included, this method only searches the recent status cache of signatures.
+        /// </remarks>
+        /// </summary>
+        /// <param name="accountPubKey">The account address as base-58 encoded string.</param>
+        /// <param name="limit">Maximum transaction signatures to return, between 1-1000. Default is 1000.</param>
+        /// <param name="before">Start searching backwards from this transaction signature.</param>
+        /// <param name="until">Search until this transaction signature, if found before limit is reached.</param>
+        /// <returns>A task which may return a request result the signatures for the transactions.</returns>
+        public async Task<RequestResult<SignatureStatusInfo[]>> GetSignaturesForAddressAsync(
+            string accountPubKey, ulong limit = 1000, string before = "", string until = "")
+        {
+            var dictionary = new Dictionary<string, object> {{"limit", limit}};
+            
+            if (!string.IsNullOrWhiteSpace(before))
+                dictionary.Add("before", before);
+            
+            if (!string.IsNullOrWhiteSpace(until))
+                dictionary.Add("until", until);
+            
+            return await SendRequestAsync<SignatureStatusInfo[]>("getSignaturesForAddress" , 
+                new List<object>{accountPubKey, dictionary});
+        }
+
+        /// <inheritdoc cref="GetSignaturesForAddressAsync"/>
+        public RequestResult<SignatureStatusInfo[]> GetSignaturesForAddress(
+            string accountPubKey, ulong limit = 1000, string before = "", string until = "")
+            => GetSignaturesForAddressAsync(accountPubKey, limit, before, until).Result;
+        
         /// <summary>
         /// Gets the status of a list of signatures.
         /// <remarks>

@@ -27,5 +27,20 @@ namespace Solnet.Rpc.Models
         /// The transaction's cluster confirmation status, either "processed", "confirmed" or "finalized".
         /// </summary>
         public string ConfirmationStatus { get; set; }
+        
+        /// <summary>
+        /// Memo associated with the transaction, null if no memo is present.
+        /// </summary>
+        public string Memo { get; set; }
+        
+        /// <summary>
+        /// The transaction signature as base-58 encoded string.
+        /// </summary>
+        public string Signature { get; set; }
+        
+        /// <summary>
+        /// Estimated production time as Unix timestamp, null if not available.
+        /// </summary>
+        public ulong? BlockTime { get; set; }
     }
 }

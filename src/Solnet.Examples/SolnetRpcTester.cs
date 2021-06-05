@@ -33,6 +33,11 @@ namespace Solnet.Examples
             //var inflationRate = c.GetInflationRate();
             //Console.WriteLine(inflationRate.Result.Total);
 
+            //var perf = c.GetRecentPerformanceSamples();
+            //Console.WriteLine($"Tx: {perf.Result[0].NumTransactions} Slot: {perf.Result[0].Slot }");
+
+            var signatures = c.GetSignaturesForAddress("4Rf9mGD7FeYknun5JczX5nGLTfQuS1GRjNVfkEMKE92b");
+            
             var v = c.GetVersion();
             Console.WriteLine(v.Result.SolanaCore);
             Console.WriteLine(v.Result.FeatureSet);
