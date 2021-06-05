@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{F50FF069-5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A651E8AD-703B-4B21-B344-68F5F09CDA67}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		build.cake = build.cake
 		README.md = README.md
 	EndProjectSection
@@ -21,15 +22,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Wallet", "src\Solnet
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Examples", "src\Solnet.Examples\Solnet.Examples.csproj", "{1198ED67-B1F1-4DE9-BDE8-AE6C96DA33A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Programs", "src\Solnet.Programs\Solnet.Programs.csproj", "{45D7F47F-4807-4918-BD78-F9EB2863B5A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Programs", "src\Solnet.Programs\Solnet.Programs.csproj", "{45D7F47F-4807-4918-BD78-F9EB2863B5A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Rpc.Test", "test\Solnet.Rpc.Test\Solnet.Rpc.Test.csproj", "{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Rpc.Test", "test\Solnet.Rpc.Test\Solnet.Rpc.Test.csproj", "{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Wallet.Test", "test\Solnet.Wallet.Test\Solnet.Wallet.Test.csproj", "{3E2EF65F-79D5-4D31-8782-175942B9CC7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Wallet.Test", "test\Solnet.Wallet.Test\Solnet.Wallet.Test.csproj", "{3E2EF65F-79D5-4D31-8782-175942B9CC7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.KeyStore.Test", "test\Solnet.KeyStore.Test\Solnet.KeyStore.Test.csproj", "{A02FDD4D-7096-4A43-B53C-5F5577F5B97C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.KeyStore.Test", "test\Solnet.KeyStore.Test\Solnet.KeyStore.Test.csproj", "{A02FDD4D-7096-4A43-B53C-5F5577F5B97C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Programs.Test", "test\Solnet.Programs.Test\Solnet.Programs.Test.csproj", "{44B262CE-3AA3-43CE-B483-F49605E80E7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Programs.Test", "test\Solnet.Programs.Test\Solnet.Programs.Test.csproj", "{44B262CE-3AA3-43CE-B483-F49605E80E7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,14 +54,14 @@ Global
 		{1198ED67-B1F1-4DE9-BDE8-AE6C96DA33A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1198ED67-B1F1-4DE9-BDE8-AE6C96DA33A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1198ED67-B1F1-4DE9-BDE8-AE6C96DA33A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{45D7F47F-4807-4918-BD78-F9EB2863B5A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{45D7F47F-4807-4918-BD78-F9EB2863B5A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45D7F47F-4807-4918-BD78-F9EB2863B5A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45D7F47F-4807-4918-BD78-F9EB2863B5A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E907F659-7FDE-4B98-85CD-1FBC6B1656CD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3E2EF65F-79D5-4D31-8782-175942B9CC7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3E2EF65F-79D5-4D31-8782-175942B9CC7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E2EF65F-79D5-4D31-8782-175942B9CC7E}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -1,0 +1,11 @@
+{
+  "jsonrpc": "2.0",
+  "error": {
+    "code": -32005,
+    "message": "Node is behind by 42 slots",
+    "data": {
+      "numSlotsBehind": 42
+    }
+  },
+  "id": 1
+}

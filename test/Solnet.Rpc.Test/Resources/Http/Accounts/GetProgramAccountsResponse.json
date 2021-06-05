@@ -1,0 +1,26 @@
+{
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "account": {
+        "data": [ "NhOiFR2mEcZJFj1ciaG2IrWOf2poe4LNGYC5gvdULBYyFH1Kq4cdNyYf+7u2r6NaWXHwnqiXnCzkFhIDUjSbNN2i/bmtSgasAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADkpoamWb2mUaHqREQNm8VPcqSWUGCgPjWKjh0raCI+OEo8UAXpyc1w/8KV64XXwhGP70z6aN3K1vnzjpYXQqr3vvsgJ4UD4OatRY1IsR9NYTReSKpRIhPpTupzQ9WzTpfWSTLZP2xvdcWyo8spQGJ2uGX0jH9h4ZxJ+orI/IsnqxyAHH+MXZuMBl28YfgFJRh8PZHPKbmFvVPDFs3xgBVWzzQuNTAlY5aWAEN5CRqkYmOXDcge++gRlEry6ItrMEA0VZV0zsOFk2oDiT9W7slB3JefUOpWS4DMPJW6N0zRUDTtXaGmWrqt6W4vEGC0DnBI++A2ZkHoMmJ+qeCKBVkNJgAAADc4o2AAAAAA/w==", "base64" ],
+        "executable": false,
+        "lamports": 3486960,
+        "owner": "GrAkKfEpTKQuVHG2Y97Y2FF4i7y7Q5AHLK94JBy7Y5yv",
+        "rentEpoch": 188
+      },
+      "pubkey": "FzNKvS4SCHDoNbnnfhmGSLVRCLNBUuGecxdvobSGmWMh"
+    },
+    {
+      "account": {
+        "data": [ "NhOiFR2mEcZJFj1ciaG2IrWOf2poe4LNGYC5gvdULBYyFH1Kq4cdNzq9rMbKiA//jaZlo4BV/W5eyqbZBOcDTc4v3Ag7qhy1AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB6O9MgpEQc7zL0mEAxsgfthyJBjh4+YA6B4KzwPW27FbboMzquymK6EsYe61Cl9ADM+/b1RUx0rI09fmIB1yVLdOpL4Nz0XBcmjtvZxWeV0VmohjraOWLUZjokQ0PLvKmil2hUUxT7PtRhvhzE1BdDCv5YMwEdnUDyZL9lKKBVBSxFSjDZzhL8J2JmDGVZz0MJdpaNvQIMFicLjA5W8FcJXzK0FKeeaRKB0AUpZeYta3YpTdE182h6gOR8w9bKSaVMPfvrHwbIc4eqPwDwVz5t5JXYC+Kwd2Z/lnNrJgojD8j8LfkQRcNybB8HrWAhH22B9S1cm44tKQBZjpMlPBADJAAAAGy0n2AAAAAA/g==", "base64" ],
+        "executable": false,
+        "lamports": 3486960,
+        "owner": "GrAkKfEpTKQuVHG2Y97Y2FF4i7y7Q5AHLK94JBy7Y5yv",
+        "rentEpoch": 188
+      },
+      "pubkey": "BPtdGfcgF1ZcUkRiMUpkmoUU6KNpjGWr5Q6VkEvgbF9V"
+    }
+  ],
+  "id": 0
+}

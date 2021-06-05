@@ -1,0 +1,8 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F": [ 0, 1, 2, 3, 4, 5, 6 ],
+    "Ssi94jHqE8WNVTJzTP99F4Qkev8aNZcqFNSRhQzwyLMF": [ 0, 1, 2, 3, 4, 5, 6 ]
+  },
+  "id": 0
+}

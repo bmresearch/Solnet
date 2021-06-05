@@ -251,7 +251,7 @@ namespace Solnet.Rpc
                     NotifyData(logsNotification.Subscription, logsNotification.Result);
                     break;
                 case "programNotification":
-                    var programNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<ProgramInfo>>>(ref reader, opts);
+                    var programNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<AccountKeyPair>>>(ref reader, opts);
                     if (programNotification == null) break;
                     NotifyData(programNotification.Subscription, programNotification.Result);
                     break;
@@ -349,17 +349,17 @@ namespace Solnet.Rpc
 
         #region Program
         /// <inheritdoc cref="IStreamingRpcClient.SubscribeProgramAsync(string, Action{SubscriptionState, ResponseValue{ProgramInfo}})"/>
-        public async Task<SubscriptionState> SubscribeProgramAsync(string transactionSignature, Action<SubscriptionState, ResponseValue<ProgramInfo>> callback)
+        public async Task<SubscriptionState> SubscribeProgramAsync(string transactionSignature, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback)
         {
-            var sub = new SubscriptionState<ResponseValue<ProgramInfo>>(this, SubscriptionChannel.Program, callback,
-                new List<object> { transactionSignature/*, new Dictionary<string, string> { { "encoding", "base64" } }*/ });
+            var sub = new SubscriptionState<ResponseValue<AccountKeyPair>>(this, SubscriptionChannel.Program, callback,
+                new List<object> { transactionSignature, new Dictionary<string, string> { { "encoding", "base64" } } });
 
-            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "programSubscribe", new List<object> { transactionSignature });
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "programSubscribe", new List<object> { transactionSignature, new Dictionary<string, string> { { "encoding", "base64" } } });
             return await Subscribe(sub, msg).ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="IStreamingRpcClient.SubscribeProgram(string, Action{SubscriptionState, ResponseValue{ProgramInfo}})"/>
-        public SubscriptionState SubscribeProgram(string transactionSignature, Action<SubscriptionState, ResponseValue<ProgramInfo>> callback)
+        public SubscriptionState SubscribeProgram(string transactionSignature, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback)
             => SubscribeProgramAsync(transactionSignature, callback).Result;
         #endregion
 

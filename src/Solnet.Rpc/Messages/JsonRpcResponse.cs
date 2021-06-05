@@ -1,4 +1,7 @@
-﻿namespace Solnet.Rpc.Messages
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
+
+namespace Solnet.Rpc.Messages
 {
     public class JsonRpcResponse<T> : JsonRpcBase
     {
@@ -14,6 +17,9 @@
     {
         public int Code { get; set; }
         public string Message { get; set; }
+
+        [JsonExtensionData]
+        public Dictionary<string, object> Data { get; set; }
     }
 
     public class ContextObj

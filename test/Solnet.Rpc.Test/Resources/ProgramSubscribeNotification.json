@@ -6,7 +6,7 @@
       "context": { "slot": 80854485 },
       "value": {
         "account": {
-          "data": "",
+          "data": [ "11116bv5nS2h3y12kD1yUKeMZvGcKLSjQgX6BeV7u1FrjeJcKfsHPXHRDEHrBesJhZyqnnq9qJeUuF7WHxiuLuL5twc38w2TXNLxnDbjmuR", "base64" ],
           "executable": false,
           "lamports": 458553192193,
           "owner": "11111111111111111111111111111111",
