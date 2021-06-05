@@ -65,7 +65,7 @@ namespace Solnet.Rpc
         /// <returns>A task which may return a request result.</returns>
         private async Task<RequestResult<T>> SendRequestAsync<T>(string method, IList<object> parameters)
         {
-            var req = BuildRequest<T>(method, parameters.ToList());
+            var req = BuildRequest<T>(method, parameters);
             return await SendRequest<T>(req);
         }
 
@@ -108,11 +108,8 @@ namespace Solnet.Rpc
 
         #endregion
 
-        /// <summary>
-        /// Gets the account info using base64 encoding.
-        /// </summary>
-        /// <param name="pubKey">The account public key.</param>
-        /// <returns>A task which may return a request result holding the context and account info.</returns>
+        #region Accounts
+        /// <inheritdoc cref="IRpcClient.GetAccountInfoAsync(string)"/>
         public async Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey)
         {
             return await SendRequestAsync<ResponseValue<AccountInfo>>(
@@ -126,9 +123,41 @@ namespace Solnet.Rpc
                 });
         }
 
-        /// <inheritdoc cref="GetAccountInfoAsync"/>
+        /// <inheritdoc cref="IRpcClient.GetAccountInfo(string)"/>
         public RequestResult<ResponseValue<AccountInfo>> GetAccountInfo(string pubKey)
             => GetAccountInfoAsync(pubKey).Result;
+
+
+        /// <inheritdoc cref="IRpcClient.GetProgramAccountsAsync(string)"/>
+        public async Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey)
+        {
+            return await SendRequestAsync< List<AccountKeyPair>>("getProgramAccounts",
+                new List<object> { pubKey },
+                new Dictionary<string, object>
+                {
+                    {
+                        "encoding", "base64"
+                    }
+                });
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetProgramAccounts(string)"/>
+        public RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey)
+            => GetProgramAccountsAsync(pubKey).Result;
+
+
+        /// <inheritdoc cref="IRpcClient.GetMultipleAccountsAsync(IList{string})"/>
+        public async Task<RequestResult<ResponseValue<List<AccountInfo>>>> GetMultipleAccountsAsync(IList<string> accounts)
+        {
+            return await SendRequestAsync<ResponseValue<List<AccountInfo>>>("getMultipleAccounts", new List<object> { accounts, 
+                new Dictionary<string, string> { { "encoding", "base64" } } });
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetMultipleAccounts(IList{string})"/>
+        public RequestResult<ResponseValue<List<AccountInfo>>> GetMultipleAccounts(IList<string> accounts)
+            => GetMultipleAccountsAsync(accounts).Result;
+
+        #endregion
 
         /// <summary>
         /// Gets the balance for a certain public key.
@@ -148,7 +177,7 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="IRpcClient.GetBlockAsync(ulong)"/>
         public async Task<RequestResult<BlockInfo>> GetBlockAsync(ulong slot)
         {
-            return await SendRequestAsync<BlockInfo>("getBlock", 
+            return await SendRequestAsync<BlockInfo>("getBlock",
                 new List<object> { slot, new Dictionary<string, string> { { "encoding", "json" }, { "transactionDetails", "full" } } });
         }
 
@@ -228,7 +257,7 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="IRpcClient.GetBlockProductionAsync(string)"/>
         public async Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync(string identity)
         {
-            return await SendRequestAsync<ResponseValue<BlockProductionInfo>>("getBlockProduction", 
+            return await SendRequestAsync<ResponseValue<BlockProductionInfo>>("getBlockProduction",
                 new List<object> { new Dictionary<string, string> { { "identity", identity } } });
         }
 
@@ -259,6 +288,36 @@ namespace Solnet.Rpc
         public RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction(string identity, ulong firstSlot, ulong lastSlot = 0)
             => GetBlockProductionAsync(identity, firstSlot, lastSlot).Result;
         #endregion
+
+        /// <inheritdoc cref="IRpcClient.GetHealth()"/>
+        public RequestResult<string> GetHealth()
+            => GetHealthAsync().Result;
+
+        /// <inheritdoc cref="IRpcClient.GetHealthAsync()"/>
+        public async Task<RequestResult<string>> GetHealthAsync()
+        {
+            return await SendRequestAsync<string>("getHealth");
+        }
+
+
+        /// <inheritdoc cref="IRpcClient.GetLeaderSchedule(ulong)"/>
+        public RequestResult<Dictionary<string, ulong[]>> GetLeaderSchedule(ulong slot = 0, string identity = null)
+            => GetLeaderScheduleAsync(slot, identity).Result;
+
+        /// <inheritdoc cref="IRpcClient.GetLeaderScheduleAsync(ulong)"/>
+        public async Task<RequestResult<Dictionary<string, ulong[]>>> GetLeaderScheduleAsync(ulong slot = 0, string identity = null)
+        {
+            List<object> parameters = new List<object>();
+
+            if (slot > 0) parameters.Add(slot);
+            if (identity != null)
+            {
+                if (slot == 0) parameters.Add(null);
+                parameters.Add(new Dictionary<string, string> { { "identity", identity } });
+            }
+
+            return await SendRequestAsync<Dictionary<string, ulong[]>>("getLeaderSchedule", parameters.Count > 0 ? parameters : null);
+        }
 
 
         /// <inheritdoc cref="IRpcClient.GetTransactionAsync(string)"/>

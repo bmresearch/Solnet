@@ -32,7 +32,6 @@ namespace Solnet.Rpc.Models
         /// The epoch at which the account will next owe rent.
         /// </summary>
         public ulong RentEpoch { get; set; }
-
     }
 
     /// <summary>
@@ -48,4 +47,22 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public List<string> Data { get; set; }
     }
+
+    /// <summary>
+    /// Represents the tuple account key and account data.
+    /// </summary>
+    public class AccountKeyPair
+    {
+        /// <summary>
+        /// The account info.
+        /// </summary>
+        public AccountInfo Account { get; set; }
+
+        /// <summary>
+        /// A base-58 encoded public key representing the account's public key.
+        /// </summary>
+        [JsonPropertyName("pubkey")]
+        public string PublicKey { get; set; }
+    }
+
 }

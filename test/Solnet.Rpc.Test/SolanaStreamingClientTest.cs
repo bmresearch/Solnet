@@ -233,10 +233,10 @@ namespace Solnet.Rpc.Test
             var expected = File.ReadAllText("Resources/ProgramSubscribe.json");
             var subConfirmContent = File.ReadAllBytes("Resources/SubscribeConfirm.json");
             var notificationContents = File.ReadAllBytes("Resources/ProgramSubscribeNotification.json");
-            ResponseValue<ProgramInfo> resultNotification = null;
+            ResponseValue<AccountKeyPair> resultNotification = null;
             var result = new ReadOnlyMemory<byte>();
 
-            SetupAction(out Action<SubscriptionState, ResponseValue<ProgramInfo>> action,
+            SetupAction(out Action<SubscriptionState, ResponseValue<AccountKeyPair>> action,
                 (x) => resultNotification = x,
                 (x) => result = x,
                 subConfirmContent,

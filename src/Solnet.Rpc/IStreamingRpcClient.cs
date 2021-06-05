@@ -87,7 +87,7 @@ namespace Solnet.Rpc
         /// <param name="programPubkey">The program pubkey.</param>
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, ResponseValue<ProgramInfo>> callback);
+        Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback);
 
         /// <summary>
         /// Subscribes to changes to a given program account data. This is a synchronous and blocking function.
@@ -95,7 +95,7 @@ namespace Solnet.Rpc
         /// <param name="programPubkey">The program pubkey.</param>
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <returns>Returns an object representing the state of the subscription.</returns>
-        SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<ProgramInfo>> callback);
+        SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback);
 
         /// <summary>
         /// Subscribes asynchronously to receive notifications anytime a slot is processed by the validator.

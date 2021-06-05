@@ -19,14 +19,46 @@ namespace Solnet.Rpc
         Uri NodeAddress { get; }
 
         /// <summary>
-        /// Gets the account info using base64 encoding.
+        /// Gets the account info using base64 encoding. This is an asynchronous operation.
         /// </summary>
         /// <param name="pubKey">The account public key.</param>
         /// <returns>A task which may return a request result holding the context and account info.</returns>
         Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey);
 
-        /// <inheritdoc cref="SolanaRpcClient.GetAccountInfoAsync"/>
+        /// <summary>
+        /// Gets the account info using base64 encoding. This is a synchronous operation.
+        /// </summary>
+        /// <param name="pubKey">The account public key.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<ResponseValue<AccountInfo>> GetAccountInfo(string pubKey);
+
+        /// <summary>
+        /// Returns all accounts owned by the provided program Pubkey. This is an asynchronous operation.
+        /// </summary>
+        /// <param name="pubKey">The program public key.</param>
+        /// <returns>A task which may return a request result holding the context and account info.</returns>
+        Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey);
+
+        /// <summary>
+        /// Returns all accounts owned by the provided program Pubkey. This is a synchronous operation.
+        /// </summary>
+        /// <param name="pubKey">The program public key.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey);
+
+        /// <summary>
+        /// Gets the account info for multiple accounts. This is an asynchronous operation.
+        /// </summary>
+        /// <param name="accounts">The list of the accounts public keys.</param>
+        /// <returns>A task which may return a request result holding the context and account info.</returns>
+        Task<RequestResult<ResponseValue<List<AccountInfo>>>> GetMultipleAccountsAsync(IList<string> accounts);
+
+        /// <summary>
+        /// Gets the account info for multiple accounts. This is a synchronous operation.
+        /// </summary>
+        /// <param name="accounts">The list of the accounts public keys.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<ResponseValue<List<AccountInfo>>> GetMultipleAccounts(IList<string> accounts);
 
         /// <summary>
         /// Gets the balance for a certain public key.
@@ -154,7 +186,7 @@ namespace Solnet.Rpc
         /// Returns a list of confirmed blocks starting at the given slot. This is an asynchronous operation.
         /// </summary>
         /// <param name="startSlot">The start slot (inclusive).</param>
-        /// <param name="limit">TThe max number of blocks to return.</param>
+        /// <param name="limit">The max number of blocks to return.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
         Task<RequestResult<ulong[]>> GetBlocksWithLimitAsync(ulong startSlot, ulong limit);
 
@@ -169,6 +201,40 @@ namespace Solnet.Rpc
         /// </summary>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
         Task<RequestResult<ulong>> GetFirstAvailableBlockAsync();
+
+        /// <summary>
+        /// Returns the current health of the node. 
+        /// This method should return the strink 'ok' if the node is healthy, or the error code along with any information provided otherwise. 
+        /// This is a synchronous operation.
+        /// </summary>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<string> GetHealth();
+
+        /// <summary>
+        /// Returns the current health of the node. 
+        /// This method should return the strink 'ok' if the node is healthy, or the error code along with any information provided otherwise. 
+        /// This is an asynchronous operation.
+        /// </summary>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        Task<RequestResult<string>> GetHealthAsync();
+
+        /// <summary>
+        /// Returns the leader schedule for an epoch. This is a synchronous operation.
+        /// </summary>
+        /// <param name="slot">Fetch the leader schedule for the epoch that corresponds to the provided slot. 
+        /// If unspecified, the leader schedule for the current epoch is fetched.</param>
+        /// <param name="identity">Filter results for this validator only (base 58 encoded string and optional).</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<Dictionary<string, ulong[]>> GetLeaderSchedule(ulong slot = 0, string identity = null);
+
+        /// <summary>
+        /// Returns the leader schedule for an epoch. This is an asynchronous operation.
+        /// </summary>
+        /// <param name="slot">Fetch the leader schedule for the epoch that corresponds to the provided slot. 
+        /// If unspecified, the leader schedule for the current epoch is fetched.</param>
+        /// <param name="identity">Filter results for this validator only (base 58 encoded string and optional).</param>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        Task<RequestResult<Dictionary<string, ulong[]>>> GetLeaderScheduleAsync(ulong slot = 0, string identity = null);
 
         /// <summary>
         /// Gets the block commitment of a certain block, identified by slot.

@@ -1,0 +1,23 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "context": { "slot": 79802813 },
+    "value": [
+      {
+        "data": [ "", "base64" ],
+        "executable": false,
+        "lamports": 503668985208,
+        "owner": "11111111111111111111111111111111",
+        "rentEpoch": 197
+      },
+      {
+        "data": [ "", "base64" ],
+        "executable": false,
+        "lamports": 5478840,
+        "owner": "11111111111111111111111111111111",
+        "rentEpoch": 196
+      }
+    ]
+  },
+  "id": 0
+}

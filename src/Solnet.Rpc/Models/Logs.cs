@@ -36,18 +36,6 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public string Signature { get; set; }
     }
-    /*
-    public class InstructionError
-    {
-        public int ErrorCode { get; set; }
-
-        public KeyValuePair<string, int> CustomError { get; set; }
-    }
-    */
-
-
-
-
 
     public class SimulationLogs
     {
