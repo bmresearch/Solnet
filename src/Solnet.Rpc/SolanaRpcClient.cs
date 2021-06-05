@@ -602,7 +602,30 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="GetSnapshotSlotAsync"/>
         public RequestResult<ulong> GetSnapshotSlot() => GetSnapshotSlotAsync().Result;
-        
+
+        /// <summary>
+        /// Gets the status of a list of signatures.
+        /// <remarks>
+        /// Unless <c>searchTransactionHistory</c> is included, this method only searches the recent status cache of signatures.
+        /// </remarks>
+        /// </summary>
+        /// <param name="transactionHashes">The list of transactions to search status info for.</param>
+        /// <param name="searchTransactionHistory">If the node should search for signatures in it's ledger cache.</param>
+        /// <returns>A task which may return a request result the highest slot with a snapshot.</returns>
+        public async Task<RequestResult<ResponseValue<SignatureStatusInfo[]>>> GetSignatureStatusesAsync(string[] transactionHashes, bool searchTransactionHistory = false)
+        {
+            if (searchTransactionHistory)
+                return await SendRequestAsync<ResponseValue<SignatureStatusInfo[]>>("getSignatureStatuses" , 
+                    new List<object>{transactionHashes, new Dictionary<string, bool>{ { "searchTransactionHistory", true }}});
+            return await SendRequestAsync<ResponseValue<SignatureStatusInfo[]>>("getSignatureStatuses" , 
+                new List<object>{transactionHashes});
+        }
+
+        /// <inheritdoc cref="GetSignatureStatusesAsync"/>
+        public RequestResult<ResponseValue<SignatureStatusInfo[]>> GetSignatureStatuses(string[] transactionHashes,
+            bool searchTransactionHistory = false)
+            => GetSignatureStatusesAsync(transactionHashes, searchTransactionHistory).Result;
+
         /// <summary>
         /// Gets a list of recent performance samples.
         /// <remarks>
