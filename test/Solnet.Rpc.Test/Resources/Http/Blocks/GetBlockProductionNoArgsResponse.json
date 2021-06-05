@@ -1,0 +1,18 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "context": { "slot": 79712285 },
+    "value": {
+      "byIdentity": {
+        "121cur1YFVPZSoKQGNyjNr9sZZRa3eX2bSuYjXHtKD6": [ 60, 49 ],
+        "123vij84ecQEKUvQ7gYMKxKwKF6PbYSzCzzURYA4xULY": [ 128, 98 ],
+        "12QYHqRxPuTPfkBVLetEuGkLGHD9GhqM5coP67xK7wfG": [ 104, 82 ]
+      },
+      "range": {
+        "firstSlot": 79580256,
+        "lastSlot": 79712285
+      }
+    }
+  },
+  "id": 0
+}

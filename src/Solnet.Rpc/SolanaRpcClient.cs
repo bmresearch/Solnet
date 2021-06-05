@@ -117,7 +117,7 @@ namespace Solnet.Rpc
         {
             return await SendRequestAsync<ResponseValue<AccountInfo>>(
                 "getAccountInfo",
-                new List<object> {pubKey},
+                new List<object> { pubKey },
                 new Dictionary<string, object>
                 {
                     {
@@ -137,12 +137,118 @@ namespace Solnet.Rpc
         /// <returns>A task which may return a request result holding the context and address balance.</returns>
         public async Task<RequestResult<ResponseValue<ulong>>> GetBalanceAsync(string pubKey)
         {
-            return await SendRequestAsync<ResponseValue<ulong>>("getBalance", new List<object> {pubKey});
+            return await SendRequestAsync<ResponseValue<ulong>>("getBalance", new List<object> { pubKey });
         }
 
         /// <inheritdoc cref="GetBalanceAsync"/>
         public RequestResult<ResponseValue<ulong>> GetBalance(string pubKey)
             => GetBalanceAsync(pubKey).Result;
+
+        #region Blocks
+        /// <inheritdoc cref="IRpcClient.GetBlockAsync(ulong)"/>
+        public async Task<RequestResult<BlockInfo>> GetBlockAsync(ulong slot)
+        {
+            return await SendRequestAsync<BlockInfo>("getBlock", 
+                new List<object> { slot, new Dictionary<string, string> { { "encoding", "json" }, { "transactionDetails", "full" } } });
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetBlock(ulong)"/>
+        public RequestResult<BlockInfo> GetBlock(ulong slot)
+            => GetBlockAsync(slot).Result;
+
+
+        /// <inheritdoc cref="IRpcClient.GetBlocksAsync(ulong, ulong)"/>
+        public async Task<RequestResult<ulong[]>> GetBlocksAsync(ulong startSlot, ulong endSlot = 0)
+        {
+            var parameters = new List<object> { startSlot };
+            if (endSlot > 0) parameters.Add(endSlot);
+
+            return await SendRequestAsync<ulong[]>("getBlocks", parameters);
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetBlocks(ulong, ulong)"/>
+        public RequestResult<ulong[]> GetBlocks(ulong startSlot, ulong endSlot = 0)
+            => GetBlocksAsync(startSlot, endSlot).Result;
+        #endregion
+
+        #region Block Production
+        /// <inheritdoc cref="IRpcClient.GetBlockProductionAsync()"/>
+        public async Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync()
+        {
+            return await SendRequestAsync<ResponseValue<BlockProductionInfo>>("getBlockProduction");
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetBlockProduction()"/>
+        public RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction() => GetBlockProductionAsync().Result;
+
+        /// <inheritdoc cref="IRpcClient.GetBlockProductionAsync(ulong, ulong)"/>
+        public async Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync(ulong firstSlot, ulong lastSlot = 0)
+        {
+            var range = new Dictionary<string, ulong> { { "firstSlot", firstSlot } };
+            if (lastSlot != 0)
+            {
+                range.Add("lastSlot", lastSlot);
+            }
+
+            return await SendRequestAsync<ResponseValue<BlockProductionInfo>>("getBlockProduction", new List<object>
+            {
+                new Dictionary<string, object>
+                {
+                    { "range", range }
+                }
+            });
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetBlockProduction(ulong, ulong)"/>
+        public RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction(ulong firstSlot, ulong lastSlot = 0)
+            => GetBlockProductionAsync(firstSlot, lastSlot).Result;
+
+        /// <inheritdoc cref="IRpcClient.GetBlockProductionAsync(string)"/>
+        public async Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync(string identity)
+        {
+            return await SendRequestAsync<ResponseValue<BlockProductionInfo>>("getBlockProduction", 
+                new List<object> { new Dictionary<string, string> { { "identity", identity } } });
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetBlockProduction(string)"/>
+        public RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction(string identity)
+            => GetBlockProductionAsync(identity).Result;
+
+        /// <inheritdoc cref="IRpcClient.GetBlockProductionAsync(string, ulong, ulong)"/>
+        public async Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync(string identity, ulong firstSlot, ulong lastSlot = 0)
+        {
+            var range = new Dictionary<string, object> { { "firstSlot", firstSlot } };
+            if (lastSlot != 0)
+            {
+                range.Add("lastSlot", lastSlot);
+            }
+
+            return await SendRequestAsync<ResponseValue<BlockProductionInfo>>("getBlockProduction", new List<object>
+            {
+                new Dictionary<string, object>
+                {
+                    { "identity", identity },
+                    { "range", range }
+                }
+            });
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetBlockProduction(string, ulong, ulong)"/>
+        public RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction(string identity, ulong firstSlot, ulong lastSlot = 0)
+            => GetBlockProductionAsync(identity, firstSlot, lastSlot).Result;
+        #endregion
+
+
+        /// <inheritdoc cref="IRpcClient.GetTransactionAsync(string)"/>
+        public async Task<RequestResult<TransactionMetaSlotInfo>> GetTransactionAsync(string signature)
+        {
+            return await SendRequestAsync<TransactionMetaSlotInfo>("getTransaction", new List<object> { signature, "json" });
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetTransaction(string)"/>
+        public RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature)
+            => GetTransactionAsync(signature).Result;
+
 
         /// <summary>
         /// Gets the current block height of the node.
@@ -164,7 +270,7 @@ namespace Solnet.Rpc
         /// <returns>A task which may return a request result and block commitment information.</returns>
         public async Task<RequestResult<BlockCommitment>> GetBlockCommitmentAsync(ulong slot)
         {
-            return await SendRequestAsync<BlockCommitment>("getBlockCommitment", new List<object> {slot});
+            return await SendRequestAsync<BlockCommitment>("getBlockCommitment", new List<object> { slot });
         }
 
         /// <inheritdoc cref="GetBlockCommitmentAsync"/>
@@ -178,7 +284,7 @@ namespace Solnet.Rpc
         /// <returns>A task which may return a request result and block production time as Unix timestamp (seconds since Epoch).</returns>
         public async Task<RequestResult<ulong>> GetBlockTimeAsync(ulong slot)
         {
-            return await SendRequestAsync<ulong>("getBlockTime", new List<object> {slot});
+            return await SendRequestAsync<ulong>("getBlockTime", new List<object> { slot });
         }
 
         /// <inheritdoc cref="GetBlockTimeAsync"/>
@@ -245,7 +351,7 @@ namespace Solnet.Rpc
         public async Task<RequestResult<ulong>> GetMinimumBalanceForRentExemptionAsync(long accountDataSize)
         {
             return await SendRequestAsync<ulong>("getMinimumBalanceForRentExemption",
-                new List<object> {accountDataSize});
+                new List<object> { accountDataSize });
         }
 
         /// <inheritdoc cref="GetMinimumBalanceForRentExemptionAsync"/>
@@ -314,8 +420,8 @@ namespace Solnet.Rpc
         {
             if (epoch != 0)
                 return await SendRequestAsync<InflationReward[]>("getInflationReward",
-                    new List<object> {addresses, epoch});
-            return await SendRequestAsync<InflationReward[]>("getInflationReward", new List<object> {addresses});
+                    new List<object> { addresses, epoch });
+            return await SendRequestAsync<InflationReward[]>("getInflationReward", new List<object> { addresses });
         }
 
         /// <inheritdoc cref="GetInflationRewardAsync"/>
@@ -413,7 +519,7 @@ namespace Solnet.Rpc
             string splTokenAccountPublicKey)
         {
             return await SendRequestAsync<ResponseValue<TokenBalance>>("getTokenAccountBalance",
-                new List<object> {splTokenAccountPublicKey});
+                new List<object> { splTokenAccountPublicKey });
         }
 
         /// <inheritdoc cref="GetTokenAccountBalanceAsync"/>
@@ -437,7 +543,7 @@ namespace Solnet.Rpc
             if (!string.IsNullOrWhiteSpace(tokenProgramId)) options.Add("programId", tokenProgramId);
             return await SendRequestAsync<ResponseValue<TokenAccount[]>>(
                 "getTokenAccountsByDelegate",
-                new List<object> {ownerPubKey, options, new Dictionary<string, string> {{"encoding", "jsonParsed"}}});
+                new List<object> { ownerPubKey, options, new Dictionary<string, string> { { "encoding", "jsonParsed" } } });
         }
 
         /// <inheritdoc cref="GetTokenAccountsByDelegateAsync"/>
@@ -462,7 +568,7 @@ namespace Solnet.Rpc
             if (!string.IsNullOrWhiteSpace(tokenProgramId)) options.Add("programId", tokenProgramId);
             return await SendRequestAsync<ResponseValue<TokenAccount[]>>(
                 "getTokenAccountsByOwner",
-                new List<object> {ownerPubKey, options, new Dictionary<string, string> {{"encoding", "jsonParsed"}}});
+                new List<object> { ownerPubKey, options, new Dictionary<string, string> { { "encoding", "jsonParsed" } } });
         }
 
         /// <inheritdoc cref="GetTokenAccountsByOwnerAsync"/>
@@ -479,7 +585,7 @@ namespace Solnet.Rpc
             string tokenMintPubKey)
         {
             return await SendRequestAsync<ResponseValue<LargeTokenAccount[]>>("getTokenLargestAccounts",
-                new List<object> {tokenMintPubKey});
+                new List<object> { tokenMintPubKey });
         }
 
         /// <inheritdoc cref="GetTokenLargestAccountsAsync"/>
@@ -494,7 +600,7 @@ namespace Solnet.Rpc
         public async Task<RequestResult<ResponseValue<TokenBalance>>> GetTokenSupplyAsync(string tokenMintPubKey)
         {
             return await SendRequestAsync<ResponseValue<TokenBalance>>("getTokenSupply",
-                new List<object> {tokenMintPubKey});
+                new List<object> { tokenMintPubKey });
         }
 
         /// <inheritdoc cref="GetTokenSupplyAsync"/>
@@ -571,7 +677,7 @@ namespace Solnet.Rpc
         public async Task<RequestResult<string>> RequestAirdropAsync(string pubKey, ulong lamports,
             Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<string>("requestAirdrop", new List<object> {pubKey, lamports, commitment});
+            return await SendRequestAsync<string>("requestAirdrop", new List<object> { pubKey, lamports, commitment });
         }
 
         /// <inheritdoc cref="RequestAirdropAsync"/>

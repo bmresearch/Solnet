@@ -1,0 +1,99 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "blockHeight": 66130135,
+    "blockTime": 1622632900,
+    "blockhash": "5wLhsKAH9SCPbRZc4qWf3GBiod9CD8sCEZfMiU25qW8",
+    "parentSlot": 79662904,
+    "previousBlockhash": "CjJ97j84mUq3o67CEqzEkTifXpHLBCD8GvmfBYLz4Zdg",
+    "rewards": [
+      {
+        "lamports": 1785000,
+        "postBalance": 365762267923,
+        "pubkey": "9zkU8suQBdhZVax2DSGNAnyEhEzfEELvA25CJhy5uwnW",
+        "rewardType": "Fee"
+      }
+    ],
+    "transactions": [
+      {
+        "meta": {
+          "err": {
+            "InstructionError": [
+              0,
+              { "Custom": 0 }
+            ]
+          },
+          "fee": 5000,
+          "innerInstructions": [],
+          "logMessages": [ "Program Vote111111111111111111111111111111111111111 invoke [1]", "Program Vote111111111111111111111111111111111111111 failed: custom program error: 0x0" ],
+          "postBalances": [ 35132731759, 12085257419217, 1, 1, 1 ],
+          "postTokenBalances": [],
+          "preBalances": [ 35132736759, 12085257419217, 1, 1, 1 ],
+          "preTokenBalances": [],
+          "rewards": [],
+          "status": {
+            "Err": {
+              "InstructionError": [
+                0,
+                { "Custom": 0 }
+              ]
+            }
+          }
+        },
+        "transaction": {
+          "message": {
+            "accountKeys": [ "DjuMPGThkGdyk2vDvDDYjTFSyxzTumdapnDNbvVZbYQE", "FcQ4wA29UZ9AcvjjnJLVUYKVVrRZANGrSkVZZ9LUDNPR", "SysvarS1otHashes111111111111111111111111111", "SysvarC1ock11111111111111111111111111111111", "Vote111111111111111111111111111111111111111" ],
+            "header": {
+              "numReadonlySignedAccounts": 0,
+              "numReadonlyUnsignedAccounts": 3,
+              "numRequiredSignatures": 1
+            },
+            "instructions": [
+              {
+                "accounts": [ 1, 2, 3, 0 ],
+                "data": "2ZjTR1vUs2pHXyTLxtFDhN2tsm2HbaH36cAxzJcwaXf8y5jdTESsGNBLFaxGuWENxLa2ZL3cX9foNJcWbRq",
+                "programIdIndex": 4
+              }
+            ],
+            "recentBlockhash": "D8qh6AeX4KaTe6ZBpsZDdntTQUyPy7x6Xjp7NnEigCWH"
+          },
+          "signatures": [ "2Hh35eZPP1wZLYQ1HHv8PqGoRo73XirJeKFpBVc19msi6qeJHk3yUKqS1viRtqkdb545CerTWeywPFXxjKEhDWTK" ]
+        }
+      },
+      {
+        "meta": {
+          "err": null,
+          "fee": 5000,
+          "innerInstructions": [],
+          "logMessages": [ "Program Vote111111111111111111111111111111111111111 invoke [1]", "Program Vote111111111111111111111111111111111111111 success" ],
+          "postBalances": [ 341696711126, 50872552288826, 1, 1, 1 ],
+          "postTokenBalances": [],
+          "preBalances": [ 341696716126, 50872552288826, 1, 1, 1 ],
+          "preTokenBalances": [],
+          "rewards": [],
+          "status": { "Ok": null }
+        },
+        "transaction": {
+          "message": {
+            "accountKeys": [ "8onJp7KyshoMcxVm5CemhPgGvA1hdSnHbcjLCvJidV8o", "3XZmdA9yHp2ycJA4njLRxhW2TGj5NVABYeEUMbxQNvB7", "SysvarS1otHashes111111111111111111111111111", "SysvarC1ock11111111111111111111111111111111", "Vote111111111111111111111111111111111111111" ],
+            "header": {
+              "numReadonlySignedAccounts": 0,
+              "numReadonlyUnsignedAccounts": 3,
+              "numRequiredSignatures": 1
+            },
+            "instructions": [
+              {
+                "accounts": [ 1, 2, 3, 0 ],
+                "data": "TxGzmQCqCug1wpnb8LJVnhoRnefr7pfAX7AC7SBH8akHvoCnzHJzDUzYXPtezS4Hgxt2HzmmaPHoJB57e9M5CupVQMwT3DYNEGdoo1raN6rQABFu1iz4T21wTkXuRZ",
+                "programIdIndex": 4
+              }
+            ],
+            "recentBlockhash": "8yjM8Yp4FxeG3ieTSeVtWbgYHrQA1qNvST11trjwz8en"
+          },
+          "signatures": [ "3hzNSkKDsZxK8UCE8G9nKXdh6zrV5Ta4wbR1YzxoD2sddTYKo1wK1KhszcwhVjMG6tuCvi23zTwCG1yimdVKqhdc" ]
+        }
+      }
+    ]
+  },
+  "id": 0
+}
