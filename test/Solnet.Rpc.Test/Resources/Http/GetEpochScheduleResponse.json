@@ -1,0 +1,11 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "firstNormalEpoch": 8,
+    "firstNormalSlot": 8160,
+    "leaderScheduleSlotOffset": 8192,
+    "slotsPerEpoch": 8192,
+    "warmup": true
+  },
+  "id": 0
+}

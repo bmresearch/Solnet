@@ -1,0 +1,18 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "context": {
+      "slot": 54
+    },
+    "value": {
+      "feeRateGovernor": {
+        "burnPercent": 50,
+        "maxLamportsPerSignature": 100000,
+        "minLamportsPerSignature": 5000,
+        "targetLamportsPerSignature": 10000,
+        "targetSignaturesPerSlot": 20000
+      }
+    }
+  },
+  "id": 0
+}

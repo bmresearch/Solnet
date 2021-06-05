@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
@@ -207,6 +208,53 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="SolanaRpcClient.GetClusterNodesAsync"/>
         RequestResult<ClusterNode[]> GetClusterNodes();
 
+        /// <summary>
+        /// Gets information about the current epoch.
+        /// </summary>
+        /// <returns>A task which may return a request result and information about the current epoch.</returns>
+        Task<RequestResult<EpochInfo>> GetEpochInfoAsync();
+
+        /// <inheritdoc cref="SolanaRpcClient.GetEpochInfoAsync"/>
+        RequestResult<EpochInfo> GetEpochInfo();
+        
+        /// <summary>
+        /// Gets epoch schedule information from this cluster's genesis config.
+        /// </summary>
+        /// <returns>A task which may return a request result and epoch schedule information from this cluster's genesis config.</returns>
+        Task<RequestResult<EpochScheduleInfo>> GetEpochScheduleAsync();
+
+        /// <inheritdoc cref="SolanaRpcClient.GetEpochScheduleAsync"/>
+        RequestResult<EpochScheduleInfo> GetEpochSchedule();
+
+        /// <summary>
+        /// Gets the fee calculator associated with the query blockhash, or null if the blockhash has expired.
+        /// </summary>
+        /// <param name="blockhash">The blockhash to query, as base-58 encoded string.</param>
+        /// <returns>A task which may return a request result and the fee calculator for the block.</returns>
+        Task<RequestResult<ResponseValue<FeeCalculatorInfo>>> GetFeeCalculatorForBlockhashAsync(string blockhash);
+        
+        /// <inheritdoc cref="SolanaRpcClient.GetFeeCalculatorForBlockhashAsync"/>
+        RequestResult<ResponseValue<FeeCalculatorInfo>> GetFeeCalculatorForBlockhash(string blockhash);
+            
+        /// <summary>
+        /// Gets the fee rate governor information from the root bank.
+        /// </summary>
+        /// <returns>A task which may return a request result and the fee rate governor.</returns>
+        Task<RequestResult<ResponseValue<FeeRateGovernorInfo>>> GetFeeRateGovernorAsync();
+    
+        /// <inheritdoc cref="SolanaRpcClient.GetFeeRateGovernorAsync"/>
+        RequestResult<ResponseValue<FeeRateGovernorInfo>> GetFeeRateGovernor();
+        
+        /// <summary>
+        /// Gets a recent block hash from the ledger, a fee schedule that can be used to compute the
+        /// cost of submitting a transaction using it, and the last slot in which the blockhash will be valid.
+        /// </summary>
+        /// <returns>A task which may return a request result and information about fees.</returns>
+        Task<RequestResult<ResponseValue<FeesInfo>>> GetFeesAsync();
+    
+        /// <inheritdoc cref="SolanaRpcClient.GetFeesAsync"/>
+        RequestResult<ResponseValue<FeesInfo>> GetFees();
+        
         /// <summary>
         /// Gets a recent block hash.
         /// </summary>
