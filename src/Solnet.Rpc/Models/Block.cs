@@ -336,6 +336,17 @@ namespace Solnet.Rpc.Models
     }
 
     /// <summary>
+    /// Represents the fee calculator info.
+    /// </summary>
+    public class FeeCalculatorInfo
+    {
+        /// <summary>
+        /// The fee calculator info.
+        /// </summary>
+        public FeeCalculator FeeCalculator { get; set; }
+    }
+    
+    /// <summary>
     /// Represents block hash info.
     /// </summary>
     public class BlockHash

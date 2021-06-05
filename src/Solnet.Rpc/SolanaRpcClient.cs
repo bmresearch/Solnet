@@ -327,6 +327,72 @@ namespace Solnet.Rpc
             => GetClusterNodesAsync().Result;
 
         /// <summary>
+        /// Gets information about the current epoch.
+        /// </summary>
+        /// <returns>A task which may return a request result and information about the current epoch.</returns>
+        public async Task<RequestResult<EpochInfo>> GetEpochInfoAsync()
+        {
+            return await SendRequestAsync<EpochInfo>("getEpochInfo");
+        }
+
+        /// <inheritdoc cref="GetEpochInfoAsync"/>
+        public RequestResult<EpochInfo> GetEpochInfo() => GetEpochInfoAsync().Result;
+
+        /// <summary>
+        /// Gets epoch schedule information from this cluster's genesis config.
+        /// </summary>
+        /// <returns>A task which may return a request result and epoch schedule information from this cluster's genesis config.</returns>
+        public async Task<RequestResult<EpochScheduleInfo>> GetEpochScheduleAsync()
+        {
+            return await SendRequestAsync<EpochScheduleInfo>("getEpochSchedule");
+        }
+
+        /// <inheritdoc cref="GetEpochScheduleAsync"/>
+        public RequestResult<EpochScheduleInfo> GetEpochSchedule() => GetEpochScheduleAsync().Result;
+
+        /// <summary>
+        /// Gets the fee calculator associated with the query blockhash, or null if the blockhash has expired.
+        /// </summary>
+        /// <param name="blockhash">The blockhash to query, as base-58 encoded string.</param>
+        /// <returns>A task which may return a request result and the fee calculator for the block.</returns>
+        public async Task<RequestResult<ResponseValue<FeeCalculatorInfo>>> GetFeeCalculatorForBlockhashAsync(
+            string blockhash)
+        {
+            return await SendRequestAsync<ResponseValue<FeeCalculatorInfo>>("getFeeCalculatorForBlockhash",
+                new List<object> {blockhash});
+        }
+
+        /// <inheritdoc cref="GetFeeCalculatorForBlockhashAsync"/>
+        public RequestResult<ResponseValue<FeeCalculatorInfo>> GetFeeCalculatorForBlockhash(string blockhash) =>
+            GetFeeCalculatorForBlockhashAsync(blockhash).Result;
+
+        /// <summary>
+        /// Gets the fee rate governor information from the root bank.
+        /// </summary>
+        /// <returns>A task which may return a request result and the fee rate governor.</returns>
+        public async Task<RequestResult<ResponseValue<FeeRateGovernorInfo>>> GetFeeRateGovernorAsync()
+        {
+            return await SendRequestAsync<ResponseValue<FeeRateGovernorInfo>>("getFeeRateGovernor");
+        }
+
+        /// <inheritdoc cref="GetFeeRateGovernorAsync"/>
+        public RequestResult<ResponseValue<FeeRateGovernorInfo>> GetFeeRateGovernor()
+            => GetFeeRateGovernorAsync().Result;
+
+        /// <summary>
+        /// Gets a recent block hash from the ledger, a fee schedule that can be used to compute the
+        /// cost of submitting a transaction using it, and the last slot in which the blockhash will be valid.
+        /// </summary>
+        /// <returns>A task which may return a request result and information about fees.</returns>
+        public async Task<RequestResult<ResponseValue<FeesInfo>>> GetFeesAsync()
+        {
+            return await SendRequestAsync<ResponseValue<FeesInfo>>("getFees");
+        }
+
+        /// <inheritdoc cref="GetFeesAsync"/>
+        public RequestResult<ResponseValue<FeesInfo>> GetFees() => GetFeesAsync().Result;
+
+        /// <summary>
         /// Gets a recent block hash.
         /// </summary>
         /// <returns>A task which may return a request result and recent block hash.</returns>

@@ -1,0 +1,17 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "context": {
+      "slot": 1
+    },
+    "value": {
+      "blockhash": "CSymwgTNX1j3E4qhKfJAUE41nBWEwXufoYryPbkde5RR",
+      "feeCalculator": {
+        "lamportsPerSignature": 5000
+      },
+      "lastValidSlot": 297,
+      "lastValidBlockHeight": 296
+    }
+  },
+  "id": 0
+}
