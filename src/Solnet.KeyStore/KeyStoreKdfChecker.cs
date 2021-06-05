@@ -1,9 +1,9 @@
-using System;
-using System.Runtime.Serialization;
-using System.Text.Json;
 using Solnet.KeyStore.Exceptions;
 using Solnet.KeyStore.Model;
 using Solnet.KeyStore.Services;
+using System;
+using System.Runtime.Serialization;
+using System.Text.Json;
 
 namespace Solnet.KeyStore
 {
@@ -22,7 +22,7 @@ namespace Solnet.KeyStore
         {
             var cryptoObjExist = keyStoreDocument.RootElement.TryGetProperty("crypto", out var cryptoObj);
             if (!cryptoObjExist) throw new JsonException("could not get crypto params object from json");
-                
+
             var kdfObjExist = cryptoObj.TryGetProperty("kdf", out var kdfObj);
             if (!kdfObjExist) throw new JsonException("could not get kdf object from json");
 
@@ -45,7 +45,7 @@ namespace Solnet.KeyStore
             if (keyStoreDocument == null) throw new SerializationException("could not process json");
 
             var kdfString = GetKdfTypeFromJson(keyStoreDocument);
-            
+
             if (kdfString == null) throw new JsonException("could not get kdf type from json");
             return kdfString switch
             {

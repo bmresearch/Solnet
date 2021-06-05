@@ -1,9 +1,9 @@
-using System;
-using System.Threading.Tasks;
 using Solnet.Rpc.Core.Sockets;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
+using System;
+using System.Threading.Tasks;
 
 namespace Solnet.Rpc
 {

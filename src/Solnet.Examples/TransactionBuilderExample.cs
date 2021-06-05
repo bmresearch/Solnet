@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
-using NBitcoin.DataEncoders;
 using Solnet.Programs;
 using Solnet.Rpc;
 using Solnet.Rpc.Builders;
-using Solnet.Rpc.Models;
 using Solnet.Wallet;
+using System;
+using System.Collections.Generic;
 
 namespace Solnet.Examples
 {
@@ -139,7 +137,7 @@ namespace Solnet.Examples
                 SystemProgram.CreateAccount(
                     ownerAccount.GetPublicKey,
                     newAccount.GetPublicKey,
-                    (long) minBalanceForExemptionAcc,
+                    (long)minBalanceForExemptionAcc,
                     SystemProgram.AccountDataSize,
                     TokenProgram.ProgramId)).AddInstruction(
                 TokenProgram.InitializeAccount(
@@ -153,7 +151,7 @@ namespace Solnet.Examples
                     ownerAccount.GetPublicKey)).AddInstruction(
                 MemoProgram.NewMemo(
                     initialAccount,
-                    "Hello from Sol.Net")).Build(new List<Account> {ownerAccount, newAccount});
+                    "Hello from Sol.Net")).Build(new List<Account> { ownerAccount, newAccount });
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 

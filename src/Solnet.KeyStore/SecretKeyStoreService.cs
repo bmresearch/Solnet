@@ -1,9 +1,9 @@
+using Solnet.KeyStore.Model;
+using Solnet.KeyStore.Services;
 using System;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text.Json;
-using Solnet.KeyStore.Model;
-using Solnet.KeyStore.Services;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Solnet.KeyStore
@@ -36,7 +36,7 @@ namespace Solnet.KeyStore
 
             var addrExist = keyStoreDocument.RootElement.TryGetProperty("address", out var address);
             if (!addrExist) throw new JsonException("could not get address from json");
-            
+
             return address.GetString();
         }
 
@@ -45,12 +45,12 @@ namespace Solnet.KeyStore
             if (address == null) throw new ArgumentNullException(nameof(address));
             return "utc--" + DateTime.UtcNow.ToString("O").Replace(":", "-") + "--" + address;
         }
-        
+
         public byte[] DecryptKeyStoreFromFile(string password, string filePath)
         {
             if (password == null) throw new ArgumentNullException(nameof(password));
             if (filePath == null) throw new ArgumentNullException(nameof(filePath));
-            
+
             using var file = File.OpenText(filePath);
             var json = file.ReadToEnd();
             return DecryptKeyStoreFromJson(password, json);

@@ -6,7 +6,7 @@ namespace Solnet.Wallet.Utilities
 
     public class BigEndianBuffer
     {
-        readonly List<byte> _bytes = new ();
+        private readonly List<byte> _bytes = new();
 
         public void WriteUInt(uint i)
         {

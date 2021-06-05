@@ -1,4 +1,3 @@
-using System;
 using Solnet.KeyStore.Model;
 
 namespace Solnet.KeyStore.Serialization

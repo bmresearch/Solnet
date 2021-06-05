@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using NBitcoin.DataEncoders;
+﻿using NBitcoin.DataEncoders;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Solnet.Programs
 {
@@ -17,12 +17,12 @@ namespace Solnet.Programs
         /// <summary>
         /// The base58 encoder instance.
         /// </summary>
-        private static readonly Base58Encoder Encoder = new ();
+        private static readonly Base58Encoder Encoder = new();
 
         /// <summary>
         /// The address of the Memo Program.
         /// </summary>
-        private static string ProgramId = "Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo";
+        private static readonly string ProgramId = "Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo";
 
         /// <summary>
         /// Initialize a new transaction instruction which interacts with the Memo Program.

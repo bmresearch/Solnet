@@ -1,7 +1,7 @@
-using System;
-using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Solnet.Wallet;
+using System;
+using System.IO;
 
 namespace Solnet.KeyStore.Test
 {
@@ -15,7 +15,7 @@ namespace Solnet.KeyStore.Test
         private const string ValidKeyStoreSavePath = "Resources/ValidSolanaKeygenSave.txt";
 
         private const string ExpectedKeyStoreAddress = "4n8BE7DHH4NudifUBrwPbvNPs2F86XcagT7C2JKdrWrR";
-        
+
         private static readonly byte[] SeedWithPassphrase =
         {
             163,4,184,24,182,219,174,214,13,54,158,198,
@@ -25,7 +25,7 @@ namespace Solnet.KeyStore.Test
             102,56,255,105,167,180,125,222,19,111,219,18,
             115,0
         };
-        
+
         [TestMethod]
         [ExpectedException(typeof(FileNotFoundException))]
         public void TestKeyStoreFileNotFound()
@@ -33,7 +33,7 @@ namespace Solnet.KeyStore.Test
             var keyStore = new SolanaKeyStoreService();
             _ = keyStore.RestoreKeystore(InvalidPath);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestKeyStoreInvalidEmptyFilePath()
@@ -41,24 +41,24 @@ namespace Solnet.KeyStore.Test
             var keyStore = new SolanaKeyStoreService();
             _ = keyStore.RestoreKeystore(InvalidEmptyFilePath);
         }
-        
+
         [TestMethod]
         public void TestKeyStoreValid()
         {
             var keyStore = new SolanaKeyStoreService();
             var wallet = keyStore.RestoreKeystore(ValidKeyStorePath);
-            
+
             Assert.AreEqual(wallet.Account.GetPublicKey, ExpectedKeyStoreAddress);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void TestKeyStoreInvalid()
         {
             var keyStore = new SolanaKeyStoreService();
             _ = keyStore.RestoreKeystore(InvalidKeyStorePath);
-        }        
-        
+        }
+
         [TestMethod]
         public void TestKeyStoreFull()
         {
@@ -66,7 +66,7 @@ namespace Solnet.KeyStore.Test
             var walletToSave = new Wallet.Wallet(SeedWithPassphrase, "bip39passphrase", SeedMode.Bip39);
             keyStore.SaveKeystore(ValidKeyStoreSavePath, walletToSave);
             var restoredWallet = keyStore.RestoreKeystore(ValidKeyStorePath, "bip39passphrase");
-            
+
             Assert.AreEqual(ExpectedKeyStoreAddress, walletToSave.Account.GetPublicKey);
             Assert.AreEqual(ExpectedKeyStoreAddress, restoredWallet.Account.GetPublicKey);
         }
@@ -75,11 +75,11 @@ namespace Solnet.KeyStore.Test
         [ExpectedException(typeof(NotImplementedException))]
         public void TestKeyStoreDecryptNotImplemented()
         {
-            
+
             var keyStore = new SolanaKeyStoreService();
             _ = keyStore.DecryptAndRestoreKeystore("Some/Path");
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(NotImplementedException))]
         public void TestKeyStoreEncryptNotImplemented()

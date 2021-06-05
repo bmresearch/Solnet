@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using NBitcoin.DataEncoders;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Solnet.Rpc.Builders
 {
@@ -16,7 +16,7 @@ namespace Solnet.Rpc.Builders
         /// <summary>
         /// The base58 encoder instance.
         /// </summary>
-        private static readonly Base58Encoder Encoder = new ();
+        private static readonly Base58Encoder Encoder = new();
 
         /// <summary>
         /// The length of a signature.
@@ -27,12 +27,12 @@ namespace Solnet.Rpc.Builders
         /// The builder of the message contained within the transaction.
         /// </summary>
         private readonly MessageBuilder _messageBuilder;
-        
+
         /// <summary>
         /// The signatures present in the message.
         /// </summary>
         private readonly List<string> _signatures;
-        
+
         /// <summary>
         /// The message after being serialized.
         /// </summary>
@@ -43,8 +43,8 @@ namespace Solnet.Rpc.Builders
             _messageBuilder = new MessageBuilder();
             _signatures = new List<string>();
         }
-        
-        
+
+
         /// <summary>
         /// Serializes the message into a byte array.
         /// </summary>
@@ -52,17 +52,17 @@ namespace Solnet.Rpc.Builders
         {
             var signaturesLength = ShortVectorEncoding.EncodeLength(_signatures.Count);
             var buffer = new MemoryStream(signaturesLength.Length + _signatures.Count * SignatureLength + _serializedMessage.Length);
-            
+
             buffer.Write(signaturesLength);
             foreach (var signature in _signatures)
             {
                 buffer.Write(Encoder.DecodeData(signature));
             }
             buffer.Write(_serializedMessage);
-            
+
             return buffer.ToArray();
         }
-        
+
         /// <summary>
         /// Sign the transaction message with each of the signer's keys.
         /// </summary>
@@ -74,7 +74,7 @@ namespace Solnet.Rpc.Builders
 
             _messageBuilder.FeePayer = signers[0];
             _serializedMessage = _messageBuilder.Build();
-            
+
             foreach (var signer in signers)
             {
                 var signatureBytes = signer.Sign(_serializedMessage);
@@ -103,7 +103,7 @@ namespace Solnet.Rpc.Builders
             _messageBuilder.AddInstruction(instruction);
             return this;
         }
-        
+
         /// <summary>
         /// Signs the transaction's message with the passed signer and add it to the transaction, serializing it.
         /// </summary>
@@ -111,9 +111,9 @@ namespace Solnet.Rpc.Builders
         /// <returns>The serialized transaction.</returns>
         public byte[] Build(Account signer)
         {
-            return Build(new List<Account>{ signer });
+            return Build(new List<Account> { signer });
         }
-        
+
         /// <summary>
         /// Signs the transaction's message with the passed list of signers and adds them to the transaction, serializing it.
         /// </summary>

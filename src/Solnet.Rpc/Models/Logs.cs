@@ -1,7 +1,6 @@
 ﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable ClassNeverInstantiated.Global
 
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Solnet.Rpc.Models

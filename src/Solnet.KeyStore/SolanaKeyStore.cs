@@ -1,6 +1,6 @@
+using Solnet.Wallet;
 using System.IO;
 using System.Text;
-using Solnet.Wallet;
 
 namespace Solnet.KeyStore
 {
@@ -9,7 +9,7 @@ namespace Solnet.KeyStore
     /// </summary>
     public class SolanaKeyStoreService
     {
-        
+
         /// <summary>
         /// Restores a keypair from a keystore compatible with the solana-keygen made in rust.
         /// </summary>
@@ -20,7 +20,7 @@ namespace Solnet.KeyStore
             var inputBytes = File.ReadAllText(path).FromStringByteArray();
 
             var wallet = new Wallet.Wallet(inputBytes, passphrase, SeedMode.Bip39);
-            
+
             return wallet;
         }
 

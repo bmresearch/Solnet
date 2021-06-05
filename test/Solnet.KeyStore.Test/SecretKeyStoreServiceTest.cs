@@ -1,9 +1,9 @@
-using System;
-using System.IO;
-using System.Text.Json;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Solnet.KeyStore.Exceptions;
 using Solnet.KeyStore.Services;
+using System;
+using System.IO;
+using System.Text.Json;
 
 namespace Solnet.KeyStore.Test
 {
@@ -35,10 +35,10 @@ namespace Solnet.KeyStore.Test
             102,56,255,105,167,180,125,222,19,111,219,18,
             115,0
         };
-        
+
         private const string ExpectedKeyStoreAddress = "4n8BE7DHH4NudifUBrwPbvNPs2F86XcagT7C2JKdrWrR";
 
-        private static readonly SecretKeyStoreService KeyStore = new ();
+        private static readonly SecretKeyStoreService KeyStore = new();
 
         [TestMethod]
         [ExpectedException(typeof(FileNotFoundException))]
@@ -46,29 +46,29 @@ namespace Solnet.KeyStore.Test
         {
             _ = KeyStore.DecryptKeyStoreFromFile("randomPassword", InvalidPath);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(JsonException))]
         public void TestKeyStoreInvalidEmptyFilePath()
         {
             _ = KeyStore.DecryptKeyStoreFromFile("randomPassword", InvalidEmptyFilePath);
         }
-        
+
         [TestMethod]
         public void TestKeyStoreValid()
         {
             var seed = KeyStore.DecryptKeyStoreFromFile("randomPassword", ValidKeyStorePath);
-            
+
             CollectionAssert.AreEqual(SeedWithPassphrase, seed);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(DecryptionException))]
         public void TestKeyStoreInvalidPassword()
         {
             _ = KeyStore.DecryptKeyStoreFromFile("randomPassworasdd", ValidKeyStorePath);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void TestKeyStoreInvalid()
@@ -81,29 +81,29 @@ namespace Solnet.KeyStore.Test
         {
             var json = KeyStore.EncryptAndGenerateDefaultKeyStoreAsJson("randomPassword", SeedWithPassphrase,
                 ExpectedKeyStoreAddress);
-            
+
             var keyStoreAddress = SecretKeyStoreService.GetAddressFromKeyStore(json);
-            
+
             Assert.AreEqual(ExpectedKeyStoreAddress, keyStoreAddress);
         }
-        
+
         [TestMethod]
         public void TestKeyStoreGenerateKeyStore()
         {
             var json = KeyStore.EncryptAndGenerateDefaultKeyStoreAsJson("randomPassword", SeedWithPassphrase,
                 ExpectedKeyStoreAddress);
-            
+
             var keyStoreAddress = SecretKeyStoreService.GetAddressFromKeyStore(json);
-            
+
             Assert.AreEqual(ExpectedKeyStoreAddress, keyStoreAddress);
         }
-                
+
         [TestMethod]
         public void TestKeyStoreGetAddress()
         {
             var fileJson = File.ReadAllText(ValidPbkdf2KeyStorePath);
             var keyStoreAddress = SecretKeyStoreService.GetAddressFromKeyStore(fileJson);
-            
+
             Assert.AreEqual(ExpectedKeyStoreAddress, keyStoreAddress);
         }
 
@@ -115,16 +115,16 @@ namespace Solnet.KeyStore.Test
             var seed = ks.DecryptKeyStoreFromJson("randomPassword", fileJson);
             CollectionAssert.AreEqual(SeedWithPassphrase, seed);
         }
-        
+
         [TestMethod]
         public void TestValidPbkdf2KeyStoreSerialize()
         {
             var ks = new KeyStorePbkdf2Service();
             var json = ks.EncryptAndGenerateKeyStoreAsJson("randomPassword", SeedWithPassphrase,
                 ExpectedKeyStoreAddress);
-            
+
             var keyStoreAddress = SecretKeyStoreService.GetAddressFromKeyStore(json);
-            
+
             Assert.AreEqual(ExpectedKeyStoreAddress, keyStoreAddress);
         }
 

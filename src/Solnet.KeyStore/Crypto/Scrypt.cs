@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Generators;
@@ -17,7 +15,7 @@ namespace Solnet.KeyStore.Crypto
             return key.GetKey();
         }
 
-        public unsafe static byte[] CryptoScrypt(byte[] password, byte[] salt, int n, int r, int p, int dkLen)
+        public static unsafe byte[] CryptoScrypt(byte[] password, byte[] salt, int n, int r, int p, int dkLen)
         {
             var ba = new byte[128 * r * p + 63];
             var xYa = new byte[256 * r + 63];
@@ -46,7 +44,7 @@ namespace Solnet.KeyStore.Crypto
         /// <summary>
         /// Copies a specified number of bytes from a source pointer to a destination pointer.
         /// </summary>
-        private unsafe static void BulkCopy(void* dst, void* src, int len)
+        private static unsafe void BulkCopy(void* dst, void* src, int len)
         {
             var d = (byte*)dst;
             var s = (byte*)src;
@@ -82,7 +80,7 @@ namespace Solnet.KeyStore.Crypto
         /// <summary>
         /// Copies a specified number of bytes from a source pointer to a destination pointer.
         /// </summary>
-        private unsafe static void BulkXor(void* dst, void* src, int len)
+        private static unsafe void BulkXor(void* dst, void* src, int len)
         {
             var d = (byte*)dst;
             var s = (byte*)src;
@@ -117,7 +115,7 @@ namespace Solnet.KeyStore.Crypto
         /// <summary>
         /// Encode an integer to byte array on any alignment in little endian format.
         /// </summary>
-        private unsafe static void Encode32(byte* p, uint x)
+        private static unsafe void Encode32(byte* p, uint x)
         {
             p[0] = (byte)(x & 0xff);
             p[1] = (byte)((x >> 8) & 0xff);
@@ -128,10 +126,10 @@ namespace Solnet.KeyStore.Crypto
         /// <summary>
         /// Decode an integer from byte array on any alignment in little endian format.
         /// </summary>
-        private unsafe static uint Decode32(byte* p)
+        private static unsafe uint Decode32(byte* p)
         {
             return
-                ((uint)(p[0]) +
+                (p[0] +
                 ((uint)(p[1]) << 8) +
                 ((uint)(p[2]) << 16) +
                 ((uint)(p[3]) << 24));
@@ -140,7 +138,7 @@ namespace Solnet.KeyStore.Crypto
         /// <summary>
         /// Apply the salsa20/8 core to the provided block.
         /// </summary>
-        private unsafe static void Salsa208(uint* b)
+        private static unsafe void Salsa208(uint* b)
         {
             uint x0 = b[0];
             uint x1 = b[1];
@@ -210,7 +208,7 @@ namespace Solnet.KeyStore.Crypto
         /// <summary>
         /// Utility method for Salsa208.
         /// </summary>
-        private unsafe static uint R(uint a, int b)
+        private static unsafe uint R(uint a, int b)
         {
             return (a << b) | (a >> (32 - b));
         }
@@ -220,7 +218,7 @@ namespace Solnet.KeyStore.Crypto
         /// bytes in length; the output Bout must also be the same size.
         /// The temporary space X must be 64 bytes.
         /// </summary>
-        private unsafe static void BlockMix(uint* bin, uint* bout, uint* x, int r)
+        private static unsafe void BlockMix(uint* bin, uint* bout, uint* x, int r)
         {
             /* 1: X <-- B_{2r - 1} */
             BulkCopy(x, &bin[(2 * r - 1) * 16], 64);
@@ -249,7 +247,7 @@ namespace Solnet.KeyStore.Crypto
         /// <summary>
         /// Return the result of parsing B_{2r-1} as a little-endian integer.
         /// </summary>
-        private unsafe static long Integerify(uint* b, int r)
+        private static unsafe long Integerify(uint* b, int r)
         {
             var x = (uint*)(((byte*)b) + (2 * r - 1) * 64);
 
@@ -263,7 +261,7 @@ namespace Solnet.KeyStore.Crypto
         /// power of 2 greater than 1.  The arrays B, V, and XY must be aligned to a
         /// multiple of 64 bytes.
         /// </summary>
-        private unsafe static void SMix(byte* b, int r, int n, uint* v, uint* xy)
+        private static unsafe void SMix(byte* b, int r, int n, uint* v, uint* xy)
         {
             var x = xy;
             var y = &xy[32 * r];

@@ -97,7 +97,7 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public string Address { get; set; }
     }
-    
+
     /// <summary>
     /// Represents a large account.
     /// </summary>
@@ -108,7 +108,7 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public ulong Lamports { get; set; }
 
-        
+
         /// <summary>
         /// The address of the token account.
         /// </summary>

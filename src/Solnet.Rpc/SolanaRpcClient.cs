@@ -1,14 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Solnet.Rpc.Core;
 using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Solnet.Rpc
 {
@@ -131,7 +131,7 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="IRpcClient.GetProgramAccountsAsync(string)"/>
         public async Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey)
         {
-            return await SendRequestAsync< List<AccountKeyPair>>("getProgramAccounts",
+            return await SendRequestAsync<List<AccountKeyPair>>("getProgramAccounts",
                 new List<object> { pubKey },
                 new Dictionary<string, object>
                 {
@@ -149,7 +149,7 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="IRpcClient.GetMultipleAccountsAsync(IList{string})"/>
         public async Task<RequestResult<ResponseValue<List<AccountInfo>>>> GetMultipleAccountsAsync(IList<string> accounts)
         {
-            return await SendRequestAsync<ResponseValue<List<AccountInfo>>>("getMultipleAccounts", new List<object> { accounts, 
+            return await SendRequestAsync<ResponseValue<List<AccountInfo>>>("getMultipleAccounts", new List<object> { accounts,
                 new Dictionary<string, string> { { "encoding", "base64" } } });
         }
 
@@ -187,27 +187,27 @@ namespace Solnet.Rpc
 
 
         /// <inheritdoc cref="IRpcClient.GetBlocksAsync(ulong, ulong)"/>
-        public async Task<RequestResult<ulong[]>> GetBlocksAsync(ulong startSlot, ulong endSlot = 0)
+        public async Task<RequestResult<List<ulong>>> GetBlocksAsync(ulong startSlot, ulong endSlot = 0)
         {
             var parameters = new List<object> { startSlot };
             if (endSlot > 0) parameters.Add(endSlot);
 
-            return await SendRequestAsync<ulong[]>("getBlocks", parameters);
+            return await SendRequestAsync<List<ulong>>("getBlocks", parameters);
         }
 
         /// <inheritdoc cref="IRpcClient.GetBlocks(ulong, ulong)"/>
-        public RequestResult<ulong[]> GetBlocks(ulong startSlot, ulong endSlot = 0)
+        public RequestResult<List<ulong>> GetBlocks(ulong startSlot, ulong endSlot = 0)
             => GetBlocksAsync(startSlot, endSlot).Result;
 
 
         /// <inheritdoc cref="IRpcClient.GetBlocksWithLimit(ulong, ulong)"/>
-        public RequestResult<ulong[]> GetBlocksWithLimit(ulong startSlot, ulong limit)
+        public RequestResult<List<ulong>> GetBlocksWithLimit(ulong startSlot, ulong limit)
             => GetBlocksWithLimitAsync(startSlot, limit).Result;
 
         /// <inheritdoc cref="IRpcClient.GetBlocksWithLimitAsync(ulong, ulong)"/>
-        public async Task<RequestResult<ulong[]>> GetBlocksWithLimitAsync(ulong startSlot, ulong limit)
+        public async Task<RequestResult<List<ulong>>> GetBlocksWithLimitAsync(ulong startSlot, ulong limit)
         {
-            return await SendRequestAsync<ulong[]>("getBlocksWithLimit", new List<object> { startSlot, limit });
+            return await SendRequestAsync<List<ulong>>("getBlocksWithLimit", new List<object> { startSlot, limit });
         }
 
 
@@ -301,11 +301,11 @@ namespace Solnet.Rpc
 
 
         /// <inheritdoc cref="IRpcClient.GetLeaderSchedule(ulong)"/>
-        public RequestResult<Dictionary<string, ulong[]>> GetLeaderSchedule(ulong slot = 0, string identity = null)
+        public RequestResult<Dictionary<string, List<ulong>>> GetLeaderSchedule(ulong slot = 0, string identity = null)
             => GetLeaderScheduleAsync(slot, identity).Result;
 
         /// <inheritdoc cref="IRpcClient.GetLeaderScheduleAsync(ulong)"/>
-        public async Task<RequestResult<Dictionary<string, ulong[]>>> GetLeaderScheduleAsync(ulong slot = 0, string identity = null)
+        public async Task<RequestResult<Dictionary<string, List<ulong>>>> GetLeaderScheduleAsync(ulong slot = 0, string identity = null)
         {
             List<object> parameters = new List<object>();
 
@@ -316,7 +316,7 @@ namespace Solnet.Rpc
                 parameters.Add(new Dictionary<string, string> { { "identity", identity } });
             }
 
-            return await SendRequestAsync<Dictionary<string, ulong[]>>("getLeaderSchedule", parameters.Count > 0 ? parameters : null);
+            return await SendRequestAsync<Dictionary<string, List<ulong>>>("getLeaderSchedule", parameters.Count > 0 ? parameters : null);
         }
 
 
@@ -376,13 +376,13 @@ namespace Solnet.Rpc
         /// Gets the cluster nodes.
         /// </summary>
         /// <returns>A task which may return a request result and information about the nodes participating in the cluster.</returns>
-        public async Task<RequestResult<ClusterNode[]>> GetClusterNodesAsync()
+        public async Task<RequestResult<List<ClusterNode>>> GetClusterNodesAsync()
         {
-            return await SendRequestAsync<ClusterNode[]>("getClusterNodes");
+            return await SendRequestAsync<List<ClusterNode>>("getClusterNodes");
         }
 
         /// <inheritdoc cref="GetClusterNodesAsync"/>
-        public RequestResult<ClusterNode[]> GetClusterNodes()
+        public RequestResult<List<ClusterNode>> GetClusterNodes()
             => GetClusterNodesAsync().Result;
 
         /// <summary>
@@ -418,7 +418,7 @@ namespace Solnet.Rpc
             string blockhash)
         {
             return await SendRequestAsync<ResponseValue<FeeCalculatorInfo>>("getFeeCalculatorForBlockhash",
-                new List<object> {blockhash});
+                new List<object> { blockhash });
         }
 
         /// <inheritdoc cref="GetFeeCalculatorForBlockhashAsync"/>
@@ -563,16 +563,16 @@ namespace Solnet.Rpc
         /// <param name="addresses">The list of addresses to query for, as base-58 encoded strings.</param>
         /// <param name="epoch">The epoch.</param>
         /// <returns>A task which may return a request result and a list of objects representing the inflation reward.</returns>
-        public async Task<RequestResult<InflationReward[]>> GetInflationRewardAsync(string[] addresses, ulong epoch = 0)
+        public async Task<RequestResult<List<InflationReward>>> GetInflationRewardAsync(List<string> addresses, ulong epoch = 0)
         {
             if (epoch != 0)
-                return await SendRequestAsync<InflationReward[]>("getInflationReward",
+                return await SendRequestAsync<List<InflationReward>>("getInflationReward",
                     new List<object> { addresses, epoch });
-            return await SendRequestAsync<InflationReward[]>("getInflationReward", new List<object> { addresses });
+            return await SendRequestAsync<List<InflationReward>>("getInflationReward", new List<object> { addresses });
         }
 
         /// <inheritdoc cref="GetInflationRewardAsync"/>
-        public RequestResult<InflationReward[]> GetInflationReward(string[] addresses, ulong epoch = 0)
+        public RequestResult<List<InflationReward>> GetInflationReward(List<string> addresses, ulong epoch = 0)
             => GetInflationRewardAsync(addresses, epoch).Result;
 
         /// <summary>
@@ -581,14 +581,14 @@ namespace Solnet.Rpc
         /// <param name="filter">Filter results by account type. Available types: circulating/nonCirculating </param>
         /// <returns>A task which may return a request result the current slot.</returns>
         /// <remarks>Results may be cached up to two hours.</remarks>
-        public async Task<RequestResult<ResponseValue<LargeAccount[]>>> GetLargestAccountsAsync(string filter)
+        public async Task<RequestResult<ResponseValue<List<LargeAccount>>>> GetLargestAccountsAsync(string filter)
         {
-            return await SendRequestAsync<ResponseValue<LargeAccount[]>>("getLargestAccounts",
-                new List<object>{new Dictionary<string, string> {{"filter", filter}}});
+            return await SendRequestAsync<ResponseValue<List<LargeAccount>>>("getLargestAccounts",
+                new List<object> { new Dictionary<string, string> { { "filter", filter } } });
         }
 
         /// <inheritdoc cref="GetSlotAsync"/>
-        public RequestResult<ResponseValue<LargeAccount[]>> GetLargestAccounts(string filter) =>
+        public RequestResult<ResponseValue<List<LargeAccount>>> GetLargestAccounts(string filter) =>
             GetLargestAccountsAsync(filter).Result;
 
         /// <summary>
@@ -602,7 +602,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="GetSnapshotSlotAsync"/>
         public RequestResult<ulong> GetSnapshotSlot() => GetSnapshotSlotAsync().Result;
-        
+
         /// <summary>
         /// Gets a list of recent performance samples.
         /// <remarks>
@@ -611,16 +611,16 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="limit">Maximum transaction signatures to return, between 1-720. Default is 720.</param>
         /// <returns>A task which may return a request result the signatures for the transactions.</returns>
-        public async Task<RequestResult<PerformanceSample[]>> GetRecentPerformanceSamplesAsync(ulong limit = 720)
+        public async Task<RequestResult<List<PerformanceSample>>> GetRecentPerformanceSamplesAsync(ulong limit = 720)
         {
-            return await SendRequestAsync<PerformanceSample[]>("getRecentPerformanceSamples" , 
-                new List<object>{limit});
+            return await SendRequestAsync<List<PerformanceSample>>("getRecentPerformanceSamples",
+                new List<object> { limit });
         }
 
         /// <inheritdoc cref="GetRecentPerformanceSamplesAsync"/>
-        public RequestResult<PerformanceSample[]> GetRecentPerformanceSamples(ulong limit = 720)
+        public RequestResult<List<PerformanceSample>> GetRecentPerformanceSamples(ulong limit = 720)
             => GetRecentPerformanceSamplesAsync(limit).Result;
-        
+
         /// <summary>
         /// Gets confirmed signatures for transactions involving the address.
         /// <remarks>
@@ -632,26 +632,26 @@ namespace Solnet.Rpc
         /// <param name="before">Start searching backwards from this transaction signature.</param>
         /// <param name="until">Search until this transaction signature, if found before limit is reached.</param>
         /// <returns>A task which may return a request result the signatures for the transactions.</returns>
-        public async Task<RequestResult<SignatureStatusInfo[]>> GetSignaturesForAddressAsync(
+        public async Task<RequestResult<List<SignatureStatusInfo>>> GetSignaturesForAddressAsync(
             string accountPubKey, ulong limit = 1000, string before = "", string until = "")
         {
-            var dictionary = new Dictionary<string, object> {{"limit", limit}};
-            
+            var dictionary = new Dictionary<string, object> { { "limit", limit } };
+
             if (!string.IsNullOrWhiteSpace(before))
                 dictionary.Add("before", before);
-            
+
             if (!string.IsNullOrWhiteSpace(until))
                 dictionary.Add("until", until);
-            
-            return await SendRequestAsync<SignatureStatusInfo[]>("getSignaturesForAddress" , 
-                new List<object>{accountPubKey, dictionary});
+
+            return await SendRequestAsync<List<SignatureStatusInfo>>("getSignaturesForAddress",
+                new List<object> { accountPubKey, dictionary });
         }
 
         /// <inheritdoc cref="GetSignaturesForAddressAsync"/>
-        public RequestResult<SignatureStatusInfo[]> GetSignaturesForAddress(
+        public RequestResult<List<SignatureStatusInfo>> GetSignaturesForAddress(
             string accountPubKey, ulong limit = 1000, string before = "", string until = "")
             => GetSignaturesForAddressAsync(accountPubKey, limit, before, until).Result;
-        
+
         /// <summary>
         /// Gets the status of a list of signatures.
         /// <remarks>
@@ -661,17 +661,17 @@ namespace Solnet.Rpc
         /// <param name="transactionHashes">The list of transactions to search status info for.</param>
         /// <param name="searchTransactionHistory">If the node should search for signatures in it's ledger cache.</param>
         /// <returns>A task which may return a request result the highest slot with a snapshot.</returns>
-        public async Task<RequestResult<ResponseValue<SignatureStatusInfo[]>>> GetSignatureStatusesAsync(string[] transactionHashes, bool searchTransactionHistory = false)
+        public async Task<RequestResult<ResponseValue<List<SignatureStatusInfo>>>> GetSignatureStatusesAsync(List<string> transactionHashes, bool searchTransactionHistory = false)
         {
             if (searchTransactionHistory)
-                return await SendRequestAsync<ResponseValue<SignatureStatusInfo[]>>("getSignatureStatuses" , 
-                    new List<object>{transactionHashes, new Dictionary<string, bool>{ { "searchTransactionHistory", true }}});
-            return await SendRequestAsync<ResponseValue<SignatureStatusInfo[]>>("getSignatureStatuses" , 
-                new List<object>{transactionHashes});
+                return await SendRequestAsync<ResponseValue<List<SignatureStatusInfo>>>("getSignatureStatuses",
+                    new List<object> { transactionHashes, new Dictionary<string, bool> { { "searchTransactionHistory", true } } });
+            return await SendRequestAsync<ResponseValue<List<SignatureStatusInfo>>>("getSignatureStatuses",
+                new List<object> { transactionHashes });
         }
 
         /// <inheritdoc cref="GetSignatureStatusesAsync"/>
-        public RequestResult<ResponseValue<SignatureStatusInfo[]>> GetSignatureStatuses(string[] transactionHashes,
+        public RequestResult<ResponseValue<List<SignatureStatusInfo>>> GetSignatureStatuses(List<string> transactionHashes,
             bool searchTransactionHistory = false)
             => GetSignatureStatusesAsync(transactionHashes, searchTransactionHistory).Result;
 
@@ -705,13 +705,13 @@ namespace Solnet.Rpc
         /// <param name="start">The start slot.</param>
         /// <param name="limit">The result limit.</param>
         /// <returns>A task which may return a request result and a list slot leaders.</returns>
-        public async Task<RequestResult<string[]>> GetSlotLeadersAsync(ulong start, ulong limit)
+        public async Task<RequestResult<List<string>>> GetSlotLeadersAsync(ulong start, ulong limit)
         {
-            return await SendRequestAsync<string[]>("getSlotLeaders", new List<object> {start, limit});
+            return await SendRequestAsync<List<string>>("getSlotLeaders", new List<object> { start, limit });
         }
 
         /// <inheritdoc cref="GetSlotLeadersAsync"/>
-        public RequestResult<string[]> GetSlotLeaders(ulong start, ulong limit)
+        public RequestResult<List<string>> GetSlotLeaders(ulong start, ulong limit)
             => GetSlotLeadersAsync(start, limit).Result;
 
         #region Token Supply and Balances
@@ -726,11 +726,11 @@ namespace Solnet.Rpc
         {
             if (epoch != 0)
                 return await SendRequestAsync<StakeActivationInfo>("getStakeActivation",
-                new List<object> {publicKey, new Dictionary<string,ulong>{{"epoch", epoch}}});
+                new List<object> { publicKey, new Dictionary<string, ulong> { { "epoch", epoch } } });
             return await SendRequestAsync<StakeActivationInfo>("getStakeActivation",
-                new List<object> {publicKey});
+                new List<object> { publicKey });
         }
-        
+
         /// <inheritdoc cref="GetStakeActivationAsync"/>
         public RequestResult<StakeActivationInfo> GetStakeActivation(string publicKey, ulong epoch = 0) =>
             GetStakeActivationAsync(publicKey, epoch).Result;
@@ -771,7 +771,7 @@ namespace Solnet.Rpc
         /// <param name="tokenMintPubKey">Public key of the specific token Mint to limit accounts to, as base-58 encoded string.</param>
         /// <param name="tokenProgramId">Public key of the Token program ID that owns the accounts, as base-58 encoded string.</param>
         /// <returns>A task which may return a request result and information about token accounts by delegate.</returns>
-        public async Task<RequestResult<ResponseValue<TokenAccount[]>>> GetTokenAccountsByDelegateAsync(
+        public async Task<RequestResult<ResponseValue<List<TokenAccount>>>> GetTokenAccountsByDelegateAsync(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "")
         {
             if (string.IsNullOrWhiteSpace(tokenMintPubKey) && string.IsNullOrWhiteSpace(tokenProgramId))
@@ -779,13 +779,13 @@ namespace Solnet.Rpc
             var options = new Dictionary<string, object>();
             if (!string.IsNullOrWhiteSpace(tokenMintPubKey)) options.Add("mint", tokenMintPubKey);
             if (!string.IsNullOrWhiteSpace(tokenProgramId)) options.Add("programId", tokenProgramId);
-            return await SendRequestAsync<ResponseValue<TokenAccount[]>>(
+            return await SendRequestAsync<ResponseValue<List<TokenAccount>>>(
                 "getTokenAccountsByDelegate",
                 new List<object> { ownerPubKey, options, new Dictionary<string, string> { { "encoding", "jsonParsed" } } });
         }
 
         /// <inheritdoc cref="GetTokenAccountsByDelegateAsync"/>
-        public RequestResult<ResponseValue<TokenAccount[]>> GetTokenAccountsByDelegate(
+        public RequestResult<ResponseValue<List<TokenAccount>>> GetTokenAccountsByDelegate(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "")
             => GetTokenAccountsByDelegateAsync(ownerPubKey, tokenMintPubKey, tokenProgramId).Result;
 
@@ -796,7 +796,7 @@ namespace Solnet.Rpc
         /// <param name="tokenMintPubKey">Public key of the specific token Mint to limit accounts to, as base-58 encoded string.</param>
         /// <param name="tokenProgramId">Public key of the Token program ID that owns the accounts, as base-58 encoded string.</param>
         /// <returns>A task which may return a request result and information about token accounts by owner.</returns>
-        public async Task<RequestResult<ResponseValue<TokenAccount[]>>> GetTokenAccountsByOwnerAsync(
+        public async Task<RequestResult<ResponseValue<List<TokenAccount>>>> GetTokenAccountsByOwnerAsync(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "")
         {
             if (string.IsNullOrWhiteSpace(tokenMintPubKey) && string.IsNullOrWhiteSpace(tokenProgramId))
@@ -804,13 +804,13 @@ namespace Solnet.Rpc
             var options = new Dictionary<string, object>();
             if (!string.IsNullOrWhiteSpace(tokenMintPubKey)) options.Add("mint", tokenMintPubKey);
             if (!string.IsNullOrWhiteSpace(tokenProgramId)) options.Add("programId", tokenProgramId);
-            return await SendRequestAsync<ResponseValue<TokenAccount[]>>(
+            return await SendRequestAsync<ResponseValue<List<TokenAccount>>>(
                 "getTokenAccountsByOwner",
                 new List<object> { ownerPubKey, options, new Dictionary<string, string> { { "encoding", "jsonParsed" } } });
         }
 
         /// <inheritdoc cref="GetTokenAccountsByOwnerAsync"/>
-        public RequestResult<ResponseValue<TokenAccount[]>> GetTokenAccountsByOwner(
+        public RequestResult<ResponseValue<List<TokenAccount>>> GetTokenAccountsByOwner(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "")
             => GetTokenAccountsByOwnerAsync(ownerPubKey, tokenMintPubKey, tokenProgramId).Result;
 
@@ -819,15 +819,15 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="tokenMintPubKey">Public key of Token Mint to query, as base-58 encoded string.</param>
         /// <returns>A task which may return a request result and information about largest accounts.</returns>
-        public async Task<RequestResult<ResponseValue<LargeTokenAccount[]>>> GetTokenLargestAccountsAsync(
+        public async Task<RequestResult<ResponseValue<List<LargeTokenAccount>>>> GetTokenLargestAccountsAsync(
             string tokenMintPubKey)
         {
-            return await SendRequestAsync<ResponseValue<LargeTokenAccount[]>>("getTokenLargestAccounts",
+            return await SendRequestAsync<ResponseValue<List<LargeTokenAccount>>>("getTokenLargestAccounts",
                 new List<object> { tokenMintPubKey });
         }
 
         /// <inheritdoc cref="GetTokenLargestAccountsAsync"/>
-        public RequestResult<ResponseValue<LargeTokenAccount[]>> GetTokenLargestAccounts(string tokenMintPubKey)
+        public RequestResult<ResponseValue<List<LargeTokenAccount>>> GetTokenLargestAccounts(string tokenMintPubKey)
             => GetTokenLargestAccountsAsync(tokenMintPubKey).Result;
 
         /// <summary>

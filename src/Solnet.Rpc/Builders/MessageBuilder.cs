@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using NBitcoin.DataEncoders;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Solnet.Rpc.Builders
 {
@@ -16,7 +16,7 @@ namespace Solnet.Rpc.Builders
         /// <summary>
         /// The base58 encoder instance.
         /// </summary>
-        private static readonly Base58Encoder Encoder = new ();
+        private static readonly Base58Encoder Encoder = new();
 
         /// <summary>
         /// The message header.
@@ -37,7 +37,7 @@ namespace Solnet.Rpc.Builders
             /// The number of read-only signed accounts.
             /// </summary>
             internal byte ReadOnlySignedAccounts { get; set; }
-            
+
             /// <summary>
             /// The number of read-only non-signed accounts.
             /// </summary>
@@ -49,7 +49,7 @@ namespace Solnet.Rpc.Builders
             /// <returns>The byte array.</returns>
             internal byte[] ToBytes()
             {
-                return new[] {RequiredSignatures, ReadOnlySignedAccounts, ReadOnlyUnsignedAccounts};
+                return new[] { RequiredSignatures, ReadOnlySignedAccounts, ReadOnlyUnsignedAccounts };
             }
         }
 
@@ -63,9 +63,9 @@ namespace Solnet.Rpc.Builders
             internal byte[] KeyIndicesCount { get; init; }
 
             internal byte[] KeyIndices { get; init; }
-            
+
             internal byte[] DataLength { get; init; }
-            
+
             internal byte[] Data { get; init; }
 
             /// <summary>
@@ -97,7 +97,7 @@ namespace Solnet.Rpc.Builders
         /// The list of instructions contained within this transaction.
         /// </summary>
         private readonly List<TransactionInstruction> _instructions;
-        
+
         /// <summary>
         /// The hash of a recent block.
         /// </summary>
@@ -137,14 +137,14 @@ namespace Solnet.Rpc.Builders
         /// <returns></returns>
         internal byte[] Build()
         {
-            if (RecentBlockHash == null) 
+            if (RecentBlockHash == null)
                 // werent we supposed to fetch it from the api in this case?
                 throw new Exception("recent block hash is required");
-            if (_instructions == null) 
+            if (_instructions == null)
                 throw new Exception("no instructions provided in the transaction");
 
             _messageHeader = new MessageHeader();
-            
+
             var keysList = GetAccountKeys();
             var accountAddressesLength = ShortVectorEncoding.EncodeLength(keysList.Count);
             var compiledInstructionsLength = 0;
@@ -157,12 +157,12 @@ namespace Solnet.Rpc.Builders
 
                 for (var i = 0; i < keyCount; i++)
                 {
-                    keyIndices[i] = (byte) FindAccountIndex(keysList, instruction.Keys[i].PublicKey);
+                    keyIndices[i] = (byte)FindAccountIndex(keysList, instruction.Keys[i].PublicKey);
                 }
 
                 var compiledInstruction = new CompiledInstruction
                 {
-                    ProgramIdIndex = (byte) FindAccountIndex(keysList, instruction.ProgramId),
+                    ProgramIdIndex = (byte)FindAccountIndex(keysList, instruction.ProgramId),
                     KeyIndicesCount = ShortVectorEncoding.EncodeLength(keyCount),
                     KeyIndices = keyIndices,
                     DataLength = ShortVectorEncoding.EncodeLength(instruction.Data.Length),
@@ -176,7 +176,7 @@ namespace Solnet.Rpc.Builders
             var accountKeysBufferSize = _accountKeysList.AccountList.Count * 32;
             var accountKeysBuffer = new MemoryStream(accountKeysBufferSize);
             var instructionsLength = ShortVectorEncoding.EncodeLength(compiledInstructions.Count);
-            
+
             foreach (var accountMeta in keysList)
             {
                 accountKeysBuffer.Write(accountMeta.PublicKey);
@@ -186,7 +186,7 @@ namespace Solnet.Rpc.Builders
                     if (!accountMeta.Writable)
                         _messageHeader.ReadOnlySignedAccounts += 1;
                 }
-                else 
+                else
                 {
                     if (!accountMeta.Writable)
                         _messageHeader.ReadOnlyUnsignedAccounts += 1;
@@ -195,9 +195,9 @@ namespace Solnet.Rpc.Builders
 
             #region Build Message Body
 
-            
+
             var messageBufferSize = MessageHeader.HeaderLength + BlockHashLength + accountAddressesLength.Length +
-                                    + instructionsLength.Length + compiledInstructionsLength + accountKeysBufferSize;
+                                    +instructionsLength.Length + compiledInstructionsLength + accountKeysBufferSize;
             var buffer = new MemoryStream(messageBufferSize);
             var messageHeaderBytes = _messageHeader.ToBytes();
 
@@ -206,7 +206,7 @@ namespace Solnet.Rpc.Builders
             buffer.Write(accountKeysBuffer.ToArray());
             buffer.Write(Encoder.DecodeData(RecentBlockHash));
             buffer.Write(instructionsLength);
-            
+
             foreach (var compiledInstruction in compiledInstructions)
             {
                 buffer.WriteByte(compiledInstruction.ProgramIdIndex);
@@ -217,7 +217,7 @@ namespace Solnet.Rpc.Builders
             }
 
             #endregion
-            
+
             return buffer.ToArray();
         }
 
@@ -236,7 +236,7 @@ namespace Solnet.Rpc.Builders
             };
             keysList.RemoveAt(feePayerIndex);
             newList.AddRange(keysList);
-            
+
             return newList;
         }
 

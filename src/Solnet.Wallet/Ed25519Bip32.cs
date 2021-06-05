@@ -1,12 +1,12 @@
+using Solnet.Wallet.Utilities;
 using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using Solnet.Wallet.Utilities;
 
 namespace Solnet.Wallet
-{ 
+{
     /// <summary>
     /// An implementation of Ed25519 based BIP32 key generation.
     /// </summary>
@@ -16,17 +16,17 @@ namespace Solnet.Wallet
         /// The seed for the Ed25519 BIP32 HMAC-SHA512 master key calculation.
         /// </summary>
         private const string Curve = "ed25519 seed";
-        
+
         /// <summary>
         /// 
         /// </summary>
         private const uint HardenedOffset = 0x80000000;
-        
+
         /// <summary>
         /// The computed master key.
         /// </summary>
         private readonly byte[] _masterKey;
-        
+
         /// <summary>
         /// The computed chain code.
         /// </summary>
@@ -100,7 +100,7 @@ namespace Solnet.Wallet
             var valid = !(path.Split('/')
                 .Slice(1)
                 .Select(a => a.Replace("'", ""))
-                .Any(a => !Int32.TryParse(a, out _)));
+                .Any(a => !int.TryParse(a, out _)));
 
             return valid;
         }
@@ -124,8 +124,8 @@ namespace Solnet.Wallet
 
             var results = segments
                 .Aggregate(
-                    (_masterKey, _chainCode), 
-                    (masterKeyFromSeed, next) => 
+                    (_masterKey, _chainCode),
+                    (masterKeyFromSeed, next) =>
                         GetChildKeyDerivation(masterKeyFromSeed._masterKey, masterKeyFromSeed._chainCode, next + HardenedOffset));
 
             return results;

@@ -12,7 +12,7 @@ namespace Solnet.Rpc.Models
         /// </summary>
         [JsonPropertyName("solana-core")]
         public string SolanaCore { get; set; }
-        
+
         /// <summary>
         /// unique identifier of the current software's feature set.
         /// </summary>

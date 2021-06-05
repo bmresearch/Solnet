@@ -1,3 +1,9 @@
+using Microsoft.Extensions.Logging;
+using Solnet.Rpc.Core;
+using Solnet.Rpc.Core.Sockets;
+using Solnet.Rpc.Messages;
+using Solnet.Rpc.Models;
+using Solnet.Rpc.Types;
 using System;
 using System.Collections.Generic;
 using System.Net.WebSockets;
@@ -6,12 +12,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Solnet.Rpc.Core;
-using Solnet.Rpc.Core.Sockets;
-using Solnet.Rpc.Messages;
-using Solnet.Rpc.Models;
-using Solnet.Rpc.Types;
 
 namespace Solnet.Rpc
 {
@@ -23,17 +23,17 @@ namespace Solnet.Rpc
         /// <summary>
         /// Message Id generator.
         /// </summary>
-        IdGenerator _idGenerator = new IdGenerator();
+        private readonly IdGenerator _idGenerator = new IdGenerator();
 
         /// <summary>
         /// Maps the internal ids to the unconfirmed subscription state objects.
         /// </summary>
-        Dictionary<int, SubscriptionState> unconfirmedRequests = new Dictionary<int, SubscriptionState>();
+        private readonly Dictionary<int, SubscriptionState> unconfirmedRequests = new Dictionary<int, SubscriptionState>();
 
         /// <summary>
         /// Maps the server ids to the confirmed subscription state objects.
         /// </summary>
-        Dictionary<int, SubscriptionState> confirmedSubscriptions = new Dictionary<int, SubscriptionState>();
+        private readonly Dictionary<int, SubscriptionState> confirmedSubscriptions = new Dictionary<int, SubscriptionState>();
 
         /// <summary>
         /// Internal constructor.

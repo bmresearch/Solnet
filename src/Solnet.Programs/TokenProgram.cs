@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
 using NBitcoin.DataEncoders;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
+using System;
+using System.Collections.Generic;
 
 namespace Solnet.Programs
 {
@@ -11,7 +11,7 @@ namespace Solnet.Programs
         /// <summary>
         /// The base58 encoder instance.
         /// </summary>
-        private static readonly Base58Encoder Encoder = new ();
+        private static readonly Base58Encoder Encoder = new();
 
         /// <summary>
         /// The address of the Token Program.
@@ -42,7 +42,7 @@ namespace Solnet.Programs
         {
             return Transfer(Encoder.DecodeData(source), Encoder.DecodeData(destination), amount, Encoder.DecodeData(owner));
         }
-        
+
         /// <summary>
         /// Transfers tokens from one account to another either directly or via a delegate.
         /// If this account is associated with the native mint then equal amounts of SOL and Tokens will be transferred to the destination account.
@@ -101,7 +101,7 @@ namespace Solnet.Programs
                 Encoder.DecodeData(tokenMint));
         }
 
-        
+
         /// <summary>
         /// <para>
         /// Transfers tokens from one account to another either directly or via a delegate.
@@ -120,7 +120,7 @@ namespace Solnet.Programs
         /// <param name="tokenMint">The token mint.</param>
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction TransferChecked(
-            byte[] source, byte[] destination, long amount, byte decimals, byte[] owner, byte[] tokenMint) 
+            byte[] source, byte[] destination, long amount, byte decimals, byte[] owner, byte[] tokenMint)
         {
             var keys = new List<AccountMeta>
             {
@@ -159,8 +159,8 @@ namespace Solnet.Programs
         public static TransactionInstruction InitializeAccount(string account, string mint, string owner)
         {
             return InitializeAccount(
-                Encoder.DecodeData(account), 
-                Encoder.DecodeData(mint), 
+                Encoder.DecodeData(account),
+                Encoder.DecodeData(mint),
                 Encoder.DecodeData(owner));
         }
 
@@ -180,7 +180,7 @@ namespace Solnet.Programs
         /// <param name="mint">The token mint.</param>
         /// <param name="owner">The account to set as owner of the initialized account.</param>
         /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction InitializeAccount(byte[] account, byte[] mint, byte[] owner) 
+        public static TransactionInstruction InitializeAccount(byte[] account, byte[] mint, byte[] owner)
         {
             var keys = new List<AccountMeta>
             {
@@ -224,7 +224,7 @@ namespace Solnet.Programs
         /// <param name="mintAuthority">The token mint authority.</param>
         /// <param name="freezeAuthority">The token freeze authority.</param>
         /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction InitializeMint(byte[] mint, int decimals, byte[] mintAuthority, byte[] freezeAuthority = null) 
+        public static TransactionInstruction InitializeMint(byte[] mint, int decimals, byte[] mintAuthority, byte[] freezeAuthority = null)
         {
             var keys = new List<AccountMeta>
             {
@@ -232,15 +232,15 @@ namespace Solnet.Programs
                 new (Encoder.DecodeData(SysvarRentPublicKey), false, false)
             };
 
-            var freezeAuthorityOpt = freezeAuthority != null ? 1 : 0 ;
-            freezeAuthority ??= new Account().PublicKey ;
-            
+            var freezeAuthorityOpt = freezeAuthority != null ? 1 : 0;
+            freezeAuthority ??= new Account().PublicKey;
+
             var txData = EncodeInitializeMintData(
                 mintAuthority,
                 freezeAuthority,
                 decimals,
                 freezeAuthorityOpt);
-            
+
             return new()
             {
                 ProgramId = Encoder.DecodeData(ProgramId),
@@ -260,8 +260,8 @@ namespace Solnet.Programs
         public static TransactionInstruction MintTo(string mint, string destination, long amount, string mintAuthority)
         {
             return MintTo(
-                Encoder.DecodeData(mint), 
-                Encoder.DecodeData(destination), 
+                Encoder.DecodeData(mint),
+                Encoder.DecodeData(destination),
                 amount,
                 Encoder.DecodeData(mintAuthority));
         }
@@ -292,13 +292,13 @@ namespace Solnet.Programs
                 Data = data
             };
         }
-        
+
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.InitializeAccount"/> method.
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
-        private static byte[] EncodeInitializeAccountData() => new [] { (byte) TokenProgramInstructions.InitializeAccount };
-        
+        private static byte[] EncodeInitializeAccountData() => new[] { (byte)TokenProgramInstructions.InitializeAccount };
+
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.InitializeMint"/> method.
         /// </summary>
@@ -313,16 +313,16 @@ namespace Solnet.Programs
         {
             var methodBuffer = new byte[67];
 
-            methodBuffer[0] = (byte) TokenProgramInstructions.InitializeMint;
-            methodBuffer[1] = (byte) decimals;
+            methodBuffer[0] = (byte)TokenProgramInstructions.InitializeMint;
+            methodBuffer[1] = (byte)decimals;
             Array.Copy(mintAuthority, 0, methodBuffer, 2, 32);
-            methodBuffer[34] = (byte) freezeAuthorityOption;
+            methodBuffer[34] = (byte)freezeAuthorityOption;
             Array.Copy(freezeAuthority, 0, methodBuffer, 35, 32);
 
             return methodBuffer;
         }
-        
-        
+
+
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.Transfer"/> method.
         /// </summary>
@@ -331,8 +331,8 @@ namespace Solnet.Programs
         private static byte[] EncodeTransferData(long amount)
         {
             var methodBuffer = new byte[9];
-            
-            methodBuffer[0] = (byte) TokenProgramInstructions.Transfer;
+
+            methodBuffer[0] = (byte)TokenProgramInstructions.Transfer;
             Utils.Int64ToByteArrayLe(amount, methodBuffer, 1);
 
             return methodBuffer;
@@ -344,17 +344,17 @@ namespace Solnet.Programs
         /// <param name="amount">The amount of tokens.</param>
         /// <param name="decimals">The number of decimals of the token.</param>
         /// <returns>The byte array with the encoded data.</returns>
-        private static byte[] EncodeTransferCheckedData(long amount, byte decimals) 
+        private static byte[] EncodeTransferCheckedData(long amount, byte decimals)
         {
             var methodBuffer = new byte[10];
 
-            methodBuffer[0] = (byte) TokenProgramInstructions.TransferChecked;
+            methodBuffer[0] = (byte)TokenProgramInstructions.TransferChecked;
             Utils.Int64ToByteArrayLe(amount, methodBuffer, 1);
             methodBuffer[9] = decimals;
 
             return methodBuffer;
         }
-        
+
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.MintTo"/> method.
         /// </summary>
@@ -363,8 +363,8 @@ namespace Solnet.Programs
         private static byte[] EncodeMintToData(long amount)
         {
             var methodBuffer = new byte[9];
-            
-            methodBuffer[0] = (byte) TokenProgramInstructions.MintTo;
+
+            methodBuffer[0] = (byte)TokenProgramInstructions.MintTo;
             Utils.Int64ToByteArrayLe(amount, methodBuffer, 1);
 
             return methodBuffer;

@@ -1,4 +1,3 @@
-using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Solnet.KeyStore.Exceptions;
 
@@ -19,8 +18,8 @@ namespace Solnet.KeyStore.Test
             102,56,255,105,167,180,125,222,19,111,219,18,
             115,0
         };
-        
-        private static readonly SecretKeyStoreService KeyStore = new ();
+
+        private static readonly SecretKeyStoreService KeyStore = new();
 
         [TestMethod]
         [ExpectedException(typeof(InvalidKdfException))]

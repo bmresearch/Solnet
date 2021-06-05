@@ -2,8 +2,8 @@ namespace Solnet.Wallet.Utilities
 {
     public static class Utils
     {
-        
-        
+
+
         /// <summary>
         /// Slices the array, returning a new array starting at <c>start</c> index and ending at <c>end</c> index.
         /// </summary>

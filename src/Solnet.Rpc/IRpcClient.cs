@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Solnet.Rpc
 {
@@ -164,7 +164,7 @@ namespace Solnet.Rpc
         /// <param name="startSlot">The start slot (inclusive).</param>
         /// <param name="endSlot">The start slot (inclusive and optional).</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<ulong[]> GetBlocks(ulong startSlot, ulong endSlot = 0);
+        RequestResult<List<ulong>> GetBlocks(ulong startSlot, ulong endSlot = 0);
 
         /// <summary>
         /// Returns a list of confirmed blocks between two slots. This is an asynchronous operation.
@@ -172,7 +172,7 @@ namespace Solnet.Rpc
         /// <param name="startSlot">The start slot (inclusive).</param>
         /// <param name="endSlot">The start slot (inclusive and optional).</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<ulong[]>> GetBlocksAsync(ulong startSlot, ulong endSlot = 0);
+        Task<RequestResult<List<ulong>>> GetBlocksAsync(ulong startSlot, ulong endSlot = 0);
 
         /// <summary>
         /// Returns a list of confirmed blocks starting at the given slot. This is a synchronous operation.
@@ -180,7 +180,7 @@ namespace Solnet.Rpc
         /// <param name="startSlot">The start slot (inclusive).</param>
         /// <param name="limit">The max number of blocks to return.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<ulong[]> GetBlocksWithLimit(ulong startSlot, ulong limit);
+        RequestResult<List<ulong>> GetBlocksWithLimit(ulong startSlot, ulong limit);
 
         /// <summary>
         /// Returns a list of confirmed blocks starting at the given slot. This is an asynchronous operation.
@@ -188,7 +188,7 @@ namespace Solnet.Rpc
         /// <param name="startSlot">The start slot (inclusive).</param>
         /// <param name="limit">The max number of blocks to return.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<ulong[]>> GetBlocksWithLimitAsync(ulong startSlot, ulong limit);
+        Task<RequestResult<List<ulong>>> GetBlocksWithLimitAsync(ulong startSlot, ulong limit);
 
         /// <summary>
         /// Returns the slot of the lowest confirmed block that has not been purged from the ledger. This is a synchronous operation.
@@ -225,7 +225,7 @@ namespace Solnet.Rpc
         /// If unspecified, the leader schedule for the current epoch is fetched.</param>
         /// <param name="identity">Filter results for this validator only (base 58 encoded string and optional).</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<Dictionary<string, ulong[]>> GetLeaderSchedule(ulong slot = 0, string identity = null);
+        RequestResult<Dictionary<string, List<ulong>>> GetLeaderSchedule(ulong slot = 0, string identity = null);
 
         /// <summary>
         /// Returns the leader schedule for an epoch. This is an asynchronous operation.
@@ -234,7 +234,7 @@ namespace Solnet.Rpc
         /// If unspecified, the leader schedule for the current epoch is fetched.</param>
         /// <param name="identity">Filter results for this validator only (base 58 encoded string and optional).</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<Dictionary<string, ulong[]>>> GetLeaderScheduleAsync(ulong slot = 0, string identity = null);
+        Task<RequestResult<Dictionary<string, List<ulong>>>> GetLeaderScheduleAsync(ulong slot = 0, string identity = null);
 
         /// <summary>
         /// Gets the block commitment of a certain block, identified by slot.
@@ -269,10 +269,10 @@ namespace Solnet.Rpc
         /// Gets the cluster nodes.
         /// </summary>
         /// <returns>A task which may return a request result and information about the nodes participating in the cluster.</returns>
-        Task<RequestResult<ClusterNode[]>> GetClusterNodesAsync();
+        Task<RequestResult<List<ClusterNode>>> GetClusterNodesAsync();
 
         /// <inheritdoc cref="SolanaRpcClient.GetClusterNodesAsync"/>
-        RequestResult<ClusterNode[]> GetClusterNodes();
+        RequestResult<List<ClusterNode>> GetClusterNodes();
 
         /// <summary>
         /// Gets information about the current epoch.
@@ -282,7 +282,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetEpochInfoAsync"/>
         RequestResult<EpochInfo> GetEpochInfo();
-        
+
         /// <summary>
         /// Gets epoch schedule information from this cluster's genesis config.
         /// </summary>
@@ -298,29 +298,29 @@ namespace Solnet.Rpc
         /// <param name="blockhash">The blockhash to query, as base-58 encoded string.</param>
         /// <returns>A task which may return a request result and the fee calculator for the block.</returns>
         Task<RequestResult<ResponseValue<FeeCalculatorInfo>>> GetFeeCalculatorForBlockhashAsync(string blockhash);
-        
+
         /// <inheritdoc cref="SolanaRpcClient.GetFeeCalculatorForBlockhashAsync"/>
         RequestResult<ResponseValue<FeeCalculatorInfo>> GetFeeCalculatorForBlockhash(string blockhash);
-            
+
         /// <summary>
         /// Gets the fee rate governor information from the root bank.
         /// </summary>
         /// <returns>A task which may return a request result and the fee rate governor.</returns>
         Task<RequestResult<ResponseValue<FeeRateGovernorInfo>>> GetFeeRateGovernorAsync();
-    
+
         /// <inheritdoc cref="SolanaRpcClient.GetFeeRateGovernorAsync"/>
         RequestResult<ResponseValue<FeeRateGovernorInfo>> GetFeeRateGovernor();
-        
+
         /// <summary>
         /// Gets a recent block hash from the ledger, a fee schedule that can be used to compute the
         /// cost of submitting a transaction using it, and the last slot in which the blockhash will be valid.
         /// </summary>
         /// <returns>A task which may return a request result and information about fees.</returns>
         Task<RequestResult<ResponseValue<FeesInfo>>> GetFeesAsync();
-    
+
         /// <inheritdoc cref="SolanaRpcClient.GetFeesAsync"/>
         RequestResult<ResponseValue<FeesInfo>> GetFees();
-        
+
         /// <summary>
         /// Gets a recent block hash.
         /// </summary>
@@ -329,7 +329,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetBlockTimeAsync"/>
         RequestResult<ResponseValue<BlockHash>> GetRecentBlockHash();
-        
+
         /// <summary>
         /// Gets the minimum balance required to make account rent exempt.
         /// </summary>
@@ -382,22 +382,22 @@ namespace Solnet.Rpc
         /// <param name="addresses">The list of addresses to query, as base-58 encoded strings.</param>
         /// <param name="epoch">The epoch.</param>
         /// <returns>A task which may return a request result and a list of objects representing the inflation reward.</returns>
-        Task<RequestResult<InflationReward[]>> GetInflationRewardAsync(string[] addresses, ulong epoch = 0);
+        Task<RequestResult<List<InflationReward>>> GetInflationRewardAsync(List<string> addresses, ulong epoch = 0);
 
         /// <inheritdoc cref="SolanaRpcClient.GetInflationRewardAsync"/>
-        RequestResult<InflationReward[]> GetInflationReward(string[] addresses, ulong epoch = 0);
-        
+        RequestResult<List<InflationReward>> GetInflationReward(List<string> addresses, ulong epoch = 0);
+
         /// <summary>
         /// Gets the 20 largest accounts, by lamport balance.
         /// </summary>
         /// <param name="filter">Filter results by account type.</param>
         /// <returns>A task which may return a request result and a list about the largest accounts.</returns>
         /// <remarks>Results may be cached up to two hours.</remarks>
-        Task<RequestResult<ResponseValue<LargeAccount[]>>> GetLargestAccountsAsync(string filter);
+        Task<RequestResult<ResponseValue<List<LargeAccount>>>> GetLargestAccountsAsync(string filter);
 
         /// <inheritdoc cref="SolanaRpcClient.GetInflationRewardAsync"/>
-        RequestResult<ResponseValue<LargeAccount[]>> GetLargestAccounts(string filter);
-        
+        RequestResult<ResponseValue<List<LargeAccount>>> GetLargestAccounts(string filter);
+
         /// <summary>
         /// Gets the maximum slot seen from retransmit stage.
         /// </summary>
@@ -406,7 +406,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetMaxRetransmitSlotAsync"/>
         RequestResult<ulong> GetMaxRetransmitSlot();
-        
+
         /// <summary>
         /// Gets the maximum slot seen from after shred insert.
         /// </summary>
@@ -424,7 +424,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetSnapshotSlotAsync"/>
         RequestResult<ulong> GetSnapshotSlot();
-        
+
         /// <summary>
         /// Gets a list of recent performance samples.
         /// <remarks>
@@ -433,11 +433,11 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="limit">Maximum transaction signatures to return, between 1-720. Default is 720.</param>
         /// <returns>A task which may return a request result the signatures for the transactions.</returns>
-        Task<RequestResult<PerformanceSample[]>> GetRecentPerformanceSamplesAsync(ulong limit = 720);
+        Task<RequestResult<List<PerformanceSample>>> GetRecentPerformanceSamplesAsync(ulong limit = 720);
 
         /// <inheritdoc cref="SolanaRpcClient.GetRecentPerformanceSamplesAsync"/>
-        RequestResult<PerformanceSample[]> GetRecentPerformanceSamples(ulong limit = 720);
-        
+        RequestResult<List<PerformanceSample>> GetRecentPerformanceSamples(ulong limit = 720);
+
         /// <summary>
         /// Gets confirmed signatures for transactions involving the address.
         /// <remarks>
@@ -449,11 +449,11 @@ namespace Solnet.Rpc
         /// <param name="before">Start searching backwards from this transaction signature.</param>
         /// <param name="until">Search until this transaction signature, if found before limit is reached.</param>
         /// <returns>A task which may return a request result the signatures for the transactions.</returns>
-        Task<RequestResult<SignatureStatusInfo[]>> GetSignaturesForAddressAsync(string accountPubKey, ulong limit = 1000, string before = "", string until = "");
+        Task<RequestResult<List<SignatureStatusInfo>>> GetSignaturesForAddressAsync(string accountPubKey, ulong limit = 1000, string before = "", string until = "");
 
         /// <inheritdoc cref="IRpcClient.GetSignaturesForAddressAsync"/>
-        RequestResult<SignatureStatusInfo[]> GetSignaturesForAddress(string accountPubKey, ulong limit = 1000, string before = "", string until = "");
-        
+        RequestResult<List<SignatureStatusInfo>> GetSignaturesForAddress(string accountPubKey, ulong limit = 1000, string before = "", string until = "");
+
         /// <summary>
         /// Gets the status of a list of signatures.
         /// <remarks>
@@ -463,11 +463,11 @@ namespace Solnet.Rpc
         /// <param name="transactionHashes">The list of transactions to search status info for.</param>
         /// <param name="searchTransactionHistory">If the node should search for signatures in it's ledger cache.</param>
         /// <returns>A task which may return a request result the highest slot with a snapshot.</returns>
-        Task<RequestResult<ResponseValue<SignatureStatusInfo[]>>> GetSignatureStatusesAsync(string[] transactionHashes,
+        Task<RequestResult<ResponseValue<List<SignatureStatusInfo>>>> GetSignatureStatusesAsync(List<string> transactionHashes,
             bool searchTransactionHistory = false);
-        
+
         /// <inheritdoc cref="SolanaRpcClient.GetSignatureStatusesAsync"/>
-        RequestResult<ResponseValue<SignatureStatusInfo[]>> GetSignatureStatuses(string[] transactionHashes,
+        RequestResult<ResponseValue<List<SignatureStatusInfo>>> GetSignatureStatuses(List<string> transactionHashes,
             bool searchTransactionHistory = false);
 
         /// <summary>
@@ -478,7 +478,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetSlotAsync"/>
         RequestResult<ulong> GetSlot();
-        
+
         /// <summary>
         /// Gets the current slot leader.
         /// </summary>
@@ -487,17 +487,17 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetSlotLeaderAsync"/>
         RequestResult<string> GetSlotLeader();
-        
+
         /// <summary>
         /// Gets the slot leaders for a given slot range.
         /// </summary>
         /// <param name="start">The start slot.</param>
         /// <param name="limit">The result limit.</param>
         /// <returns>A task which may return a request result and a list slot leaders.</returns>
-        Task<RequestResult<string[]>> GetSlotLeadersAsync(ulong start, ulong limit);
+        Task<RequestResult<List<string>>> GetSlotLeadersAsync(ulong start, ulong limit);
 
         /// <inheritdoc cref="SolanaRpcClient.GetSlotLeadersAsync"/>
-        RequestResult<string[]> GetSlotLeaders(ulong start, ulong limit);
+        RequestResult<List<string>> GetSlotLeaders(ulong start, ulong limit);
 
         /// <summary>
         /// Gets the epoch activation information for a stake account.
@@ -536,11 +536,11 @@ namespace Solnet.Rpc
         /// <param name="tokenMintPubKey">Public key of the specific token Mint to limit accounts to, as base-58 encoded string.</param>
         /// <param name="tokenProgramId">Public key of the Token program ID that owns the accounts, as base-58 encoded string.</param>
         /// <returns>A task which may return a request result and information about token accounts by delegate</returns>
-        Task<RequestResult<ResponseValue<TokenAccount[]>>> GetTokenAccountsByDelegateAsync(
+        Task<RequestResult<ResponseValue<List<TokenAccount>>>> GetTokenAccountsByDelegateAsync(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "");
 
         /// <inheritdoc cref="SolanaRpcClient.GetTokenAccountsByDelegateAsync"/>
-        RequestResult<ResponseValue<TokenAccount[]>> GetTokenAccountsByDelegate(
+        RequestResult<ResponseValue<List<TokenAccount>>> GetTokenAccountsByDelegate(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "");
 
         /// <summary>
@@ -550,11 +550,11 @@ namespace Solnet.Rpc
         /// <param name="tokenMintPubKey">Public key of the specific token Mint to limit accounts to, as base-58 encoded string.</param>
         /// <param name="tokenProgramId">Public key of the Token program ID that owns the accounts, as base-58 encoded string.</param>
         /// <returns>A task which may return a request result and information about token accounts by owner.</returns>
-        Task<RequestResult<ResponseValue<TokenAccount[]>>> GetTokenAccountsByOwnerAsync(
+        Task<RequestResult<ResponseValue<List<TokenAccount>>>> GetTokenAccountsByOwnerAsync(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "");
 
         /// <inheritdoc cref="SolanaRpcClient.GetTokenAccountsByOwnerAsync"/>
-        RequestResult<ResponseValue<TokenAccount[]>> GetTokenAccountsByOwner(
+        RequestResult<ResponseValue<List<TokenAccount>>> GetTokenAccountsByOwner(
             string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "");
 
         /// <summary>
@@ -562,10 +562,10 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="tokenMintPubKey">Public key of Token Mint to query, as base-58 encoded string.</param>
         /// <returns>A task which may return a request result and information about largest token accounts.</returns>
-        Task<RequestResult<ResponseValue<LargeTokenAccount[]>>> GetTokenLargestAccountsAsync(string tokenMintPubKey);
+        Task<RequestResult<ResponseValue<List<LargeTokenAccount>>>> GetTokenLargestAccountsAsync(string tokenMintPubKey);
 
         /// <inheritdoc cref="SolanaRpcClient.GetTokenLargestAccountsAsync"/>
-        RequestResult<ResponseValue<LargeTokenAccount[]>> GetTokenLargestAccounts(string tokenMintPubKey);
+        RequestResult<ResponseValue<List<LargeTokenAccount>>> GetTokenLargestAccounts(string tokenMintPubKey);
 
         /// <summary>
         /// Get the token supply of an SPL Token type.

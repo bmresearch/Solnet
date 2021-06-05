@@ -1,5 +1,5 @@
-using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Solnet.Wallet.Test
 {
@@ -20,7 +20,7 @@ namespace Solnet.Wallet.Test
             196, 69, 57, 102, 15, 151, 149, 242, 119, 181,
             171, 113, 120, 224, 0, 118, 155, 61, 246, 56, 178, 47
         };
-        
+
         private static readonly byte[] InvalidPrivateKey =
         {
             227, 215, 255, 79, 160, 83, 24, 167, 124, 73, 168, 45,
@@ -35,8 +35,8 @@ namespace Solnet.Wallet.Test
             196, 69, 57, 102, 15, 151, 149, 242, 119, 181,
             171, 113, 120, 224, 0, 118, 155, 61
         };
-        
-        
+
+
         private static readonly byte[] SerializedMessage =
         {
             1, 0, 2, 4, 138, 180, 156, 252, 109, 252, 108, 26, 186, 0,
@@ -75,28 +75,28 @@ namespace Solnet.Wallet.Test
             Assert.IsNotNull(account.GetPrivateKey, "account.GetPrivateKey != null");
             Assert.IsNotNull(account.GetPublicKey, "account.GetPublicKey != null");
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void TestAccountInvalidKeys()
         {
             _ = new Account(InvalidPrivateKey, InvalidPublicKey);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void TestAccountInvalidPrivateKey()
         {
             _ = new Account(InvalidPrivateKey, PublicKey);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void TestAccountInvalidPublicKey()
         {
             _ = new Account(PrivateKey, InvalidPublicKey);
         }
-        
+
         [TestMethod]
         public void TestAccountGetPrivateKey()
         {
@@ -105,7 +105,7 @@ namespace Solnet.Wallet.Test
             CollectionAssert.AreEqual(PublicKey, account.PublicKey);
             Assert.AreEqual(ExpectedEncodedPublicKey, account.GetPublicKey);
         }
-        
+
         [TestMethod]
         public void TestAccountGetPublicKey()
         {
@@ -123,7 +123,7 @@ namespace Solnet.Wallet.Test
             CollectionAssert.AreEqual(PublicKey, account.PublicKey);
             CollectionAssert.AreEqual(SerializedMessageSignature, account.Sign(SerializedMessage));
         }
-        
+
         [TestMethod]
         public void TestAccountVerify()
         {

@@ -1,7 +1,7 @@
-using System;
 using Solnet.KeyStore.Crypto;
-using Solnet.KeyStore.Serialization;
 using Solnet.KeyStore.Model;
+using Solnet.KeyStore.Serialization;
+using System;
 
 namespace Solnet.KeyStore.Services
 {
@@ -29,7 +29,7 @@ namespace Solnet.KeyStore.Services
 
         protected override Pbkdf2Params GetDefaultParams()
         {
-            return new () {Dklen = 32, Count = 262144, Prf = "hmac-sha256"};
+            return new() { Dklen = 32, Count = 262144, Prf = "hmac-sha256" };
         }
 
         public override KeyStore<Pbkdf2Params> DeserializeKeyStoreFromJson(string json)

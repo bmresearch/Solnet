@@ -1,5 +1,5 @@
-using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Solnet.Wallet.Test
 {
@@ -10,12 +10,12 @@ namespace Solnet.Wallet.Test
         /// The valid derivation path.
         /// </summary>
         private const string DerivationPath = "m/44'/501'/0'/0'";
-        
+
         /// <summary>
         /// The invalid derivation path.
         /// </summary>
         private const string InvalidDerivationPath = "m44/'501'//0'/0'";
-        
+
         private static readonly byte[] SeedWithoutPassphrase =
         {
             124,36,217,106,151,19,165,102,96,101,74,81,
@@ -24,7 +24,7 @@ namespace Solnet.Wallet.Test
             145,107,209,208,107,159,40,223,19,82,53,136,
             255,40,171,137,93,9,205,28,7,207,88,194,91,
             219,232
-        };    
+        };
 
         [TestMethod]
         [ExpectedException(typeof(FormatException))]

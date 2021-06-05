@@ -1,7 +1,7 @@
-using System;
-using System.Collections.Generic;
 using NBitcoin.DataEncoders;
 using Solnet.Rpc.Models;
+using System;
+using System.Collections.Generic;
 
 namespace Solnet.Programs
 {
@@ -16,7 +16,7 @@ namespace Solnet.Programs
         /// <summary>
         /// The base58 encoder instance.
         /// </summary>
-        private static readonly Base58Encoder Encoder = new ();
+        private static readonly Base58Encoder Encoder = new();
 
         /// <summary>
         /// The address of the System Program.
@@ -26,11 +26,11 @@ namespace Solnet.Programs
         /// <summary>
         /// 
         /// </summary>
-        private static int ProgramIndexCreateAccount = 0;
+        private static readonly int ProgramIndexCreateAccount = 0;
         /// <summary>
         /// 
         /// </summary>
-        private static int ProgramIndexTransfer = 2;
+        private static readonly int ProgramIndexTransfer = 2;
 
         /// <summary>
         /// Account layout size.
@@ -48,7 +48,7 @@ namespace Solnet.Programs
         {
             return Transfer(Encoder.DecodeData(fromPublicKey), Encoder.DecodeData(toPublicKey), lamports);
         }
-        
+
         /// <summary>
         /// Initialize a transaction to transfer lamports.
         /// </summary>
@@ -64,18 +64,18 @@ namespace Solnet.Programs
                 new(toPublicKey, false, true)
             };
             var data = new byte[12];
-            
+
             Utils.Uint32ToByteArrayLe(ProgramIndexTransfer, data, 0);
             Utils.Int64ToByteArrayLe(lamports, data, 4);
 
             return new TransactionInstruction
             {
-                ProgramId =  Encoder.DecodeData(ProgramId),
+                ProgramId = Encoder.DecodeData(ProgramId),
                 Keys = keys,
                 Data = data
             };
         }
-        
+
         /// <summary>
         /// Initialize a new transaction instruction which interacts with the System Program to create a new account.
         /// </summary>
@@ -117,7 +117,7 @@ namespace Solnet.Programs
                 new(newAccountPublicKey, true, true)
             };
             var data = new byte[52];
-            
+
             Utils.Uint32ToByteArrayLe(ProgramIndexCreateAccount, data, 0);
             Utils.Int64ToByteArrayLe(lamports, data, 4);
             Utils.Int64ToByteArrayLe(space, data, 12);
