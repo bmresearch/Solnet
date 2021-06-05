@@ -1,6 +1,4 @@
-using System;
 using NBitcoin.DataEncoders;
-using Solnet.Wallet;
 
 namespace Solnet.Rpc.Models
 {
@@ -12,7 +10,7 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// The base58 encoder instance.
         /// </summary>
-        private static readonly Base58Encoder Encoder = new ();
+        private static readonly Base58Encoder Encoder = new();
 
         /// <summary>
         /// The public key.
@@ -41,14 +39,14 @@ namespace Solnet.Rpc.Models
             Signer = isSigner;
             Writable = isWritable;
         }
-        
-        
+
+
         /// <summary>
         /// Get the public key encoded as base58.
         /// </summary>
         public string GetPublicKey => Encoder.EncodeData(PublicKey);
     }
-    
+
     /// <summary>
     /// Implements extensions to <see cref="AccountMeta"/>.
     /// </summary>
@@ -66,7 +64,8 @@ namespace Solnet.Rpc.Models
         internal static int Compare(AccountMeta am1, AccountMeta am2)
         {
             var cmpSigner = am1.Signer == am2.Signer ? 0 : am1.Signer ? -1 : 1;
-            if (cmpSigner != 0) {
+            if (cmpSigner != 0)
+            {
                 return cmpSigner;
             }
 

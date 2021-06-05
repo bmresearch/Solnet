@@ -1,6 +1,6 @@
-using System;
 using Solnet.KeyStore.Crypto;
 using Solnet.KeyStore.Model;
+using System;
 
 namespace Solnet.KeyStore.Services
 {
@@ -38,10 +38,10 @@ namespace Solnet.KeyStore.Services
             var keyStore = EncryptAndGenerateKeyStore(password, privateKey, address);
             return SerializeKeyStoreToJson(keyStore);
         }
-        
+
         public abstract KeyStore<T> DeserializeKeyStoreFromJson(string json);
         public abstract string SerializeKeyStoreToJson(KeyStore<T> keyStore);
-        
+
         public abstract byte[] DecryptKeyStore(string password, KeyStore<T> keyStore);
 
         public abstract string GetKdfType();

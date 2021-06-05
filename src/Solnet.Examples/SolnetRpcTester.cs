@@ -1,11 +1,6 @@
-﻿using System;
+﻿using Solnet.Rpc;
+using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
-using NBitcoin.Logging;
-using Solnet.Rpc;
-using Solnet.Rpc.Core.Sockets;
-using Solnet.Rpc.Models;
-using Solnet.Rpc.Types;
 
 namespace Solnet.Examples
 {
@@ -37,7 +32,7 @@ namespace Solnet.Examples
             //Console.WriteLine($"Tx: {perf.Result[0].NumTransactions} Slot: {perf.Result[0].Slot }");
 
             var signatures = c.GetSignaturesForAddress("4Rf9mGD7FeYknun5JczX5nGLTfQuS1GRjNVfkEMKE92b");
-            
+
             var v = c.GetVersion();
             Console.WriteLine(v.Result.SolanaCore);
             Console.WriteLine(v.Result.FeatureSet);
@@ -66,14 +61,14 @@ namespace Solnet.Examples
             //var res3 = c.GetLeaderSchedule(identity: "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu");
             //var res4 = c.GetLeaderSchedule(79_700_000, "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu");
             var inflation = c.GetInflationReward(
-                new []{ "25xzEf8cqLLEm2wyZTEBtCDchsUFm3SVESjs6eEFHJWe", "GPQdoUUDQXM1gWgRVwBbYmDqAgxoZN3bhVeKr1P8jd4c"});
-            Console.WriteLine(inflation.Result.Length);
+                new List<string> { "25xzEf8cqLLEm2wyZTEBtCDchsUFm3SVESjs6eEFHJWe", "GPQdoUUDQXM1gWgRVwBbYmDqAgxoZN3bhVeKr1P8jd4c" });
+            Console.WriteLine(inflation.Result.Count);
             var res = c.GetLargestAccounts("circulating");
-            Console.WriteLine(res.Result.Value.Length);
+            Console.WriteLine(res.Result.Value.Count);
 
             var accs = c.GetMultipleAccounts(new List<string> { "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu", "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5" });
-            
-            
+
+
             /* Large accounts for Token Mint PubKey
             var largeAccounts = c.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
 

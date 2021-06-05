@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NBitcoin;
+using System;
+using System.Collections.Generic;
 
 namespace Solnet.Wallet.Test
 {
     [TestClass]
     public class WalletTest
-    {        
+    {
         private static readonly byte[] SeedWithoutPassphrase =
         {
             124,36,217,106,151,19,165,102,96,101,74,81,
@@ -16,7 +16,7 @@ namespace Solnet.Wallet.Test
             145,107,209,208,107,159,40,223,19,82,53,136,
             255,40,171,137,93,9,205,28,7,207,88,194,91,
             219,232
-        };        
+        };
         private static readonly byte[] SeedWithPassphrase =
         {
             163,4,184,24,182,219,174,214,13,54,158,198,
@@ -59,26 +59,26 @@ namespace Solnet.Wallet.Test
             61, 254, 120, 250, 15, 109, 254, 142, 88, 176, 145, 111, 0, 231, 29, 225, 10, 193,
             135, 130, 54, 21, 25, 48, 147, 4, 138, 171, 252, 15
         };
-        
+
         private const string MnemonicWords =
             "lens scheme misery search address destroy shallow police picture gown apart rural cotton vivid cage disagree enrich govern history kit early near cloth alarm";
         private const string Bip39Passphrase = "bip39passphrase";
 
-        private static readonly Mnemonic Mnemonic = new (MnemonicWords);
+        private static readonly Mnemonic Mnemonic = new(MnemonicWords);
 
         /// <summary>
         /// Expected key pairs from wallet initialization using the above parameters, as output from sollet.io
         /// </summary>
         private static readonly List<(string PublicKey, string PrivateKey)> ExpectedSolletKeys = new()
         {
-            ("ALSzrjtGi8MZGmAZa6ZhtUZq3rwurWuJqWFdgcj9MMFL", 
+            ("ALSzrjtGi8MZGmAZa6ZhtUZq3rwurWuJqWFdgcj9MMFL",
                 "5ZD7ntKtyHrnqMhfSuKBLdqHzT5N3a2aYnCGBcz4N78b84TKpjwQ4QBsapEnpnZFchM7F1BpqDkSuLdwMZwM8hLi"),
-            ("CgFKZ1VLJvip93rh7qKqiGwZjxXb4XXC4GhBGBizuWUb", 
+            ("CgFKZ1VLJvip93rh7qKqiGwZjxXb4XXC4GhBGBizuWUb",
                 "5hTHMuq5vKJachfenfKeAoDhMttXFfN77G51L8KiVRsZqRmzFvNLUdMFDRYgTfuX6yy9g6gCpatzray4XFX5B8xb"),
             ("C6jL32xjsGr9fmMdd56TF9oQURN19EfemFxkdpzRoyxm",
                 "UYhpZrPoRGvHur6ZunZT6VraiTC85NjGsFDrm8LLx3kZkThHEUGSkAuJhn2KUAt2o2Nf3EeFhEW52REzmD3iPgV")
         };
-        
+
         /// <summary>
         /// Expected key pair from wallet initialization using the above parameters, as output from solana-keygen cli tool
         /// </summary>
@@ -94,7 +94,7 @@ namespace Solnet.Wallet.Test
                 _ => throw new ArgumentOutOfRangeException(nameof(seedMode), seedMode, "this should never happen")
             };
         }
-        
+
         private static Wallet SetupWalletFromSeed(SeedMode seedMode)
         {
             return seedMode switch
@@ -104,7 +104,7 @@ namespace Solnet.Wallet.Test
                 _ => throw new ArgumentOutOfRangeException(nameof(seedMode), seedMode, "this should never happen")
             };
         }
-        
+
         private static Wallet SetupWalletFromMnemonic(SeedMode seedMode)
         {
             return seedMode switch
@@ -114,7 +114,7 @@ namespace Solnet.Wallet.Test
                 _ => throw new ArgumentOutOfRangeException(nameof(seedMode), seedMode, "this should never happen")
             };
         }
-        
+
         [TestMethod]
         public void TestWallet()
         {
@@ -131,14 +131,14 @@ namespace Solnet.Wallet.Test
             var sig = wallet.Sign(SerializedMessage, 2);
             Assert.IsTrue(wallet.Verify(SerializedMessage, sig, 2));
         }
-        
+
         [TestMethod]
         public void TestWalletEd25519Bip32FromWords()
         {
             var wallet = SetupWalletFromMnemonicWords(SeedMode.Ed25519Bip32);
 
             CollectionAssert.AreEqual(SeedWithoutPassphrase, wallet.DeriveMnemonicSeed());
-            
+
             for (var i = 0; i < ExpectedSolletKeys.Count; i++)
             {
                 var account = wallet.GetAccount(i);
@@ -146,25 +146,25 @@ namespace Solnet.Wallet.Test
                 Assert.AreEqual(ExpectedSolletKeys[i].PrivateKey, account.GetPrivateKey);
             }
         }
-        
+
         [TestMethod]
         public void TestWalletBip39FromWords()
         {
             var wallet = SetupWalletFromMnemonicWords(SeedMode.Bip39);
-            
+
             CollectionAssert.AreEqual(SeedWithPassphrase, wallet.DeriveMnemonicSeed());
-            
+
             Assert.AreEqual(ExpectedSolanaKeygenPublicKey, wallet.Account.GetPublicKey);
             Assert.AreEqual(ExpectedSolanaKeygenPrivateKey, wallet.Account.GetPrivateKey);
         }
-        
+
         [TestMethod]
         public void TestWalletEd25519Bip32FromSeed()
         {
             var wallet = SetupWalletFromSeed(SeedMode.Ed25519Bip32);
-            
+
             CollectionAssert.AreEqual(SeedWithoutPassphrase, wallet.DeriveMnemonicSeed());
-            
+
             for (var i = 0; i < ExpectedSolletKeys.Count; i++)
             {
                 var account = wallet.GetAccount(i);
@@ -172,26 +172,26 @@ namespace Solnet.Wallet.Test
                 Assert.AreEqual(ExpectedSolletKeys[i].PrivateKey, account.GetPrivateKey);
             }
         }
-        
+
         [TestMethod]
         public void TestWalletBip39FromSeed()
         {
             var wallet = SetupWalletFromSeed(SeedMode.Bip39);
-            
+
             CollectionAssert.AreEqual(SeedWithPassphrase, wallet.DeriveMnemonicSeed());
-            
+
             Assert.AreEqual(ExpectedSolanaKeygenPublicKey, wallet.Account.GetPublicKey);
             Assert.AreEqual(ExpectedSolanaKeygenPrivateKey, wallet.Account.GetPrivateKey);
         }
-        
-        
+
+
         [TestMethod]
         public void TestWalletEd25519Bip32FromMnemonic()
         {
             var wallet = SetupWalletFromMnemonic(SeedMode.Ed25519Bip32);
-            
+
             CollectionAssert.AreEqual(SeedWithoutPassphrase, wallet.DeriveMnemonicSeed());
-            
+
             for (var i = 0; i < ExpectedSolletKeys.Count; i++)
             {
                 var account = wallet.GetAccount(i);
@@ -199,12 +199,12 @@ namespace Solnet.Wallet.Test
                 Assert.AreEqual(ExpectedSolletKeys[i].PrivateKey, account.GetPrivateKey);
             }
         }
-        
+
         [TestMethod]
         public void TestWalletBip39FromMnemonic()
         {
             var wallet = SetupWalletFromMnemonic(SeedMode.Bip39);
-            
+
             CollectionAssert.AreEqual(SeedWithPassphrase, wallet.DeriveMnemonicSeed());
 
             Assert.AreEqual(ExpectedSolanaKeygenPublicKey, wallet.Account.GetPublicKey);
@@ -219,7 +219,7 @@ namespace Solnet.Wallet.Test
             CollectionAssert.AreEqual(SerializedMessageSignature, wallet.Account.Sign(SerializedMessage));
             CollectionAssert.AreEqual(SerializedMessageSignature, wallet.GetAccount(0).Sign(SerializedMessage));
         }
-        
+
         [TestMethod]
         public void TestWalletVerifyEd25519Bip32()
         {
@@ -228,7 +228,7 @@ namespace Solnet.Wallet.Test
             Assert.IsTrue(wallet.Account.Verify(SerializedMessage, SerializedMessageSignature));
             Assert.IsTrue(wallet.GetAccount(0).Verify(SerializedMessage, SerializedMessageSignature));
         }
-        
+
         [TestMethod]
         public void TestWalletSignBip39()
         {
@@ -239,15 +239,15 @@ namespace Solnet.Wallet.Test
 
             CollectionAssert.AreEqual(SerializedMessageSignatureBip39, wallet.Account.Sign(SerializedMessage));
         }
-        
+
         [TestMethod]
         public void TestWalletVerifyBip39()
         {
             var wallet = SetupWalletFromMnemonicWords(SeedMode.Bip39);
-            
+
             Assert.ThrowsException<Exception>(() => wallet.Verify(SerializedMessage, SerializedMessageSignature, 1));
             Assert.ThrowsException<Exception>(() => wallet.GetAccount(0).Verify(SerializedMessage, SerializedMessageSignature));
-            
+
             Assert.IsTrue(wallet.Account.Verify(SerializedMessage, SerializedMessageSignatureBip39));
         }
     }

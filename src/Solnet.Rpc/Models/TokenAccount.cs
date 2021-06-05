@@ -3,7 +3,7 @@
 using System.Text.Json.Serialization;
 
 namespace Solnet.Rpc.Models
-{    
+{
     /// <summary>
     /// Represents a token account.
     /// </summary>
@@ -13,7 +13,7 @@ namespace Solnet.Rpc.Models
         /// The token account info.
         /// </summary>
         public TokenAccountInfo Account { get; set; }
-        
+
         /// <summary>
         /// A base-58 encoded public key representing the account's public key.
         /// </summary>

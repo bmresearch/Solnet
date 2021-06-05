@@ -1,13 +1,13 @@
-using Solnet.Rpc.Core.Sockets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Solnet.Rpc.Core.Sockets;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using System;
-using System.Threading;
 using System.IO;
 using System.Net.WebSockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Solnet.Rpc.Test
@@ -350,8 +350,6 @@ namespace Solnet.Rpc.Test
                 notificationContents);
 
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
-
-            string signature = "4orRpuqStpJDvcpBy3vDSV4TDTGNbefmqYUnG2yVnKwjnLFqCwY4h5cBTAKakKek4inuxHF71LuscBS1vwSLtWcx";
 
             SubscriptionEvent evt = null;
 

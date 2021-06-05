@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.WebSockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Solnet.Rpc.Core.Sockets
 {
-    class WebSocketWrapper : IWebSocket
+    internal class WebSocketWrapper : IWebSocket
     {
         private readonly ClientWebSocket webSocket;
 

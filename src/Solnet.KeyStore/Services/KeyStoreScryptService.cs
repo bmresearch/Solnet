@@ -1,11 +1,11 @@
-using System;
 using Solnet.KeyStore.Crypto;
 using Solnet.KeyStore.Model;
 using Solnet.KeyStore.Serialization;
+using System;
 
 namespace Solnet.KeyStore.Services
 {
-  public class KeyStoreScryptService : KeyStoreServiceBase<ScryptParams>
+    public class KeyStoreScryptService : KeyStoreServiceBase<ScryptParams>
     {
         public const string KdfType = "scrypt";
 
@@ -31,7 +31,7 @@ namespace Solnet.KeyStore.Services
 
         protected override ScryptParams GetDefaultParams()
         {
-            return new () {Dklen = 32, N = 262144, R = 1, P = 8};
+            return new() { Dklen = 32, N = 262144, R = 1, P = 8 };
         }
 
         public override KeyStore<ScryptParams> DeserializeKeyStoreFromJson(string json)

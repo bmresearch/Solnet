@@ -1,8 +1,7 @@
-using System;
 using NBitcoin.DataEncoders;
 using Solnet.Rpc;
 using Solnet.Rpc.Core.Sockets;
-using Solnet.Rpc.Models;
+using System;
 
 namespace Solnet.Examples
 {
@@ -24,7 +23,7 @@ namespace Solnet.Examples
                     //if (accData)
                     //    Console.WriteLine(
                     //        $"Channel: {s.Channel} Slot: {data.Context.Slot} Lamports: {data.Value.Lamports} Account Owner: {tokenAcc.Parsed.Info.Owner}");
-                    
+
                     //// In a case where account data is received as base64
                     //string encodedData = null;
                     //var dataString = data.Value.TryGetAccountData(out encodedData);

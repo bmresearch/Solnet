@@ -55,12 +55,12 @@ namespace Solnet.Rpc.Utilities
             BigInteger dxxyy = D * yy * xx;
             return (yy - xx - dxxyy - 1).Mod(Q).Equals(BigInteger.Zero);
         }
-        
+
         public static bool IsOnCurve(this byte[] key)
         {
             BigInteger y = new BigInteger(key) & Un;
             BigInteger x = RecoverX(y);
-            
+
             return IsOnCurve(x, y);
         }
 
@@ -82,8 +82,8 @@ namespace Solnet.Rpc.Utilities
         private static readonly BigInteger Un =
             BigInteger.Parse("57896044618658097711785492504343953926634992332820282019728792003956564819967");
 
-        private static readonly BigInteger Two = new (2);
-        private static readonly BigInteger Eight = new (8);
+        private static readonly BigInteger Two = new(2);
+        private static readonly BigInteger Eight = new(8);
     }
 
     internal static class BigIntegerHelpers

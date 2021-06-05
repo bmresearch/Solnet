@@ -36,7 +36,7 @@ namespace Solnet.Rpc.Models
         {
             _accounts = new Dictionary<string, AccountMeta>();
         }
-        
+
         /// <summary>
         /// Add a list of account metas to the dictionary with key-value pairs of public keys - account metas.
         /// </summary>

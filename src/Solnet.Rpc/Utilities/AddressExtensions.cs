@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using Chaos.NaCl;
 
 namespace Solnet.Rpc.Utilities
 {
@@ -67,7 +66,7 @@ namespace Solnet.Rpc.Utilities
                 byte[] address;
                 try
                 {
-                    buffer.Add(new[] {(byte) nonce});
+                    buffer.Add(new[] { (byte)nonce });
                     address = CreateProgramAddress(buffer, programId);
                 }
                 catch (Exception)

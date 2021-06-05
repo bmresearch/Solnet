@@ -122,12 +122,12 @@ namespace Solnet.Rpc.Models
         /// Fee reward.
         /// </summary>
         Fee,
-        
+
         /// <summary>
         /// Rent reward.
         /// </summary>
         Rent,
-        
+
         /// <summary>
         /// Voting reward.
         /// </summary>
@@ -345,7 +345,7 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public FeeCalculator FeeCalculator { get; set; }
     }
-    
+
     /// <summary>
     /// Represents block hash info.
     /// </summary>

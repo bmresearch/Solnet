@@ -1,7 +1,7 @@
-using System;
-using System.Security.Cryptography;
 using Chaos.NaCl;
 using NBitcoin.DataEncoders;
+using System;
+using System.Security.Cryptography;
 
 namespace Solnet.Wallet
 {
@@ -10,13 +10,13 @@ namespace Solnet.Wallet
         /// <summary>
         /// The base58 encoder instance.
         /// </summary>
-        private static readonly Base58Encoder Encoder = new ();
+        private static readonly Base58Encoder Encoder = new();
 
         /// <summary>
         /// Private key length.
         /// </summary>
         private const int PrivateKeyLength = 64;
-        
+
         /// <summary>
         /// Public key length.
         /// </summary>
@@ -53,7 +53,7 @@ namespace Solnet.Wallet
                 throw new ArgumentException("invalid key length", nameof(privateKey));
             if (publicKey.Length != PublicKeyLength)
                 throw new ArgumentException("invalid key length", nameof(privateKey));
-            
+
             _privateKey = privateKey;
             _publicKey = publicKey;
         }
@@ -77,8 +77,8 @@ namespace Solnet.Wallet
         /// Get the private key as a byte array.
         /// </summary>
         public byte[] PrivateKey => _privateKey;
-        
-        
+
+
         /// <summary>
         /// Verify the signed message.
         /// </summary>
@@ -89,7 +89,7 @@ namespace Solnet.Wallet
         {
             return Ed25519.Verify(signature, message, _publicKey);
         }
-        
+
         /// <summary>
         /// Sign the data.
         /// </summary>

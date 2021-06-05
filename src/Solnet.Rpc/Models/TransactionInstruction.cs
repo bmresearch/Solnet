@@ -11,12 +11,12 @@ namespace Solnet.Rpc.Models
         /// The program ID associated with the instruction.
         /// </summary>
         public byte[] ProgramId { get; init; }
-        
+
         /// <summary>
         /// The keys associated with the instruction.
         /// </summary>
         public IList<AccountMeta> Keys { get; init; }
-        
+
         /// <summary>
         /// The instruction-specific data.
         /// </summary>

@@ -1,7 +1,6 @@
+using NBitcoin;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using NBitcoin;
 
 namespace Solnet.Examples
 {
@@ -22,22 +21,22 @@ namespace Solnet.Examples
                 new []{"9KmfMX4Ne5ocb8C7PwjmJTWTpQTQcPhkeD2zY35mawhq", "c1BzdtL4RByNQnzcaUq3WuNLuyY4tQogGT7JWwy4YGBE8FGSgWUH8eNJFyJgXNYtwTKq4emhC4V132QX9REwujm"},
                 new []{"7MrtfwpJBw2hn4eopB2CVEKR1kePJV5kKmKX3wUAFsJ9", "4skUmBVmaLoriN9Ge8xcF4xQFJmF554rnRRa2u1yDbre2zj2wUpgCXUaPETLSAWNudCkNAkWM5oJFJRaeZY1g9JR"}
             };
-            
+
             // mnemonic and passphrase to derive seed
             var mnemonic = new Mnemonic("route clerk disease box emerge airport loud waste attitude film army tray forward deal onion eight catalog surface unit card window walnut wealth medal", Wordlist.English);
-            
+
             // The passphrase isn't used to harden the mnemonic in this case.
             var solletWallet = new Wallet.Wallet(mnemonic);
             var flag = true;
-            
+
             // Mimic sollet key generation
             for (int i = 0; i < 10; i++)
             {
                 var account = solletWallet.GetAccount(i);
-                
+
                 Console.WriteLine($"SOLLET publicKey>b58 {account.GetPublicKey}");
                 Console.WriteLine($"SOLLET privateKey>b58 {account.GetPrivateKey}");
-                
+
                 if (account.GetPublicKey != expectedSolletAddresses[i][0] || account.GetPrivateKey != expectedSolletAddresses[i][1]) flag = false;
             }
             Console.WriteLine(flag ? "GOOD FOR THE SOLLET" : "NOT GOOD FOR THE SOLLET");

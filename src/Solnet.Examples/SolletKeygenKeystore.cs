@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using NBitcoin;
 using Solnet.KeyStore;
 using Solnet.Wallet;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Solnet.Examples
 {
@@ -27,55 +27,55 @@ namespace Solnet.Examples
             const string _password = "password";
             const string mnemonicWords =
                 "route clerk disease box emerge airport loud waste attitude film army tray forward deal onion eight catalog surface unit card window walnut wealth medal";
-            
+
             var mnemonic = new Mnemonic(mnemonicWords, Wordlist.English);
 
             var keystoreService = new SecretKeyStoreService();
-            
+
             // no passphrase to generate same keys as sollet
             var wallet = new Wallet.Wallet(mnemonic);
             var seed = wallet.DeriveMnemonicSeed();
             Account account = null;
             bool flag = true; // to check if the keys are the expected ones
             Console.WriteLine($"Seed: {seed.ToStringByteArray()}\nAddress: {wallet.Account.GetPublicKey}");
-            
+
             /* 1. Encrypt mnemonic derived seed and generate keystore as json 
             var keystoreJson = keystoreService.EncryptAndGenerateDefaultKeyStoreAsJson(_password, seed, wallet.Account.EncodedPublicKey);
             */
-            
+
             /* 2. Encrypt the mnemonic as bytes */
             var stringByteArray = Encoding.UTF8.GetBytes(mnemonic.ToString());
             var encryptedKeystoreJson = keystoreService.EncryptAndGenerateDefaultKeyStoreAsJson(_password, stringByteArray, wallet.Account.GetPublicKey);
 
             var keystoreJsonAddr = SecretKeyStoreService.GetAddressFromKeyStore(encryptedKeystoreJson);
-            
+
             Console.WriteLine($"Keystore JSON: {encryptedKeystoreJson}\nKeystore Address: {keystoreJsonAddr}");
-            
+
             /* 1. Decrypt mnemonic derived seed and generate wallet from it 
             var decryptedKeystore = keystoreService.DecryptKeyStoreFromJson(_password, keystoreJson);
             */
-            
+
             /* 2. Decrypt the mnemonic as bytes */
             var decryptedKeystore = keystoreService.DecryptKeyStoreFromJson(_password, encryptedKeystoreJson);
             var mnemonicString = Encoding.UTF8.GetString(decryptedKeystore);
-            
+
             /* 2. Restore the wallet from the restored mnemonic */
             var restoredMnemonic = new Mnemonic(mnemonicString);
             var restoredWallet = new Wallet.Wallet(restoredMnemonic);
-            
+
             // no passphrase to generate same keys as sollet
             //var restoredWallet = new Wallet.Wallet(decryptedKeystore);
             var restoredSeed = restoredWallet.DeriveMnemonicSeed();
-            
+
             Console.WriteLine($"Seed: {restoredSeed.ToStringByteArray()}");
-            
+
             // Mimic sollet key generation
             for (int i = 0; i < 10; i++)
             {
                 account = restoredWallet.GetAccount(i);
-                
+
                 Console.WriteLine($"RESTORED SOLLET address {account.GetPublicKey}");
-                
+
                 if (account.GetPublicKey != expectedSolletAddresses[i][0] || account.GetPrivateKey != expectedSolletAddresses[i][1]) flag = false;
             }
             Console.WriteLine(flag ? "GOOD RESTORE FOR THE SOLLET" : "NOT GOOD RESTORE FOR THE SOLLET");

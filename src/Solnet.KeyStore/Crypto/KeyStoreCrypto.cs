@@ -1,11 +1,11 @@
-using System;
-using System.Text;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
 using Solnet.KeyStore.Exceptions;
+using System;
+using System.Text;
 
 namespace Solnet.KeyStore.Crypto
 {
@@ -59,7 +59,7 @@ namespace Solnet.KeyStore.Crypto
             pdb.Init(PbeParametersGenerator.Pkcs5PasswordToUtf8Bytes(password.ToCharArray()), salt,
                 count);
             //if dklen == 32, then it is 256 (8 * 32)
-            var key = (KeyParameter) pdb.GenerateDerivedMacParameters(8 * dklen);
+            var key = (KeyParameter)pdb.GenerateDerivedMacParameters(8 * dklen);
             return key.GetKey();
         }
 

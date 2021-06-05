@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Solnet.Programs;
 using Solnet.Rpc.Builders;
 using Solnet.Wallet;
+using System;
+using System.Collections.Generic;
 
 namespace Solnet.Rpc.Test
 {
@@ -108,7 +108,7 @@ namespace Solnet.Rpc.Test
                     25000,
                     ownerAccount.GetPublicKey))
                 .AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net"))
-                .Build(new List<Account> {ownerAccount, mintAccount, initialAccount});
+                .Build(new List<Account> { ownerAccount, mintAccount, initialAccount });
 
             Assert.AreEqual(ExpectedTransactionHashCreateInitializeAndMintTo, Convert.ToBase64String(tx));
         }

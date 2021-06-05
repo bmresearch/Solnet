@@ -20,7 +20,7 @@ namespace Solnet.KeyStore.Model
             Kdf = kdfType;
         }
 
-        [JsonPropertyName("cipher")] 
+        [JsonPropertyName("cipher")]
         // ReSharper disable once MemberCanBePrivate.Global
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string Cipher { get; }
@@ -34,7 +34,7 @@ namespace Solnet.KeyStore.Model
         // ReSharper disable once MemberCanBePrivate.Global
         public CipherParams CipherParams { get; init; }
 
-        [JsonPropertyName("kdf")] 
+        [JsonPropertyName("kdf")]
         // ReSharper disable once MemberCanBePrivate.Global
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string Kdf { get; }

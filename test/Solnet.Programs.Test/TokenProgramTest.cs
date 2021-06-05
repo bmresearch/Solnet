@@ -1,7 +1,4 @@
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Solnet.Rpc.Builders;
-using Solnet.Wallet;
 
 namespace Solnet.Programs.Test
 {
@@ -41,7 +38,7 @@ namespace Solnet.Programs.Test
             7, 168, 97, 0, 0, 0, 0, 0, 0
         };
 
-        private static readonly byte[] ExpectedInitializeAccountData = {1};
+        private static readonly byte[] ExpectedInitializeAccountData = { 1 };
 
         [TestMethod]
         public void TestTransfer()
