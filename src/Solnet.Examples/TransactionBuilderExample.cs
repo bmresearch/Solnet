@@ -14,7 +14,8 @@ namespace Solnet.Examples
         private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
 
         private const string MnemonicWords =
-            "bamboo frown napkin amount detect must wine reject sketch enrich drop wing century remind clutch grain kiss omit uncover yellow flame sketch capital child";
+            "route clerk disease box emerge airport loud waste attitude film army tray " +
+            "forward deal onion eight catalog surface unit card window walnut wealth medal";
 
         public static string PrettyPrintTransactionSimulationLogs(string[] logMessages)
         {
@@ -112,7 +113,7 @@ namespace Solnet.Examples
         }
 
 
-        static void ex(string[] args)
+        static void TransferTokenExample(string[] args)
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
 
@@ -121,20 +122,38 @@ namespace Solnet.Examples
                 rpcClient.GetMinimumBalanceForRentExemption(SystemProgram.AccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
 
-            var ownerAccount = wallet.GetAccount(0);
+            var minBalanceForExemptionMint =
+                rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
+            Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
+
+            var mintAccount = wallet.GetAccount(21);
+            Console.WriteLine($"MintAccount: {mintAccount.GetPublicKey}");
+            var ownerAccount = wallet.GetAccount(10);
             Console.WriteLine($"OwnerAccount: {ownerAccount.GetPublicKey}");
-            var newAccount = wallet.GetAccount(1);
+            var initialAccount = wallet.GetAccount(24);
+            Console.WriteLine($"InitialAccount: {initialAccount.GetPublicKey}");
+            var newAccount = wallet.GetAccount(26);
             Console.WriteLine($"NewAccount: {newAccount.GetPublicKey}");
 
-            var tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)/*.AddInstruction(
+            var tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash).AddInstruction(
                 SystemProgram.CreateAccount(
                     ownerAccount.GetPublicKey,
                     newAccount.GetPublicKey,
                     (long) minBalanceForExemptionAcc,
                     SystemProgram.AccountDataSize,
-                    SystemProgram.ProgramId))*/
-                .AddInstruction(SystemProgram.Transfer(newAccount.GetPublicKey, ownerAccount.GetPublicKey, 100_000_000_000))
-                .Build(newAccount);
+                    TokenProgram.ProgramId)).AddInstruction(
+                TokenProgram.InitializeAccount(
+                    newAccount.GetPublicKey,
+                    mintAccount.GetPublicKey,
+                    ownerAccount.GetPublicKey)).AddInstruction(
+                TokenProgram.Transfer(
+                    initialAccount.GetPublicKey,
+                    newAccount.GetPublicKey,
+                    25000,
+                    ownerAccount.GetPublicKey)).AddInstruction(
+                MemoProgram.NewMemo(
+                    initialAccount,
+                    "Hello from Sol.Net")).Build(new List<Account> {ownerAccount, newAccount});
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
