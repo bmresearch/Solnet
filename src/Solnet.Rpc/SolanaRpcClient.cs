@@ -586,6 +586,25 @@ namespace Solnet.Rpc
         #region Token Supply and Balances
 
         /// <summary>
+        /// Gets the epoch activation information for a stake account.
+        /// </summary>
+        /// <param name="publicKey">Public key of account to query, as base-58 encoded string</param>
+        /// <param name="epoch">Epoch for which to calculate activation details.</param>
+        /// <returns>A task which may return a request result and information about the stake activation.</returns>
+        public async Task<RequestResult<StakeActivationInfo>> GetStakeActivationAsync(string publicKey, ulong epoch = 0)
+        {
+            if (epoch != 0)
+                return await SendRequestAsync<StakeActivationInfo>("getStakeActivation",
+                new List<object> {publicKey, new Dictionary<string,ulong>{{"epoch", epoch}}});
+            return await SendRequestAsync<StakeActivationInfo>("getStakeActivation",
+                new List<object> {publicKey});
+        }
+        
+        /// <inheritdoc cref="GetStakeActivationAsync"/>
+        public RequestResult<StakeActivationInfo> GetStakeActivation(string publicKey, ulong epoch = 0) =>
+            GetStakeActivationAsync(publicKey, epoch).Result;
+
+        /// <summary>
         /// Gets information about the current supply.
         /// </summary>
         /// <returns>A task which may return a request result and information about the supply.</returns>

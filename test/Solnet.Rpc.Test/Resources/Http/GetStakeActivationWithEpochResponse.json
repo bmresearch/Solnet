@@ -1,0 +1,9 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "active": 124429280,
+    "inactive": 73287840,
+    "state": "activating"
+  },
+  "id": 1
+}
