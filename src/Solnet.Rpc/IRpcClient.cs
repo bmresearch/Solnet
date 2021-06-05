@@ -426,6 +426,22 @@ namespace Solnet.Rpc
         RequestResult<ulong> GetSnapshotSlot();
 
         /// <summary>
+        /// Gets the status of a list of signatures.
+        /// <remarks>
+        /// Unless <c>searchTransactionHistory</c> is included, this method only searches the recent status cache of signatures.
+        /// </remarks>
+        /// </summary>
+        /// <param name="transactionHashes">The list of transactions to search status info for.</param>
+        /// <param name="searchTransactionHistory">If the node should search for signatures in it's ledger cache.</param>
+        /// <returns>A task which may return a request result the highest slot with a snapshot.</returns>
+        Task<RequestResult<ResponseValue<SignatureStatusInfo[]>>> GetSignatureStatusesAsync(string[] transactionHashes,
+            bool searchTransactionHistory = false);
+        
+        /// <inheritdoc cref="SolanaRpcClient.GetSignatureStatusesAsync"/>
+        RequestResult<ResponseValue<SignatureStatusInfo[]>> GetSignatureStatuses(string[] transactionHashes,
+            bool searchTransactionHistory = false);
+
+        /// <summary>
         /// Gets the current slot the node is processing
         /// </summary>
         /// <returns>A task which may return a request result the current slot.</returns>

@@ -928,6 +928,77 @@ namespace Solnet.Rpc.Test
         }
         
         [TestMethod]
+        public void TestGetSignatureStatuses()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Signatures/GetSignatureStatusesResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Signatures/GetSignatureStatusesRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetSignatureStatuses( 
+                new []
+                {
+                    "5VERv8NMvzbJMEkV8xnrLkEaWRtSz9CosKDYjCJjBRnbJLgp8uirBgmQpjKhoR4tjF3ZpRzrFmBV6UjKdiSZkQUW", 
+                    "5j7s6NiJS3JAkvgkoc18WVAsiSaci2pxB2A6ueCJP4tprA2TFg9wSyTLeYouxPBJEMzJinENTkpA52YStRW5Dia7"
+                });
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(82UL, result.Result.Context.Slot);
+            Assert.AreEqual(2, result.Result.Value.Length);
+            Assert.AreEqual(null, result.Result.Value[1]);
+            Assert.AreEqual(72UL, result.Result.Value[0].Slot);
+            Assert.AreEqual(10UL, result.Result.Value[0].Confirmations);
+            Assert.AreEqual("confirmed", result.Result.Value[0].ConfirmationStatus);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        
+        [TestMethod]
+        public void TestGetSignatureStatusesWithHistory()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Signatures/GetSignatureStatusesWithHistoryResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Signatures/GetSignatureStatusesWithHistoryRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetSignatureStatuses( 
+                new []
+                {
+                    "5VERv8NMvzbJMEkV8xnrLkEaWRtSz9CosKDYjCJjBRnbJLgp8uirBgmQpjKhoR4tjF3ZpRzrFmBV6UjKdiSZkQUW", 
+                    "5j7s6NiJS3JAkvgkoc18WVAsiSaci2pxB2A6ueCJP4tprA2TFg9wSyTLeYouxPBJEMzJinENTkpA52YStRW5Dia7"
+                }, true);
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(82UL, result.Result.Context.Slot);
+            Assert.AreEqual(2, result.Result.Value.Length);
+            Assert.AreEqual(null, result.Result.Value[1]);
+            Assert.AreEqual(48UL, result.Result.Value[0].Slot);
+            Assert.AreEqual(null, result.Result.Value[0].Confirmations);
+            Assert.AreEqual("finalized", result.Result.Value[0].ConfirmationStatus);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        [TestMethod]
         public void TestGetSnapshotSlot()
         {
             var responseData = File.ReadAllText("Resources/Http/GetSnapshotSlotResponse.json");
