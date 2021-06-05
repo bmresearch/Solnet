@@ -1228,6 +1228,60 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
+        public void TestGetBlocksWithLimit()
+        {
+
+            var responseData = File.ReadAllText("Resources/Http/Blocks/GetBlocksWithLimitResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Blocks/GetBlocksWithLimitRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri
+            };
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var res = sut.GetBlocksWithLimit(79_699_950, 2);
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(res.Result);
+            Assert.AreEqual(2, res.Result.Length);
+            Assert.AreEqual(79699950UL, res.Result[0]);
+            Assert.AreEqual(79699951UL, res.Result[1]);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetFirstAvailableBlock()
+        {
+
+            var responseData = File.ReadAllText("Resources/Http/Blocks/GetFirstAvailableBlockResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Blocks/GetFirstAvailableBlockRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri
+            };
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var res = sut.GetFirstAvailableBlock();
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(res.Result);
+            Assert.AreEqual(39368303UL, res.Result);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+
+
+        [TestMethod]
         public void TestGetBlock()
         {
 

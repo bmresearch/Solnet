@@ -142,6 +142,34 @@ namespace Solnet.Rpc
         Task<RequestResult<ulong[]>> GetBlocksAsync(ulong startSlot, ulong endSlot = 0);
 
         /// <summary>
+        /// Returns a list of confirmed blocks starting at the given slot. This is a synchronous operation.
+        /// </summary>
+        /// <param name="startSlot">The start slot (inclusive).</param>
+        /// <param name="limit">The max number of blocks to return.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<ulong[]> GetBlocksWithLimit(ulong startSlot, ulong limit);
+
+        /// <summary>
+        /// Returns a list of confirmed blocks starting at the given slot. This is an asynchronous operation.
+        /// </summary>
+        /// <param name="startSlot">The start slot (inclusive).</param>
+        /// <param name="limit">TThe max number of blocks to return.</param>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        Task<RequestResult<ulong[]>> GetBlocksWithLimitAsync(ulong startSlot, ulong limit);
+
+        /// <summary>
+        /// Returns the slot of the lowest confirmed block that has not been purged from the ledger. This is a synchronous operation.
+        /// </summary>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<ulong> GetFirstAvailableBlock();
+
+        /// <summary>
+        /// Returns the slot of the lowest confirmed block that has not been purged from the ledger. This is an asynchronous operation.
+        /// </summary>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        Task<RequestResult<ulong>> GetFirstAvailableBlockAsync();
+
+        /// <summary>
         /// Gets the block commitment of a certain block, identified by slot.
         /// </summary>
         /// <param name="slot">The slot.</param>

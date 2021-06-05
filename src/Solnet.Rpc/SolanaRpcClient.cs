@@ -169,6 +169,28 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="IRpcClient.GetBlocks(ulong, ulong)"/>
         public RequestResult<ulong[]> GetBlocks(ulong startSlot, ulong endSlot = 0)
             => GetBlocksAsync(startSlot, endSlot).Result;
+
+
+        /// <inheritdoc cref="IRpcClient.GetBlocksWithLimit(ulong, ulong)"/>
+        public RequestResult<ulong[]> GetBlocksWithLimit(ulong startSlot, ulong limit)
+            => GetBlocksWithLimitAsync(startSlot, limit).Result;
+
+        /// <inheritdoc cref="IRpcClient.GetBlocksWithLimitAsync(ulong, ulong)"/>
+        public async Task<RequestResult<ulong[]>> GetBlocksWithLimitAsync(ulong startSlot, ulong limit)
+        {
+            return await SendRequestAsync<ulong[]>("getBlocksWithLimit", new List<object> { startSlot, limit });
+        }
+
+
+        /// <inheritdoc cref="IRpcClient.GetFirstAvailableBlock()"/>
+        public RequestResult<ulong> GetFirstAvailableBlock()
+            => GetFirstAvailableBlockAsync().Result;
+
+        /// <inheritdoc cref="IRpcClient.GetFirstAvailableBlock()"/>
+        public async Task<RequestResult<ulong>> GetFirstAvailableBlockAsync()
+        {
+            return await SendRequestAsync<ulong>("getFirstAvailableBlock");
+        }
         #endregion
 
         #region Block Production
