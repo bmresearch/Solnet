@@ -23,7 +23,15 @@
 
 Solnet is Solana's .NET integration library.
 
-Solnet was developed targeting net 5.0 because we believe a modern decentralized platform deserves a modern technology framework to go along with it, although we are actively working on targeting earlier versions such as:
+## Features
+- Full JSON RPC API coverage
+- Full Streaming JSON RPC API coverage
+- Wallet and accounts (sollet and solana-keygen compatible)
+- Keystore (sollet and solana-keygen compatible)
+- Programs
+    - SystemProgram
+    - MemoProgram
+    - TokenProgram (no multisig)
 
 ## Requirements
 - net 5.0
@@ -59,8 +67,8 @@ var wallet = new Wallet(mnemonic);
 
 ```c#
 // Initialize the rpc client and a wallet
-var rpcClient = new SolanaRpcClient("https://testnet.solana.com");
-var wallet = new Wallet.Wallet();
+var rpcClient = ClientFactory.GetClient(Cluster.MainNet);
+var wallet = new Wallet();
 // Get the source account
 var fromAccount = wallet.GetAccount(0);
 // Get the destination account
@@ -76,6 +84,89 @@ var tx = new TransactionBuilder().
         Build(fromAccount);
 
 var firstSig = rpcClient.SendTransaction(tx);
+```
+
+### Create, Initialize and Mint
+
+```c#
+var wallet = new Wallet.Wallet(MnemonicWords);
+
+var blockHash = rpcClient.GetRecentBlockHash();
+var minBalanceForExemptionAcc = rpcClient.GetMinimumBalanceForRentExemption(SystemProgram.AccountDataSize).Result;
+
+var minBalanceForExemptionMint =rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
+
+var mintAccount = wallet.GetAccount(21);
+var ownerAccount = wallet.GetAccount(10);
+var initialAccount = wallet.GetAccount(22);
+
+var tx = new TransactionBuilder().
+    SetRecentBlockHash(blockHash.Result.Value.Blockhash).
+    AddInstruction(SystemProgram.CreateAccount(
+        ownerAccount.GetPublicKey,
+        mintAccount.GetPublicKey,
+        (long)minBalanceForExemptionMint,
+        TokenProgram.MintAccountDataSize,
+        TokenProgram.ProgramId)).
+    AddInstruction(TokenProgram.InitializeMint(
+        mintAccount.GetPublicKey,
+        2,
+        ownerAccount.GetPublicKey,
+        ownerAccount.GetPublicKey)).
+    AddInstruction(SystemProgram.CreateAccount(
+        ownerAccount.GetPublicKey,
+        initialAccount.GetPublicKey,
+        (long)minBalanceForExemptionAcc,
+        SystemProgram.AccountDataSize,
+        TokenProgram.ProgramId)).
+    AddInstruction(TokenProgram.InitializeAccount(
+        initialAccount.GetPublicKey,
+        mintAccount.GetPublicKey,
+        ownerAccount.GetPublicKey)).
+    AddInstruction(TokenProgram.MintTo(
+        mintAccount.GetPublicKey,
+        initialAccount.GetPublicKey,
+        25000,
+        ownerAccount.GetPublicKey)).
+    AddInstruction(MemoProgram.NewMemo(initialAccount,"Hello from Sol.Net")).
+        Build(new List<Account> { ownerAccount, mintAccount, initialAccount });
+```
+
+### Transfer a Token to a new Token Account
+
+```c#
+// Initialize the rpc client and a wallet
+var rpcClient = ClientFactory.GetClient(Cluster.MainNet);
+var wallet = new Wallet();
+
+var blockHash = rpcClient.GetRecentBlockHash();
+var minBalanceForExemptionAcc =
+    rpcClient.GetMinimumBalanceForRentExemption(SystemProgram.AccountDataSize).Result;
+
+var mintAccount = wallet.GetAccount(21);
+var ownerAccount = wallet.GetAccount(10);
+var initialAccount = wallet.GetAccount(22);
+var newAccount = wallet.GetAccount(23);
+
+var tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash).AddInstruction(
+    SystemProgram.CreateAccount(
+        ownerAccount.GetPublicKey,
+        newAccount.GetPublicKey,
+        (long) minBalanceForExemptionAcc,
+        SystemProgram.AccountDataSize,
+        TokenProgram.ProgramId)).AddInstruction(
+    TokenProgram.InitializeAccount(
+        newAccount.GetPublicKey,
+        mintAccount.GetPublicKey,
+        ownerAccount.GetPublicKey)).AddInstruction(
+    TokenProgram.Transfer(
+        initialAccount.GetPublicKey,
+        newAccount.GetPublicKey,
+        25000,
+        ownerAccount.GetPublicKey)).AddInstruction(
+    MemoProgram.NewMemo(
+        initialAccount,
+        "Hello from Sol.Net")).Build(new List<Account> {ownerAccount, newAccount});
 ```
 
 
