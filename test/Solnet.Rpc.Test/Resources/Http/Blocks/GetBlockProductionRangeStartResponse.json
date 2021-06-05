@@ -1,0 +1,50 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "context": { "slot": 79714275 },
+    "value": {
+      "byIdentity": {
+        "123vij84ecQEKUvQ7gYMKxKwKF6PbYSzCzzURYA4xULY": [ 4, 3 ],
+        "28LgQ7MeEZVgNJfYRc6UnoAz2SnSjKbyCKM6sntCRotb": [ 4, 4 ],
+        "2Ceu5z672tACCDB6cmB3n4tih7B8dikv6k6kfYr3Li1e": [ 4, 0 ],
+        "2FCxeG7mBYy2kpYgvgTZLCYXnaqDc4hGwYunhzHmEUD1": [ 4, 4 ],
+        "2hJpiwrWXbpRaxFdQWnhYHR19bbWfUd5VqNk7hhjALCx": [ 4, 4 ],
+        "2p64GWwGEWtHdwjdeXCMHU5LBstm5BenLdGsJZzDrKHH": [ 4, 4 ],
+        "44J72PpPim1PJHge3TwJWAMnuPhwE7DMLaZmCerYEC61": [ 4, 4 ],
+        "4pZjWxF6277CRncZjggHdiDN96juPucZHg537d2km4f9": [ 4, 4 ],
+        "4x7HEA12XAiqjsM5FbWkyNnwKfqzSDHWA1XA79uFpzGJ": [ 4, 4 ],
+        "5GkNpbXuCdQmCzE2Bten6UohHNybhCUsFybcvRNJGQLP": [ 4, 3 ],
+        "6Pjg2CBN8tG3u61t1hRQym5aHwNC55DcYV4ypWkpBFTa": [ 4, 0 ],
+        "6W3xBXKnq4vGHvBjMNSgVviQ6vqDeWiL4LwnSFjvr8Yo": [ 4, 0 ],
+        "7KvnzA5iLwJeQ2q84FA3K6ZAKSWwvyBXPGPqcEea45Wu": [ 4, 3 ],
+        "8Ce22R38MddAZSpEhLC38BqUEzVAcZh7h9MgfVCWibN3": [ 4, 4 ],
+        "8ZgmpBG5ixt4LVRQEK538hsKTsJBgmFFH5L6X5e9iPTd": [ 4, 4 ],
+        "8dYakfEyJqBxobSp6WsSPSe2eEQs9oGHtgJ8xvHbKYiv": [ 4, 4 ],
+        "8hm1sMZoqn7ZA8SmaEq81Eda5qz7mvGoNxsFR64BJqKx": [ 4, 0 ],
+        "8tiCet13nwqVRtG1UbW5Lf4uuj33X16JnHPZssfvPXpE": [ 4, 0 ],
+        "9Paysbs5evoh9BiWiS77NNutMCG9koUK2xyAsJm89Rfh": [ 4, 4 ],
+        "9me8oFZvWuc9cjBuXiW8YDGGZgkitk9GTKYTNCHaBQaF": [ 4, 4 ],
+        "A6hE8814DXNHWieGcKei3P1FhKL2rwD5YGfR89bKnihK": [ 4, 4 ],
+        "B75YnUyemn7ixtnUtq4cDUVKrFwQmn8J2Er85ypcEJ1c": [ 4, 4 ],
+        "DGQ6UDGprq5t6fhfxdykcAcqtx9P8MqkY57ef3sjpGPp": [ 4, 3 ],
+        "DiAZodQBeCoP65gTBfPsghk8No5QH6E1PEwntuxyeQy9": [ 4, 0 ],
+        "E9WbzbArKL5bnW3NTYZPKuU2dxMiznaWAyc4jpNDfdv7": [ 4, 3 ],
+        "EDpQ655JNe3hFVgMdCjz3JJhAVkZpwNguyYxUvQbvbc6": [ 4, 0 ],
+        "Ef5gVy3PFRJA7uQ4UkAD6AufNcZNtHN45k5N3L5mYatU": [ 4, 4 ],
+        "FNH1XmR5WgK7CH7W7YdcfxtdgaKFueKtqaggVr3CnY7M": [ 4, 4 ],
+        "Fd1sNgjc9mCYRxps1XuTNJ9XKbBRdV9zN5bueAUQryVN": [ 4, 4 ],
+        "GPpFVDjENZafNP8uysYR6TtnXWdN935z9jNDocP5hbzB": [ 4, 4 ],
+        "GRqJ1rtEGdJMuraEM5Z3oDbZ5k9N5mW5jkXTeDYTT5rT": [ 4, 0 ],
+        "GikkfYtVZgaUtcmreVpQ1Eamw7mrnf2jnDFGJBnhVQhG": [ 4, 4 ],
+        "Goy1QEMaKzadc7y6hYPbNu5tzQPZMFRLM7oRehiuoeDc": [ 1, 1 ],
+        "Hkj4Y4QxFvyoCd2wzAswsDpwW4vD1vyC5vppVyDDhJ8F": [ 4, 4 ],
+        "J7v9ndmcoBuo9to2MnHegLnBkC9x3SAVbQBJo5MMJrN1": [ 8, 8 ]
+      },
+      "range": {
+        "firstSlot": 79714135,
+        "lastSlot": 79714275
+      }
+    }
+  },
+  "id": 0
+}

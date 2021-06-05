@@ -25,7 +25,7 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public string[] Logs { get; set; }
     }
-    
+
     /// <summary>
     /// Represents a log message when subscribing to the log output of the Streaming RPC.
     /// </summary>
@@ -36,32 +36,30 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public string Signature { get; set; }
     }
-
+    /*
     public class InstructionError
     {
         public int ErrorCode { get; set; }
-        
+
         public KeyValuePair<string, int> CustomError { get; set; }
     }
-    
-    public class InstructionErrors
-    {
-        [JsonPropertyName("InstructionError")]
-        [JsonConverter(typeof(InstructionErrorJsonConverter))]
-        public InstructionError[] InstructionError { get; set; }
-    }
+    */
+
+
+
+
 
     public class SimulationLogs
     {
         public object[] Accounts { get; set; }
-        
+
         /// <summary>
         /// The error associated with the transaction simulation.
         /// </summary>
         [JsonPropertyName("err")]
-        public InstructionErrors Error { get; set; }
-        
-        
+        public TransactionError Error { get; set; }
+
+
         /// <summary>
         /// The log messages the transaction instructions output during execution.
         /// <remarks>
