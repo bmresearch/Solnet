@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using NBitcoin.Logging;
 using Solnet.Rpc;
@@ -36,6 +33,13 @@ namespace Solnet.Examples
             //var inflationRate = c.GetInflationRate();
             //Console.WriteLine(inflationRate.Result.Total);
 
+            var v = c.GetVersion();
+            Console.WriteLine(v.Result.SolanaCore);
+            Console.WriteLine(v.Result.FeatureSet);
+
+            var va = c.GetVoteAccounts();
+            Console.WriteLine(va.Result.Current.Length);
+            Console.WriteLine(va.Result.Delinquent.Length);
 
             //var last = c.GetBlock(79662905);
             //var t = c.GetBlockHeight();
@@ -56,8 +60,51 @@ namespace Solnet.Examples
             //var res2 = c.GetLeaderSchedule(79_700_000);
             //var res3 = c.GetLeaderSchedule(identity: "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu");
             //var res4 = c.GetLeaderSchedule(79_700_000, "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu");
+            var inflation = c.GetInflationReward(
+                new []{ "25xzEf8cqLLEm2wyZTEBtCDchsUFm3SVESjs6eEFHJWe", "GPQdoUUDQXM1gWgRVwBbYmDqAgxoZN3bhVeKr1P8jd4c"});
+            Console.WriteLine(inflation.Result.Length);
+            var res = c.GetLargestAccounts("circulating");
+            Console.WriteLine(res.Result.Value.Length);
 
             var accs = c.GetMultipleAccounts(new List<string> { "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu", "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5" });
+            
+            
+            /* Large accounts for Token Mint PubKey
+            var largeAccounts = c.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
+
+            foreach (var acc in largeAccounts.Result.Value)
+            {
+                Console.WriteLine($"Acc: {acc.Address}  Balance: {acc.UiAmountString}");
+            }
+            */
+
+            /* Token balance for Account PubKey
+            var tokenBalance = c.GetTokenAccountBalance("7247amxcSBamBSKZJrqbj373CiJSa1v21cRav56C3WfZ");
+            Console.WriteLine($"Token Balance: {tokenBalance.Result.Value.UiAmountString}");
+            */
+
+            //var tokenAccounts = c.GetTokenAccountsByOwner(
+            //    "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5",null, "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");            
+            //foreach (var acc in tokenAccounts.Result.Value)
+            //{
+            //    Console.WriteLine("--------------------------------------------------------------------");
+            //    var accInfo = c.GetAccountInfo(acc.PublicKey, BinaryEncoding.JsonParsed);
+            //    TokenAccountData tokenAccData = null;
+            //    var data = accInfo.Result.Value.TryGetAccountData(out tokenAccData);
+            //    Console.WriteLine(
+            //        $"Token Account:\n" +
+            //        $"\tAccount PubKey: {acc.PublicKey}\n" +
+            //        $"\tAccount Lamport Balance: {acc.Account.Lamports}\n" +
+            //        $"\tAccount Encoded Data: {acc.Account.Data}\n" +
+            //        $"Account Info for {acc.PublicKey}:\n" +
+            //        $"\tAccount Owner: {tokenAccData.Parsed.Info.Owner}\n" +
+            //        $"\tToken Balance: {tokenAccData.Parsed.Info.TokenAmount.UiAmountString}\n" +
+            //        $"\tToken Mint: {tokenAccData.Parsed.Info.Mint}"
+            //    );
+            //    Console.WriteLine("--------------------------------------------------------------------");
+            //}
+            var tokenAccounts = c.GetTokenAccountsByOwner(
+                "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", tokenProgramId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 
             Console.ReadKey();
         }
