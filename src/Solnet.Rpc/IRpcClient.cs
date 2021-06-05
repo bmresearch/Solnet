@@ -424,6 +424,51 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="SolanaRpcClient.GetSnapshotSlotAsync"/>
         RequestResult<ulong> GetSnapshotSlot();
+        
+        /// <summary>
+        /// Gets a list of recent performance samples.
+        /// <remarks>
+        /// Unless <c>searchTransactionHistory</c> is included, this method only searches the recent status cache of signatures.
+        /// </remarks>
+        /// </summary>
+        /// <param name="limit">Maximum transaction signatures to return, between 1-720. Default is 720.</param>
+        /// <returns>A task which may return a request result the signatures for the transactions.</returns>
+        Task<RequestResult<PerformanceSample[]>> GetRecentPerformanceSamplesAsync(ulong limit = 720);
+
+        /// <inheritdoc cref="SolanaRpcClient.GetRecentPerformanceSamplesAsync"/>
+        RequestResult<PerformanceSample[]> GetRecentPerformanceSamples(ulong limit = 720);
+        
+        /// <summary>
+        /// Gets confirmed signatures for transactions involving the address.
+        /// <remarks>
+        /// Unless <c>searchTransactionHistory</c> is included, this method only searches the recent status cache of signatures.
+        /// </remarks>
+        /// </summary>
+        /// <param name="accountPubKey">The account address as base-58 encoded string.</param>
+        /// <param name="limit">Maximum transaction signatures to return, between 1-1000. Default is 1000.</param>
+        /// <param name="before">Start searching backwards from this transaction signature.</param>
+        /// <param name="until">Search until this transaction signature, if found before limit is reached.</param>
+        /// <returns>A task which may return a request result the signatures for the transactions.</returns>
+        Task<RequestResult<SignatureStatusInfo[]>> GetSignaturesForAddressAsync(string accountPubKey, ulong limit = 1000, string before = "", string until = "");
+
+        /// <inheritdoc cref="IRpcClient.GetSignaturesForAddressAsync"/>
+        RequestResult<SignatureStatusInfo[]> GetSignaturesForAddress(string accountPubKey, ulong limit = 1000, string before = "", string until = "");
+        
+        /// <summary>
+        /// Gets the status of a list of signatures.
+        /// <remarks>
+        /// Unless <c>searchTransactionHistory</c> is included, this method only searches the recent status cache of signatures.
+        /// </remarks>
+        /// </summary>
+        /// <param name="transactionHashes">The list of transactions to search status info for.</param>
+        /// <param name="searchTransactionHistory">If the node should search for signatures in it's ledger cache.</param>
+        /// <returns>A task which may return a request result the highest slot with a snapshot.</returns>
+        Task<RequestResult<ResponseValue<SignatureStatusInfo[]>>> GetSignatureStatusesAsync(string[] transactionHashes,
+            bool searchTransactionHistory = false);
+        
+        /// <inheritdoc cref="SolanaRpcClient.GetSignatureStatusesAsync"/>
+        RequestResult<ResponseValue<SignatureStatusInfo[]>> GetSignatureStatuses(string[] transactionHashes,
+            bool searchTransactionHistory = false);
 
         /// <summary>
         /// Gets the current slot the node is processing
