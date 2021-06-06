@@ -51,7 +51,8 @@ jobs:
           packagesToPush: 'artifacts/packages/*.nupkg'
 
       - task: GithubRelease@0 
-        displayName: 'Create GitHub Release'      
+        displayName: 'Create GitHub Release' 
+        condition: eq(variables.isMaster, true)     
         inputs:
           gitHubConnection: 'bmresearch'
           repositoryName: bmresearch/Solnet
