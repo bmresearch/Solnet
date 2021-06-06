@@ -11,8 +11,8 @@
         <img src="https://img.shields.io/github/license/bmresearch/solnet?style=flat-square"
             alt="Code License"></a>
     <br>
-    <a href="https://twitter.com/intent/follow?screen_name=blockmountainco">
-        <img src="https://img.shields.io/twitter/follow/blockmountainco?style=flat-square&logo=twitter"
+    <a href="https://twitter.com/intent/follow?screen_name=blockmountainio">
+        <img src="https://img.shields.io/twitter/follow/blockmountainio?style=flat-square&logo=twitter"
             alt="Follow on Twitter"></a>
     <a href="https://discord.gg/YHMbpuS3Tx">
        <img alt="Discord" src="https://img.shields.io/discord/849407317761064961?style=flat-square"
