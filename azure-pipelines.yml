@@ -50,12 +50,14 @@ jobs:
           command: 'push'
           packagesToPush: 'artifacts/packages/*.nupkg'
 
-      - task: GithubRelease@0 
-        displayName: 'Create GitHub Release' 
-        condition: eq(variables.isMaster, true)     
+      - task: GithubRelease@0
+        displayName: 'Create GitHub Release'
+        condition: eq(variables.isMaster, true)
         inputs:
-          gitHubConnection: 'bmresearch'
+          gitHubConnection: 'bmresearch_tiago'
           repositoryName: bmresearch/Solnet
           tagSource: manual
-          tag: $(Build.BuildNumber)      
+          tag: $(Build.BuildNumber)
           assets: $(Build.ArtifactStagingDirectory)/*.nupkg
+          changeLogCompareToRelease: 'lastFullRelease'
+          changeLogType: 'commitBased'
