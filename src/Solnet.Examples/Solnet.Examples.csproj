@@ -1,21 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>net5.0</TargetFramework>
-        <OutputType>Exe</OutputType>
-    </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Solnet.KeyStore\Solnet.KeyStore.csproj" />
-      <ProjectReference Include="..\Solnet.Programs\Solnet.Programs.csproj" />
-      <ProjectReference Include="..\Solnet.Rpc\Solnet.Rpc.csproj" />
-      <ProjectReference Include="..\Solnet.Wallet\Solnet.Wallet.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Solnet.KeyStore\Solnet.KeyStore.csproj" />
+    <ProjectReference Include="..\Solnet.Programs\Solnet.Programs.csproj" />
+    <ProjectReference Include="..\Solnet.Rpc\Solnet.Rpc.csproj" />
+    <ProjectReference Include="..\Solnet.Wallet\Solnet.Wallet.csproj" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Chaos.NaCl.Standard" Version="1.0.0" />
-      <PackageReference Include="NBitcoin" Version="5.0.78" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Chaos.NaCl.Standard" Version="1.0.0" />
+    <PackageReference Include="NBitcoin" Version="5.0.78" />
+  </ItemGroup>
 
 </Project>
