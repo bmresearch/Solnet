@@ -37,14 +37,6 @@ jobs:
           artifactName: 'NuGet packages'
           targetPath: 'artifacts/packages'
 
-      - task: NuGetCommand@2
-        displayName: 'Publishing to NuGet'
-        inputs:
-          command: 'push'
-          packagesToPush: 'artifacts/packages/*.nupkg'
-          nuGetFeedType: 'external'
-          publishFeedCredentials: 'blockmountain nuget'
-
       - task: GithubRelease@0
         displayName: 'Create GitHub Release'
         condition: eq(variables.isMaster, true)
@@ -52,8 +44,7 @@ jobs:
           gitHubConnection: 'bmresearch_tiago'
           repositoryName: bmresearch/Solnet
           tagSource: manual
-          tag: $(Build.BuildNumber)
+          tag: $(Build.SourceVersionMessage)
           assets: 'artifacts/packages/*.nupkg'
           changeLogCompareToRelease: 'lastFullRelease'
           changeLogType: 'commitBased'
-          
