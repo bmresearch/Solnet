@@ -53,7 +53,7 @@ jobs:
           repositoryName: bmresearch/Solnet
           tagSource: manual
           tag: $(Build.BuildNumber)
-          assets: $(Build.ArtifactStagingDirectory)/*.nupkg
+          assets: 'artifacts/packages/*.nupkg'
           changeLogCompareToRelease: 'lastFullRelease'
           changeLogType: 'commitBased'
           
