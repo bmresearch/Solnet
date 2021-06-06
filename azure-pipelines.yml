@@ -5,6 +5,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  isMaster: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
 
 
 jobs:
@@ -20,27 +21,43 @@ jobs:
           restoreSolution: '$(solution)'
 
       - task: ShellScript@2
+        displayName: 'Build & Test'
         inputs:
           scriptPath: './build.sh'
 
       - task: PublishCodeCoverageResults@1
+        displayName: 'Publishing code coverage'
         inputs:
           codeCoverageTool: 'cobertura'
           summaryFileLocation: '$(Build.SourcesDirectory)/**/results.cobertura.xml'
+          
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publishing artifacts'
+        inputs:
+          artifactName: 'NuGet packages'
+          targetPath: 'artifacts/packages'
 
-  - job: Windows
-    pool:
-      vmImage: 'windows-latest'
-    steps:
-      - task: NuGetToolInstaller@1
-
+      - task: NuGetAuthenticate@0
+        displayName: 'Authenticating with NuGet'
+        condition: eq(variables.isMaster, true)
+        inputs:
+         nuGetServiceConnections: 'blockmountain nuget'
+            
       - task: NuGetCommand@2
+        displayName: 'Publishing to NuGet'
+        condition: eq(variables.isMaster, true)
         inputs:
-          restoreSolution: '$(solution)'
+          command: 'push'
+          packagesToPush: 'artifacts/packages/*.nupkg'
 
-      - powershell: ./build.ps1
-
-      - task: PublishCodeCoverageResults@1
+      - task: GithubRelease@0
+        displayName: 'Create GitHub Release'
+        condition: eq(variables.isMaster, true)
         inputs:
-          codeCoverageTool: 'cobertura'
-          summaryFileLocation: '$(Build.SourcesDirectory)/**/results.cobertura.xml'
+          gitHubConnection: 'bmresearch_tiago'
+          repositoryName: bmresearch/Solnet
+          tagSource: manual
+          tag: $(Build.BuildNumber)
+          assets: $(Build.ArtifactStagingDirectory)/*.nupkg
+          changeLogCompareToRelease: 'lastFullRelease'
+          changeLogType: 'commitBased'

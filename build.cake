@@ -10,20 +10,23 @@ var testProjectsRelativePaths = new string[]
     "./test/Solnet.Programs.Test/Solnet.Programs.Test.csproj"
 };
 
-var target = Argument("target", "Publish");
+var target = Argument("target", "Pack");
 var configuration = Argument("configuration", "Release");
 var solutionFolder = "./";
-var outputFolder = "./artifacts";
+var artifactsDir = MakeAbsolute(Directory("artifacts"));
+
 var reportTypes = "HtmlInline_AzurePipelines";
 var coverageFolder = "./code_coverage";
 
 var coberturaFileName = "results";
 var coverageFilePath = Directory(coverageFolder) + File(coberturaFileName + ".cobertura.xml");
 var jsonFilePath = Directory(coverageFolder) + File(coberturaFileName + ".json");
+var packagesDir = artifactsDir.Combine(Directory("packages"));
+
 
 Task("Clean")
     .Does(() => {
-        CleanDirectory(outputFolder);
+        CleanDirectory(artifactsDir);
         CleanDirectory(coverageFolder);
     });
 
@@ -96,8 +99,27 @@ Task("Publish")
             NoRestore = true,
             Configuration = configuration,
             NoBuild = true,
-            OutputDirectory = outputFolder
+            OutputDirectory = artifactsDir
         });
+    });
+
+Task("Pack")
+    .IsDependentOn("Test")
+    .Does(() =>
+    {
+        var settings = new DotNetCorePackSettings
+        {
+            Configuration = configuration,
+            NoBuild = true,
+            NoRestore = true,
+            IncludeSymbols = true,
+            OutputDirectory = packagesDir,
+        };
+
+
+        GetFiles("./src/*/*.csproj")
+            .ToList()
+            .ForEach(f => DotNetCorePack(f.FullPath, settings));
     });
 
 RunTarget(target);
