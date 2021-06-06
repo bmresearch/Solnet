@@ -37,18 +37,13 @@ jobs:
           artifactName: 'NuGet packages'
           targetPath: 'artifacts/packages'
 
-      - task: NuGetAuthenticate@0
-        displayName: 'Authenticating with NuGet'
-        condition: eq(variables.isMaster, true)
-        inputs:
-         nuGetServiceConnections: 'blockmountain nuget'
-            
       - task: NuGetCommand@2
         displayName: 'Publishing to NuGet'
-        condition: eq(variables.isMaster, true)
         inputs:
           command: 'push'
           packagesToPush: 'artifacts/packages/*.nupkg'
+          nuGetFeedType: 'external'
+          publishFeedCredentials: 'blockmountain nuget'
 
       - task: GithubRelease@0
         displayName: 'Create GitHub Release'
@@ -61,3 +56,4 @@ jobs:
           assets: $(Build.ArtifactStagingDirectory)/*.nupkg
           changeLogCompareToRelease: 'lastFullRelease'
           changeLogType: 'commitBased'
+          
