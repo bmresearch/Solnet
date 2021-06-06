@@ -61,17 +61,20 @@ namespace Solnet.Rpc.Core.Http
         /// <returns>A task that represents the asynchronous operation that holds the request result.</returns>
         protected async Task<RequestResult<T>> SendRequest<T>(JsonRpcRequest req)
         {
-            HttpResponseMessage response;
             RequestResult<T> result;
             var requestJson = JsonSerializer.Serialize(req, _serializerOptions);
 
             try
             {
                 _logger?.LogInformation(new EventId(req.Id, req.Method), $"Sending request: {requestJson}");
-                response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Post, "/")
+
+                using (var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Post, "/")
                 {
                     Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
-                });
+                }).ConfigureAwait(false))
+                {
+                    return await HandleResult<T>(req, response).ConfigureAwait(false);
+                }
             }
             catch (HttpRequestException e)
             {
@@ -86,12 +89,24 @@ namespace Solnet.Rpc.Core.Http
                 return result;
             }
 
-            result = new RequestResult<T>(response);
+
+        }
+
+        /// <summary>
+        /// Handles the result after sending a request.
+        /// </summary>
+        /// <typeparam name="T">The type of the result to deserialize from json.</typeparam>
+        /// <param name="req">The original message request.</param>
+        /// <param name="response">The response obtained from the request.</param>
+        /// <returns>A task that represents the asynchronous operation that holds the request result.</returns>
+        private async Task<RequestResult<T>> HandleResult<T>(JsonRpcRequest req, HttpResponseMessage response)
+        {
+            RequestResult<T> result = new RequestResult<T>(response);
             if (!result.WasHttpRequestSuccessful) return result;
 
             try
             {
-                var requestRes = await response.Content.ReadAsStringAsync();
+                var requestRes = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 _logger?.LogInformation(new EventId(req.Id, req.Method), $"Result: {requestRes}");
 
