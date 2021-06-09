@@ -11,12 +11,12 @@ namespace Solnet.Rpc
         /// <summary>
         /// The dev net cluster.
         /// </summary>
-        private const string RpcDevNet = "https://devnet.solana.com";
+        private const string RpcDevNet = "https://api.devnet.solana.com";
 
         /// <summary>
         /// The test net cluster.
         /// </summary>
-        private const string RpcTestNet = "https://testnet.solana.com";
+        private const string RpcTestNet = "https://api.testnet.solana.com";
 
         /// <summary>
         /// The main net cluster.
