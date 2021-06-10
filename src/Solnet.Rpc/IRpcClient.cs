@@ -20,17 +20,25 @@ namespace Solnet.Rpc
 
         /// <summary>
         /// Gets the account info using base64 encoding. This is an asynchronous operation.
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
         /// </summary>
         /// <param name="pubKey">The account public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>A task which may return a request result holding the context and account info.</returns>
-        Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey);
+        Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Gets the account info using base64 encoding. This is a synchronous operation.
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
         /// </summary>
         /// <param name="pubKey">The account public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<ResponseValue<AccountInfo>> GetAccountInfo(string pubKey);
+        RequestResult<ResponseValue<AccountInfo>> GetAccountInfo(string pubKey, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Returns all accounts owned by the provided program Pubkey. This is an asynchronous operation.
@@ -61,28 +69,48 @@ namespace Solnet.Rpc
         RequestResult<ResponseValue<List<AccountInfo>>> GetMultipleAccounts(IList<string> accounts);
 
         /// <summary>
-        /// Gets the balance for a certain public key.
+        /// Gets the balance <b>asynchronously</b> for a certain public key.
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
         /// </summary>
         /// <param name="pubKey">The public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>A task which may return a request result holding the context and address balance.</returns>
-        Task<RequestResult<ResponseValue<ulong>>> GetBalanceAsync(string pubKey);
+        Task<RequestResult<ResponseValue<ulong>>> GetBalanceAsync(string pubKey, Commitment commitment = Commitment.Finalized);
 
-        /// <inheritdoc cref="SolanaRpcClient.GetBalanceAsync"/>
-        RequestResult<ResponseValue<ulong>> GetBalance(string pubKey);
+        /// <summary>
+        /// Gets the balance <b>synchronously</b> for a certain public key.
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
+        /// </summary>
+        /// <param name="pubKey">The public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<ResponseValue<ulong>> GetBalance(string pubKey, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Returns identity and transaction information about a confirmed block in the ledger. This is an asynchronous operation.
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
         /// </summary>
         /// <param name="slot">The slot.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<BlockInfo>> GetBlockAsync(ulong slot);
+        Task<RequestResult<BlockInfo>> GetBlockAsync(ulong slot, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Returns identity and transaction information about a confirmed block in the ledger. This is a synchronous operation.
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
         /// </summary>
         /// <param name="slot">The slot.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<BlockInfo> GetBlock(ulong slot);
+        RequestResult<BlockInfo> GetBlock(ulong slot, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Returns recent block production information from the current or previous epoch. This is an asynchronous operation.

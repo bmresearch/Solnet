@@ -109,23 +109,23 @@ namespace Solnet.Rpc
         #endregion
 
         #region Accounts
-        /// <inheritdoc cref="IRpcClient.GetAccountInfoAsync(string)"/>
-        public async Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey)
+        /// <inheritdoc cref="IRpcClient.GetAccountInfoAsync(string,Commitment)"/>
+        public async Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey, Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<ResponseValue<AccountInfo>>(
-                "getAccountInfo",
-                new List<object> { pubKey },
-                new Dictionary<string, object>
-                {
-                    {
-                        "encoding", "base64"
-                    }
-                });
+            var configParams = new Dictionary<string, object> { { "encoding", "base64" } };
+
+            // given that finalized is the default, lets not add it to speed things up
+            if (commitment != Commitment.Finalized)
+            {
+                configParams.Add("commitment", commitment);
+            }
+
+            return await SendRequestAsync<ResponseValue<AccountInfo>>("getAccountInfo", new List<object> { pubKey, configParams });
         }
 
-        /// <inheritdoc cref="IRpcClient.GetAccountInfo(string)"/>
-        public RequestResult<ResponseValue<AccountInfo>> GetAccountInfo(string pubKey)
-            => GetAccountInfoAsync(pubKey).Result;
+        /// <inheritdoc cref="IRpcClient.GetAccountInfo(string,Commitment)"/>
+        public RequestResult<ResponseValue<AccountInfo>> GetAccountInfo(string pubKey, Commitment commitment = Commitment.Finalized)
+            => GetAccountInfoAsync(pubKey, commitment).Result;
 
 
         /// <inheritdoc cref="IRpcClient.GetProgramAccountsAsync(string)"/>
@@ -159,30 +159,40 @@ namespace Solnet.Rpc
 
         #endregion
 
-        /// <summary>
-        /// Gets the balance for a certain public key.
-        /// </summary>
-        /// <param name="pubKey">The public key.</param>
-        /// <returns>A task which may return a request result holding the context and address balance.</returns>
-        public async Task<RequestResult<ResponseValue<ulong>>> GetBalanceAsync(string pubKey)
+        /// <inheritdoc cref="IRpcClient.GetBalanceAsync"/>
+        public async Task<RequestResult<ResponseValue<ulong>>> GetBalanceAsync(string pubKey, Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<ResponseValue<ulong>>("getBalance", new List<object> { pubKey });
+            var paramsList = new List<object> { pubKey };
+
+            if (commitment != Commitment.Finalized)
+            {
+                paramsList.Add(new Dictionary<string, Commitment> { { "commitment", commitment } });
+            }
+
+            return await SendRequestAsync<ResponseValue<ulong>>("getBalance", paramsList);
         }
 
-        /// <inheritdoc cref="GetBalanceAsync"/>
-        public RequestResult<ResponseValue<ulong>> GetBalance(string pubKey)
-            => GetBalanceAsync(pubKey).Result;
+        /// <inheritdoc cref="IRpcClient.GetBalance"/>
+        public RequestResult<ResponseValue<ulong>> GetBalance(string pubKey, Commitment commitment = Commitment.Finalized)
+            => GetBalanceAsync(pubKey, commitment).Result;
 
         #region Blocks
-        /// <inheritdoc cref="IRpcClient.GetBlockAsync(ulong)"/>
-        public async Task<RequestResult<BlockInfo>> GetBlockAsync(ulong slot)
+        /// <inheritdoc cref="IRpcClient.GetBlockAsync(ulong,Commitment)"/>
+        public async Task<RequestResult<BlockInfo>> GetBlockAsync(ulong slot, Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<BlockInfo>("getBlock",
-                new List<object> { slot, new Dictionary<string, string> { { "encoding", "json" }, { "transactionDetails", "full" } } });
+            // transaction details default is aready full
+            var configParams = new Dictionary<string, object> { { "encoding", "json" } };
+
+            if (commitment != Commitment.Finalized)
+            {
+                configParams.Add("commitment", commitment);
+            }
+
+            return await SendRequestAsync<BlockInfo>("getBlock", new List<object> { slot, configParams });
         }
 
-        /// <inheritdoc cref="IRpcClient.GetBlock(ulong)"/>
-        public RequestResult<BlockInfo> GetBlock(ulong slot)
+        /// <inheritdoc cref="IRpcClient.GetBlock(ulong,Commitment)"/>
+        public RequestResult<BlockInfo> GetBlock(ulong slot, Commitment commitment = Commitment.Finalized)
             => GetBlockAsync(slot).Result;
 
 
