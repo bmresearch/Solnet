@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace Solnet.Programs.Test
 {
@@ -39,6 +40,10 @@ namespace Solnet.Programs.Test
         };
 
         private static readonly byte[] ExpectedInitializeAccountData = { 1 };
+
+        private static readonly byte[] ExpectedApproveData = { 4, 168, 97, 0, 0, 0, 0, 0, 0 };
+        
+        private static readonly byte[] ExpectedRevokeData = { 5 };
 
         [TestMethod]
         public void TestTransfer()
@@ -142,6 +147,46 @@ namespace Solnet.Programs.Test
             Assert.AreEqual(3, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedMintToData, txInstruction.Data);
+        }
+        
+        [TestMethod]
+        public void TestApprove()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+
+            var sourceAccount = wallet.GetAccount(69);
+            var delegateAccount = wallet.GetAccount(420);
+            var ownerAccount = wallet.GetAccount(1);
+
+            var txInstruction =
+                TokenProgram.Approve(
+                    sourceAccount.GetPublicKey,
+                    delegateAccount.GetPublicKey,
+                    ownerAccount.GetPublicKey,
+                    25000, null);
+
+            Assert.AreEqual(3, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
+            CollectionAssert.AreEqual(ExpectedApproveData, txInstruction.Data);
+        }
+        
+        [TestMethod]
+        public void TestRevoke()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+
+            var sourceAccount = wallet.GetAccount(69);
+            var delegateAccount = wallet.GetAccount(420);
+            var ownerAccount = wallet.GetAccount(1);
+
+            var txInstruction =
+                TokenProgram.Revoke(
+                    delegateAccount.GetPublicKey,
+                    ownerAccount.GetPublicKey, null);
+
+            Assert.AreEqual(2, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
+            CollectionAssert.AreEqual(ExpectedRevokeData, txInstruction.Data);
         }
     }
 }

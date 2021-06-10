@@ -3,6 +3,7 @@ using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Solnet.Programs
 {
@@ -29,7 +30,7 @@ namespace Solnet.Programs
         public const int MintAccountDataSize = 82;
 
         /// <summary>
-        /// Transfers tokens from one account to another either directly or via a delegate.
+        /// Initializes an instruction to transfer tokens from one account to another either directly or via a delegate.
         /// If this account is associated with the native mint then equal amounts of SOL and Tokens will be transferred to the destination account.
         /// </summary>
         /// <param name="source">The account to transfer tokens from.</param>
@@ -40,11 +41,12 @@ namespace Solnet.Programs
         public static TransactionInstruction Transfer(
             string source, string destination, long amount, string owner)
         {
-            return Transfer(Encoder.DecodeData(source), Encoder.DecodeData(destination), amount, Encoder.DecodeData(owner));
+            return Transfer(Encoder.DecodeData(source), Encoder.DecodeData(destination), amount,
+                Encoder.DecodeData(owner));
         }
 
         /// <summary>
-        /// Transfers tokens from one account to another either directly or via a delegate.
+        /// Initializes an instruction to transfer tokens from one account to another either directly or via a delegate.
         /// If this account is associated with the native mint then equal amounts of SOL and Tokens will be transferred to the destination account.
         /// </summary>
         /// <param name="source">The account to transfer tokens from.</param>
@@ -57,24 +59,18 @@ namespace Solnet.Programs
         {
             var keys = new List<AccountMeta>
             {
-                new (source, false, true),
-                new (destination, false, true),
-                new (owner, true, false)
+                new(source, false, true), new(destination, false, true), new(owner, true, false)
             };
-
-            var transactionData = EncodeTransferData(amount);
 
             return new TransactionInstruction
             {
-                ProgramId = Encoder.DecodeData(ProgramId),
-                Keys = keys,
-                Data = transactionData
+                ProgramId = Encoder.DecodeData(ProgramId), Keys = keys, Data = EncodeTransferData(amount)
             };
         }
 
         /// <summary>
         /// <para>
-        /// Transfers tokens from one account to another either directly or via a delegate.
+        /// Initializes an instruction to transfer tokens from one account to another either directly or via a delegate.
         /// If this account is associated with the native mint then equal amounts of SOL and Tokens will be transferred to the destination account.
         /// </para>
         /// <para>
@@ -104,7 +100,7 @@ namespace Solnet.Programs
 
         /// <summary>
         /// <para>
-        /// Transfers tokens from one account to another either directly or via a delegate.
+        /// Initializes an instruction to transfer tokens from one account to another either directly or via a delegate.
         /// If this account is associated with the native mint then equal amounts of SOL and Tokens will be transferred to the destination account.
         /// </para>
         /// <para>
@@ -124,24 +120,22 @@ namespace Solnet.Programs
         {
             var keys = new List<AccountMeta>
             {
-                new (source, false, true),
-                new (tokenMint, false, false),
-                new (destination, false, true),
-                new (owner, true, false)
+                new(source, false, true),
+                new(tokenMint, false, false),
+                new(destination, false, true),
+                new(owner, true, false)
             };
-
-            var transactionData = EncodeTransferCheckedData(amount, decimals);
 
             return new TransactionInstruction
             {
                 ProgramId = Encoder.DecodeData(ProgramId),
                 Keys = keys,
-                Data = transactionData
+                Data = EncodeTransferCheckedData(amount, decimals)
             };
         }
 
         /// <summary>
-        /// <para>Initializes a new account to hold tokens.
+        /// <para>Initializes an instruction to initialize a new account to hold tokens.
         /// If this account is associated with the native mint then the token balance of the initialized account will be equal to the amount of SOL in the account.
         /// If this account is associated with another mint, that mint must be initialized before this command can succeed.
         /// </para>
@@ -165,7 +159,7 @@ namespace Solnet.Programs
         }
 
         /// <summary>
-        /// <para>Initializes a new account to hold tokens.
+        /// <para>Initializes an instruction to initialize a new account to hold tokens.
         /// If this account is associated with the native mint then the token balance of the initialized account will be equal to the amount of SOL in the account.
         /// If this account is associated with another mint, that mint must be initialized before this command can succeed.
         /// </para>
@@ -184,22 +178,17 @@ namespace Solnet.Programs
         {
             var keys = new List<AccountMeta>
             {
-                new (account, false, true),
-                new (mint, false, false),
-                new (owner, false, false),
-                new (Encoder.DecodeData(SysvarRentPublicKey), false, false)
+                new(account, false, true),
+                new(mint, false, false),
+                new(owner, false, false),
+                new(Encoder.DecodeData(SysvarRentPublicKey), false, false)
             };
 
-            return new()
-            {
-                ProgramId = Encoder.DecodeData(ProgramId),
-                Keys = keys,
-                Data = EncodeInitializeAccountData()
-            };
+            return new() {ProgramId = Encoder.DecodeData(ProgramId), Keys = keys, Data = EncodeInitializeAccountData()};
         }
 
         /// <summary>
-        /// Initialize a transaction to initialize a token mint account.
+        /// Initialize an instruction to initialize a token mint account.
         /// </summary>
         /// <param name="mint">The token mint.</param>
         /// <param name="decimals">The token decimals.</param>
@@ -217,40 +206,38 @@ namespace Solnet.Programs
         }
 
         /// <summary>
-        /// Initialize a transaction to initialize a token mint account.
+        /// Initialize an instruction to initialize a token mint account.
         /// </summary>
         /// <param name="mint">The token mint.</param>
         /// <param name="decimals">The token decimals.</param>
         /// <param name="mintAuthority">The token mint authority.</param>
         /// <param name="freezeAuthority">The token freeze authority.</param>
         /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction InitializeMint(byte[] mint, int decimals, byte[] mintAuthority, byte[] freezeAuthority = null)
+        public static TransactionInstruction InitializeMint(byte[] mint, int decimals, byte[] mintAuthority,
+            byte[] freezeAuthority = null)
         {
             var keys = new List<AccountMeta>
             {
-                new (mint, false, true),
-                new (Encoder.DecodeData(SysvarRentPublicKey), false, false)
+                new(mint, false, true), new(Encoder.DecodeData(SysvarRentPublicKey), false, false)
             };
 
             var freezeAuthorityOpt = freezeAuthority != null ? 1 : 0;
             freezeAuthority ??= new Account().PublicKey;
 
-            var txData = EncodeInitializeMintData(
-                mintAuthority,
-                freezeAuthority,
-                decimals,
-                freezeAuthorityOpt);
-
             return new()
             {
                 ProgramId = Encoder.DecodeData(ProgramId),
                 Keys = keys,
-                Data = txData
+                Data = EncodeInitializeMintData(
+                    mintAuthority,
+                    freezeAuthority,
+                    decimals,
+                    freezeAuthorityOpt)
             };
         }
 
         /// <summary>
-        /// Initializes a transaction to mint tokens to a destination account.
+        /// Initializes an instruction to mint tokens to a destination account.
         /// </summary>
         /// <param name="mint">The token mint.</param>
         /// <param name="destination">The account to mint tokens to.</param>
@@ -267,7 +254,7 @@ namespace Solnet.Programs
         }
 
         /// <summary>
-        /// Initializes a transaction to mint tokens to a destination account.
+        /// Initializes an instruction to mint tokens to a destination account.
         /// </summary>
         /// <param name="mint">The token mint.</param>
         /// <param name="destination">The account to mint tokens to.</param>
@@ -278,26 +265,155 @@ namespace Solnet.Programs
         {
             var keys = new List<AccountMeta>
             {
-                new (mint, false, true),
-                new (destination, false, true),
-                new (mintAuthority, true, false)
+                new(mint, false, true), new(destination, false, true), new(mintAuthority, true, false)
             };
 
-            var data = EncodeMintToData(amount);
+            return new() {ProgramId = Encoder.DecodeData(ProgramId), Keys = keys, Data = EncodeMintToData(amount)};
+        }
 
-            return new()
+        /// <summary>
+        /// Initializes an instruction to approve a transaction.
+        /// </summary>
+        /// <param name="sourceAccount">The source account.</param>
+        /// <param name="delegateAccount">The delegate account authorized to perform a transfer from the source account.</param>
+        /// <param name="ownerAccount">The owner account of the source account.</param>
+        /// <param name="amount">The maximum amount of tokens the delegate may transfer.</param>
+        /// <param name="signers">Signing accounts if the `owner` is a multisig.</param>
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction Approve(
+            string sourceAccount, string delegateAccount, string ownerAccount, long amount, List<string> signers = null)
+        {
+            if (signers == null)
             {
-                ProgramId = Encoder.DecodeData(ProgramId),
-                Keys = keys,
-                Data = data
+                return Approve(
+                    Encoder.DecodeData(sourceAccount),
+                    Encoder.DecodeData(delegateAccount),
+                    Encoder.DecodeData(ownerAccount),
+                    amount);
+            }
+
+            List<byte[]> byteSigners = new(signers.Count);
+            byteSigners.AddRange(signers.Select(signer => Encoder.DecodeData(signer)));
+            return Approve(
+                Encoder.DecodeData(sourceAccount),
+                Encoder.DecodeData(delegateAccount),
+                Encoder.DecodeData(ownerAccount),
+                amount, byteSigners);
+        }
+
+        /// <summary>
+        /// Initializes an instruction to approve a transaction.
+        /// </summary>
+        /// <param name="sourceAccount">The source account.</param>
+        /// <param name="delegateAccount">The delegate account authorized to perform a transfer from the source account.</param>
+        /// <param name="ownerAccount">The owner account of the source account.</param>
+        /// <param name="amount">The maximum amount of tokens the delegate may transfer.</param>
+        /// <param name="signers">Signing accounts if the `owner` is a multisig.</param>
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction Approve(
+            byte[] sourceAccount, byte[] delegateAccount, byte[] ownerAccount, long amount, List<byte[]> signers = null)
+        {
+            var keys = new List<AccountMeta> {new(sourceAccount, false, true), new(delegateAccount, false, false)};
+
+            keys = AddSigners(keys, ownerAccount, signers);
+
+            return new() {ProgramId = Encoder.DecodeData(ProgramId), Keys = keys, Data = EncodeApproveData(amount)};
+        }
+
+        /// <summary>
+        /// Initializes an instruction to revoke a transaction.
+        /// </summary>
+        /// <param name="delegateAccount">The delegate account authorized to perform a transfer from the source account.</param>
+        /// <param name="ownerAccount">The owner account of the source account.</param>
+        /// <param name="signers">Signing accounts if the `owner` is a multisig.</param>
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction Revoke(string delegateAccount, string ownerAccount, List<string> signers = null)
+        {
+            if (signers == null)
+            {
+                return Revoke(
+                    Encoder.DecodeData(delegateAccount),
+                    Encoder.DecodeData(ownerAccount));
+            }
+            List<byte[]> byteSigners = new(signers.Count);
+            byteSigners.AddRange(signers.Select(signer => Encoder.DecodeData(signer)));
+            return Revoke(
+                Encoder.DecodeData(delegateAccount),
+                Encoder.DecodeData(ownerAccount),
+                byteSigners);
+        }
+
+        /// <summary>
+        /// Initializes an instruction to revoke a transaction.
+        /// </summary>
+        /// <param name="delegateAccount">The delegate account authorized to perform a transfer from the source account.</param>
+        /// <param name="ownerAccount">The owner account of the source account.</param>
+        /// <param name="signers">Signing accounts if the `owner` is a multisig.</param>
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction Revoke(byte[] delegateAccount, byte[] ownerAccount, List<byte[]> signers = null)
+        {
+            var keys = new List<AccountMeta> {new(delegateAccount, false, false),};
+            keys = AddSigners(keys, ownerAccount, signers);
+
+            return new TransactionInstruction
+            {
+                ProgramId = Encoder.DecodeData(ProgramId), Keys = keys, Data = EncodeRevokeData()
             };
+        }
+        
+        /// <summary>
+        /// Adds the list of signers to the list of keys.
+        /// </summary>
+        /// <param name="keys">The instruction's list of keys.</param>
+        /// <param name="owner">The owner account.</param>
+        /// <param name="signers">The list of signers.</param>
+        /// <returns>The list of keys with the added signers.</returns>
+        private static List<AccountMeta> AddSigners(List<AccountMeta> keys, byte[] owner = null,
+            IEnumerable<byte[]> signers = null)
+        {
+            if (signers != null)
+            {
+                keys.Add(new AccountMeta(owner, false, false));
+                keys.AddRange(signers.Select(signer => new AccountMeta(signer, true, false)));
+            }
+            else
+            {
+                keys.Add(new AccountMeta(owner, true, false));
+            }
+
+            return keys;
+        }
+
+        /// <summary>
+        /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.Revoke"/> method.
+        /// </summary>
+        /// <returns>The byte array with the encoded data.</returns>
+        private static byte[] EncodeRevokeData()
+        {
+            var methodBuffer = new byte[1];
+            methodBuffer[0] = (byte)TokenProgramInstructions.Revoke;
+            return methodBuffer;
+        }
+
+        /// <summary>
+        /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.Approve"/> method.
+        /// </summary>
+        /// <param name="amount">The amount of tokens to approve the transfer of.</param>
+        /// <returns>The byte array with the encoded data.</returns>
+        private static byte[] EncodeApproveData(long amount)
+        {
+            var methodBuffer = new byte[9];
+
+            methodBuffer[0] = (byte)TokenProgramInstructions.Approve;
+            Utils.Int64ToByteArrayLe(amount, methodBuffer, 1);
+            return methodBuffer;
         }
 
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.InitializeAccount"/> method.
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
-        private static byte[] EncodeInitializeAccountData() => new[] { (byte)TokenProgramInstructions.InitializeAccount };
+        private static byte[] EncodeInitializeAccountData() => new[] {(byte)TokenProgramInstructions.InitializeAccount};
 
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.InitializeMint"/> method.
