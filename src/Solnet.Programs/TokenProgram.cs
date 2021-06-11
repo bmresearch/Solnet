@@ -64,7 +64,9 @@ namespace Solnet.Programs
 
             return new TransactionInstruction
             {
-                ProgramId = Encoder.DecodeData(ProgramId), Keys = keys, Data = EncodeTransferData(amount)
+                ProgramId = Encoder.DecodeData(ProgramId),
+                Keys = keys,
+                Data = EncodeTransferData(amount)
             };
         }
 
@@ -184,7 +186,7 @@ namespace Solnet.Programs
                 new(Encoder.DecodeData(SysvarRentPublicKey), false, false)
             };
 
-            return new() {ProgramId = Encoder.DecodeData(ProgramId), Keys = keys, Data = EncodeInitializeAccountData()};
+            return new() { ProgramId = Encoder.DecodeData(ProgramId), Keys = keys, Data = EncodeInitializeAccountData() };
         }
 
         /// <summary>
@@ -268,7 +270,7 @@ namespace Solnet.Programs
                 new(mint, false, true), new(destination, false, true), new(mintAuthority, true, false)
             };
 
-            return new() {ProgramId = Encoder.DecodeData(ProgramId), Keys = keys, Data = EncodeMintToData(amount)};
+            return new() { ProgramId = Encoder.DecodeData(ProgramId), Keys = keys, Data = EncodeMintToData(amount) };
         }
 
         /// <summary>
@@ -313,11 +315,11 @@ namespace Solnet.Programs
         public static TransactionInstruction Approve(
             byte[] sourceAccount, byte[] delegateAccount, byte[] ownerAccount, long amount, List<byte[]> signers = null)
         {
-            var keys = new List<AccountMeta> {new(sourceAccount, false, true), new(delegateAccount, false, false)};
+            var keys = new List<AccountMeta> { new(sourceAccount, false, true), new(delegateAccount, false, false) };
 
             keys = AddSigners(keys, ownerAccount, signers);
 
-            return new() {ProgramId = Encoder.DecodeData(ProgramId), Keys = keys, Data = EncodeApproveData(amount)};
+            return new() { ProgramId = Encoder.DecodeData(ProgramId), Keys = keys, Data = EncodeApproveData(amount) };
         }
 
         /// <summary>
@@ -327,7 +329,8 @@ namespace Solnet.Programs
         /// <param name="ownerAccount">The owner account of the source account.</param>
         /// <param name="signers">Signing accounts if the `owner` is a multisig.</param>
         /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction Revoke(string delegateAccount, string ownerAccount, List<string> signers = null)
+        public static TransactionInstruction Revoke(string delegateAccount, string ownerAccount,
+            List<string> signers = null)
         {
             if (signers == null)
             {
@@ -335,6 +338,7 @@ namespace Solnet.Programs
                     Encoder.DecodeData(delegateAccount),
                     Encoder.DecodeData(ownerAccount));
             }
+
             List<byte[]> byteSigners = new(signers.Count);
             byteSigners.AddRange(signers.Select(signer => Encoder.DecodeData(signer)));
             return Revoke(
@@ -350,17 +354,20 @@ namespace Solnet.Programs
         /// <param name="ownerAccount">The owner account of the source account.</param>
         /// <param name="signers">Signing accounts if the `owner` is a multisig.</param>
         /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction Revoke(byte[] delegateAccount, byte[] ownerAccount, List<byte[]> signers = null)
+        public static TransactionInstruction Revoke(byte[] delegateAccount, byte[] ownerAccount,
+            List<byte[]> signers = null)
         {
-            var keys = new List<AccountMeta> {new(delegateAccount, false, false),};
+            var keys = new List<AccountMeta> { new(delegateAccount, false, false), };
             keys = AddSigners(keys, ownerAccount, signers);
 
             return new TransactionInstruction
             {
-                ProgramId = Encoder.DecodeData(ProgramId), Keys = keys, Data = EncodeRevokeData()
+                ProgramId = Encoder.DecodeData(ProgramId),
+                Keys = keys,
+                Data = EncodeRevokeData()
             };
         }
-        
+
         /// <summary>
         /// Adds the list of signers to the list of keys.
         /// </summary>
@@ -413,7 +420,7 @@ namespace Solnet.Programs
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.InitializeAccount"/> method.
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
-        private static byte[] EncodeInitializeAccountData() => new[] {(byte)TokenProgramInstructions.InitializeAccount};
+        private static byte[] EncodeInitializeAccountData() => new[] { (byte)TokenProgramInstructions.InitializeAccount };
 
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.InitializeMint"/> method.

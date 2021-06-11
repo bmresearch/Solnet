@@ -42,7 +42,7 @@ namespace Solnet.Programs.Test
         private static readonly byte[] ExpectedInitializeAccountData = { 1 };
 
         private static readonly byte[] ExpectedApproveData = { 4, 168, 97, 0, 0, 0, 0, 0, 0 };
-        
+
         private static readonly byte[] ExpectedRevokeData = { 5 };
 
         [TestMethod]
@@ -148,7 +148,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedMintToData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestApprove()
         {
@@ -169,7 +169,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedApproveData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestRevoke()
         {
