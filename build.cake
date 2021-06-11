@@ -104,7 +104,7 @@ Task("Publish")
     });
 
 Task("Pack")
-    .IsDependentOn("Test")
+    .IsDependentOn("Publish")
     .Does(() =>
     {
         var settings = new DotNetCorePackSettings
