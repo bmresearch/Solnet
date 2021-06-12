@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Solnet.Rpc.Models;
+using Solnet.Rpc.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -90,7 +91,7 @@ namespace Solnet.Rpc.Test
         {
 
             var responseData = File.ReadAllText("Resources/Http/Blocks/GetBlockResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Blocks/GetBlockRequest.json");
+            var requestData = File.ReadAllText("Resources/Http/Blocks/GetBlockConfirmedRequest.json");
             var sentMessage = string.Empty;
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
@@ -108,6 +109,33 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(2, res.Result.Transactions.Length);
             /// everything else was already validated above
             FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetBlockInvalid()
+        {
+
+            var responseData = File.ReadAllText("Resources/Http/Blocks/GetBlockResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Blocks/GetBlockRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri
+            };
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            try
+            {
+                var res = sut.GetBlock(79662905, Types.Commitment.Processed);
+                Assert.Fail("Should throw exception before here.");
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(typeof(ArgumentException), e.InnerException.GetType());
+            }
         }
 
         [TestMethod]
@@ -139,6 +167,33 @@ namespace Solnet.Rpc.Test
 
 
             FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetBlockProductionInvalidCommitment()
+        {
+
+            var responseData = File.ReadAllText("Resources/Http/Blocks/GetBlockProductionNoArgsResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Blocks/GetBlockProductionNoArgsRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri
+            };
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            try
+            {
+                var res = sut.GetBlockProduction(lastSlot: 1234556UL);
+                Assert.Fail("Should throw exception before here.");
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(typeof(ArgumentException), e.InnerException.GetType());
+            }
         }
 
         [TestMethod]
@@ -188,7 +243,7 @@ namespace Solnet.Rpc.Test
             };
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var res = sut.GetBlockProduction(79714135UL);
+            var res = sut.GetBlockProduction(commitment: Commitment.Processed, firstSlot: 79714135UL);
 
             Assert.AreEqual(requestData, sentMessage);
 
@@ -324,6 +379,59 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
+        public void TestGetBlocksInvalidCommitment()
+        {
+
+            var responseData = File.ReadAllText("Resources/Http/Blocks/GetBlocksResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Blocks/GetBlocksRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri
+            };
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            try
+            {
+                var res = sut.GetBlocks(79_499_950, 79_500_000, Commitment.Processed);
+                Assert.Fail("Should throw exception before here.");
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(typeof(ArgumentException), e.InnerException.GetType());
+            }
+        }
+
+        [TestMethod]
+        public void TestGetBlocksConfirmed()
+        {
+
+            var responseData = File.ReadAllText("Resources/Http/Blocks/GetBlocksResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Blocks/GetBlocksConfirmedRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri
+            };
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var res = sut.GetBlocks(79_499_950, 79_500_000, Commitment.Confirmed);
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(res.Result);
+            Assert.AreEqual(39, res.Result.Count);
+            Assert.AreEqual(79499950UL, res.Result[0]);
+            Assert.AreEqual(79500000UL, res.Result[38]);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
         public void TestGetBlocksWithLimit()
         {
 
@@ -393,6 +501,32 @@ namespace Solnet.Rpc.Test
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
             var result = sut.GetBlockHeight();
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(1233UL, result.Result);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetBlockHeightConfirmed()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Blocks/GetBlockHeightResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Blocks/GetBlockHeightConfirmedRequest.json");
+
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var result = sut.GetBlockHeight(Types.Commitment.Confirmed);
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result);
             Assert.IsTrue(result.WasSuccessful);
