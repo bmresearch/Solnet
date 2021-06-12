@@ -114,75 +114,41 @@ namespace Solnet.Rpc
 
         /// <summary>
         /// Returns recent block production information from the current or previous epoch. This is an asynchronous operation.
-        /// </summary>
-        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync();
-
-        /// <summary>
-        /// Returns recent block production information from the current or previous epoch. This is a synchronous operation.
-        /// </summary>
-        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction();
-
-        /// <summary>
-        /// Returns recent block production information from the current or previous epoch. This is an asynchronous operation.
-        /// </summary>
-        /// <param name="firstSlot">The first slot to return production information (inclusive).</param>
-        /// <param name="lastSlot">The last slot to return production information (inclusive and optional).</param>
-        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync(ulong firstSlot, ulong lastSlot = 0);
-
-        /// <summary>
-        /// Returns recent block production information from the current or previous epoch. This is a synchronous operation.
-        /// </summary>
-        /// <param name="firstSlot">The first slot to return production information (inclusive).</param>
-        /// <param name="lastSlot">The last slot to return production information (inclusive and optional).</param>
-        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction(ulong firstSlot, ulong lastSlot = 0);
-
-        /// <summary>
-        /// Returns recent block production information from the current or previous epoch. This is an asynchronous operation.
-        /// </summary>
-        /// <param name="identity">Filter production details only for this given validator.</param>
-        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync(string identity);
-
-        /// <summary>
-        /// Returns recent block production information from the current or previous epoch. This is a synchronous operation.
-        /// </summary>
-        /// <param name="identity">Filter production details only for this given validator.</param>
-        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction(string identity);
-
-        /// <summary>
-        /// Returns recent block production information from the current or previous epoch. This is an asynchronous operation.
+        /// <remarks>
+        /// All the arguments are optional, but the lastSlot must be paired with a firstSlot argument.
+        /// </remarks>
         /// </summary>
         /// <param name="identity">Filter production details only for this given validator.</param>
         /// <param name="firstSlot">The first slot to return production information (inclusive).</param>
         /// <param name="lastSlot">The last slot to return production information (inclusive and optional).</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync(string identity, ulong firstSlot, ulong lastSlot = 0);
+        Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync(string identity = null, ulong? firstSlot = null, ulong? lastSlot = null, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Returns recent block production information from the current or previous epoch. This is a synchronous operation.
         /// </summary>
+        /// <remarks>
+        /// All the arguments are optional, but the lastSlot must be paired with a firstSlot argument.
+        /// </remarks>
         /// <param name="identity">Filter production details only for this given validator.</param>
         /// <param name="firstSlot">The first slot to return production information (inclusive).</param>
         /// <param name="lastSlot">The last slot to return production information (inclusive and optional).</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction(string identity, ulong firstSlot, ulong lastSlot = 0);
+        RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction(string identity = null, ulong? firstSlot = null, ulong? lastSlot = null, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Returns transaction details for a confirmed transaction. This is an asynchronous operation.
         /// </summary>
-        /// <param name="identity">ransaction signature as base-58 encoded string.</param>
+        /// <param name="signature">ransaction signature as base-58 encoded string.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
         Task<RequestResult<TransactionMetaSlotInfo>> GetTransactionAsync(string signature);
 
         /// <summary>
         /// Returns transaction details for a confirmed transaction. This is a synchronous operation.
         /// </summary>
-        /// <param name="identity">Transaction signature as base-58 encoded string.</param>
+        /// <param name="signature">Transaction signature as base-58 encoded string.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature);
 
@@ -191,16 +157,18 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="startSlot">The start slot (inclusive).</param>
         /// <param name="endSlot">The start slot (inclusive and optional).</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<List<ulong>> GetBlocks(ulong startSlot, ulong endSlot = 0);
+        RequestResult<List<ulong>> GetBlocks(ulong startSlot, ulong endSlot = 0, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Returns a list of confirmed blocks between two slots. This is an asynchronous operation.
         /// </summary>
         /// <param name="startSlot">The start slot (inclusive).</param>
         /// <param name="endSlot">The start slot (inclusive and optional).</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<List<ulong>>> GetBlocksAsync(ulong startSlot, ulong endSlot = 0);
+        Task<RequestResult<List<ulong>>> GetBlocksAsync(ulong startSlot, ulong endSlot = 0, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Returns a list of confirmed blocks starting at the given slot. This is a synchronous operation.
@@ -285,13 +253,18 @@ namespace Solnet.Rpc
         RequestResult<ulong> GetBlockTime(ulong slot);
 
         /// <summary>
-        /// Gets the current block height of the node.
+        /// Gets the current block height of the node. This is an asynchronous operation.
         /// </summary>
-        /// <returns>A task which may return a request result and a block height.</returns>
-        Task<RequestResult<ulong>> GetBlockHeightAsync();
+        /// <param name="commitment">The commitment state to consider when querying the ledger state.</param>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        Task<RequestResult<ulong>> GetBlockHeightAsync(Commitment commitment = Commitment.Finalized);
 
-        /// <inheritdoc cref="SolanaRpcClient.GetBlockHeightAsync"/>
-        RequestResult<ulong> GetBlockHeight();
+        /// <summary>
+        /// Gets the current block height of the node. This is a synchronous operation.
+        /// </summary>
+        /// <param name="commitment">The commitment state to consider when querying the ledger state.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<ulong> GetBlockHeight(Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Gets the cluster nodes.

@@ -183,7 +183,11 @@ namespace Solnet.Rpc
             // transaction details default is aready full
             var configParams = new Dictionary<string, object> { { "encoding", "json" } };
 
-            if (commitment != Commitment.Finalized)
+            if (commitment == Commitment.Processed)
+            {
+                throw new ArgumentException("Commitment.Processed is not supported for this method.");
+            }
+            else if (commitment != Commitment.Finalized)
             {
                 configParams.Add("commitment", commitment);
             }
@@ -193,21 +197,30 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="IRpcClient.GetBlock(ulong,Commitment)"/>
         public RequestResult<BlockInfo> GetBlock(ulong slot, Commitment commitment = Commitment.Finalized)
-            => GetBlockAsync(slot).Result;
+            => GetBlockAsync(slot, commitment).Result;
 
 
-        /// <inheritdoc cref="IRpcClient.GetBlocksAsync(ulong, ulong)"/>
-        public async Task<RequestResult<List<ulong>>> GetBlocksAsync(ulong startSlot, ulong endSlot = 0)
+        /// <inheritdoc cref="IRpcClient.GetBlocksAsync(ulong, ulong, Commitment)"/>
+        public async Task<RequestResult<List<ulong>>> GetBlocksAsync(ulong startSlot, ulong endSlot = 0, Commitment commitment = Commitment.Finalized)
         {
             var parameters = new List<object> { startSlot };
             if (endSlot > 0) parameters.Add(endSlot);
 
+            if (commitment == Commitment.Processed)
+            {
+                throw new ArgumentException("Commitment.Processed is not supported for this method.");
+            }
+            else if (commitment != Commitment.Finalized)
+            {
+                parameters.Add(new Dictionary<string, Commitment> { { "commitment", commitment } });
+            }
+
             return await SendRequestAsync<List<ulong>>("getBlocks", parameters);
         }
 
-        /// <inheritdoc cref="IRpcClient.GetBlocks(ulong, ulong)"/>
-        public RequestResult<List<ulong>> GetBlocks(ulong startSlot, ulong endSlot = 0)
-            => GetBlocksAsync(startSlot, endSlot).Result;
+        /// <inheritdoc cref="IRpcClient.GetBlocks(ulong, ulong, Commitment)"/>
+        public RequestResult<List<ulong>> GetBlocks(ulong startSlot, ulong endSlot = 0, Commitment commitment = Commitment.Finalized)
+            => GetBlocksAsync(startSlot, endSlot, commitment).Result;
 
 
         /// <inheritdoc cref="IRpcClient.GetBlocksWithLimit(ulong, ulong)"/>
@@ -233,70 +246,44 @@ namespace Solnet.Rpc
         #endregion
 
         #region Block Production
-        /// <inheritdoc cref="IRpcClient.GetBlockProductionAsync()"/>
-        public async Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync()
+        /// <inheritdoc cref="IRpcClient.GetBlockProductionAsync(string, ulong?, ulong?, Commitment)"/>
+        public async Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync(string identity = null, ulong? firstSlot = null, ulong? lastSlot = null, Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<ResponseValue<BlockProductionInfo>>("getBlockProduction");
-        }
+            var parameters = new Dictionary<string, object>();
 
-        /// <inheritdoc cref="IRpcClient.GetBlockProduction()"/>
-        public RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction() => GetBlockProductionAsync().Result;
-
-        /// <inheritdoc cref="IRpcClient.GetBlockProductionAsync(ulong, ulong)"/>
-        public async Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync(ulong firstSlot, ulong lastSlot = 0)
-        {
-            var range = new Dictionary<string, ulong> { { "firstSlot", firstSlot } };
-            if (lastSlot != 0)
+            if (commitment != Commitment.Finalized)
             {
-                range.Add("lastSlot", lastSlot);
+                parameters.Add("commitment", commitment);
             }
 
-            return await SendRequestAsync<ResponseValue<BlockProductionInfo>>("getBlockProduction", new List<object>
+            if (!string.IsNullOrEmpty(identity))
             {
-                new Dictionary<string, object>
-                {
-                    { "range", range }
-                }
-            });
-        }
-
-        /// <inheritdoc cref="IRpcClient.GetBlockProduction(ulong, ulong)"/>
-        public RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction(ulong firstSlot, ulong lastSlot = 0)
-            => GetBlockProductionAsync(firstSlot, lastSlot).Result;
-
-        /// <inheritdoc cref="IRpcClient.GetBlockProductionAsync(string)"/>
-        public async Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync(string identity)
-        {
-            return await SendRequestAsync<ResponseValue<BlockProductionInfo>>("getBlockProduction",
-                new List<object> { new Dictionary<string, string> { { "identity", identity } } });
-        }
-
-        /// <inheritdoc cref="IRpcClient.GetBlockProduction(string)"/>
-        public RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction(string identity)
-            => GetBlockProductionAsync(identity).Result;
-
-        /// <inheritdoc cref="IRpcClient.GetBlockProductionAsync(string, ulong, ulong)"/>
-        public async Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync(string identity, ulong firstSlot, ulong lastSlot = 0)
-        {
-            var range = new Dictionary<string, object> { { "firstSlot", firstSlot } };
-            if (lastSlot != 0)
-            {
-                range.Add("lastSlot", lastSlot);
+                parameters.Add("identity", identity);
             }
 
-            return await SendRequestAsync<ResponseValue<BlockProductionInfo>>("getBlockProduction", new List<object>
+            if (firstSlot.HasValue)
             {
-                new Dictionary<string, object>
+                var range = new Dictionary<string, object> { { "firstSlot", firstSlot.Value } };
+
+                if (lastSlot.HasValue)
                 {
-                    { "identity", identity },
-                    { "range", range }
+                    range.Add("lastSlot", lastSlot.Value);
                 }
-            });
+                parameters.Add("range", range);
+            }
+            else if (lastSlot.HasValue)
+            {
+                throw new ArgumentException("Range parameters are optional, but the lastSlot argument must be paired with a firstSlot.");
+            }
+
+            List<object> args = parameters.Count > 0 ? new List<object> { parameters } : null;
+
+            return await SendRequestAsync<ResponseValue<BlockProductionInfo>>("getBlockProduction", args);
         }
 
-        /// <inheritdoc cref="IRpcClient.GetBlockProduction(string, ulong, ulong)"/>
-        public RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction(string identity, ulong firstSlot, ulong lastSlot = 0)
-            => GetBlockProductionAsync(identity, firstSlot, lastSlot).Result;
+        /// <inheritdoc cref="IRpcClient.GetBlockProduction(string, ulong?, ulong?, Commitment)"/>
+        public RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction(string identity = null, ulong? firstSlot = null, ulong? lastSlot = null, Commitment commitment = Commitment.Finalized)
+            => GetBlockProductionAsync(identity, firstSlot, lastSlot, commitment).Result;
         #endregion
 
         /// <inheritdoc cref="IRpcClient.GetHealth()"/>
@@ -310,11 +297,11 @@ namespace Solnet.Rpc
         }
 
 
-        /// <inheritdoc cref="IRpcClient.GetLeaderSchedule(ulong)"/>
+        /// <inheritdoc cref="IRpcClient.GetLeaderSchedule(ulong, string)"/>
         public RequestResult<Dictionary<string, List<ulong>>> GetLeaderSchedule(ulong slot = 0, string identity = null)
             => GetLeaderScheduleAsync(slot, identity).Result;
 
-        /// <inheritdoc cref="IRpcClient.GetLeaderScheduleAsync(ulong)"/>
+        /// <inheritdoc cref="IRpcClient.GetLeaderScheduleAsync(ulong, string)"/>
         public async Task<RequestResult<Dictionary<string, List<ulong>>>> GetLeaderScheduleAsync(ulong slot = 0, string identity = null)
         {
             List<object> parameters = new List<object>();
@@ -341,18 +328,22 @@ namespace Solnet.Rpc
             => GetTransactionAsync(signature).Result;
 
 
-        /// <summary>
-        /// Gets the current block height of the node.
-        /// </summary>
-        /// <returns>A task which may return a request result and a block height.</returns>
-        public async Task<RequestResult<ulong>> GetBlockHeightAsync()
+        /// <inheritdoc cref="IRpcClient.GetBlockHeightAsync(Commitment)"/>
+        public async Task<RequestResult<ulong>> GetBlockHeightAsync(Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<ulong>("getBlockHeight");
+            List<object> parameters = null;
+
+            if (commitment != Commitment.Finalized)
+            {
+                parameters = new List<object> { new Dictionary<string, Commitment> { { "commitment", commitment } } };
+            }
+
+            return await SendRequestAsync<ulong>("getBlockHeight", parameters);
         }
 
-        /// <inheritdoc cref="GetBlockHeightAsync"/>
-        public RequestResult<ulong> GetBlockHeight()
-            => GetBlockHeightAsync().Result;
+        /// <inheritdoc cref="IRpcClient.GetBlockHeight(Commitment)"/>
+        public RequestResult<ulong> GetBlockHeight(Commitment commitment = Commitment.Finalized)
+            => GetBlockHeightAsync(commitment).Result;
 
         /// <summary>
         /// Gets the block commitment of a certain block, identified by slot.
