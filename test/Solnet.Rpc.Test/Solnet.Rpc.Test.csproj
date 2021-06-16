@@ -69,6 +69,9 @@
     <None Update="Resources\Http\Blocks\GetBlocksConfirmedRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Http\Blocks\GetBlocksWithLimitConfirmedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Http\Blocks\GetFirstAvailableBlockRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -103,6 +106,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\GetBalanceConfirmedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\GetEpochInfoProcessedRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\Health\GetHealthUnhealthyResponse.json">

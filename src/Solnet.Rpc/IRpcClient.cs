@@ -175,16 +175,18 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="startSlot">The start slot (inclusive).</param>
         /// <param name="limit">The max number of blocks to return.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<List<ulong>> GetBlocksWithLimit(ulong startSlot, ulong limit);
+        RequestResult<List<ulong>> GetBlocksWithLimit(ulong startSlot, ulong limit, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Returns a list of confirmed blocks starting at the given slot. This is an asynchronous operation.
         /// </summary>
         /// <param name="startSlot">The start slot (inclusive).</param>
         /// <param name="limit">The max number of blocks to return.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<List<ulong>>> GetBlocksWithLimitAsync(ulong startSlot, ulong limit);
+        Task<RequestResult<List<ulong>>> GetBlocksWithLimitAsync(ulong startSlot, ulong limit, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Returns the slot of the lowest confirmed block that has not been purged from the ledger. This is a synchronous operation.
@@ -276,13 +278,18 @@ namespace Solnet.Rpc
         RequestResult<List<ClusterNode>> GetClusterNodes();
 
         /// <summary>
-        /// Gets information about the current epoch.
+        /// Gets information about the current epoch. This is an asynchronous operation.
         /// </summary>
-        /// <returns>A task which may return a request result and information about the current epoch.</returns>
-        Task<RequestResult<EpochInfo>> GetEpochInfoAsync();
+        /// <param name="commitment">The commitment state to consider when querying the ledger state.</param>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        Task<RequestResult<EpochInfo>> GetEpochInfoAsync(Commitment commitment = Commitment.Finalized);
 
-        /// <inheritdoc cref="SolanaRpcClient.GetEpochInfoAsync"/>
-        RequestResult<EpochInfo> GetEpochInfo();
+        /// <summary>
+        /// Gets information about the current epoch. This is a synchronous operation.
+        /// </summary>
+        /// <param name="commitment">The commitment state to consider when querying the ledger state.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<EpochInfo> GetEpochInfo(Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Gets epoch schedule information from this cluster's genesis config.
