@@ -37,7 +37,6 @@ Solnet is Solana's .NET integration library.
 - net 5.0
 
 ## Dependencies
-- NBitcoin
 - Chaos.NaCl.Standard
 - Portable.BouncyCastle
 
