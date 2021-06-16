@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <PackageReference Include="Chaos.NaCl.Standard" Version="1.0.0" />
-    <PackageReference Include="NBitcoin" Version="5.0.78" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
-using NBitcoin;
 using Solnet.Wallet;
+using Solnet.Wallet.Bip39;
 using System;
 
 namespace Solnet.Examples

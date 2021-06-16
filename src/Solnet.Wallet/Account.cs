@@ -1,5 +1,5 @@
 using Chaos.NaCl;
-using NBitcoin.DataEncoders;
+using Solnet.Wallet.Utilities;
 using System;
 using System.Security.Cryptography;
 

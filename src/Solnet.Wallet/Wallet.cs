@@ -1,5 +1,5 @@
 using Chaos.NaCl;
-using NBitcoin;
+using Solnet.Wallet.Bip39;
 using System;
 using System.Linq;
 

@@ -1,6 +1,6 @@
-using NBitcoin;
 using Solnet.KeyStore;
 using Solnet.Wallet;
+using Solnet.Wallet.Bip39;
 using System;
 using System.Collections.Generic;
 using System.Text;

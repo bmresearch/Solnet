@@ -1,4 +1,3 @@
-using NBitcoin.DataEncoders;
 using Solnet.Rpc;
 using Solnet.Rpc.Core.Sockets;
 using System;
@@ -10,7 +9,6 @@ namespace Solnet.Examples
         static void Example(string[] args)
         {
             IStreamingRpcClient c = ClientFactory.GetStreamingClient(Cluster.MainNet);
-            var b64Dec = new Base64Encoder();
             c.Init().Wait();
 
             var sub = c.SubscribeAccountInfo(

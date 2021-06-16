@@ -1,5 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NBitcoin;
+using Solnet.Wallet.Bip39;
 using System;
 using System.Collections.Generic;
 
