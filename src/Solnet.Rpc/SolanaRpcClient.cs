@@ -223,14 +223,25 @@ namespace Solnet.Rpc
             => GetBlocksAsync(startSlot, endSlot, commitment).Result;
 
 
-        /// <inheritdoc cref="IRpcClient.GetBlocksWithLimit(ulong, ulong)"/>
-        public RequestResult<List<ulong>> GetBlocksWithLimit(ulong startSlot, ulong limit)
-            => GetBlocksWithLimitAsync(startSlot, limit).Result;
+        /// <inheritdoc cref="IRpcClient.GetBlocksWithLimit(ulong, ulong, Commitment)"/>
+        public RequestResult<List<ulong>> GetBlocksWithLimit(ulong startSlot, ulong limit, Commitment commitment = Commitment.Finalized)
+            => GetBlocksWithLimitAsync(startSlot, limit, commitment).Result;
 
-        /// <inheritdoc cref="IRpcClient.GetBlocksWithLimitAsync(ulong, ulong)"/>
-        public async Task<RequestResult<List<ulong>>> GetBlocksWithLimitAsync(ulong startSlot, ulong limit)
+        /// <inheritdoc cref="IRpcClient.GetBlocksWithLimitAsync(ulong, ulong, Commitment)"/>
+        public async Task<RequestResult<List<ulong>>> GetBlocksWithLimitAsync(ulong startSlot, ulong limit, Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<List<ulong>>("getBlocksWithLimit", new List<object> { startSlot, limit });
+            var parameters = new List<object> { startSlot, limit };
+
+            if (commitment == Commitment.Processed)
+            {
+                throw new ArgumentException("Commitment.Processed is not supported for this method.");
+            }
+            else if (commitment != Commitment.Finalized)
+            {
+                parameters.Add(new Dictionary<string, Commitment> { { "commitment", commitment } });
+            }
+
+            return await SendRequestAsync<List<ulong>>("getBlocksWithLimit", parameters);
         }
 
 
@@ -386,17 +397,21 @@ namespace Solnet.Rpc
         public RequestResult<List<ClusterNode>> GetClusterNodes()
             => GetClusterNodesAsync().Result;
 
-        /// <summary>
-        /// Gets information about the current epoch.
-        /// </summary>
-        /// <returns>A task which may return a request result and information about the current epoch.</returns>
-        public async Task<RequestResult<EpochInfo>> GetEpochInfoAsync()
+        /// <inheritdoc cref="IRpcClient.GetEpochInfoAsync(Commitment)"/>
+        public async Task<RequestResult<EpochInfo>> GetEpochInfoAsync(Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<EpochInfo>("getEpochInfo");
+            List<object> parameters = null;
+
+            if (commitment != Commitment.Finalized)
+            {
+                parameters = new List<Object> { new Dictionary<string, Commitment> { { "commitment", commitment } } };
+            }
+
+            return await SendRequestAsync<EpochInfo>("getEpochInfo", parameters);
         }
 
-        /// <inheritdoc cref="GetEpochInfoAsync"/>
-        public RequestResult<EpochInfo> GetEpochInfo() => GetEpochInfoAsync().Result;
+        /// <inheritdoc cref="IRpcClient.GetEpochInfo(Commitment)"/>
+        public RequestResult<EpochInfo> GetEpochInfo(Commitment commitment = Commitment.Finalized) => GetEpochInfoAsync(commitment).Result;
 
         /// <summary>
         /// Gets epoch schedule information from this cluster's genesis config.

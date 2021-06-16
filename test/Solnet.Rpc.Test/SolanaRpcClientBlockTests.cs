@@ -114,18 +114,7 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetBlockInvalid()
         {
-
-            var responseData = File.ReadAllText("Resources/Http/Blocks/GetBlockResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Blocks/GetBlockRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri
-            };
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var sut = new SolanaRpcClient(TestnetUrl, null);
 
             try
             {
@@ -172,18 +161,7 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetBlockProductionInvalidCommitment()
         {
-
-            var responseData = File.ReadAllText("Resources/Http/Blocks/GetBlockProductionNoArgsResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Blocks/GetBlockProductionNoArgsRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri
-            };
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var sut = new SolanaRpcClient(TestnetUrl, null);
 
             try
             {
@@ -381,18 +359,7 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetBlocksInvalidCommitment()
         {
-
-            var responseData = File.ReadAllText("Resources/Http/Blocks/GetBlocksResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Blocks/GetBlocksRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri
-            };
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var sut = new SolanaRpcClient(TestnetUrl, null);
             try
             {
                 var res = sut.GetBlocks(79_499_950, 79_500_000, Commitment.Processed);
@@ -456,6 +423,49 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(79699951UL, res.Result[1]);
 
             FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetBlocksWithLimitConfirmed()
+        {
+
+            var responseData = File.ReadAllText("Resources/Http/Blocks/GetBlocksWithLimitResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Blocks/GetBlocksWithLimitConfirmedRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri
+            };
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var res = sut.GetBlocksWithLimit(79_699_950, 2, Commitment.Confirmed);
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(res.Result);
+            Assert.AreEqual(2, res.Result.Count);
+            Assert.AreEqual(79699950UL, res.Result[0]);
+            Assert.AreEqual(79699951UL, res.Result[1]);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetBlocksWithLimitBadCommitment()
+        {
+            var sut = new SolanaRpcClient(TestnetUrl, null);
+
+            try
+            {
+                var res = sut.GetBlocksWithLimit(79_699_950, 2, Commitment.Processed);
+                Assert.Fail("Should throw exception before here.");
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(typeof(ArgumentException), e.InnerException.GetType());
+            }
         }
 
         [TestMethod]

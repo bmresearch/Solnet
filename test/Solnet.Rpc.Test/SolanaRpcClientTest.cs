@@ -265,6 +265,35 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
+        public void TestGetEpochInfoProcessed()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetEpochInfoResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetEpochInfoProcessedRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetEpochInfo(Types.Commitment.Processed);
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(166598UL, result.Result.AbsoluteSlot);
+            Assert.AreEqual(166500UL, result.Result.BlockHeight);
+            Assert.AreEqual(27UL, result.Result.Epoch);
+            Assert.AreEqual(2790UL, result.Result.SlotIndex);
+            Assert.AreEqual(8192UL, result.Result.SlotsInEpoch);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
         public void TestGetEpochSchedule()
         {
             var responseData = File.ReadAllText("Resources/Http/GetEpochScheduleResponse.json");
