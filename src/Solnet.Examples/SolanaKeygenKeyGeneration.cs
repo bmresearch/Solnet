@@ -13,7 +13,7 @@ namespace Solnet.Examples
 
             // mnemonic and passphrase to derive seed
             var passphrase = "thisiseightbytesithink";
-            var mnemonic = new Mnemonic("route clerk disease box emerge airport loud waste attitude film army tray forward deal onion eight catalog surface unit card window walnut wealth medal", Wordlist.English);
+            var mnemonic = new Mnemonic("route clerk disease box emerge airport loud waste attitude film army tray forward deal onion eight catalog surface unit card window walnut wealth medal", WordList.English);
 
             var solKeygenWallet = new Wallet.Wallet(mnemonic, passphrase, SeedMode.Bip39);
 

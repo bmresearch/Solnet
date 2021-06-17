@@ -1,5 +1,6 @@
 using Solnet.Wallet.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -46,7 +47,7 @@ namespace Solnet.Wallet
         /// </summary>
         /// <param name="seed">The seed used to calculate the master key.</param>
         /// <returns>A tuple consisting of the key and corresponding chain code.</returns>
-        private (byte[] Key, byte[] ChainCode) GetMasterKeyFromSeed(byte[] seed)
+        private static (byte[] Key, byte[] ChainCode) GetMasterKeyFromSeed(byte[] seed)
             => HmacSha512(Encoding.UTF8.GetBytes(Curve), seed);
 
         /// <summary>
@@ -56,9 +57,9 @@ namespace Solnet.Wallet
         /// <param name="chainCode">The chain code for derivation.</param>
         /// <param name="index">The index of the key to the derive.</param>
         /// <returns>A tuple consisting of the key and corresponding chain code.</returns>
-        private (byte[] Key, byte[] ChainCode) GetChildKeyDerivation(byte[] key, byte[] chainCode, uint index)
+        private static (byte[] Key, byte[] ChainCode) GetChildKeyDerivation(byte[] key, byte[] chainCode, uint index)
         {
-            BigEndianBuffer buffer = new BigEndianBuffer();
+            BigEndianBuffer buffer = new ();
 
             buffer.Write(new byte[] { 0 });
             buffer.Write(key);
@@ -75,11 +76,11 @@ namespace Solnet.Wallet
         /// <returns>A tuple consisting of the key and corresponding chain code.</returns>
         private static (byte[] Key, byte[] ChainCode) HmacSha512(byte[] keyBuffer, byte[] data)
         {
-            using var hmacSha512 = new HMACSHA512(keyBuffer);
-            var i = hmacSha512.ComputeHash(data);
+            using HMACSHA512 hmacSha512 = new (keyBuffer);
+            byte[] i = hmacSha512.ComputeHash(data);
 
-            var il = i.Slice(0, 32);
-            var ir = i.Slice(32);
+            byte[] il = i.Slice(0, 32);
+            byte[] ir = i.Slice(32);
 
             return (Key: il, ChainCode: ir);
         }
@@ -92,12 +93,12 @@ namespace Solnet.Wallet
         /// <returns>A boolean.</returns>
         private static bool IsValidPath(string path)
         {
-            var regex = new Regex("^m(\\/[0-9]+')+$");
+            Regex regex = new ("^m(\\/[0-9]+')+$");
 
             if (!regex.IsMatch(path))
                 return false;
 
-            var valid = !(path.Split('/')
+            bool valid = !(path.Split('/')
                 .Slice(1)
                 .Select(a => a.Replace("'", ""))
                 .Any(a => !int.TryParse(a, out _)));
@@ -116,13 +117,13 @@ namespace Solnet.Wallet
             if (!IsValidPath(path))
                 throw new FormatException("Invalid derivation path");
 
-            var segments = path
+            IEnumerable<uint> segments = path
                 .Split('/')
                 .Slice(1)
                 .Select(a => a.Replace("'", ""))
                 .Select(a => Convert.ToUInt32(a, 10));
 
-            var results = segments
+            (byte[] _masterKey, byte[] _chainCode) results = segments
                 .Aggregate(
                     (_masterKey, _chainCode),
                     (masterKeyFromSeed, next) =>

@@ -1,5 +1,6 @@
 using Solnet.Wallet.Utilities;
 using System;
+using System.Collections;
 using System.Linq;
 using System.Text;
 
@@ -12,220 +13,258 @@ namespace Solnet.Wallet.Bip39
     /// </summary>
     public class Mnemonic
     {
-        public Mnemonic(string mnemonic, Wordlist wordlist = null)
+        /// <summary>
+        /// Initialize a mnemonic from the given string and wordList type.
+        /// </summary>
+        /// <param name="mnemonic">The mnemonic string.</param>
+        /// <param name="wordList">The word list type.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the mnemonic string is null.</exception>
+        /// <exception cref="FormatException">Thrown when the word count of the mnemonic is invalid.</exception>
+        public Mnemonic(string mnemonic, WordList wordList = null)
         {
             if (mnemonic == null)
                 throw new ArgumentNullException(nameof(mnemonic));
-            _Mnemonic = mnemonic.Trim();
-            if (wordlist == null)
-                wordlist = Wordlist.AutoDetect(mnemonic) ?? Wordlist.English;
-            var words = mnemonic.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
-            _Mnemonic = string.Join(wordlist.Space.ToString(), words);
+            _mnemonic = mnemonic.Trim();
+            
+            wordList ??= Bip39.WordList.AutoDetect(mnemonic) ?? Bip39.WordList.English;
+            
+            string[] words = mnemonic.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+            _mnemonic = string.Join(wordList.Space.ToString(), words);
+            
             //if the sentence is not at least 12 characters or cleanly divisible by 3, it is bad!
             if (!CorrectWordCount(words.Length))
             {
                 throw new FormatException("Word count should be 12,15,18,21 or 24");
             }
-            _Words = words;
-            _WordList = wordlist;
-            _Indices = wordlist.ToIndices(words);
+            Words = words;
+            WordList = wordList;
+            Indices = wordList.ToIndices(words);
         }
 
         /// <summary>
         /// Generate a mnemonic
         /// </summary>
-        /// <param name="wordList"></param>
-        /// <param name="entropy"></param>
-        public Mnemonic(Wordlist wordList, byte[] entropy = null)
+        /// <param name="wordList">The word list of the mnemonic.</param>
+        /// <param name="entropy">The entropy.</param>
+        private Mnemonic(WordList wordList, byte[] entropy = null)
         {
-            wordList = wordList ?? Wordlist.English;
-            _WordList = wordList;
-            if (entropy == null)
-                entropy = RandomUtils.GetBytes(32);
+            wordList ??= Bip39.WordList.English;
+            WordList = wordList;
+            entropy ??= RandomUtils.GetBytes(32);
 
-            var i = Array.IndexOf(entArray, entropy.Length * 8);
+            int i = Array.IndexOf(EntArray, entropy.Length * 8);
             if (i == -1)
-                throw new ArgumentException("The length for entropy should be " + String.Join(",", entArray) + " bits", "entropy");
+                throw new ArgumentException("The length for entropy should be " + string.Join(",", EntArray) + " bits", "entropy");
 
-            int cs = csArray[i];
+            int cs = CsArray[i];
             byte[] checksum = Utils.Sha256(entropy);
-            BitWriter entcsResult = new();
+            BitWriter entropyResult = new();
 
-            entcsResult.Write(entropy);
-            entcsResult.Write(checksum, cs);
-            _Indices = entcsResult.ToIntegers();
-            _Words = _WordList.GetWords(_Indices);
-            _Mnemonic = _WordList.GetSentence(_Indices);
+            entropyResult.Write(entropy);
+            entropyResult.Write(checksum, cs);
+            Indices = entropyResult.ToIntegers();
+            Words = WordList.GetWords(Indices);
+            _mnemonic = WordList.GetSentence(Indices);
         }
 
-        public Mnemonic(Wordlist wordList, WordCount wordCount)
-            : this(wordList, GenerateEntropy(wordCount))
-        {
+        /// <summary>
+        /// Initialize a mnemonic from the given word list and word count..
+        /// </summary>
+        /// <param name="wordList">The word list.</param>
+        /// <param name="wordCount">The word count.</param>
+        public Mnemonic(WordList wordList, WordCount wordCount) : this(wordList, GenerateEntropy(wordCount)) {}
 
-        }
-
+        /// <summary>
+        /// Generate entropy for the given word count.
+        /// </summary>
+        /// <param name="wordCount"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Thrown when the word count is invalid.</exception>
         private static byte[] GenerateEntropy(WordCount wordCount)
         {
-            var ms = (int)wordCount;
+            int ms = (int)wordCount;
             if (!CorrectWordCount(ms))
-                throw new ArgumentException("Word count should be 12,15,18,21 or 24", "wordCount");
-            int i = Array.IndexOf(msArray, (int)wordCount);
-            return RandomUtils.GetBytes(entArray[i] / 8);
+                throw new ArgumentException("Word count should be 12,15,18,21 or 24", nameof(wordCount));
+            int i = Array.IndexOf(MsArray, (int)wordCount);
+            return RandomUtils.GetBytes(EntArray[i] / 8);
         }
 
-        static readonly int[] msArray = new[] { 12, 15, 18, 21, 24 };
-        static readonly int[] csArray = new[] { 4, 5, 6, 7, 8 };
-        static readonly int[] entArray = new[] { 128, 160, 192, 224, 256 };
-
-        bool? _IsValidChecksum;
+        /// <summary>
+        /// The word count array.
+        /// </summary>
+        private static readonly int[] MsArray = { 12, 15, 18, 21, 24 };
+        
+        /// <summary>
+        /// The bit count array.
+        /// </summary>
+        private static readonly int[] CsArray = { 4, 5, 6, 7, 8 };
+        
+        /// <summary>
+        /// The entropy value array.
+        /// </summary>
+        private static readonly int[] EntArray = { 128, 160, 192, 224, 256 };
+        
+        /// <summary>
+        /// Whether the checksum of the mnemonic is valid.
+        /// </summary>
+        private bool? _isValidChecksum;
+        
+        /// <summary>
+        /// Whether the checksum of the mnemonic is valid.
+        /// </summary>
         public bool IsValidChecksum
         {
             get
             {
-                if (_IsValidChecksum == null)
+                if (_isValidChecksum != null)
                 {
-                    int i = Array.IndexOf(msArray, _Indices.Length);
-                    int cs = csArray[i];
-                    int ent = entArray[i];
-
-                    BitWriter writer = new BitWriter();
-                    var bits = Wordlist.ToBits(_Indices);
-                    writer.Write(bits, ent);
-                    var entropy = writer.ToBytes();
-                    var checksum = Utils.Sha256(entropy);
-
-                    writer.Write(checksum, cs);
-                    var expectedIndices = writer.ToIntegers();
-                    _IsValidChecksum = expectedIndices.SequenceEqual(_Indices);
+                    return _isValidChecksum.Value;
                 }
-                return _IsValidChecksum.Value;
+
+                int i = Array.IndexOf(MsArray, Indices.Length);
+                int cs = CsArray[i];
+                int ent = EntArray[i];
+
+                BitWriter writer = new ();
+                BitArray bits = Bip39.WordList.ToBits(Indices);
+                writer.Write(bits, ent);
+                byte[] entropy = writer.ToBytes();
+                byte[] checksum = Utils.Sha256(entropy);
+
+                writer.Write(checksum, cs);
+                int[] expectedIndices = writer.ToIntegers();
+                _isValidChecksum = expectedIndices.SequenceEqual(Indices);
+                return _isValidChecksum.Value;
             }
         }
 
+        /// <summary>
+        /// Whether the word count is correct.
+        /// </summary>
+        /// <param name="ms">The number of words.</param>
+        /// <returns>True if it is, otherwise false.</returns>
         private static bool CorrectWordCount(int ms)
         {
-            return msArray.Any(_ => _ == ms);
+            return MsArray.Any(_ => _ == ms);
         }
 
-        private readonly Wordlist _WordList;
-        public Wordlist WordList
-        {
-            get
-            {
-                return _WordList;
-            }
-        }
+        /// <summary>
+        /// The word list.
+        /// </summary>
+        public WordList WordList { get; }
 
-        private readonly int[] _Indices;
-        public int[] Indices
-        {
-            get
-            {
-                return _Indices;
-            }
-        }
-        private readonly string[] _Words;
+        /// <summary>
+        /// The indices.
+        /// </summary>
+        public int[] Indices { get; }
 
-        public string[] Words
-        {
-            get
-            {
-                return _Words;
-            }
-        }
+        /// <summary>
+        /// The words of the mnemonic.
+        /// </summary>
+        public string[] Words { get; }
 
-        static Encoding NoBOMUTF8 = new UTF8Encoding(false);
+        /// <summary>
+        /// Utf8 encoding.
+        /// </summary>
+        private static readonly Encoding _noBomutf8 = new UTF8Encoding(false);
+        
+        /// <summary>
+        /// Derives the mnemonic seed.
+        /// </summary>
+        /// <param name="passphrase">The passphrase.</param>
+        /// <returns>The seed.</returns>
         public byte[] DeriveSeed(string passphrase = null)
         {
             passphrase ??= "";
-            var salt = Concat(NoBOMUTF8.GetBytes("mnemonic"), Normalize(passphrase));
-            var bytes = Normalize(_Mnemonic);
+            byte[] salt = Concat(_noBomutf8.GetBytes("mnemonic"), Normalize(passphrase));
+            byte[] bytes = Normalize(_mnemonic);
 
             using System.Security.Cryptography.Rfc2898DeriveBytes derive = new(bytes, salt, 2048, System.Security.Cryptography.HashAlgorithmName.SHA512);
             return derive.GetBytes(64);
         }
 
-        internal static byte[] Normalize(string str)
+        /// <summary>
+        /// Get the normalized the string as a byte array.
+        /// </summary>
+        /// <param name="str">The string to normalize.</param>
+        /// <returns>The byte array.</returns>
+        private static byte[] Normalize(string str)
         {
-            return NoBOMUTF8.GetBytes(NormalizeString(str));
+            return _noBomutf8.GetBytes(NormalizeString(str));
         }
 
+        /// <summary>
+        /// Normalize the string.
+        /// </summary>
+        /// <param name="word">The string to normalize.</param>
+        /// <returns>The normalized string.</returns>
         internal static string NormalizeString(string word)
         {
-            return !SupportOsNormalization() ? KDTable.NormalizeKD(word) : word.Normalize(NormalizationForm.FormKD);
+            return !SupportOsNormalization() ? KdTable.NormalizeKd(word) : word.Normalize(NormalizationForm.FormKD);
         }
 
-        static bool? _SupportOSNormalization;
-        internal static bool SupportOsNormalization()
+        /// <summary>
+        /// Whether the OS normalization is supported.
+        /// </summary>
+        private static bool? _supportOsNormalization;
+
+        /// <summary>
+        /// Checks for OS normalization support.
+        /// </summary>
+        /// <returns>True if available, otherwise false.</returns>
+        private static bool SupportOsNormalization()
         {
-            if (_SupportOSNormalization == null)
+            if (_supportOsNormalization != null)
             {
-                var notNormalized = "あおぞら";
-                var normalized = "あおぞら";
-                if (notNormalized.Equals(normalized, StringComparison.Ordinal))
-                {
-                    _SupportOSNormalization = false;
-                }
-                else
-                {
-                    try
-                    {
-                        _SupportOSNormalization = notNormalized.Normalize(NormalizationForm.FormKD).Equals(normalized, StringComparison.Ordinal);
-                    }
-                    catch { _SupportOSNormalization = false; }
-                }
+                return _supportOsNormalization.Value;
             }
-            return _SupportOSNormalization.Value;
+
+            const string notNormalized = "あおぞら";
+            const string normalized = "あおぞら";
+            
+            if (notNormalized.Equals(normalized, StringComparison.Ordinal))
+            {
+                _supportOsNormalization = false;
+            }
+            else
+            {
+                try
+                {
+                    _supportOsNormalization = notNormalized.Normalize(NormalizationForm.FormKD).Equals(normalized, StringComparison.Ordinal);
+                }
+                catch { _supportOsNormalization = false; }
+            }
+            return _supportOsNormalization.Value;
         }
 
-        static Byte[] Concat(Byte[] source1, Byte[] source2)
+        /// <summary>
+        /// Concatenate an array of bytes.
+        /// </summary>
+        /// <param name="source1">The first array.</param>
+        /// <param name="source2">The second array.</param>
+        /// <returns>The concatenated array of bytes.</returns>
+        private static byte[] Concat(byte[] source1, byte[] source2)
         {
             //Most efficient way to merge two arrays this according to http://stackoverflow.com/questions/415291/best-way-to-combine-two-or-more-byte-arrays-in-c-sharp
-            Byte[] buffer = new Byte[source1.Length + source2.Length];
+            byte[] buffer = new byte[source1.Length + source2.Length];
             Buffer.BlockCopy(source1, 0, buffer, 0, source1.Length);
             Buffer.BlockCopy(source2, 0, buffer, source1.Length, source2.Length);
 
             return buffer;
         }
-
-
-        string _Mnemonic;
+        
+        /// <summary>
+        /// The mnemonic string.
+        /// </summary>
+        private readonly string _mnemonic;
+        
+        /// <summary>
+        /// Gets the mnemonic string.
+        /// </summary>
+        /// <returns>The string.</returns>
         public override string ToString()
         {
-            return _Mnemonic;
+            return _mnemonic;
         }
-
-
-    }
-
-    /// <summary>
-    /// Specifies the available lengths for the mnemonic.
-    /// </summary>
-    public enum WordCount : int
-    {
-        /// <summary>
-        /// Twelve words.
-        /// </summary>
-		Twelve = 12,
-
-        /// <summary>
-        /// Fifteen words.
-        /// </summary>
-        Fifteen = 15,
-
-        /// <summary>
-        /// Eighteen words.
-        /// </summary>
-        Eighteen = 18,
-
-        /// <summary>
-        /// Twenty one words.
-        /// </summary>
-        TwentyOne = 21,
-
-        /// <summary>
-        /// Twenty four words.
-        /// </summary>
-        TwentyFour = 24
     }
 }

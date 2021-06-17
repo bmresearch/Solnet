@@ -3,60 +3,101 @@ using System.Security.Cryptography;
 
 namespace Solnet.Wallet.Utilities
 {
-    public class RNGCryptoServiceProviderRandom : IRandom
+    /// <summary>
+    /// Implements a random number generator using the crypto service provider.
+    /// </summary>
+    public class RngCryptoServiceProviderRandom : IRandom
     {
-        readonly RNGCryptoServiceProvider _Instance;
-        public RNGCryptoServiceProviderRandom()
+        /// <summary>
+        /// The instance of the crypto service provider.
+        /// </summary>
+        private readonly RNGCryptoServiceProvider _instance;
+
+        /// <summary>
+        /// Initialize the random number generator.
+        /// </summary>
+        public RngCryptoServiceProviderRandom()
         {
-            _Instance = new RNGCryptoServiceProvider();
+            _instance = new RNGCryptoServiceProvider();
         }
+
         #region IRandom Members
 
+        /// <inheritdoc cref="IRandom.GetBytes(byte[])"/>
         public void GetBytes(byte[] output)
         {
-            _Instance.GetBytes(output);
+            _instance.GetBytes(output);
         }
 
         #endregion
     }
 
+    /// <summary>
+    /// Specifies functionality for a random number generator.
+    /// </summary>
     public interface IRandom
     {
+        /// <summary>
+        /// Get bytes.
+        /// </summary>
+        /// <param name="output">The output array of bytes.</param>
         void GetBytes(byte[] output);
     }
 
+    /// <summary>
+    /// Implements utilities to be used with random number generation.
+    /// </summary>
     public static class RandomUtils
     {
+        /// <summary>
+        /// Whether to use additional entropy or not.
+        /// </summary>
         public static bool UseAdditionalEntropy { get; set; } = true;
 
+        /// <summary>
+        /// Initialize the static instance of the random number generator.
+        /// </summary>
         static RandomUtils()
         {
-            Random = new RNGCryptoServiceProviderRandom();
+            Random = new RngCryptoServiceProviderRandom();
             AddEntropy(Guid.NewGuid().ToByteArray());
         }
 
+        /// <summary>
+        /// The random number generator.
+        /// </summary>
         public static IRandom Random
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// Get random bytes.
+        /// </summary>
+        /// <param name="length">The number of bytes to get.</param>
+        /// <returns>The byte array.</returns>
+        /// <exception cref="InvalidOperationException">Thrown when the random number generator has not been initialized</exception>
         public static byte[] GetBytes(int length)
         {
             byte[] data = new byte[length];
             if (Random == null)
-                throw new InvalidOperationException("You must set the RNG (RandomUtils.Random) before generating random numbers");
+                throw new InvalidOperationException("You must initialize the random number generator before generating numbers.");
             Random.GetBytes(data);
             PushEntropy(data);
             return data;
         }
 
+        /// <summary>
+        /// Pushes entropy to the given array of bytes.
+        /// </summary>
+        /// <param name="data">The array of bytes.</param>
         private static void PushEntropy(byte[] data)
         {
-            if (!UseAdditionalEntropy || additionalEntropy == null || data.Length == 0)
+            if (!UseAdditionalEntropy || _additionalEntropy == null || data.Length == 0)
                 return;
-            int pos = entropyIndex;
-            var entropy = additionalEntropy;
+            int pos = _entropyIndex;
+            var entropy = _additionalEntropy;
             for (int i = 0; i < data.Length; i++)
             {
                 data[i] ^= entropy[pos % 32];
@@ -68,26 +109,38 @@ namespace Solnet.Wallet.Utilities
                 data[i] ^= entropy[pos % 32];
                 pos++;
             }
-            entropyIndex = pos % 32;
+            _entropyIndex = pos % 32;
         }
 
-        static volatile byte[] additionalEntropy = null;
-        static volatile int entropyIndex = 0;
+        /// <summary>
+        /// The additional entropy.
+        /// </summary>
+        private static volatile byte[] _additionalEntropy = null;
 
+        /// <summary>
+        /// The entropy index..
+        /// </summary>
+        private static volatile int _entropyIndex = 0;
+
+        /// <summary>
+        /// Add entropy to the given data.
+        /// </summary>
+        /// <param name="data">The data to add entropy to.</param>
+        /// <exception cref="ArgumentNullException">Thrown if the data array is null.</exception>
         public static void AddEntropy(byte[] data)
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
             var entropy = Utils.Sha256(data);
-            if (additionalEntropy == null)
-                additionalEntropy = entropy;
+            if (_additionalEntropy == null)
+                _additionalEntropy = entropy;
             else
             {
                 for (int i = 0; i < 32; i++)
                 {
-                    additionalEntropy[i] ^= entropy[i];
+                    _additionalEntropy[i] ^= entropy[i];
                 }
-                additionalEntropy = Utils.Sha256(additionalEntropy);
+                _additionalEntropy = Utils.Sha256(_additionalEntropy);
             }
         }
     }

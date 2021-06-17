@@ -1,10 +1,14 @@
+using Chaos.NaCl;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
 namespace Solnet.Wallet.Utilities
 {
-    public static class Utils
+    /// <summary>
+    /// Implements utility methods to be used in the wallet.
+    /// </summary>
+    internal static class Utils
     {
         /// <summary>
         /// Adds or replaces a value in a dictionary.
@@ -14,7 +18,7 @@ namespace Solnet.Wallet.Utilities
         /// <param name="value">The value.</param>
         /// <typeparam name="TKey">The type of the key.</typeparam>
         /// <typeparam name="TValue">The type of the value.</typeparam>
-        public static void AddOrReplace<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
+        internal static void AddOrReplace<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
         {
             if (dictionary.ContainsKey(key))
                 dictionary[key] = value;
@@ -30,7 +34,7 @@ namespace Solnet.Wallet.Utilities
         /// <typeparam name="TKey">The type of the key.</typeparam>
         /// <typeparam name="TValue">The type of the value.</typeparam>
         /// <returns>The value.</returns>
-        public static TValue TryGet<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
+        internal static TValue TryGet<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
         {
             dictionary.TryGetValue(key, out TValue value);
             return value;
@@ -44,7 +48,7 @@ namespace Solnet.Wallet.Utilities
         /// <param name="end">The ending index of the slicing.</param>
         /// <typeparam name="T">The array type.</typeparam>
         /// <returns>The sliced array.</returns>
-        public static T[] Slice<T>(this T[] source, int start, int end)
+        internal static T[] Slice<T>(this T[] source, int start, int end)
         {
             if (end < 0)
                 end = source.Length;
@@ -64,9 +68,9 @@ namespace Solnet.Wallet.Utilities
         /// <param name="start">The starting index of the slicing.</param>
         /// <typeparam name="T">The array type.</typeparam>
         /// <returns>The sliced array.</returns>
-        public static T[] Slice<T>(this T[] source, int start)
+        internal static T[] Slice<T>(this T[] source, int start)
         {
-            return Slice<T>(source, start, -1);
+            return Slice(source, start, -1);
         }
 
         /// <summary>
@@ -74,7 +78,7 @@ namespace Solnet.Wallet.Utilities
         /// </summary>
         /// <param name="data">The data to hash.</param>
         /// <returns>The hash.</returns>
-        public static byte[] Sha256(ReadOnlySpan<byte> data)
+        internal static byte[] Sha256(ReadOnlySpan<byte> data)
         {
             return Sha256(data.ToArray(), 0, data.Length);
         }
@@ -91,5 +95,14 @@ namespace Solnet.Wallet.Utilities
             using SHA256Managed sha = new();
             return sha.ComputeHash(data, offset, count);
         }
+        
+        
+        /// <summary>
+        /// Gets the corresponding ed25519 key pair from the passed seed.
+        /// </summary>
+        /// <param name="seed">The seed</param>
+        /// <returns>The key pair.</returns>
+        internal static (byte[] privateKey, byte[] publicKey) EdKeyPairFromSeed(byte[] seed) =>
+            new(Ed25519.ExpandedPrivateKeyFromSeed(seed), Ed25519.PublicKeyFromSeed(seed));
     }
 }

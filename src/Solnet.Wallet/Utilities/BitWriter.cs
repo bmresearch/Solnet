@@ -1,5 +1,3 @@
-// unset
-
 using Solnet.Wallet.Bip39;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,45 +6,71 @@ using System.Text;
 
 namespace Solnet.Wallet.Utilities
 {
-    class BitWriter
+    /// <summary>
+    /// Implements a bit writer.
+    /// </summary>
+    internal class BitWriter
     {
-        List<bool> values = new List<bool>();
-        public int Count
+        /// <summary>
+        /// The values of the bit writer.
+        /// </summary>
+        private readonly List<bool> _values = new();
+        
+        /// <summary>
+        /// The number of values.
+        /// </summary>
+        private int Count => _values.Count;
+
+        /// <summary>
+        /// Writes a value to the writer buffer.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        private void Write(bool value)
         {
-            get
-            {
-                return values.Count;
-            }
-        }
-        public void Write(bool value)
-        {
-            values.Insert(Position, value);
-            _Position++;
+            _values.Insert(Position, value);
+            Position++;
         }
 
+        /// <summary>
+        /// Writes a byte array to the writer buffer.
+        /// </summary>
+        /// <param name="bytes">The byte array.</param>
         internal void Write(byte[] bytes)
         {
             Write(bytes, bytes.Length * 8);
         }
 
+        /// <summary>
+        /// Writes a byte array to the writer buffer.
+        /// </summary>
+        /// <param name="bytes">The byte array.</param>
+        /// <param name="bitCount">The bit count.</param>
         public void Write(byte[] bytes, int bitCount)
         {
             bytes = SwapEndianBytes(bytes);
-            BitArray array = new BitArray(bytes);
-            values.InsertRange(Position, array.OfType<bool>().Take(bitCount));
-            _Position += bitCount;
+            BitArray array = new (bytes);
+            _values.InsertRange(Position, array.OfType<bool>().Take(bitCount));
+            Position += bitCount;
         }
 
+        /// <summary>
+        /// Gets the bit writer's buffer as a byte array.
+        /// </summary>
+        /// <returns>The byte array.</returns>
         public byte[] ToBytes()
         {
-            var array = ToBitArray();
-            var bytes = ToByteArray(array);
+            BitArray array = ToBitArray();
+            byte[] bytes = ToByteArray(array);
             bytes = SwapEndianBytes(bytes);
             return bytes;
         }
 
-        //BitArray.CopyTo do not exist in portable lib
-        static byte[] ToByteArray(BitArray bits)
+        /// <summary>
+        /// Convert a bit array to a byte array.
+        /// </summary>
+        /// <param name="bits">The bit array to convert.</param>
+        /// <returns>The byte array.</returns>
+        private static byte[] ToByteArray(BitArray bits)
         {
             int arrayLength = bits.Length / 8;
             if (bits.Length % 8 != 0)
@@ -62,22 +86,33 @@ namespace Solnet.Wallet.Utilities
             return array;
         }
 
-
+        /// <summary>
+        /// Gets the bit writer's buffer as a bit array.
+        /// </summary>
+        /// <returns>The bit array.</returns>
         public BitArray ToBitArray()
         {
-            return new BitArray(values.ToArray());
+            return new (_values.ToArray());
         }
 
+        /// <summary>
+        /// Gets the bit writer's buffer as an array of integers.
+        /// </summary>
+        /// <returns>The array of integers.</returns>
         public int[] ToIntegers()
         {
-            var array = new BitArray(values.ToArray());
-            return Wordlist.ToIntegers(array);
+            BitArray array = new (_values.ToArray());
+            return ToIntegers(array);
         }
 
-
-        static byte[] SwapEndianBytes(byte[] bytes)
+        /// <summary>
+        /// Swaps the endianness of the bytes.
+        /// </summary>
+        /// <param name="bytes">The bytes to swap.</param>
+        /// <returns>The swapped byte array.</returns>
+        private static byte[] SwapEndianBytes(IReadOnlyList<byte> bytes)
         {
-            byte[] output = new byte[bytes.Length];
+            byte[] output = new byte[bytes.Count];
             for (int i = 0; i < output.Length; i++)
             {
                 byte newByte = 0;
@@ -90,42 +125,16 @@ namespace Solnet.Wallet.Utilities
             return output;
         }
 
+        /// <summary>
+        /// The current position of the bit writer.
+        /// </summary>
+        public int Position { get; set; }
 
-
-        public void Write(uint value, int bitCount)
-        {
-            for (int i = 0; i < bitCount; i++)
-            {
-                Write((value & 1) == 1);
-                value = value >> 1;
-            }
-        }
-
-        int _Position;
-        public int Position
-        {
-            get
-            {
-                return _Position;
-            }
-            set
-            {
-                _Position = value;
-            }
-        }
-
-        internal void Write(BitReader reader, int bitCount)
-        {
-            for (int i = 0; i < bitCount; i++)
-            {
-                Write(reader.Read());
-            }
-        }
-
-        public void Write(BitArray bitArray)
-        {
-            Write(bitArray, bitArray.Length);
-        }
+        /// <summary>
+        /// Write
+        /// </summary>
+        /// <param name="bitArray"></param>
+        /// <param name="bitCount"></param>
         public void Write(BitArray bitArray, int bitCount)
         {
             for (int i = 0; i < bitCount; i++)
@@ -134,24 +143,38 @@ namespace Solnet.Wallet.Utilities
             }
         }
 
-        public void Write(BitReader reader)
+        /// <summary>
+        /// Convert the bit array to integers.
+        /// </summary>
+        /// <param name="bits">The bit array.</param>
+        /// <returns>The int array.</returns>
+        public static int[] ToIntegers(BitArray bits)
         {
-            Write(reader, reader.Count - reader.Position);
+            return
+                bits
+                    .OfType<bool>()
+                    .Select((v, i) => new
+                    {
+                        Group = i / 11,
+                        Value = v ? 1 << (10 - (i % 11)) : 0
+                    })
+                    .GroupBy(_ => _.Group, _ => _.Value)
+                    .Select(g => g.Sum())
+                    .ToArray();
         }
 
-        public BitReader ToReader()
-        {
-            return new BitReader(ToBitArray());
-        }
-
+        /// <summary>
+        /// Encode the writer as string.
+        /// </summary>
+        /// <returns>The string.</returns>
         public override string ToString()
         {
-            StringBuilder builder = new StringBuilder(values.Count);
+            StringBuilder builder = new (_values.Count);
             for (int i = 0; i < Count; i++)
             {
                 if (i != 0 && i % 8 == 0)
                     builder.Append(' ');
-                builder.Append(values[i] ? "1" : "0");
+                builder.Append(_values[i] ? "1" : "0");
             }
             return builder.ToString();
         }
