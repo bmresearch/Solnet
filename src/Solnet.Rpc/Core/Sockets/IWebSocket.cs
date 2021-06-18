@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Solnet.Rpc.Core.Sockets
 {
-    public interface IWebSocket : IDisposable
+    internal interface IWebSocket : IDisposable
     {
         WebSocketState State { get; }
 

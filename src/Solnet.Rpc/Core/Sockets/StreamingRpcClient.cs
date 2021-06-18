@@ -10,7 +10,7 @@ namespace Solnet.Rpc.Core.Sockets
     /// <summary>
     /// Base streaming Rpc client class that abstracts the websocket handling.
     /// </summary>
-    public abstract class StreamingRpcClient
+    internal abstract class StreamingRpcClient
     {
         /// <summary>
         /// The web socket client abstraction.

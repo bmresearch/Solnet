@@ -40,7 +40,10 @@ namespace Solnet.Rpc.Core.Sockets
         /// </summary>
         public string LastCode { get; private set; }
 
-        private ImmutableList<object> AdditionalParameters { get; }
+        /// <summary>
+        /// The collection of parameters that were submitted for this subscription.
+        /// </summary>
+        public ImmutableList<object> AdditionalParameters { get; }
 
         /// <summary>
         /// Event fired when the state of the subcription changes.

@@ -10,7 +10,7 @@ namespace Solnet.Rpc.Utilities
      * Released to the public domain
      */
 
-    public static class Ed25519Extensions
+    internal static class Ed25519Extensions
     {
         private static BigInteger ExpMod(BigInteger number, BigInteger exponent, BigInteger modulo)
         {
@@ -56,7 +56,7 @@ namespace Solnet.Rpc.Utilities
             return (yy - xx - dxxyy - 1).Mod(Q).Equals(BigInteger.Zero);
         }
 
-        public static bool IsOnCurve(this byte[] key)
+        internal static bool IsOnCurve(this byte[] key)
         {
             BigInteger y = new BigInteger(key) & Un;
             BigInteger x = RecoverX(y);
@@ -88,7 +88,7 @@ namespace Solnet.Rpc.Utilities
 
     internal static class BigIntegerHelpers
     {
-        public static BigInteger Mod(this BigInteger num, BigInteger modulo)
+        internal static BigInteger Mod(this BigInteger num, BigInteger modulo)
         {
             var result = num % modulo;
             return result < 0 ? result + modulo : result;

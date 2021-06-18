@@ -3,9 +3,9 @@ using System;
 namespace Solnet.Rpc.Utilities
 {
 
-    public static class ShortVectorEncoding
+    internal static class ShortVectorEncoding
     {
-        public static byte[] EncodeLength(int len)
+        internal static byte[] EncodeLength(int len)
         {
             var output = new byte[10];
             var remLen = len;
