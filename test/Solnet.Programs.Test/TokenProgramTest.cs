@@ -129,6 +129,12 @@ namespace Solnet.Programs.Test
         }
 
         [TestMethod]
+        public void TestInitializeMultisig()
+        {
+            
+        }
+
+        [TestMethod]
         public void TestMintTo()
         {
             var wallet = new Wallet.Wallet(MnemonicWords);

@@ -9,6 +9,9 @@ namespace Solnet.Programs
 {
     /// <summary>
     /// Implements the Token Program methods.
+    /// <remarks>
+    /// For more information see: https://spl.solana.com/token
+    /// </remarks>
     /// </summary>
     public static class TokenProgram
     {
@@ -85,7 +88,7 @@ namespace Solnet.Programs
                 new AccountMeta(owner, false)
             };
 
-            return new TransactionInstruction
+            return new()
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
@@ -128,7 +131,31 @@ namespace Solnet.Programs
         }
 
         /// <summary>
-        /// Initialize an instruction to initialize a token mint account.
+        /// Initializes an instruction to initialize a multi signature token account.
+        /// </summary>
+        /// <param name="multiSignature">Public key of the multi signature account.</param>
+        /// <param name="signers">Addresses of multi signature signers.</param>
+        /// <param name="m">The number of signatures required to validate this multi signature account.</param>
+        public static TransactionInstruction InitializeMultiSignature(PublicKey multiSignature, List<PublicKey> signers, int m)
+        {
+            var keys = new List<AccountMeta>()
+            {
+                new(multiSignature, true),
+                new(SysvarRentKey, false)
+            };
+            keys.AddRange(signers.Select(signer => new AccountMeta(signer, false)));
+
+            return new TransactionInstruction
+            {
+                ProgramId = ProgramIdKey.KeyBytes, 
+                Keys = keys, 
+                Data = TokenProgramData.EncodeInitializeMultiSignatureData(m)
+            };
+        }
+
+        /// <summary>
+        /// Initializes an instruction to transfer tokens from one account to another either directly or via a delegate.
+        /// If this account is associated with the native mint then equal amounts of SOL and Tokens will be transferred to the destination account.
         /// </summary>
         /// <param name="mint">The public keytoken mint.</param>
         /// <param name="decimals">The token decimals.</param>
@@ -154,6 +181,18 @@ namespace Solnet.Programs
                     freezeAuthorityOpt)
             };
         }
+
+        /// <param name="source">The account to transfer tokens from.</param>
+        /// <param name="destination">The account to transfer tokens to.</param>
+        /// <param name="amount">The amount of tokens to transfer.</param>
+        /// <param name="owner">The account owner.</param>
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction Transfer(
+            string source, string destination, long amount, string owner)
+        {
+            return new();
+        }
+
 
         /// <summary>
         /// Initializes an instruction to mint tokens to a destination account.
@@ -182,7 +221,7 @@ namespace Solnet.Programs
         /// <param name="delegateAccount">The delegate account authorized to perform a transfer from the source account.</param>
         /// <param name="ownerAccount">The owner account of the source account.</param>
         /// <param name="amount">The maximum amount of tokens the delegate may transfer.</param>
-        /// <param name="signers">Signing accounts if the `owner` is a multisig.</param>
+        /// <param name="signers">Signing accounts if the `owner` is a multi signature.</param>
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Approve(
             PublicKey sourceAccount, PublicKey delegateAccount, Account ownerAccount, long amount, IEnumerable<Account> signers = null)
@@ -214,7 +253,85 @@ namespace Solnet.Programs
                 Data = TokenProgramData.EncodeRevokeData()
             };
         }
+        
+        
+        /// <summary>
+        /// Initialize an instruction to set an authority on an account.
+        /// </summary>
+        /// <param name="account">The account to set the authority on.</param>
+        /// <param name="authority">The type of authority to set.</param>
+        /// <param name="currentAuthority">The current authority of the specified type.</param>
+        /// <param name="signers">Signing accounts if the <c>account</c> is a multi signature.</param>
+        /// <param name="newAuthority">The new authority.</param>
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction SetAuthority(
+            string account, AuthorityType authority, string currentAuthority, string newAuthority, List<string> signers = null)
+        {
+            if (signers == null)
+            {
+                return SetAuthority(
+                    Encoder.DecodeData(account),
+                    authority,
+                    Encoder.DecodeData(currentAuthority),
+                    Encoder.DecodeData(newAuthority));
+            }
 
+            List<byte[]> byteSigners = new(signers.Count);
+            byteSigners.AddRange(signers.Select(signer => Encoder.DecodeData(signer)));
+            return SetAuthority(
+                Encoder.DecodeData(account),
+                authority,
+                Encoder.DecodeData(currentAuthority),
+                Encoder.DecodeData(newAuthority),
+                byteSigners);
+        }
+        
+        /// <inheritdoc cref="SetAuthority(string,Solnet.Programs.AuthorityType,string,string,System.Collections.Generic.List{string})"/>
+        public static TransactionInstruction SetAuthority(
+            byte[] account, AuthorityType authority, byte[] currentAuthority, byte[] newAuthority, List<byte[]> signers = null)
+        {
+            
+            
+            return new TransactionInstruction() { };
+        }
+        
+        
+        public static TransactionInstruction Burn()
+        {
+            return new TransactionInstruction() { };
+        }
+        
+
+        public static TransactionInstruction CloseAccount()
+        {
+            return new TransactionInstruction() { };
+        }
+        
+        public static TransactionInstruction FreezeAccount()
+        {
+            return new TransactionInstruction() { };
+        }
+        
+        public static TransactionInstruction ThawAccount()
+        {
+            return new TransactionInstruction() { };
+        }
+        
+        public static TransactionInstruction ApproveChecked()
+        {
+            return new TransactionInstruction() { };
+        }
+        
+        public static TransactionInstruction MintToChecked()
+        {
+            return new TransactionInstruction() { };
+        }
+        
+        public static TransactionInstruction BurnChecked()
+        {
+            return new TransactionInstruction() { };
+        }
+        
         /// <summary>
         /// Adds the list of signers to the list of keys.
         /// </summary>

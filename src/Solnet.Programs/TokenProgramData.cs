@@ -110,6 +110,101 @@ namespace Solnet.Programs
 
             return methodBuffer;
         }
+
+        /// <summary>
+        /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.InitializeMultiSignature"/> method.
+        /// </summary>
+        /// <param name="m">The number of signers necessary to validate the account.</param>
+        /// <returns>The byte array with the encoded data.</returns>
+        internal static byte[] EncodeInitializeMultiSignatureData(int m)
+        {
+            var methodBuffer = new byte[2];
+            
+            methodBuffer[0] = (byte)TokenProgramInstructions.InitializeMultiSignature;
+            methodBuffer[1] = (byte)m;
+
+            return methodBuffer;
+        }
+        
+        internal static byte[] EncodeSetAuthorityData()
+        {
+            
+            var methodBuffer = new byte[10];
+
+            methodBuffer[0] = (byte)TokenProgramInstructions.SetAuthority;
+
+            return methodBuffer;
+        }
+        
+        internal static byte[] EncodeBurnData()
+        {
+            
+            var methodBuffer = new byte[10];
+
+            methodBuffer[0] = (byte)TokenProgramInstructions.Burn;
+
+            return methodBuffer;
+        }
+        
+        internal static byte[] EncodeCloseAccountData()
+        {
+            
+            var methodBuffer = new byte[10];
+
+            methodBuffer[0] = (byte)TokenProgramInstructions.CloseAccount;
+
+            return methodBuffer;
+        }
+        
+        internal static byte[] EncodeFreezeAccountData()
+        {
+            
+            var methodBuffer = new byte[10];
+
+            methodBuffer[0] = (byte)TokenProgramInstructions.FreezeAccount;
+
+            return methodBuffer;
+        }
+        
+        internal static byte[] EncodeThawAccountData()
+        {
+            
+            var methodBuffer = new byte[10];
+
+            methodBuffer[0] = (byte)TokenProgramInstructions.ThawAccount;
+
+            return methodBuffer;
+        }
+        
+        internal static byte[] EncodeApproveCheckedData()
+        {
+            
+            var methodBuffer = new byte[10];
+
+            methodBuffer[0] = (byte)TokenProgramInstructions.ApproveChecked;
+
+            return methodBuffer;
+        }
+        
+        internal static byte[] EncodeMintToCheckedData()
+        {
+            
+            var methodBuffer = new byte[10];
+
+            methodBuffer[0] = (byte)TokenProgramInstructions.MintToChecked;
+
+            return methodBuffer;
+        }
+
+        internal static byte[] EncodeBurnCheckedData()
+        {
+            
+            var methodBuffer = new byte[10];
+
+            methodBuffer[0] = (byte)TokenProgramInstructions.BurnChecked;
+
+            return methodBuffer;
+        }
         
     }
 }

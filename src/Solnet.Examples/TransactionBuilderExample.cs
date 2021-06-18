@@ -26,7 +26,7 @@ namespace Solnet.Examples
             return logString;
         }
 
-        static void TransactionAndMemoExample(string[] args)
+        static void Main(string[] args)
         {
             var rpcClient = ClientFactory.GetClient(Cluster.TestNet);
             var wallet = new Wallet.Wallet(MnemonicWords);
@@ -49,7 +49,7 @@ namespace Solnet.Examples
             Console.WriteLine($"First Tx Signature: {firstSig.Result}");
         }
 
-        static void Main(string[] args)
+        static void CreateInitializeAndMintToExample(string[] args)
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
 
@@ -62,11 +62,11 @@ namespace Solnet.Examples
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
 
-            var mintAccount = wallet.GetAccount(31);
+            var mintAccount = wallet.GetAccount(21);
             Console.WriteLine($"MintAccount: {mintAccount.PublicKey}");
             var ownerAccount = wallet.GetAccount(10);
             Console.WriteLine($"OwnerAccount: {ownerAccount.PublicKey}");
-            var initialAccount = wallet.GetAccount(32);
+            var initialAccount = wallet.GetAccount(22);
             Console.WriteLine($"InitialAccount: {initialAccount.PublicKey}");
 
             var tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash).AddInstruction(
@@ -215,6 +215,21 @@ namespace Solnet.Examples
 
             var txReq = rpcClient.SendTransaction(tx);
             Console.WriteLine($"Tx Signature: {txReq.Result}");
+        }
+
+        static void InitializeMultiSignatureExample()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+
+            var blockHash = rpcClient.GetRecentBlockHash();
+            var minBalanceForExemptionAcc =
+                rpcClient.GetMinimumBalanceForRentExemption(SystemProgram.AccountDataSize).Result;
+            Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
+
+            var minBalanceForExemptionMint =
+                rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
+            Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
+
         }
     }
 }

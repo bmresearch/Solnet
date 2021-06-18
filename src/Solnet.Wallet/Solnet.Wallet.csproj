@@ -14,5 +14,5 @@
     <PackageReference Include="Chaos.NaCl.Standard" Version="1.0.0" />
   </ItemGroup>
 
-  <Import Project="..\..\SharedBuildProperties.props" />
+  <Import Project="..\..\SharedBuildProperties.props"/>
 </Project>
