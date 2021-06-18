@@ -1,4 +1,4 @@
-using NBitcoin;
+using Solnet.Wallet.Bip39;
 using System;
 using System.Collections.Generic;
 
@@ -23,7 +23,7 @@ namespace Solnet.Examples
             };
 
             // mnemonic and passphrase to derive seed
-            var mnemonic = new Mnemonic("route clerk disease box emerge airport loud waste attitude film army tray forward deal onion eight catalog surface unit card window walnut wealth medal", Wordlist.English);
+            var mnemonic = new Mnemonic("route clerk disease box emerge airport loud waste attitude film army tray forward deal onion eight catalog surface unit card window walnut wealth medal", WordList.English);
 
             // The passphrase isn't used to harden the mnemonic in this case.
             var solletWallet = new Wallet.Wallet(mnemonic);

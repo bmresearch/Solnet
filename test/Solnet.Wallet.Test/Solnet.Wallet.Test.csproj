@@ -18,11 +18,16 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Resources" />
+      <ProjectReference Include="..\..\src\Solnet.Wallet\Solnet.Wallet.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Solnet.Wallet\Solnet.Wallet.csproj" />
+      <None Update="Resources\Bip39Japanese.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Resources\Bip39Vectors.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

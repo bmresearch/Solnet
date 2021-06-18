@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NBitcoin.DataEncoders;
 using Solnet.Rpc.Utilities;
+using Solnet.Wallet.Utilities;
 using System;
 using System.Text;
 

@@ -37,7 +37,6 @@ Solnet is Solana's .NET integration library.
 - net 5.0
 
 ## Dependencies
-- NBitcoin
 - Chaos.NaCl.Standard
 - Portable.BouncyCastle
 
@@ -57,7 +56,6 @@ var sollet = new Wallet("mnemonic words ...", Wordlist.English);
 // Retrieve accounts by derivation path index
 var account = sollet.GetAccount(10);
 
-// Or initialize a mnemonic from NBitcoin before and use it
 var mnemonic = new Mnemonic("mnemonic words ...");
 var wallet = new Wallet(mnemonic);
 

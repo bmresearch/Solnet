@@ -1,6 +1,6 @@
-﻿using NBitcoin.DataEncoders;
-using Solnet.Rpc.Models;
+﻿using Solnet.Rpc.Models;
 using Solnet.Wallet;
+using Solnet.Wallet.Utilities;
 using System.Collections.Generic;
 using System.Text;
 

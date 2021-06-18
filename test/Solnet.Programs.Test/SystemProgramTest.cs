@@ -1,5 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NBitcoin.DataEncoders;
+using Solnet.Wallet.Utilities;
 
 namespace Solnet.Programs.Test
 {

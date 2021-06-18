@@ -1,5 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NBitcoin;
+using Solnet.Wallet.Bip39;
 using System;
 using System.Collections.Generic;
 
@@ -89,8 +89,8 @@ namespace Solnet.Wallet.Test
         {
             return seedMode switch
             {
-                SeedMode.Bip39 => new Wallet(MnemonicWords, Wordlist.English, Bip39Passphrase, SeedMode.Bip39),
-                SeedMode.Ed25519Bip32 => new Wallet(MnemonicWords, Wordlist.English),
+                SeedMode.Bip39 => new Wallet(MnemonicWords, WordList.English, Bip39Passphrase, SeedMode.Bip39),
+                SeedMode.Ed25519Bip32 => new Wallet(MnemonicWords, WordList.English),
                 _ => throw new ArgumentOutOfRangeException(nameof(seedMode), seedMode, "this should never happen")
             };
         }
@@ -118,7 +118,7 @@ namespace Solnet.Wallet.Test
         [TestMethod]
         public void TestWallet()
         {
-            var wallet = new Wallet(WordCount.TwentyFour, Wordlist.English);
+            var wallet = new Wallet(WordCount.TwentyFour, WordList.English);
             Assert.IsNotNull(wallet.Account, "_wallet.account != null");
             Assert.IsNotNull(wallet.Account.PrivateKey, "_wallet.account.PrivateKey != null");
             Assert.IsNotNull(wallet.Account.PublicKey, "_wallet.account.PublicKey != null");

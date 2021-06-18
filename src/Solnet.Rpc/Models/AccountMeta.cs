@@ -1,4 +1,4 @@
-using NBitcoin.DataEncoders;
+using Solnet.Wallet.Utilities;
 
 namespace Solnet.Rpc.Models
 {

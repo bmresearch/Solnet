@@ -1,10 +1,13 @@
 using Chaos.NaCl;
-using NBitcoin.DataEncoders;
+using Solnet.Wallet.Utilities;
 using System;
 using System.Security.Cryptography;
 
 namespace Solnet.Wallet
 {
+    /// <summary>
+    /// Implements account functionality.
+    /// </summary>
     public class Account
     {
         /// <summary>
@@ -37,9 +40,9 @@ namespace Solnet.Wallet
         /// </summary>
         public Account()
         {
-            var seed = GenerateRandomSeed();
+            byte[] seed = GenerateRandomSeed();
 
-            (_privateKey, _publicKey) = Ed25519Extensions.EdKeyPairFromSeed(seed);
+            (_privateKey, _publicKey) = Utils.EdKeyPairFromSeed(seed);
         }
 
         /// <summary>
@@ -97,7 +100,7 @@ namespace Solnet.Wallet
         /// <returns>The signature of the data.</returns>
         public byte[] Sign(byte[] message)
         {
-            var signature = new byte[64];
+            byte[] signature = new byte[64];
             Ed25519.Sign(signature, message, _privateKey);
             return signature;
         }
@@ -106,9 +109,9 @@ namespace Solnet.Wallet
         /// Generates a random seed for the Ed25519 key pair.
         /// </summary>
         /// <returns>The seed as byte array.</returns>
-        private byte[] GenerateRandomSeed()
+        private static byte[] GenerateRandomSeed()
         {
-            var bytes = new byte[Ed25519.PrivateKeySeedSizeInBytes];
+            byte[] bytes = new byte[Ed25519.PrivateKeySeedSizeInBytes];
             RandomNumberGenerator.Create().GetBytes(bytes);
             return bytes;
         }

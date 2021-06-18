@@ -1,6 +1,6 @@
-using NBitcoin;
 using Solnet.KeyStore;
 using Solnet.Wallet;
+using Solnet.Wallet.Bip39;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,7 +28,7 @@ namespace Solnet.Examples
             const string mnemonicWords =
                 "route clerk disease box emerge airport loud waste attitude film army tray forward deal onion eight catalog surface unit card window walnut wealth medal";
 
-            var mnemonic = new Mnemonic(mnemonicWords, Wordlist.English);
+            var mnemonic = new Mnemonic(mnemonicWords, WordList.English);
 
             var keystoreService = new SecretKeyStoreService();
 
