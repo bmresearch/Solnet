@@ -20,82 +20,122 @@ namespace Solnet.Rpc
         /// <summary>
         /// Subscribes asynchronously to AccountInfo notifications.
         /// </summary>
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
         /// <param name="pubkey">The public key of the account.</param>
         /// <param name="callback">The callback to handle data notifications.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback);
+        Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes to the AccountInfo. This is a synchronous and blocking function.
         /// </summary>
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
         /// <param name="pubkey">The public key of the account.</param>
         /// <param name="callback">The callback to handle data notifications.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object representing the state of the subscription.</returns>
-        SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback);
+        SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes asynchronously to the logs notifications that mention a given public key.
         /// </summary>
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
         /// <param name="pubkey">The public key to filter by mention.</param>
         /// <param name="callback">The callback to handle data notifications.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        Task<SubscriptionState> SubscribeLogInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback);
+        Task<SubscriptionState> SubscribeLogInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes asynchronously to the logs notifications.
         /// </summary>
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
         /// <param name="subscriptionType">The filter mechanism.</param>
         /// <param name="callback">The callback to handle data notifications.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        Task<SubscriptionState> SubscribeLogInfoAsync(LogsSubscriptionType subscriptionType, Action<SubscriptionState, ResponseValue<LogInfo>> callback);
+        Task<SubscriptionState> SubscribeLogInfoAsync(LogsSubscriptionType subscriptionType, Action<SubscriptionState, ResponseValue<LogInfo>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes to the logs notifications that mention a given public key. This is a synchronous and blocking function.
         /// </summary>
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
         /// <param name="pubkey">The public key to filter by mention.</param>
         /// <param name="callback">The callback to handle data notifications.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object representing the state of the subscription.</returns>
-        SubscriptionState SubscribeLogInfo(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback);
+        SubscriptionState SubscribeLogInfo(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes to the logs notifications. This is a synchronous and blocking function.
         /// </summary>
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
         /// <param name="subscriptionType">The filter mechanism.</param>
         /// <param name="callback">The callback to handle data notifications.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object representing the state of the subscription.</returns>
-        SubscriptionState SubscribeLogInfo(LogsSubscriptionType subscriptionType, Action<SubscriptionState, ResponseValue<LogInfo>> callback);
+        SubscriptionState SubscribeLogInfo(LogsSubscriptionType subscriptionType, Action<SubscriptionState, ResponseValue<LogInfo>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes asynchronously to a transaction signature to receive notification when the transaction is confirmed.
         /// </summary>
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
         /// <param name="transactionSignature">The transaction signature.</param>
         /// <param name="callback">The callback to handle data notifications.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        Task<SubscriptionState> SubscribeSignatureAsync(string transactionSignature, Action<SubscriptionState, ResponseValue<ErrorResult>> callback);
+        Task<SubscriptionState> SubscribeSignatureAsync(string transactionSignature, Action<SubscriptionState, ResponseValue<ErrorResult>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes to a transaction signature to receive notification when the transaction is confirmed. This is a synchronous and blocking function.
         /// </summary>
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
         /// <param name="transactionSignature">The transaction signature.</param>
         /// <param name="callback">The callback to handle data notifications.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object representing the state of the subscription.</returns>
-        SubscriptionState SubscribeSignature(string transactionSignature, Action<SubscriptionState, ResponseValue<ErrorResult>> callback);
+        SubscriptionState SubscribeSignature(string transactionSignature, Action<SubscriptionState, ResponseValue<ErrorResult>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes asynchronously to changes to a given program account data.
         /// </summary>
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
         /// <param name="programPubkey">The program pubkey.</param>
         /// <param name="callback">The callback to handle data notifications.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback);
+        Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes to changes to a given program account data. This is a synchronous and blocking function.
         /// </summary>
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
         /// <param name="programPubkey">The program pubkey.</param>
         /// <param name="callback">The callback to handle data notifications.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object representing the state of the subscription.</returns>
-        SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback);
+        SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes asynchronously to receive notifications anytime a slot is processed by the validator.

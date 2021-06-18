@@ -18,7 +18,7 @@ namespace Solnet.Rpc
     /// <summary>
     /// Implementation of the Solana streaming RPC API abstraction client.
     /// </summary>
-    public class SolanaStreamingRpcClient : StreamingRpcClient, IStreamingRpcClient
+    internal class SolanaStreamingRpcClient : StreamingRpcClient, IStreamingRpcClient
     {
         /// <summary>
         /// Message Id generator.
@@ -287,80 +287,122 @@ namespace Solnet.Rpc
         }
 
         #region AccountInfo
-        /// <inheritdoc cref="IStreamingRpcClient.SubscribeAccountInfoAsync(string, Action{SubscriptionState, ResponseValue{AccountInfo}})"/>
-        public async Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback)
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeAccountInfoAsync(string, Action{SubscriptionState, ResponseValue{AccountInfo}}, Commitment)"/>
+        public async Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, Commitment commitment = Commitment.Finalized)
 
         {
-            var sub = new SubscriptionState<ResponseValue<AccountInfo>>(this, SubscriptionChannel.Account, callback, new List<object> { pubkey });
+            var parameters = new List<object> { pubkey };
+            var configParams = new Dictionary<string, object> { { "encoding", "base64" } };
 
-            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "accountSubscribe", new List<object> { pubkey, new Dictionary<string, string> { { "encoding", "base64" } } });
+            if(commitment != Commitment.Finalized)
+            {
+                configParams.Add("commitment", commitment);
+            }
+
+            parameters.Add(configParams);
+
+            var sub = new SubscriptionState<ResponseValue<AccountInfo>>(this, SubscriptionChannel.Account, callback, parameters);
+
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "accountSubscribe", parameters);
 
             return await Subscribe(sub, msg).ConfigureAwait(false);
         }
 
-        /// <inheritdoc cref="IStreamingRpcClient.SubscribeAccountInfo(string, Action{SubscriptionState, ResponseValue{AccountInfo}})"/>
-        public SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback)
-            => SubscribeAccountInfoAsync(pubkey, callback).Result;
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeAccountInfo(string, Action{SubscriptionState, ResponseValue{AccountInfo}}, Commitment)"/>
+        public SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, Commitment commitment = Commitment.Finalized)
+            => SubscribeAccountInfoAsync(pubkey, callback, commitment).Result;
         #endregion
 
         #region Logs
-        /// <inheritdoc cref="IStreamingRpcClient.SubscribeLogInfoAsync(string, Action{SubscriptionState, ResponseValue{LogInfo}})"/>
-        public async Task<SubscriptionState> SubscribeLogInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback)
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeLogInfoAsync(string, Action{SubscriptionState, ResponseValue{LogInfo}}, Commitment)"/>
+        public async Task<SubscriptionState> SubscribeLogInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback, Commitment commitment = Commitment.Finalized)
         {
-            var sub = new SubscriptionState<ResponseValue<LogInfo>>(this, SubscriptionChannel.Logs, callback, new List<object> { pubkey });
+            var parameters = new List<object> { new Dictionary<string, object> { { "mentions", new List<string> { pubkey } } } };
+            
+            if (commitment != Commitment.Finalized)
+            {
+                var configParams = new Dictionary<string, Commitment> { { "commitment", commitment } };
+                parameters.Add(configParams);
+            }
 
-            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "logsSubscribe", new List<object> { new Dictionary<string, object> { { "mentions", new List<string> { pubkey } } } });
+            var sub = new SubscriptionState<ResponseValue<LogInfo>>(this, SubscriptionChannel.Logs, callback, parameters);
+
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "logsSubscribe", parameters );
             return await Subscribe(sub, msg).ConfigureAwait(false);
         }
 
-        /// <inheritdoc cref="IStreamingRpcClient.SubscribeLogInfo(string, Action{SubscriptionState, ResponseValue{LogInfo}})"/>
-        public SubscriptionState SubscribeLogInfo(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback)
-            => SubscribeLogInfoAsync(pubkey, callback).Result;
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeLogInfo(string, Action{SubscriptionState, ResponseValue{LogInfo}}, Commitment)"/>
+        public SubscriptionState SubscribeLogInfo(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback, Commitment commitment = Commitment.Finalized)
+            => SubscribeLogInfoAsync(pubkey, callback, commitment).Result;
 
-        /// <inheritdoc cref="IStreamingRpcClient.SubscribeLogInfoAsync(LogsSubscriptionType, Action{SubscriptionState, ResponseValue{LogInfo}})"/>
-        public async Task<SubscriptionState> SubscribeLogInfoAsync(LogsSubscriptionType subscriptionType, Action<SubscriptionState, ResponseValue<LogInfo>> callback)
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeLogInfoAsync(LogsSubscriptionType, Action{SubscriptionState, ResponseValue{LogInfo}}, Commitment)"/>
+        public async Task<SubscriptionState> SubscribeLogInfoAsync(LogsSubscriptionType subscriptionType, Action<SubscriptionState, ResponseValue<LogInfo>> callback, Commitment commitment = Commitment.Finalized)
         {
-            var sub = new SubscriptionState<ResponseValue<LogInfo>>(this, SubscriptionChannel.Logs, callback, new List<object> { subscriptionType });
+            var parameters = new List<object> { subscriptionType };
 
+            if (commitment != Commitment.Finalized)
+            {
+                var configParams = new Dictionary<string, Commitment> { { "commitment", commitment } };
+                parameters.Add(configParams);
+            }
 
-            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "logsSubscribe", new List<object> { subscriptionType });
+            var sub = new SubscriptionState<ResponseValue<LogInfo>>(this, SubscriptionChannel.Logs, callback, parameters);
+
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "logsSubscribe", parameters);
             return await Subscribe(sub, msg).ConfigureAwait(false);
         }
 
-        /// <inheritdoc cref="IStreamingRpcClient.SubscribeLogInfo(LogsSubscriptionType, Action{SubscriptionState, ResponseValue{LogInfo}})"/>
-        public SubscriptionState SubscribeLogInfo(LogsSubscriptionType subscriptionType, Action<SubscriptionState, ResponseValue<LogInfo>> callback)
-            => SubscribeLogInfoAsync(subscriptionType, callback).Result;
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeLogInfo(LogsSubscriptionType, Action{SubscriptionState, ResponseValue{LogInfo}}, Commitment)"/>
+        public SubscriptionState SubscribeLogInfo(LogsSubscriptionType subscriptionType, Action<SubscriptionState, ResponseValue<LogInfo>> callback, Commitment commitment = Commitment.Finalized)
+            => SubscribeLogInfoAsync(subscriptionType, callback, commitment).Result;
         #endregion
 
         #region Signature
-        /// <inheritdoc cref="IStreamingRpcClient.SubscribeSignatureAsync(string, Action{SubscriptionState, ResponseValue{ErrorResult}})"/>
-        public async Task<SubscriptionState> SubscribeSignatureAsync(string transactionSignature, Action<SubscriptionState, ResponseValue<ErrorResult>> callback)
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeSignatureAsync(string, Action{SubscriptionState, ResponseValue{ErrorResult}}, Commitment)"/>
+        public async Task<SubscriptionState> SubscribeSignatureAsync(string transactionSignature, Action<SubscriptionState, ResponseValue<ErrorResult>> callback, Commitment commitment = Commitment.Finalized)
         {
-            var sub = new SubscriptionState<ResponseValue<ErrorResult>>(this, SubscriptionChannel.Signature, callback, new List<object> { transactionSignature });
+            var parameters = new List<object> { transactionSignature };
 
-            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "signatureSubscribe", new List<object> { transactionSignature });
+            if (commitment != Commitment.Finalized)
+            {
+                var configParams = new Dictionary<string, Commitment> { { "commitment", commitment } };
+                parameters.Add(configParams);
+            }
+
+            var sub = new SubscriptionState<ResponseValue<ErrorResult>>(this, SubscriptionChannel.Signature, callback, parameters);
+
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "signatureSubscribe", parameters);
             return await Subscribe(sub, msg).ConfigureAwait(false);
         }
 
-        /// <inheritdoc cref="IStreamingRpcClient.SubscribeSignature(string, Action{SubscriptionState, ResponseValue{ErrorResult}})"/>
-        public SubscriptionState SubscribeSignature(string transactionSignature, Action<SubscriptionState, ResponseValue<ErrorResult>> callback)
-            => SubscribeSignatureAsync(transactionSignature, callback).Result;
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeSignature(string, Action{SubscriptionState, ResponseValue{ErrorResult}}, Commitment)"/>
+        public SubscriptionState SubscribeSignature(string transactionSignature, Action<SubscriptionState, ResponseValue<ErrorResult>> callback, Commitment commitment = Commitment.Finalized)
+            => SubscribeSignatureAsync(transactionSignature, callback, commitment).Result;
         #endregion
 
         #region Program
-        /// <inheritdoc cref="IStreamingRpcClient.SubscribeProgramAsync(string, Action{SubscriptionState, ResponseValue{ProgramInfo}})"/>
-        public async Task<SubscriptionState> SubscribeProgramAsync(string transactionSignature, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback)
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeProgramAsync(string, Action{SubscriptionState, ResponseValue{AccountKeyPair}}, Commitment)"/>
+        public async Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, Commitment commitment = Commitment.Finalized)
         {
-            var sub = new SubscriptionState<ResponseValue<AccountKeyPair>>(this, SubscriptionChannel.Program, callback,
-                new List<object> { transactionSignature, new Dictionary<string, string> { { "encoding", "base64" } } });
+            var parameters = new List<object> { programPubkey };
+            var configParams = new Dictionary<string, object> { { "encoding", "base64" } };
 
-            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "programSubscribe", new List<object> { transactionSignature, new Dictionary<string, string> { { "encoding", "base64" } } });
+            if (commitment != Commitment.Finalized)
+            {
+                configParams.Add("commitment", commitment);
+            }
+
+            parameters.Add(configParams);
+
+            var sub = new SubscriptionState<ResponseValue<AccountKeyPair>>(this, SubscriptionChannel.Program, callback, parameters);
+
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "programSubscribe", parameters);
             return await Subscribe(sub, msg).ConfigureAwait(false);
         }
 
-        /// <inheritdoc cref="IStreamingRpcClient.SubscribeProgram(string, Action{SubscriptionState, ResponseValue{ProgramInfo}})"/>
-        public SubscriptionState SubscribeProgram(string transactionSignature, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback)
-            => SubscribeProgramAsync(transactionSignature, callback).Result;
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeProgram(string, Action{SubscriptionState, ResponseValue{AccountKeyPair}}, Commitment)"/>
+        public SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, Commitment commitment = Commitment.Finalized)
+            => SubscribeProgramAsync(programPubkey, callback, commitment).Result;
         #endregion
 
         #region SlotInfo

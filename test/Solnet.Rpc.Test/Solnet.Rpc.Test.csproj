@@ -135,64 +135,79 @@
     <None Update="Resources\Http\LeaderSchedule\GetLeaderScheduleResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\SignatureSubscribe.json">
+    <None Update="Resources\Streaming\Account\AccountSubscribeProcessed.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\SignatureSubscribeNotification.json">
+    <None Update="Resources\Streaming\Logs\LogsSubscribeAllProcessed.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\BadAccountSubscribe.json">
+    <None Update="Resources\Streaming\Logs\LogsSubscribeMentionConfirmed.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\AccountSubscribe.json">
+    <None Update="Resources\Streaming\Program\ProgramSubscribeConfirmed.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\BadAccountSubscribeResult.json">
+    <None Update="Resources\Streaming\Signature\SignatureSubscribeProcessed.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\BigAccountNotificationPayload.json">
+    <None Update="Resources\Streaming\Signature\SignatureSubscribe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\BigAccountNotificationPayloadData.txt">
+    <None Update="Resources\Streaming\Signature\SignatureSubscribeNotification.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\BigAccountSubscribe.json">
+    <None Update="Resources\Streaming\Account\BadAccountSubscribe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\ProgramSubscribe.json">
+    <None Update="Resources\Streaming\Account\AccountSubscribe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\ProgramSubscribeNotification.json">
+    <None Update="Resources\Streaming\Account\BadAccountSubscribeResult.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\RootSubscribe.json">
+    <None Update="Resources\Streaming\Account\BigAccountNotificationPayload.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\SlotSubscribe.json">
+    <None Update="Resources\Streaming\Account\BigAccountNotificationPayloadData.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\RootSubscribeNotification.json">
+    <None Update="Resources\Streaming\Account\BigAccountSubscribe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\SlotSubscribeNotification.json">
+    <None Update="Resources\Streaming\Program\ProgramSubscribe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\SubscribeConfirm.json">
+    <None Update="Resources\Streaming\Program\ProgramSubscribeNotification.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\AccountSubscribeNotification.json">
+    <None Update="Resources\Streaming\RootSubscribe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\AccountSubUnsubscription.json">
+    <None Update="Resources\Streaming\SlotSubscribe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\LogsSubscribeAll.json">
+    <None Update="Resources\Streaming\RootSubscribeNotification.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\LogsSubscribeMention.json">
+    <None Update="Resources\Streaming\SlotSubscribeNotification.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\LogsSubscribeNotification.json">
+    <None Update="Resources\Streaming\SubscribeConfirm.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Streaming\Account\AccountSubscribeNotification.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Streaming\Account\AccountSubUnsubscription.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Streaming\Logs\LogsSubscribeAll.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Streaming\Logs\LogsSubscribeMention.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Streaming\Logs\LogsSubscribeNotification.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\Accounts\GetAccountInfoRequest.json">
