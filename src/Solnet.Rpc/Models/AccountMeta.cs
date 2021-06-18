@@ -1,6 +1,5 @@
 using Solnet.Wallet;
 using System;
-using Solnet.Wallet.Utilities;
 
 namespace Solnet.Rpc.Models
 {
