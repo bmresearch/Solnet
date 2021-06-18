@@ -1,22 +1,23 @@
-using Solnet.Wallet.Utilities;
+using Solnet.Wallet;
+using System;
 
 namespace Solnet.Rpc.Models
 {
     /// <summary>
     /// Implements the account meta logic, which defines if an account represented by public key is a signer, a writable account or both.
     /// </summary>
-    public class AccountMeta
+    public class AccountMeta : IComparable<AccountMeta>
     {
         /// <summary>
-        /// The base58 encoder instance.
+        /// The public key as a byte array.
         /// </summary>
-        private static readonly Base58Encoder Encoder = new();
-
+        internal byte[] PublicKeyBytes { get; }
+        
         /// <summary>
-        /// The public key.
+        /// Get the public key encoded as base58.
         /// </summary>
-        internal byte[] PublicKey;
-
+        internal string PublicKey { get; }
+        
         /// <summary>
         /// A boolean which defines if the account is a signer account.
         /// </summary>
@@ -28,48 +29,61 @@ namespace Solnet.Rpc.Models
         internal bool Writable { get; }
 
         /// <summary>
-        /// Initialize the account meta with the passed public key, and booleans defining if it is a signer and/or writable account.
+        /// The account.
         /// </summary>
-        /// <param name="publicKey">The account's public key.</param>
-        /// <param name="isSigner">If the account is a signer.</param>
+        internal Account Account { get; }
+
+        /// <summary>
+        /// Initialize the account meta with the passed account, being a signing account for the transaction.
+        /// </summary>
+        /// <param name="account">The account.</param>
         /// <param name="isWritable">If the account is writable.</param>
-        public AccountMeta(byte[] publicKey, bool isSigner, bool isWritable)
+        public AccountMeta(Account account, bool isWritable)
         {
-            PublicKey = publicKey;
-            Signer = isSigner;
+            PublicKey = account.PublicKey.Key;
+            PublicKeyBytes = account.PublicKey.KeyBytes;
+            Account = account;
+            Signer = true;
+            Writable = isWritable;
+        }
+        
+        /// <summary>
+        /// Initialize the account meta with the passed public key, being a non-signing account for the transaction.
+        /// </summary>
+        /// <param name="publicKey">The public key.</param>
+        /// <param name="isWritable">If the account is writable.</param>
+        public AccountMeta(PublicKey publicKey, bool isWritable)
+        {
+            Account = null;
+            PublicKey = publicKey.Key;
+            PublicKeyBytes = publicKey.KeyBytes;
+            Signer = false;
             Writable = isWritable;
         }
 
-
         /// <summary>
-        /// Get the public key encoded as base58.
+        /// Compares the account meta instance with another account meta.
         /// </summary>
-        public string GetPublicKey => Encoder.EncodeData(PublicKey);
-    }
-
-    /// <summary>
-    /// Implements extensions to <see cref="AccountMeta"/>.
-    /// </summary>
-    internal static class AccountMetaExtensions
-    {
-        /// <summary>
-        /// Compares two <see cref="AccountMeta"/> objects.
-        /// </summary>
-        /// <param name="am1">The base of the comparison.</param>
-        /// <param name="am2">The object to compare the base to.</param>
+        /// <param name="other">The object to compare the base to.</param>
         /// <returns>
         /// Returns 0 if the objects are equal in terms of Signing and Writing,
         /// -1 if the base of the comparison is something the other is not, otherwise 1.
         /// </returns>
-        internal static int Compare(AccountMeta am1, AccountMeta am2)
+        /// <exception cref="NotImplementedException">Thrown when the object to compare with is null.</exception>
+        public int CompareTo(AccountMeta other)
         {
-            var cmpSigner = am1.Signer == am2.Signer ? 0 : am1.Signer ? -1 : 1;
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+            
+            int cmpSigner = Signer == other.Signer ? 0 : Signer ? -1 : 1;
             if (cmpSigner != 0)
             {
                 return cmpSigner;
             }
 
-            var cmpWritable = am1.Writable == am2.Writable ? 0 : am1.Writable ? -1 : 1;
+            int cmpWritable = Writable == other.Writable ? 0 : Writable ? -1 : 1;
             return cmpWritable != 0 ? cmpWritable : 0;
         }
     }

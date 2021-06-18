@@ -8,5 +8,5 @@
     <ProjectReference Include="..\Solnet.Rpc\Solnet.Rpc.csproj" />
   </ItemGroup>
 
-  <Import Project="..\..\SharedBuildProperties.props"/>
+  <Import Project="..\..\SharedBuildProperties.props" />
 </Project>

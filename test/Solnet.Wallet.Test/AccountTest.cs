@@ -72,8 +72,8 @@ namespace Solnet.Wallet.Test
             var account = new Account();
             Assert.IsNotNull(account.PrivateKey, "account.PrivateKey != null");
             Assert.IsNotNull(account.PublicKey, "account.PublicKey != null");
-            Assert.IsNotNull(account.GetPrivateKey, "account.GetPrivateKey != null");
-            Assert.IsNotNull(account.GetPublicKey, "account.GetPublicKey != null");
+            Assert.IsNotNull(account.PrivateKey, "account.PrivateKey != null");
+            Assert.IsNotNull(account.PublicKey, "account.PublicKey != null");
         }
 
         [TestMethod]
@@ -101,26 +101,26 @@ namespace Solnet.Wallet.Test
         public void TestAccountGetPrivateKey()
         {
             var account = new Account(PrivateKey, PublicKey);
-            CollectionAssert.AreEqual(PrivateKey, account.PrivateKey);
-            CollectionAssert.AreEqual(PublicKey, account.PublicKey);
-            Assert.AreEqual(ExpectedEncodedPublicKey, account.GetPublicKey);
+            CollectionAssert.AreEqual(PrivateKey, account.PrivateKey.KeyBytes);
+            CollectionAssert.AreEqual(PublicKey, account.PublicKey.KeyBytes);
+            Assert.AreEqual(ExpectedEncodedPublicKey, account.PublicKey.Key);
         }
 
         [TestMethod]
         public void TestAccountGetPublicKey()
         {
             var account = new Account(PrivateKey, PublicKey);
-            CollectionAssert.AreEqual(PrivateKey, account.PrivateKey);
-            CollectionAssert.AreEqual(PublicKey, account.PublicKey);
-            Assert.AreEqual(ExpectedEncodedPrivateKey, account.GetPrivateKey);
+            CollectionAssert.AreEqual(PrivateKey, account.PrivateKey.KeyBytes);
+            CollectionAssert.AreEqual(PublicKey, account.PublicKey.KeyBytes);
+            Assert.AreEqual(ExpectedEncodedPrivateKey, account.PrivateKey.Key);
         }
 
         [TestMethod]
         public void TestAccountSign()
         {
             var account = new Account(PrivateKey, PublicKey);
-            CollectionAssert.AreEqual(PrivateKey, account.PrivateKey);
-            CollectionAssert.AreEqual(PublicKey, account.PublicKey);
+            CollectionAssert.AreEqual(PrivateKey, account.PrivateKey.KeyBytes);
+            CollectionAssert.AreEqual(PublicKey, account.PublicKey.KeyBytes);
             CollectionAssert.AreEqual(SerializedMessageSignature, account.Sign(SerializedMessage));
         }
 
@@ -128,8 +128,8 @@ namespace Solnet.Wallet.Test
         public void TestAccountVerify()
         {
             var account = new Account(PrivateKey, PublicKey);
-            CollectionAssert.AreEqual(PrivateKey, account.PrivateKey);
-            CollectionAssert.AreEqual(PublicKey, account.PublicKey);
+            CollectionAssert.AreEqual(PrivateKey, account.PrivateKey.KeyBytes);
+            CollectionAssert.AreEqual(PublicKey, account.PublicKey.KeyBytes);
             Assert.IsTrue(account.Verify(SerializedMessage, SerializedMessageSignature));
         }
     }

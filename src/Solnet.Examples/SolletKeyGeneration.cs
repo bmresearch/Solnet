@@ -34,10 +34,10 @@ namespace Solnet.Examples
             {
                 var account = solletWallet.GetAccount(i);
 
-                Console.WriteLine($"SOLLET publicKey>b58 {account.GetPublicKey}");
-                Console.WriteLine($"SOLLET privateKey>b58 {account.GetPrivateKey}");
+                Console.WriteLine($"SOLLET publicKey>b58 {account.PublicKey}");
+                Console.WriteLine($"SOLLET privateKey>b58 {account.PrivateKey}");
 
-                if (account.GetPublicKey != expectedSolletAddresses[i][0] || account.GetPrivateKey != expectedSolletAddresses[i][1]) flag = false;
+                if (account.PublicKey.Key != expectedSolletAddresses[i][0] || account.PrivateKey.Key != expectedSolletAddresses[i][1]) flag = false;
             }
             Console.WriteLine(flag ? "GOOD FOR THE SOLLET" : "NOT GOOD FOR THE SOLLET");
         }

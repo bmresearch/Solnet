@@ -38,7 +38,7 @@ namespace Solnet.Examples
             //Console.WriteLine($"BlockHash >> {blockHash.Blockhash}");
 
             var tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
-                .AddInstruction(SystemProgram.Transfer(fromAccount.GetPublicKey, toAccount.GetPublicKey, 10000000))
+                .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
                 .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)")).Build(fromAccount);
 
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
@@ -49,7 +49,7 @@ namespace Solnet.Examples
             Console.WriteLine($"First Tx Signature: {firstSig.Result}");
         }
 
-        static void CreateInitializeAndMintToExample(string[] args)
+        static void Main(string[] args)
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
 
@@ -62,40 +62,40 @@ namespace Solnet.Examples
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
 
-            var mintAccount = wallet.GetAccount(21);
-            Console.WriteLine($"MintAccount: {mintAccount.GetPublicKey}");
+            var mintAccount = wallet.GetAccount(31);
+            Console.WriteLine($"MintAccount: {mintAccount.PublicKey}");
             var ownerAccount = wallet.GetAccount(10);
-            Console.WriteLine($"OwnerAccount: {ownerAccount.GetPublicKey}");
-            var initialAccount = wallet.GetAccount(22);
-            Console.WriteLine($"InitialAccount: {initialAccount.GetPublicKey}");
+            Console.WriteLine($"OwnerAccount: {ownerAccount.PublicKey}");
+            var initialAccount = wallet.GetAccount(32);
+            Console.WriteLine($"InitialAccount: {initialAccount.PublicKey}");
 
             var tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash).AddInstruction(
                 SystemProgram.CreateAccount(
-                    ownerAccount.GetPublicKey,
-                    mintAccount.GetPublicKey,
+                    ownerAccount,
+                    mintAccount,
                     (long)minBalanceForExemptionMint,
                     TokenProgram.MintAccountDataSize,
-                    TokenProgram.ProgramId)).AddInstruction(
+                    TokenProgram.ProgramIdKey)).AddInstruction(
                 TokenProgram.InitializeMint(
-                    mintAccount.GetPublicKey,
+                    mintAccount.PublicKey,
                     2,
-                    ownerAccount.GetPublicKey,
-                    ownerAccount.GetPublicKey)).AddInstruction(
+                    ownerAccount.PublicKey,
+                    ownerAccount.PublicKey)).AddInstruction(
                 SystemProgram.CreateAccount(
-                    ownerAccount.GetPublicKey,
-                    initialAccount.GetPublicKey,
+                    ownerAccount,
+                    initialAccount,
                     (long)minBalanceForExemptionAcc,
                     SystemProgram.AccountDataSize,
-                    TokenProgram.ProgramId)).AddInstruction(
+                    TokenProgram.ProgramIdKey)).AddInstruction(
                 TokenProgram.InitializeAccount(
-                    initialAccount.GetPublicKey,
-                    mintAccount.GetPublicKey,
-                    ownerAccount.GetPublicKey)).AddInstruction(
+                    initialAccount.PublicKey,
+                    mintAccount.PublicKey,
+                    ownerAccount.PublicKey)).AddInstruction(
                 TokenProgram.MintTo(
-                    mintAccount.GetPublicKey,
-                    initialAccount.GetPublicKey,
+                    mintAccount.PublicKey,
+                    initialAccount.PublicKey,
                     25000,
-                    ownerAccount.GetPublicKey)).AddInstruction(
+                    ownerAccount)).AddInstruction(
                 MemoProgram.NewMemo(
                     initialAccount,
                     "Hello from Sol.Net")).Build(new List<Account> { ownerAccount, mintAccount, initialAccount });
@@ -125,30 +125,30 @@ namespace Solnet.Examples
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
 
             var mintAccount = wallet.GetAccount(21);
-            Console.WriteLine($"MintAccount: {mintAccount.GetPublicKey}");
+            Console.WriteLine($"MintAccount: {mintAccount.PublicKey}");
             var ownerAccount = wallet.GetAccount(10);
-            Console.WriteLine($"OwnerAccount: {ownerAccount.GetPublicKey}");
+            Console.WriteLine($"OwnerAccount: {ownerAccount.PublicKey}");
             var initialAccount = wallet.GetAccount(24);
-            Console.WriteLine($"InitialAccount: {initialAccount.GetPublicKey}");
+            Console.WriteLine($"InitialAccount: {initialAccount.PublicKey}");
             var newAccount = wallet.GetAccount(26);
-            Console.WriteLine($"NewAccount: {newAccount.GetPublicKey}");
+            Console.WriteLine($"NewAccount: {newAccount.PublicKey}");
 
             var tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash).AddInstruction(
                 SystemProgram.CreateAccount(
-                    ownerAccount.GetPublicKey,
-                    newAccount.GetPublicKey,
+                    ownerAccount,
+                    newAccount,
                     (long)minBalanceForExemptionAcc,
                     SystemProgram.AccountDataSize,
-                    TokenProgram.ProgramId)).AddInstruction(
+                    TokenProgram.ProgramIdKey)).AddInstruction(
                 TokenProgram.InitializeAccount(
-                    newAccount.GetPublicKey,
-                    mintAccount.GetPublicKey,
-                    ownerAccount.GetPublicKey)).AddInstruction(
+                    newAccount.PublicKey,
+                    mintAccount.PublicKey,
+                    ownerAccount.PublicKey)).AddInstruction(
                 TokenProgram.Transfer(
-                    initialAccount.GetPublicKey,
-                    newAccount.GetPublicKey,
+                    initialAccount.PublicKey,
+                    newAccount.PublicKey,
                     25000,
-                    ownerAccount.GetPublicKey)).AddInstruction(
+                    ownerAccount)).AddInstruction(
                 MemoProgram.NewMemo(
                     initialAccount,
                     "Hello from Sol.Net")).Build(new List<Account> { ownerAccount, newAccount });
@@ -177,32 +177,32 @@ namespace Solnet.Examples
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
 
             var mintAccount = wallet.GetAccount(21);
-            Console.WriteLine($"MintAccount: {mintAccount.GetPublicKey}");
+            Console.WriteLine($"MintAccount: {mintAccount.PublicKey}");
             var ownerAccount = wallet.GetAccount(10);
-            Console.WriteLine($"OwnerAccount: {ownerAccount.GetPublicKey}");
+            Console.WriteLine($"OwnerAccount: {ownerAccount.PublicKey}");
             var initialAccount = wallet.GetAccount(26);
-            Console.WriteLine($"InitialAccount: {initialAccount.GetPublicKey}");
+            Console.WriteLine($"InitialAccount: {initialAccount.PublicKey}");
             var newAccount = wallet.GetAccount(27);
-            Console.WriteLine($"NewAccount: {newAccount.GetPublicKey}");
+            Console.WriteLine($"NewAccount: {newAccount.PublicKey}");
 
             var tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash).AddInstruction(
                 SystemProgram.CreateAccount(
-                    ownerAccount.GetPublicKey,
-                    newAccount.GetPublicKey,
+                    ownerAccount,
+                    newAccount,
                     (long)minBalanceForExemptionAcc,
                     SystemProgram.AccountDataSize,
-                    TokenProgram.ProgramId)).AddInstruction(
+                    TokenProgram.ProgramIdKey)).AddInstruction(
                 TokenProgram.InitializeAccount(
-                    newAccount.GetPublicKey,
-                    mintAccount.GetPublicKey,
-                    ownerAccount.GetPublicKey)).AddInstruction(
+                    newAccount.PublicKey,
+                    mintAccount.PublicKey,
+                    ownerAccount.PublicKey)).AddInstruction(
                 TokenProgram.TransferChecked(
-                    initialAccount.GetPublicKey,
-                    newAccount.GetPublicKey,
+                    initialAccount.PublicKey,
+                    newAccount.PublicKey,
                     25000,
                     2,
-                    ownerAccount.GetPublicKey,
-                    mintAccount.GetPublicKey)).AddInstruction(
+                    ownerAccount,
+                    mintAccount.PublicKey)).AddInstruction(
                 MemoProgram.NewMemo(
                     initialAccount,
                     "Hello from Sol.Net")).Build(new List<Account> { ownerAccount, newAccount });

@@ -122,8 +122,8 @@ namespace Solnet.Wallet.Test
             Assert.IsNotNull(wallet.Account, "_wallet.account != null");
             Assert.IsNotNull(wallet.Account.PrivateKey, "_wallet.account.PrivateKey != null");
             Assert.IsNotNull(wallet.Account.PublicKey, "_wallet.account.PublicKey != null");
-            Assert.IsNotNull(wallet.Account.GetPrivateKey, "_wallet.account.GetPrivateKey != null");
-            Assert.IsNotNull(wallet.Account.GetPublicKey, "_wallet.account.GetPublicKey != null");
+            Assert.IsNotNull(wallet.Account.PrivateKey.KeyBytes, "_wallet.account.PrivateKeyBytes != null");
+            Assert.IsNotNull(wallet.Account.PublicKey.KeyBytes, "_wallet.account.PublicKeyBytes != null");
 
             var signature = wallet.Account.Sign(SerializedMessage);
             Assert.IsTrue(wallet.Account.Verify(SerializedMessage, signature));
@@ -142,8 +142,8 @@ namespace Solnet.Wallet.Test
             for (var i = 0; i < ExpectedSolletKeys.Count; i++)
             {
                 var account = wallet.GetAccount(i);
-                Assert.AreEqual(ExpectedSolletKeys[i].PublicKey, account.GetPublicKey);
-                Assert.AreEqual(ExpectedSolletKeys[i].PrivateKey, account.GetPrivateKey);
+                Assert.AreEqual(ExpectedSolletKeys[i].PublicKey, account.PublicKey.Key);
+                Assert.AreEqual(ExpectedSolletKeys[i].PrivateKey, account.PrivateKey.Key);
             }
         }
 
@@ -154,8 +154,8 @@ namespace Solnet.Wallet.Test
 
             CollectionAssert.AreEqual(SeedWithPassphrase, wallet.DeriveMnemonicSeed());
 
-            Assert.AreEqual(ExpectedSolanaKeygenPublicKey, wallet.Account.GetPublicKey);
-            Assert.AreEqual(ExpectedSolanaKeygenPrivateKey, wallet.Account.GetPrivateKey);
+            Assert.AreEqual(ExpectedSolanaKeygenPublicKey, wallet.Account.PublicKey.Key);
+            Assert.AreEqual(ExpectedSolanaKeygenPrivateKey, wallet.Account.PrivateKey.Key);
         }
 
         [TestMethod]
@@ -168,8 +168,8 @@ namespace Solnet.Wallet.Test
             for (var i = 0; i < ExpectedSolletKeys.Count; i++)
             {
                 var account = wallet.GetAccount(i);
-                Assert.AreEqual(ExpectedSolletKeys[i].PublicKey, account.GetPublicKey);
-                Assert.AreEqual(ExpectedSolletKeys[i].PrivateKey, account.GetPrivateKey);
+                Assert.AreEqual(ExpectedSolletKeys[i].PublicKey, account.PublicKey.Key);
+                Assert.AreEqual(ExpectedSolletKeys[i].PrivateKey, account.PrivateKey.Key);
             }
         }
 
@@ -180,8 +180,8 @@ namespace Solnet.Wallet.Test
 
             CollectionAssert.AreEqual(SeedWithPassphrase, wallet.DeriveMnemonicSeed());
 
-            Assert.AreEqual(ExpectedSolanaKeygenPublicKey, wallet.Account.GetPublicKey);
-            Assert.AreEqual(ExpectedSolanaKeygenPrivateKey, wallet.Account.GetPrivateKey);
+            Assert.AreEqual(ExpectedSolanaKeygenPublicKey, wallet.Account.PublicKey.Key);
+            Assert.AreEqual(ExpectedSolanaKeygenPrivateKey, wallet.Account.PrivateKey.Key);
         }
 
 
@@ -195,8 +195,8 @@ namespace Solnet.Wallet.Test
             for (var i = 0; i < ExpectedSolletKeys.Count; i++)
             {
                 var account = wallet.GetAccount(i);
-                Assert.AreEqual(ExpectedSolletKeys[i].PublicKey, account.GetPublicKey);
-                Assert.AreEqual(ExpectedSolletKeys[i].PrivateKey, account.GetPrivateKey);
+                Assert.AreEqual(ExpectedSolletKeys[i].PublicKey, account.PublicKey.Key);
+                Assert.AreEqual(ExpectedSolletKeys[i].PrivateKey, account.PrivateKey.Key);
             }
         }
 
@@ -207,8 +207,8 @@ namespace Solnet.Wallet.Test
 
             CollectionAssert.AreEqual(SeedWithPassphrase, wallet.DeriveMnemonicSeed());
 
-            Assert.AreEqual(ExpectedSolanaKeygenPublicKey, wallet.Account.GetPublicKey);
-            Assert.AreEqual(ExpectedSolanaKeygenPrivateKey, wallet.Account.GetPrivateKey);
+            Assert.AreEqual(ExpectedSolanaKeygenPublicKey, wallet.Account.PublicKey.Key);
+            Assert.AreEqual(ExpectedSolanaKeygenPrivateKey, wallet.Account.PrivateKey.Key);
         }
 
         [TestMethod]

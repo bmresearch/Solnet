@@ -45,7 +45,7 @@ namespace Solnet.Programs.Test
             var fromAccount = wallet.GetAccount(0);
             var toAccount = wallet.GetAccount(1);
 
-            var txInstruction = SystemProgram.Transfer(fromAccount.GetPublicKey, toAccount.GetPublicKey, 10000000);
+            var txInstruction = SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TransferInstructionBytes, txInstruction.Data);
@@ -61,11 +61,11 @@ namespace Solnet.Programs.Test
             var ownerAccount = wallet.GetAccount(4);
 
             var txInstruction = SystemProgram.CreateAccount(
-                ownerAccount.GetPublicKey,
-                mintAccount.GetPublicKey,
+                ownerAccount,
+                mintAccount,
                 BalanceForRentExemption,
                 SystemProgram.AccountDataSize,
-                TokenProgram.ProgramId);
+                TokenProgram.ProgramIdKey);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(CreateAccountInstructionBytes, txInstruction.Data);

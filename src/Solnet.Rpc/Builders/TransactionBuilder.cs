@@ -50,11 +50,11 @@ namespace Solnet.Rpc.Builders
         /// </summary>
         private byte[] Serialize()
         {
-            var signaturesLength = ShortVectorEncoding.EncodeLength(_signatures.Count);
-            var buffer = new MemoryStream(signaturesLength.Length + _signatures.Count * SignatureLength + _serializedMessage.Length);
+            byte[] signaturesLength = ShortVectorEncoding.EncodeLength(_signatures.Count);
+            MemoryStream buffer = new (signaturesLength.Length + _signatures.Count * SignatureLength + _serializedMessage.Length);
 
             buffer.Write(signaturesLength);
-            foreach (var signature in _signatures)
+            foreach (string signature in _signatures)
             {
                 buffer.Write(Encoder.DecodeData(signature));
             }
@@ -75,9 +75,9 @@ namespace Solnet.Rpc.Builders
             _messageBuilder.FeePayer = signers[0];
             _serializedMessage = _messageBuilder.Build();
 
-            foreach (var signer in signers)
+            foreach (Account signer in signers)
             {
-                var signatureBytes = signer.Sign(_serializedMessage);
+                byte[] signatureBytes = signer.Sign(_serializedMessage);
                 _signatures.Add(Encoder.EncodeData(signatureBytes));
             }
         }
