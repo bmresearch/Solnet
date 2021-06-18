@@ -6,7 +6,7 @@ namespace Solnet.Rpc.Models
     /// <summary>
     /// A wrapper around a dictionary of key-value pairs of public-keys - account metas to be used
     /// during transaction building. It checks for differences in account meta when adding to the dictionary
-    /// and sorts the underlying list of values in the dictionary according to <see cref="AccountMeta.Compare"/>
+    /// and sorts the underlying list of values in the dictionary according to <see cref="AccountMeta.CompareTo"/>
     /// so they are ordered and compatible with Solana's transaction anatomy.
     /// </summary>
     internal class AccountKeysList
@@ -23,8 +23,8 @@ namespace Solnet.Rpc.Models
         {
             get
             {
-                List<AccountMeta> list = new List<AccountMeta>(_accounts.Values);
-                list.Sort(AccountMeta.Compare);
+                List<AccountMeta> list = new (_accounts.Values);
+                list.Sort();
                 return list;
             }
         }

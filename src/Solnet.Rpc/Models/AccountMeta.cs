@@ -1,12 +1,12 @@
 using Solnet.Wallet;
-using Solnet.Wallet.Utilities;
+using System;
 
 namespace Solnet.Rpc.Models
 {
     /// <summary>
     /// Implements the account meta logic, which defines if an account represented by public key is a signer, a writable account or both.
     /// </summary>
-    public class AccountMeta
+    public class AccountMeta : IComparable<AccountMeta>
     {
         /// <summary>
         /// The public key as a byte array.
@@ -48,36 +48,42 @@ namespace Solnet.Rpc.Models
         }
         
         /// <summary>
-        /// 
+        /// Initialize the account meta with the passed public key, being a non-signing account for the transaction.
         /// </summary>
-        /// <param name="publicKey"></param>
-        /// <param name="isWritable"></param>
+        /// <param name="publicKey">The public key.</param>
+        /// <param name="isWritable">If the account is writable.</param>
         public AccountMeta(PublicKey publicKey, bool isWritable)
         {
+            Account = null;
             PublicKey = publicKey.Key;
             PublicKeyBytes = publicKey.KeyBytes;
             Signer = false;
             Writable = isWritable;
         }
-        
+
         /// <summary>
-        /// Compares two <see cref="AccountMeta"/> objects.
+        /// Compares the account meta instance with another account meta.
         /// </summary>
-        /// <param name="am1">The base of the comparison.</param>
-        /// <param name="am2">The object to compare the base to.</param>
+        /// <param name="other">The object to compare the base to.</param>
         /// <returns>
         /// Returns 0 if the objects are equal in terms of Signing and Writing,
         /// -1 if the base of the comparison is something the other is not, otherwise 1.
         /// </returns>
-        internal static int Compare(AccountMeta am1, AccountMeta am2)
+        /// <exception cref="NotImplementedException">Thrown when the object to compare with is null.</exception>
+        public int CompareTo(AccountMeta other)
         {
-            int cmpSigner = am1.Signer == am2.Signer ? 0 : am1.Signer ? -1 : 1;
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+            
+            int cmpSigner = Signer == other.Signer ? 0 : Signer ? -1 : 1;
             if (cmpSigner != 0)
             {
                 return cmpSigner;
             }
 
-            int cmpWritable = am1.Writable == am2.Writable ? 0 : am1.Writable ? -1 : 1;
+            int cmpWritable = Writable == other.Writable ? 0 : Writable ? -1 : 1;
             return cmpWritable != 0 ? cmpWritable : 0;
         }
     }

@@ -43,7 +43,10 @@ namespace Solnet.Wallet
         /// <param name="key">The public key as base58 encoded string.</param>
         public PublicKey(string key)
         {
-            KeyBytes = Encoders.Base58.DecodeData(key);
+            byte[] decodedKey = Encoders.Base58.DecodeData(key);
+            if (decodedKey.Length != PublicKeyLength)
+                throw new ArgumentException("invalid key length", nameof(key));
+            KeyBytes = decodedKey;
             Key = key;
         }
     }

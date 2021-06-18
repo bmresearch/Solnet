@@ -84,7 +84,6 @@ namespace Solnet.Rpc.Test
             var ownerAccount = wallet.GetAccount(10);
             var initialAccount = wallet.GetAccount(18);
 
-
             var tx = new TransactionBuilder().SetRecentBlockHash(blockHash).AddInstruction(SystemProgram.CreateAccount(
                     ownerAccount,
                     mintAccount,
