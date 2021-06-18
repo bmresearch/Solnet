@@ -174,7 +174,7 @@ namespace Solnet.Programs
             Utils.Int64ToByteArrayLe(amount, methodBuffer, 1);
             return methodBuffer;
         }
-        
+
         /// <summary>
         /// Encodes the transaction data for the methods which only require the amount and the number of decimals.
         /// </summary>

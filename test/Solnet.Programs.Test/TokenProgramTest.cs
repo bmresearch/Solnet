@@ -222,7 +222,6 @@ namespace Solnet.Programs.Test
             Assert.AreEqual(7, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedInitializeMultiSignatureData, txInstruction.Data);
-            
         }
 
         [TestMethod]
