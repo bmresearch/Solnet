@@ -6,7 +6,7 @@ namespace Solnet.Examples
 {
     class SolnetRpcTester
     {
-        static void Main(string[] args)
+        static void Example(string[] args)
         {
             var c = ClientFactory.GetClient(Cluster.TestNet);
 

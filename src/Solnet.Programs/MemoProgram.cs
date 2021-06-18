@@ -34,7 +34,7 @@ namespace Solnet.Programs
         {
             var keys = new List<AccountMeta>
             {
-                new (account.PublicKey, true, false)
+                new (account, false)
             };
             var memoBytes = Encoding.UTF8.GetBytes(memo);
 

@@ -6,7 +6,7 @@ namespace Solnet.Rpc.Models
     /// <summary>
     /// A wrapper around a dictionary of key-value pairs of public-keys - account metas to be used
     /// during transaction building. It checks for differences in account meta when adding to the dictionary
-    /// and sorts the underlying list of values in the dictionary according to <see cref="AccountMetaExtensions.Compare"/>
+    /// and sorts the underlying list of values in the dictionary according to <see cref="AccountMeta.Compare"/>
     /// so they are ordered and compatible with Solana's transaction anatomy.
     /// </summary>
     internal class AccountKeysList
@@ -23,8 +23,8 @@ namespace Solnet.Rpc.Models
         {
             get
             {
-                var list = new List<AccountMeta>(_accounts.Values);
-                list.Sort(AccountMetaExtensions.Compare);
+                List<AccountMeta> list = new List<AccountMeta>(_accounts.Values);
+                list.Sort(AccountMeta.Compare);
                 return list;
             }
         }
@@ -44,18 +44,18 @@ namespace Solnet.Rpc.Models
         /// <exception cref="Exception">Throws exception when account meta is already present and couldn't overwrite.</exception>
         internal void Add(AccountMeta accountMeta)
         {
-            if (_accounts.ContainsKey(accountMeta.GetPublicKey))
+            if (_accounts.ContainsKey(accountMeta.PublicKey))
             {
-                var ok = _accounts.TryGetValue(accountMeta.GetPublicKey, out var account);
+                bool ok = _accounts.TryGetValue(accountMeta.PublicKey, out AccountMeta account);
                 if (!ok) throw new Exception("account meta already exists but could not overwrite");
                 if (accountMeta.Writable && !account.Writable)
                 {
-                    _accounts.Add(accountMeta.GetPublicKey, accountMeta);
+                    _accounts.Add(accountMeta.PublicKey, accountMeta);
                 }
             }
             else
             {
-                _accounts.Add(accountMeta.GetPublicKey, accountMeta);
+                _accounts.Add(accountMeta.PublicKey, accountMeta);
             }
         }
 
@@ -65,7 +65,7 @@ namespace Solnet.Rpc.Models
         /// <param name="accountMetas">The account meta to add.</param>
         internal void Add(IEnumerable<AccountMeta> accountMetas)
         {
-            foreach (var accountMeta in accountMetas)
+            foreach (AccountMeta accountMeta in accountMetas)
             {
                 Add(accountMeta);
             }

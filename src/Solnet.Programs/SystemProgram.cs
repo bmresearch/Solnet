@@ -1,4 +1,5 @@
 using Solnet.Rpc.Models;
+using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
@@ -6,31 +7,24 @@ using System.Collections.Generic;
 namespace Solnet.Programs
 {
     /// <summary>
-    /// Helper class for the System Program.
-    /// <remarks>
-    /// Used to transfer lamports between accounts and create new accounts.
-    /// </remarks>
+    /// Implements the System Program methods.
     /// </summary>
     public static class SystemProgram
     {
         /// <summary>
-        /// The base58 encoder instance.
+        /// The bytes that represent the program id address.
         /// </summary>
-        private static readonly Base58Encoder Encoder = new();
-
-        /// <summary>
-        /// The address of the System Program.
-        /// </summary>
-        public static string ProgramId = "11111111111111111111111111111111";
+        public static readonly PublicKey ProgramIdKey = new ("11111111111111111111111111111111");
 
         /// <summary>
         /// 
         /// </summary>
-        private static readonly int ProgramIndexCreateAccount = 0;
+        private const int ProgramIndexCreateAccount = 0;
+
         /// <summary>
         /// 
         /// </summary>
-        private static readonly int ProgramIndexTransfer = 2;
+        private const int ProgramIndexTransfer = 2;
 
         /// <summary>
         /// Account layout size.
@@ -44,92 +38,54 @@ namespace Solnet.Programs
         /// <param name="toPublicKey">The account to transfer to.</param>
         /// <param name="lamports">The amount of lamports</param>
         /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction Transfer(string fromPublicKey, string toPublicKey, long lamports)
+        public static TransactionInstruction Transfer(Account fromPublicKey, PublicKey toPublicKey, long lamports)
         {
-            return Transfer(Encoder.DecodeData(fromPublicKey), Encoder.DecodeData(toPublicKey), lamports);
-        }
-
-        /// <summary>
-        /// Initialize a transaction to transfer lamports.
-        /// </summary>
-        /// <param name="fromPublicKey">The account to transfer from.</param>
-        /// <param name="toPublicKey">The account to transfer to.</param>
-        /// <param name="lamports">The amount of lamports</param>
-        /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction Transfer(byte[] fromPublicKey, byte[] toPublicKey, long lamports)
-        {
-            var keys = new List<AccountMeta>
+            List<AccountMeta> keys = new ()
             {
-                new(fromPublicKey, true, true),
-                new(toPublicKey, false, true)
+                new AccountMeta(fromPublicKey, true),
+                new AccountMeta(toPublicKey, true)
             };
-            var data = new byte[12];
-
+            byte[] data = new byte[12];
             Utils.Uint32ToByteArrayLe(ProgramIndexTransfer, data, 0);
             Utils.Int64ToByteArrayLe(lamports, data, 4);
 
             return new TransactionInstruction
             {
-                ProgramId = Encoder.DecodeData(ProgramId),
-                Keys = keys,
-                Data = data
+              ProgramId = ProgramIdKey.KeyBytes,
+              Keys = keys,
+              Data = data
             };
         }
 
         /// <summary>
         /// Initialize a new transaction instruction which interacts with the System Program to create a new account.
         /// </summary>
-        /// <param name="fromPublicKey">The account from which the lamports will be transferred.</param>
-        /// <param name="newAccountPublicKey">The account to which the lamports will be transferred.</param>
+        /// <param name="fromAccount">The account from which the lamports will be transferred.</param>
+        /// <param name="newAccountPublicKey">The public key of the account to which the lamports will be transferred.</param>
         /// <param name="lamports">The amount of lamports to transfer</param>
         /// <param name="space">Number of bytes of memory to allocate for the account.</param>
-        /// <param name="programId"></param>
+        /// <param name="programId">The program id of the account.</param>
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction CreateAccount(
-            string fromPublicKey, string newAccountPublicKey, long lamports,
-            long space, string programId)
+            Account fromAccount, Account newAccountPublicKey, long lamports, long space, PublicKey programId)
         {
-            return CreateAccount(
-                Encoder.DecodeData(fromPublicKey),
-                Encoder.DecodeData(newAccountPublicKey),
-                lamports,
-                space,
-                Encoder.DecodeData(programId)
-                );
-        }
-
-        /// <summary>
-        /// Initialize a new transaction instruction which interacts with the System Program to create a new account.
-        /// </summary>
-        /// <param name="fromPublicKey">The account from which the lamports will be transferred.</param>
-        /// <param name="newAccountPublicKey">The account to which the lamports will be transferred.</param>
-        /// <param name="lamports">The amount of lamports to transfer.</param>
-        /// <param name="space">Number of bytes of memory to allocate for the account.</param>
-        /// <param name="programId">Public key of the program to assign as the owner of the created account.</param>
-        /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction CreateAccount(
-            byte[] fromPublicKey, byte[] newAccountPublicKey, long lamports,
-            long space, byte[] programId)
-        {
-            var keys = new List<AccountMeta>
+            List<AccountMeta> keys = new ()
             {
-                new(fromPublicKey, true, true),
-                new(newAccountPublicKey, true, true)
+                new AccountMeta(fromAccount, true),
+                new AccountMeta(newAccountPublicKey, true)
             };
-            var data = new byte[52];
+            byte[] data = new byte[52];
 
             Utils.Uint32ToByteArrayLe(ProgramIndexCreateAccount, data, 0);
             Utils.Int64ToByteArrayLe(lamports, data, 4);
             Utils.Int64ToByteArrayLe(space, data, 12);
-            Array.Copy(programId, 0, data, 20, 32);
-
+            Array.Copy(programId.KeyBytes, 0, data, 20, 32);
             return new TransactionInstruction
             {
-                ProgramId = Encoder.DecodeData(ProgramId),
+                ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
                 Data = data
             };
         }
-
     }
 }

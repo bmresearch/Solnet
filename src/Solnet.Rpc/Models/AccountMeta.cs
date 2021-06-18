@@ -1,3 +1,4 @@
+using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
 
 namespace Solnet.Rpc.Models
@@ -8,15 +9,15 @@ namespace Solnet.Rpc.Models
     public class AccountMeta
     {
         /// <summary>
-        /// The base58 encoder instance.
+        /// The public key as a byte array.
         /// </summary>
-        private static readonly Base58Encoder Encoder = new();
-
+        internal byte[] PublicKeyBytes { get; }
+        
         /// <summary>
-        /// The public key.
+        /// Get the public key encoded as base58.
         /// </summary>
-        internal byte[] PublicKey;
-
+        internal string PublicKey { get; }
+        
         /// <summary>
         /// A boolean which defines if the account is a signer account.
         /// </summary>
@@ -28,30 +29,37 @@ namespace Solnet.Rpc.Models
         internal bool Writable { get; }
 
         /// <summary>
-        /// Initialize the account meta with the passed public key, and booleans defining if it is a signer and/or writable account.
+        /// The account.
         /// </summary>
-        /// <param name="publicKey">The account's public key.</param>
-        /// <param name="isSigner">If the account is a signer.</param>
-        /// <param name="isWritable">If the account is writable.</param>
-        public AccountMeta(byte[] publicKey, bool isSigner, bool isWritable)
-        {
-            PublicKey = publicKey;
-            Signer = isSigner;
-            Writable = isWritable;
-        }
-
+        internal Account Account { get; }
 
         /// <summary>
-        /// Get the public key encoded as base58.
+        /// Initialize the account meta with the passed account, being a signing account for the transaction.
         /// </summary>
-        public string GetPublicKey => Encoder.EncodeData(PublicKey);
-    }
-
-    /// <summary>
-    /// Implements extensions to <see cref="AccountMeta"/>.
-    /// </summary>
-    internal static class AccountMetaExtensions
-    {
+        /// <param name="account">The account.</param>
+        /// <param name="isWritable">If the account is writable.</param>
+        public AccountMeta(Account account, bool isWritable)
+        {
+            PublicKey = account.PublicKey.Key;
+            PublicKeyBytes = account.PublicKey.KeyBytes;
+            Account = account;
+            Signer = true;
+            Writable = isWritable;
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="publicKey"></param>
+        /// <param name="isWritable"></param>
+        public AccountMeta(PublicKey publicKey, bool isWritable)
+        {
+            PublicKey = publicKey.Key;
+            PublicKeyBytes = publicKey.KeyBytes;
+            Signer = false;
+            Writable = isWritable;
+        }
+        
         /// <summary>
         /// Compares two <see cref="AccountMeta"/> objects.
         /// </summary>
@@ -63,13 +71,13 @@ namespace Solnet.Rpc.Models
         /// </returns>
         internal static int Compare(AccountMeta am1, AccountMeta am2)
         {
-            var cmpSigner = am1.Signer == am2.Signer ? 0 : am1.Signer ? -1 : 1;
+            int cmpSigner = am1.Signer == am2.Signer ? 0 : am1.Signer ? -1 : 1;
             if (cmpSigner != 0)
             {
                 return cmpSigner;
             }
 
-            var cmpWritable = am1.Writable == am2.Writable ? 0 : am1.Writable ? -1 : 1;
+            int cmpWritable = am1.Writable == am2.Writable ? 0 : am1.Writable ? -1 : 1;
             return cmpWritable != 0 ? cmpWritable : 0;
         }
     }

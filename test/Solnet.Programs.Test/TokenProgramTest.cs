@@ -55,10 +55,10 @@ namespace Solnet.Programs.Test
             var newAccount = wallet.GetAccount(26);
 
             var txInstruction = TokenProgram.Transfer(
-                initialAccount.GetPublicKey,
-                newAccount.GetPublicKey,
+                initialAccount.PublicKey,
+                newAccount.PublicKey,
                 25000,
-                ownerAccount.GetPublicKey);
+                ownerAccount);
 
             Assert.AreEqual(3, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
@@ -76,12 +76,12 @@ namespace Solnet.Programs.Test
             var newAccount = wallet.GetAccount(27);
 
             var txInstruction = TokenProgram.TransferChecked(
-                initialAccount.GetPublicKey,
-                newAccount.GetPublicKey,
+                initialAccount.PublicKey,
+                newAccount.PublicKey,
                 25000,
                 2,
-                ownerAccount.GetPublicKey,
-                mintAccount.GetPublicKey);
+                ownerAccount,
+                mintAccount.PublicKey);
 
 
             Assert.AreEqual(4, txInstruction.Keys.Count);
@@ -100,9 +100,9 @@ namespace Solnet.Programs.Test
 
             var txInstruction =
                 TokenProgram.InitializeAccount(
-                    initialAccount.GetPublicKey,
-                    mintAccount.GetPublicKey,
-                    ownerAccount.GetPublicKey);
+                    initialAccount.PublicKey,
+                    mintAccount.PublicKey,
+                    ownerAccount.PublicKey);
 
             Assert.AreEqual(4, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
@@ -118,10 +118,10 @@ namespace Solnet.Programs.Test
             var ownerAccount = wallet.GetAccount(10);
 
             var txInstruction = TokenProgram.InitializeMint(
-                mintAccount.GetPublicKey,
+                mintAccount.PublicKey,
                 2,
-                ownerAccount.GetPublicKey,
-                ownerAccount.GetPublicKey);
+                ownerAccount.PublicKey,
+                ownerAccount.PublicKey);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
@@ -139,10 +139,10 @@ namespace Solnet.Programs.Test
 
             var txInstruction =
                 TokenProgram.MintTo(
-                    mintAccount.GetPublicKey,
-                    initialAccount.GetPublicKey,
+                    mintAccount.PublicKey,
+                    initialAccount.PublicKey,
                     25000,
-                    ownerAccount.GetPublicKey);
+                    ownerAccount);
 
             Assert.AreEqual(3, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
@@ -160,9 +160,9 @@ namespace Solnet.Programs.Test
 
             var txInstruction =
                 TokenProgram.Approve(
-                    sourceAccount.GetPublicKey,
-                    delegateAccount.GetPublicKey,
-                    ownerAccount.GetPublicKey,
+                    sourceAccount.PublicKey,
+                    delegateAccount.PublicKey,
+                    ownerAccount,
                     25000, null);
 
             Assert.AreEqual(3, txInstruction.Keys.Count);
@@ -181,8 +181,8 @@ namespace Solnet.Programs.Test
 
             var txInstruction =
                 TokenProgram.Revoke(
-                    delegateAccount.GetPublicKey,
-                    ownerAccount.GetPublicKey, null);
+                    delegateAccount.PublicKey,
+                    ownerAccount, null);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);

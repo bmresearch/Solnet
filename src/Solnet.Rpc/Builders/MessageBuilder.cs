@@ -125,7 +125,7 @@ namespace Solnet.Rpc.Builders
         internal MessageBuilder AddInstruction(TransactionInstruction instruction)
         {
             _accountKeysList.Add(instruction.Keys);
-            _accountKeysList.Add(new AccountMeta(instruction.ProgramId, false, false));
+            _accountKeysList.Add(new AccountMeta(new PublicKey(instruction.ProgramId), false));
             _instructions.Add(instruction);
 
             return this;
@@ -138,29 +138,28 @@ namespace Solnet.Rpc.Builders
         internal byte[] Build()
         {
             if (RecentBlockHash == null)
-                // werent we supposed to fetch it from the api in this case?
                 throw new Exception("recent block hash is required");
             if (_instructions == null)
                 throw new Exception("no instructions provided in the transaction");
 
             _messageHeader = new MessageHeader();
 
-            var keysList = GetAccountKeys();
-            var accountAddressesLength = ShortVectorEncoding.EncodeLength(keysList.Count);
-            var compiledInstructionsLength = 0;
-            var compiledInstructions = new List<CompiledInstruction>();
+            List<AccountMeta> keysList = GetAccountKeys();
+            byte[] accountAddressesLength = ShortVectorEncoding.EncodeLength(keysList.Count);
+            int compiledInstructionsLength = 0;
+            List<CompiledInstruction> compiledInstructions = new List<CompiledInstruction>();
 
-            foreach (var instruction in _instructions)
+            foreach (TransactionInstruction instruction in _instructions)
             {
-                var keyCount = instruction.Keys.Count;
-                var keyIndices = new byte[keyCount];
+                int keyCount = instruction.Keys.Count;
+                byte[] keyIndices = new byte[keyCount];
 
-                for (var i = 0; i < keyCount; i++)
+                for (int i = 0; i < keyCount; i++)
                 {
-                    keyIndices[i] = (byte)FindAccountIndex(keysList, instruction.Keys[i].PublicKey);
+                    keyIndices[i] = (byte)FindAccountIndex(keysList, instruction.Keys[i].PublicKeyBytes);
                 }
 
-                var compiledInstruction = new CompiledInstruction
+                CompiledInstruction compiledInstruction = new CompiledInstruction
                 {
                     ProgramIdIndex = (byte)FindAccountIndex(keysList, instruction.ProgramId),
                     KeyIndicesCount = ShortVectorEncoding.EncodeLength(keyCount),
@@ -173,13 +172,13 @@ namespace Solnet.Rpc.Builders
             }
 
 
-            var accountKeysBufferSize = _accountKeysList.AccountList.Count * 32;
-            var accountKeysBuffer = new MemoryStream(accountKeysBufferSize);
-            var instructionsLength = ShortVectorEncoding.EncodeLength(compiledInstructions.Count);
+            int accountKeysBufferSize = _accountKeysList.AccountList.Count * 32;
+            MemoryStream accountKeysBuffer = new MemoryStream(accountKeysBufferSize);
+            byte[] instructionsLength = ShortVectorEncoding.EncodeLength(compiledInstructions.Count);
 
-            foreach (var accountMeta in keysList)
+            foreach (AccountMeta accountMeta in keysList)
             {
-                accountKeysBuffer.Write(accountMeta.PublicKey);
+                accountKeysBuffer.Write(accountMeta.PublicKeyBytes);
                 if (accountMeta.Signer)
                 {
                     _messageHeader.RequiredSignatures += 1;
@@ -196,10 +195,10 @@ namespace Solnet.Rpc.Builders
             #region Build Message Body
 
 
-            var messageBufferSize = MessageHeader.HeaderLength + BlockHashLength + accountAddressesLength.Length +
+            int messageBufferSize = MessageHeader.HeaderLength + BlockHashLength + accountAddressesLength.Length +
                                     +instructionsLength.Length + compiledInstructionsLength + accountKeysBufferSize;
-            var buffer = new MemoryStream(messageBufferSize);
-            var messageHeaderBytes = _messageHeader.ToBytes();
+            MemoryStream buffer = new MemoryStream(messageBufferSize);
+            byte[] messageHeaderBytes = _messageHeader.ToBytes();
 
             buffer.Write(messageHeaderBytes);
             buffer.Write(accountAddressesLength);
@@ -207,7 +206,7 @@ namespace Solnet.Rpc.Builders
             buffer.Write(Encoder.DecodeData(RecentBlockHash));
             buffer.Write(instructionsLength);
 
-            foreach (var compiledInstruction in compiledInstructions)
+            foreach (CompiledInstruction compiledInstruction in compiledInstructions)
             {
                 buffer.WriteByte(compiledInstruction.ProgramIdIndex);
                 buffer.Write(compiledInstruction.KeyIndicesCount);
@@ -227,12 +226,12 @@ namespace Solnet.Rpc.Builders
         /// <returns></returns>
         private List<AccountMeta> GetAccountKeys()
         {
-            var keysList = _accountKeysList.AccountList;
-            var feePayerIndex = FindAccountIndex(keysList, FeePayer.PublicKey);
+            IList<AccountMeta> keysList = _accountKeysList.AccountList;
+            int feePayerIndex = FindAccountIndex(keysList, FeePayer.PublicKey.KeyBytes);
 
-            var newList = new List<AccountMeta>
+            List<AccountMeta> newList = new List<AccountMeta>
             {
-                new (keysList[feePayerIndex].PublicKey, true, true)
+                new (FeePayer, true)
             };
             keysList.RemoveAt(feePayerIndex);
             newList.AddRange(keysList);
@@ -247,11 +246,11 @@ namespace Solnet.Rpc.Builders
         /// <param name="publicKey"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        private int FindAccountIndex(IList<AccountMeta> accountMetas, byte[] publicKey)
+        private static int FindAccountIndex(IList<AccountMeta> accountMetas, byte[] publicKey)
         {
-            for (var index = 0; index < accountMetas.Count; index++)
+            for (int index = 0; index < accountMetas.Count; index++)
             {
-                if (Encoder.EncodeData(accountMetas[index].PublicKey) == Encoder.EncodeData(publicKey)) return index;
+                if (accountMetas[index].PublicKey == Encoder.EncodeData(publicKey)) return index;
             }
 
             throw new Exception($"could not find account index for public key: {Encoder.EncodeData(publicKey)}");

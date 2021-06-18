@@ -11,29 +11,14 @@ namespace Solnet.Wallet
     public class Account
     {
         /// <summary>
-        /// The base58 encoder instance.
-        /// </summary>
-        private static readonly Base58Encoder Encoder = new();
-
-        /// <summary>
-        /// Private key length.
-        /// </summary>
-        private const int PrivateKeyLength = 64;
-
-        /// <summary>
-        /// Public key length.
-        /// </summary>
-        private const int PublicKeyLength = 32;
-
-        /// <summary>
         /// The private key.
         /// </summary>
-        private readonly byte[] _privateKey;
+        public PrivateKey PrivateKey { get; }
 
         /// <summary>
         /// The public key.
         /// </summary>
-        private readonly byte[] _publicKey;
+        public PublicKey PublicKey { get; }
 
         /// <summary>
         /// Initialize an account. Generating a random seed for the Ed25519 key pair.
@@ -42,45 +27,29 @@ namespace Solnet.Wallet
         {
             byte[] seed = GenerateRandomSeed();
 
-            (_privateKey, _publicKey) = Utils.EdKeyPairFromSeed(seed);
-        }
+            (byte[] privateKey, byte[] publicKey) = Utils.EdKeyPairFromSeed(seed);
 
+            PrivateKey = new PrivateKey(privateKey);
+            PublicKey = new PublicKey(publicKey);
+        }
+        
         /// <summary>
         /// Initialize an account with the passed private and public keys.
         /// </summary>
         /// <param name="privateKey">The private key.</param>
         /// <param name="publicKey">The public key.</param>
-        public Account(byte[] privateKey, byte[] publicKey)
+        public Account(string privateKey, string publicKey)
         {
-            if (privateKey.Length != PrivateKeyLength)
-                throw new ArgumentException("invalid key length", nameof(privateKey));
-            if (publicKey.Length != PublicKeyLength)
-                throw new ArgumentException("invalid key length", nameof(privateKey));
-
-            _privateKey = privateKey;
-            _publicKey = publicKey;
+            PrivateKey = new PrivateKey(privateKey);
+            PublicKey = new PublicKey(publicKey);
         }
 
-        /// <summary>
-        /// Get the private key encoded as base58.
-        /// </summary>
-        public string GetPrivateKey => Encoder.EncodeData(_privateKey);
-
-        /// <summary>
-        /// Get the public key encoded as base58.
-        /// </summary>
-        public string GetPublicKey => Encoder.EncodeData(_publicKey);
-
-        /// <summary>
-        /// Get the public key as a byte array.
-        /// </summary>
-        public byte[] PublicKey => _publicKey;
-
-        /// <summary>
-        /// Get the private key as a byte array.
-        /// </summary>
-        public byte[] PrivateKey => _privateKey;
-
+        /// <inheritdoc cref="Account(string,string)"/>
+        public Account(byte[] privateKey, byte[] publicKey)
+        {
+            PrivateKey = new PrivateKey(privateKey);
+            PublicKey = new PublicKey(publicKey);
+        }
 
         /// <summary>
         /// Verify the signed message.
@@ -90,7 +59,7 @@ namespace Solnet.Wallet
         /// <returns></returns>
         public bool Verify(byte[] message, byte[] signature)
         {
-            return Ed25519.Verify(signature, message, _publicKey);
+            return Ed25519.Verify(signature, message, PublicKey.KeyBytes);
         }
 
         /// <summary>
@@ -101,7 +70,7 @@ namespace Solnet.Wallet
         public byte[] Sign(byte[] message)
         {
             byte[] signature = new byte[64];
-            Ed25519.Sign(signature, message, _privateKey);
+            Ed25519.Sign(signature, message, PrivateKey.KeyBytes);
             return signature;
         }
 

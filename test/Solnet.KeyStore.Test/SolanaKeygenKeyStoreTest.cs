@@ -51,7 +51,7 @@ namespace Solnet.KeyStore.Test
         {
             var wallet = KeyStoreService.RestoreKeystoreFromFile(ValidKeyStorePath);
 
-            Assert.AreEqual(wallet.Account.GetPublicKey, ExpectedKeyStoreAddress);
+            Assert.AreEqual(wallet.Account.PublicKey.Key, ExpectedKeyStoreAddress);
         }
 
         [TestMethod]
@@ -68,15 +68,15 @@ namespace Solnet.KeyStore.Test
             KeyStoreService.SaveKeystore(ValidKeyStoreSavePath, walletToSave);
             var restoredWallet = KeyStoreService.RestoreKeystoreFromFile(ValidKeyStorePath, "bip39passphrase");
 
-            Assert.AreEqual(ExpectedKeyStoreAddress, walletToSave.Account.GetPublicKey);
-            Assert.AreEqual(ExpectedKeyStoreAddress, restoredWallet.Account.GetPublicKey);
+            Assert.AreEqual(ExpectedKeyStoreAddress, walletToSave.Account.PublicKey.Key);
+            Assert.AreEqual(ExpectedKeyStoreAddress, restoredWallet.Account.PublicKey.Key);
         }
 
         [TestMethod]
         public void TestRestoreKeyStore()
         {
             var wallet = KeyStoreService.RestoreKeystore(StringKeyStoreSeedWithoutPassphrase);
-            Assert.AreEqual(ExpectedStringKeyStoreAddress, wallet.Account.GetPublicKey);
+            Assert.AreEqual(ExpectedStringKeyStoreAddress, wallet.Account.PublicKey.Key);
         }
 
     }
