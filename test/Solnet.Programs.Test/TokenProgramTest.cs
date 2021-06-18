@@ -457,11 +457,9 @@ namespace Solnet.Programs.Test
 
             var txInstruction =
                 TokenProgram.Revoke(delegateAccount.PublicKey, ownerAccount);
-=======
                 TokenProgram.Revoke(
                     delegateAccount.PublicKey,
                     ownerAccount, null);
->>>>>>> Refactoring account and keys for better integration with programs.
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);

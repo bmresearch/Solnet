@@ -55,6 +55,7 @@ namespace Solnet.Rpc.Models
         public AccountMeta(PublicKey publicKey, bool isWritable)
         {
             Account = null;
+            PublicKey = publicKey.Key;
             PublicKeyBytes = publicKey.KeyBytes;
             Signer = false;
             Writable = isWritable;
