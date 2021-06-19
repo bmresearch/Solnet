@@ -13,27 +13,16 @@ namespace Solnet.Programs
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.Revoke"/> method.
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
-        internal static byte[] EncodeRevokeData()
-        {
-            byte[] methodBuffer = new byte[1];
-            methodBuffer[0] = (byte)TokenProgramInstructions.Revoke;
-            return methodBuffer;
-        }
+        internal static byte[] EncodeRevokeData() => new[] { (byte)TokenProgramInstructions.Revoke };
 
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.Approve"/> method.
         /// </summary>
         /// <param name="amount">The amount of tokens to approve the transfer of.</param>
         /// <returns>The byte array with the encoded data.</returns>
-        internal static byte[] EncodeApproveData(long amount)
-        {
-            byte[] methodBuffer = new byte[9];
-
-            methodBuffer[0] = (byte)TokenProgramInstructions.Approve;
-            Utils.Int64ToByteArrayLe(amount, methodBuffer, 1);
-            return methodBuffer;
-        }
-
+        internal static byte[] EncodeApproveData(ulong amount)
+            => EncodeAmountLayout((byte)TokenProgramInstructions.Transfer, amount);
+        
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.InitializeAccount"/> method.
         /// </summary>
@@ -63,21 +52,13 @@ namespace Solnet.Programs
             return methodBuffer;
         }
 
-
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.Transfer"/> method.
         /// </summary>
         /// <param name="amount">The amount of tokens.</param>
         /// <returns>The byte array with the encoded data.</returns>
-        internal static byte[] EncodeTransferData(long amount)
-        {
-            byte[] methodBuffer = new byte[9];
-
-            methodBuffer[0] = (byte)TokenProgramInstructions.Transfer;
-            Utils.Int64ToByteArrayLe(amount, methodBuffer, 1);
-
-            return methodBuffer;
-        }
+        internal static byte[] EncodeTransferData(ulong amount)
+            => EncodeAmountLayout((byte)TokenProgramInstructions.Transfer, amount);
 
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.TransferChecked"/> method.
@@ -85,31 +66,16 @@ namespace Solnet.Programs
         /// <param name="amount">The amount of tokens.</param>
         /// <param name="decimals">The number of decimals of the token.</param>
         /// <returns>The byte array with the encoded data.</returns>
-        internal static byte[] EncodeTransferCheckedData(long amount, byte decimals)
-        {
-            byte[] methodBuffer = new byte[10];
-
-            methodBuffer[0] = (byte)TokenProgramInstructions.TransferChecked;
-            Utils.Int64ToByteArrayLe(amount, methodBuffer, 1);
-            methodBuffer[9] = decimals;
-
-            return methodBuffer;
-        }
+        internal static byte[] EncodeTransferCheckedData(ulong amount, int decimals)
+            => EncodeAmountCheckedLayout((byte)TokenProgramInstructions.TransferChecked, amount, (byte)decimals);
 
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.MintTo"/> method.
         /// </summary>
         /// <param name="amount">The amount of tokens.</param>
         /// <returns>The byte array with the encoded data.</returns>
-        internal static byte[] EncodeMintToData(long amount)
-        {
-            byte[] methodBuffer = new byte[9];
-
-            methodBuffer[0] = (byte)TokenProgramInstructions.MintTo;
-            Utils.Int64ToByteArrayLe(amount, methodBuffer, 1);
-
-            return methodBuffer;
-        }
+        internal static byte[] EncodeMintToData(ulong amount)
+            => EncodeAmountLayout((byte)TokenProgramInstructions.MintTo, amount);
 
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.InitializeMultiSignature"/> method.
@@ -118,7 +84,7 @@ namespace Solnet.Programs
         /// <returns>The byte array with the encoded data.</returns>
         internal static byte[] EncodeInitializeMultiSignatureData(int m)
         {
-            var methodBuffer = new byte[2];
+            byte[] methodBuffer = new byte[2];
             
             methodBuffer[0] = (byte)TokenProgramInstructions.InitializeMultiSignature;
             methodBuffer[1] = (byte)m;
@@ -126,85 +92,103 @@ namespace Solnet.Programs
             return methodBuffer;
         }
         
-        internal static byte[] EncodeSetAuthorityData()
+        /// <summary>
+        /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.SetAuthority"/> method.
+        /// </summary>
+        /// <returns>The byte array with the encoded data.</returns>
+        internal static byte[] EncodeSetAuthorityData(AuthorityType authorityType, int newAuthorityOption, byte[] newAuthority)
         {
-            
-            var methodBuffer = new byte[10];
+            byte[] methodBuffer = new byte[34];
 
             methodBuffer[0] = (byte)TokenProgramInstructions.SetAuthority;
+            methodBuffer[1] = (byte)authorityType;
+            methodBuffer[2] = (byte)newAuthorityOption;
+            Array.Copy(newAuthority, 0, methodBuffer, 3, 32);
 
             return methodBuffer;
         }
         
-        internal static byte[] EncodeBurnData()
+        /// <summary>
+        /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.Burn"/> method.
+        /// </summary>
+        /// <param name="amount">The amount of tokens.</param>
+        /// <returns>The byte array with the encoded data.</returns>
+        internal static byte[] EncodeBurnData(ulong amount) 
+            => EncodeAmountLayout((byte)TokenProgramInstructions.Burn, amount);
+        
+        /// <summary>
+        /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.CloseAccount"/> method.
+        /// </summary>
+        /// <returns>The byte array with the encoded data.</returns>
+        internal static byte[] EncodeCloseAccountData() => new[] { (byte)TokenProgramInstructions.CloseAccount };
+        
+        /// <summary>
+        /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.FreezeAccount"/> method.
+        /// </summary>
+        /// <returns>The byte array with the encoded data.</returns>
+        internal static byte[] EncodeFreezeAccountData() => new[] { (byte)TokenProgramInstructions.FreezeAccount };
+        
+        /// <summary>
+        /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.ThawAccount"/> method.
+        /// </summary>
+        /// <returns>The byte array with the encoded data.</returns>
+        internal static byte[] EncodeThawAccountData() => new[] { (byte)TokenProgramInstructions.ThawAccount };
+        
+        /// <summary>
+        /// Encodes the transaction instruction data for the <see cref="TokenProgramInstructions.ApproveChecked"/> method.
+        /// </summary>
+        /// <param name="amount">The amount of tokens.</param>
+        /// <param name="decimals">The decimals of the token.</param>
+        /// <returns>The byte array with the encoded data.</returns>
+        internal static byte[] EncodeApproveCheckedData(ulong amount, int decimals)
+            => EncodeAmountCheckedLayout((byte)TokenProgramInstructions.ApproveChecked, amount, (byte)decimals);
+        
+        /// <summary>
+        /// Encodes the transaction instruction data for the <see cref="TokenProgramInstructions.MintToChecked"/> method.
+        /// </summary>
+        /// <param name="amount">The amount of tokens.</param>
+        /// <param name="decimals">The decimals of the token.</param>
+        /// <returns>The byte array with the encoded data.</returns>
+        internal static byte[] EncodeMintToCheckedData(ulong amount, int decimals)
+            => EncodeAmountCheckedLayout((byte)TokenProgramInstructions.MintToChecked, amount, (byte)decimals);
+
+        /// <summary>
+        /// Encodes the transaction instruction data for the <see cref="TokenProgramInstructions.BurnChecked"/> method.
+        /// </summary>
+        /// <param name="amount">The amount of tokens.</param>
+        /// <param name="decimals">The decimals of the token.</param>
+        /// <returns>The byte array with the encoded data.</returns>
+        internal static byte[] EncodeBurnCheckedData(ulong amount, int decimals)
+            => EncodeAmountCheckedLayout((byte)TokenProgramInstructions.BurnChecked, amount, (byte)decimals);
+        
+        /// <summary>
+        /// Encodes the transaction data for the methods which only require the amount.
+        /// </summary>
+        /// <param name="method">The method identifier.</param>
+        /// <param name="amount">The amount of tokens.</param>
+        /// <returns>The byte array with the encoded data.</returns>
+        private static byte[] EncodeAmountLayout(byte method, ulong amount)
         {
-            
-            var methodBuffer = new byte[10];
-
-            methodBuffer[0] = (byte)TokenProgramInstructions.Burn;
-
+            byte[] methodBuffer = new byte[9];
+            methodBuffer[0] = method;
+            Utils.Int64ToByteArrayLe(amount, methodBuffer, 1);
             return methodBuffer;
         }
         
-        internal static byte[] EncodeCloseAccountData()
+        /// <summary>
+        /// Encodes the transaction data for the methods which only require the amount and the number of decimals.
+        /// </summary>
+        /// <param name="method">The method identifier.</param>
+        /// <param name="amount">The amount of tokens.</param>
+        /// <param name="decimals">The decimals of the token.</param>
+        /// <returns>The byte array with the encoded data.</returns>
+        private static byte[] EncodeAmountCheckedLayout(byte method, ulong amount, byte decimals)
         {
-            
-            var methodBuffer = new byte[10];
-
-            methodBuffer[0] = (byte)TokenProgramInstructions.CloseAccount;
-
+            byte[] methodBuffer = new byte[10];
+            methodBuffer[0] = method;
+            Utils.Int64ToByteArrayLe(amount, methodBuffer, 1);
+            methodBuffer[9] = decimals;
             return methodBuffer;
         }
-        
-        internal static byte[] EncodeFreezeAccountData()
-        {
-            
-            var methodBuffer = new byte[10];
-
-            methodBuffer[0] = (byte)TokenProgramInstructions.FreezeAccount;
-
-            return methodBuffer;
-        }
-        
-        internal static byte[] EncodeThawAccountData()
-        {
-            
-            var methodBuffer = new byte[10];
-
-            methodBuffer[0] = (byte)TokenProgramInstructions.ThawAccount;
-
-            return methodBuffer;
-        }
-        
-        internal static byte[] EncodeApproveCheckedData()
-        {
-            
-            var methodBuffer = new byte[10];
-
-            methodBuffer[0] = (byte)TokenProgramInstructions.ApproveChecked;
-
-            return methodBuffer;
-        }
-        
-        internal static byte[] EncodeMintToCheckedData()
-        {
-            
-            var methodBuffer = new byte[10];
-
-            methodBuffer[0] = (byte)TokenProgramInstructions.MintToChecked;
-
-            return methodBuffer;
-        }
-
-        internal static byte[] EncodeBurnCheckedData()
-        {
-            
-            var methodBuffer = new byte[10];
-
-            methodBuffer[0] = (byte)TokenProgramInstructions.BurnChecked;
-
-            return methodBuffer;
-        }
-        
     }
 }

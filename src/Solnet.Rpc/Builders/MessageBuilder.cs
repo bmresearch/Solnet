@@ -96,7 +96,7 @@ namespace Solnet.Rpc.Builders
         /// <summary>
         /// The list of instructions contained within this transaction.
         /// </summary>
-        private readonly List<TransactionInstruction> _instructions;
+        internal readonly List<TransactionInstruction> Instructions;
 
         /// <summary>
         /// The hash of a recent block.
@@ -114,7 +114,7 @@ namespace Solnet.Rpc.Builders
         internal MessageBuilder()
         {
             _accountKeysList = new AccountKeysList();
-            _instructions = new List<TransactionInstruction>();
+            Instructions = new List<TransactionInstruction>();
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace Solnet.Rpc.Builders
         {
             _accountKeysList.Add(instruction.Keys);
             _accountKeysList.Add(new AccountMeta(new PublicKey(instruction.ProgramId), false));
-            _instructions.Add(instruction);
+            Instructions.Add(instruction);
 
             return this;
         }
@@ -139,7 +139,7 @@ namespace Solnet.Rpc.Builders
         {
             if (RecentBlockHash == null)
                 throw new Exception("recent block hash is required");
-            if (_instructions == null)
+            if (Instructions == null)
                 throw new Exception("no instructions provided in the transaction");
 
             _messageHeader = new MessageHeader();
@@ -149,7 +149,7 @@ namespace Solnet.Rpc.Builders
             int compiledInstructionsLength = 0;
             List<CompiledInstruction> compiledInstructions = new List<CompiledInstruction>();
 
-            foreach (TransactionInstruction instruction in _instructions)
+            foreach (TransactionInstruction instruction in Instructions)
             {
                 int keyCount = instruction.Keys.Count;
                 byte[] keyIndices = new byte[keyCount];
