@@ -168,18 +168,6 @@ namespace Solnet.Programs
             };
         }
 
-        /// <param name="source">The account to transfer tokens from.</param>
-        /// <param name="destination">The account to transfer tokens to.</param>
-        /// <param name="amount">The amount of tokens to transfer.</param>
-        /// <param name="owner">The account owner.</param>
-        /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction Transfer(
-            string source, string destination, long amount, string owner)
-        {
-            return new();
-        }
-
-
         /// <summary>
         /// Initializes an instruction to mint tokens to a destination account.
         /// </summary>

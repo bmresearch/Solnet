@@ -54,7 +54,7 @@ namespace Solnet.Examples
             Console.WriteLine($"First Tx Signature: {firstSig.Result}");
         }
 
-        static void CreateInitializeAndMintToExample(string[] args)
+        static void Main(string[] args)
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
 
