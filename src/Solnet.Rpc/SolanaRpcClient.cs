@@ -108,6 +108,16 @@ namespace Solnet.Rpc
 
         #endregion
 
+        private KeyValue HandleCommitment(Commitment parameter, Commitment defaultValue = Commitment.Finalized)
+        {
+            if (parameter != defaultValue)
+            {
+                return KeyValue.Create("commitment", parameter);
+            }
+            return null;
+        }
+
+
         #region Accounts
         /// <inheritdoc cref="IRpcClient.GetAccountInfoAsync(string,Commitment)"/>
         public async Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey, Commitment commitment = Commitment.Finalized)
@@ -128,34 +138,37 @@ namespace Solnet.Rpc
             => GetAccountInfoAsync(pubKey, commitment).Result;
 
 
-        /// <inheritdoc cref="IRpcClient.GetProgramAccountsAsync(string)"/>
-        public async Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey)
+        /// <inheritdoc cref="IRpcClient.GetProgramAccountsAsync"/>
+        public async Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey, Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<List<AccountKeyPair>>("getProgramAccounts",
-                new List<object> { pubKey },
-                new Dictionary<string, object>
-                {
-                    {
-                        "encoding", "base64"
-                    }
-                });
+                Parameters.Create(
+                    pubKey,
+                    ConfigObject.Create(
+                        KeyValue.Create("encoding", "base64"),
+                        HandleCommitment(commitment))));
         }
 
-        /// <inheritdoc cref="IRpcClient.GetProgramAccounts(string)"/>
+        /// <inheritdoc cref="IRpcClient.GetProgramAccounts"/>
         public RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey)
             => GetProgramAccountsAsync(pubKey).Result;
 
 
-        /// <inheritdoc cref="IRpcClient.GetMultipleAccountsAsync(IList{string})"/>
-        public async Task<RequestResult<ResponseValue<List<AccountInfo>>>> GetMultipleAccountsAsync(IList<string> accounts)
+        /// <inheritdoc cref="IRpcClient.GetMultipleAccountsAsync"/>
+        public async Task<RequestResult<ResponseValue<List<AccountInfo>>>> GetMultipleAccountsAsync(IList<string> accounts, 
+            Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<ResponseValue<List<AccountInfo>>>("getMultipleAccounts", new List<object> { accounts,
-                new Dictionary<string, string> { { "encoding", "base64" } } });
+            return await SendRequestAsync<ResponseValue<List<AccountInfo>>>("getMultipleAccounts",
+                Parameters.Create(
+                    accounts, 
+                    ConfigObject.Create(
+                        KeyValue.Create("encoding", "base64"), 
+                        HandleCommitment(commitment))));
         }
 
-        /// <inheritdoc cref="IRpcClient.GetMultipleAccounts(IList{string})"/>
-        public RequestResult<ResponseValue<List<AccountInfo>>> GetMultipleAccounts(IList<string> accounts)
-            => GetMultipleAccountsAsync(accounts).Result;
+        /// <inheritdoc cref="IRpcClient.GetMultipleAccounts"/>
+        public RequestResult<ResponseValue<List<AccountInfo>>> GetMultipleAccounts(IList<string> accounts, Commitment commitment = Commitment.Finalized)
+            => GetMultipleAccountsAsync(accounts, commitment).Result;
 
         #endregion
 
@@ -425,21 +438,19 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="GetEpochScheduleAsync"/>
         public RequestResult<EpochScheduleInfo> GetEpochSchedule() => GetEpochScheduleAsync().Result;
 
-        /// <summary>
-        /// Gets the fee calculator associated with the query blockhash, or null if the blockhash has expired.
-        /// </summary>
-        /// <param name="blockhash">The blockhash to query, as base-58 encoded string.</param>
-        /// <returns>A task which may return a request result and the fee calculator for the block.</returns>
+
+        /// <inheritdoc cref="IRpcClient.GetFeeCalculatorForBlockhashAsync(string, Commitment)"/>
         public async Task<RequestResult<ResponseValue<FeeCalculatorInfo>>> GetFeeCalculatorForBlockhashAsync(
-            string blockhash)
+            string blockhash, Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<ResponseValue<FeeCalculatorInfo>>("getFeeCalculatorForBlockhash",
-                new List<object> { blockhash });
+            var parameters = Parameters.Create(blockhash, ConfigObject.Create(HandleCommitment(commitment)));
+
+            return await SendRequestAsync<ResponseValue<FeeCalculatorInfo>>("getFeeCalculatorForBlockhash", parameters);
         }
 
-        /// <inheritdoc cref="GetFeeCalculatorForBlockhashAsync"/>
-        public RequestResult<ResponseValue<FeeCalculatorInfo>> GetFeeCalculatorForBlockhash(string blockhash) =>
-            GetFeeCalculatorForBlockhashAsync(blockhash).Result;
+        /// <inheritdoc cref="IRpcClient.GetFeeCalculatorForBlockhash(string, Commitment)"/>
+        public RequestResult<ResponseValue<FeeCalculatorInfo>> GetFeeCalculatorForBlockhash(string blockhash, Commitment commitment = Commitment.Finalized) =>
+            GetFeeCalculatorForBlockhashAsync(blockhash, commitment).Result;
 
         /// <summary>
         /// Gets the fee rate governor information from the root bank.
@@ -454,31 +465,28 @@ namespace Solnet.Rpc
         public RequestResult<ResponseValue<FeeRateGovernorInfo>> GetFeeRateGovernor()
             => GetFeeRateGovernorAsync().Result;
 
-        /// <summary>
-        /// Gets a recent block hash from the ledger, a fee schedule that can be used to compute the
-        /// cost of submitting a transaction using it, and the last slot in which the blockhash will be valid.
-        /// </summary>
-        /// <returns>A task which may return a request result and information about fees.</returns>
-        public async Task<RequestResult<ResponseValue<FeesInfo>>> GetFeesAsync()
+        /// <inheritdoc cref="IRpcClient.GetFeesAsync"/>
+        public async Task<RequestResult<ResponseValue<FeesInfo>>> GetFeesAsync(Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<ResponseValue<FeesInfo>>("getFees");
+            return await SendRequestAsync<ResponseValue<FeesInfo>>("getFees",
+                Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
         }
 
-        /// <inheritdoc cref="GetFeesAsync"/>
-        public RequestResult<ResponseValue<FeesInfo>> GetFees() => GetFeesAsync().Result;
 
-        /// <summary>
-        /// Gets a recent block hash.
-        /// </summary>
-        /// <returns>A task which may return a request result and recent block hash.</returns>
-        public async Task<RequestResult<ResponseValue<BlockHash>>> GetRecentBlockHashAsync()
+        /// <inheritdoc cref="IRpcClient.GetFees"/>
+        public RequestResult<ResponseValue<FeesInfo>> GetFees(Commitment commitment = Commitment.Finalized)
+            => GetFeesAsync(commitment).Result;
+
+        /// <inheritdoc cref="IRpcClient.GetRecentBlockHashAsync"/>
+        public async Task<RequestResult<ResponseValue<BlockHash>>> GetRecentBlockHashAsync(Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<ResponseValue<BlockHash>>("getRecentBlockhash");
+            return await SendRequestAsync<ResponseValue<BlockHash>>("getRecentBlockhash", 
+                Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
         }
 
-        /// <inheritdoc cref="GetBlockTimeAsync"/>
-        public RequestResult<ResponseValue<BlockHash>> GetRecentBlockHash()
-            => GetRecentBlockHashAsync().Result;
+        /// <inheritdoc cref="IRpcClient.GetRecentBlockHash"/>
+        public RequestResult<ResponseValue<BlockHash>> GetRecentBlockHash(Commitment commitment = Commitment.Finalized)
+            => GetRecentBlockHashAsync(commitment).Result;
 
         /// <summary>
         /// Gets the maximum slot seen from retransmit stage.
@@ -506,20 +514,17 @@ namespace Solnet.Rpc
         public RequestResult<ulong> GetMaxShredInsertSlot()
             => GetMaxShredInsertSlotAsync().Result;
 
-        /// <summary>
-        /// Gets the minimum balance required to make account rent exempt.
-        /// </summary>
-        /// <param name="accountDataSize">The account data size.</param>
-        /// <returns>A task which may return a request result and the rent exemption value.</returns>
-        public async Task<RequestResult<ulong>> GetMinimumBalanceForRentExemptionAsync(long accountDataSize)
+        /// <inheritdoc cref="IRpcClient.GetMinimumBalanceForRentExemptionAsync"/>
+        public async Task<RequestResult<ulong>> GetMinimumBalanceForRentExemptionAsync(long accountDataSize, 
+            Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<ulong>("getMinimumBalanceForRentExemption",
-                new List<object> { accountDataSize });
+                Parameters.Create(accountDataSize, ConfigObject.Create(HandleCommitment(commitment))));
         }
 
-        /// <inheritdoc cref="GetMinimumBalanceForRentExemptionAsync"/>
-        public RequestResult<ulong> GetMinimumBalanceForRentExemption(long accountDataSize)
-            => GetMinimumBalanceForRentExemptionAsync(accountDataSize).Result;
+        /// <inheritdoc cref="IRpcClient.GetMinimumBalanceForRentExemption"/>
+        public RequestResult<ulong> GetMinimumBalanceForRentExemption(long accountDataSize, Commitment commitment = Commitment.Finalized)
+            => GetMinimumBalanceForRentExemptionAsync(accountDataSize, commitment).Result;
 
         /// <summary>
         /// Gets the genesis hash of the ledger.
@@ -547,65 +552,55 @@ namespace Solnet.Rpc
         public RequestResult<NodeIdentity> GetIdentity()
             => GetIdentityAsync().Result;
 
-        /// <summary>
-        /// Gets the current inflation governor.
-        /// </summary>
-        /// <returns>A task which may return a request result and an object representing the current inflation governor.</returns>
-        public async Task<RequestResult<InflationGovernor>> GetInflationGovernorAsync()
+        /// <inheritdoc cref="IRpcClient.GetInflationGovernorAsync"/>
+        public async Task<RequestResult<InflationGovernor>> GetInflationGovernorAsync(Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<InflationGovernor>("getInflationGovernor");
+            return await SendRequestAsync<InflationGovernor>("getInflationGovernor",
+                Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
         }
 
-        /// <inheritdoc cref="GetInflationGovernorAsync"/>
-        public RequestResult<InflationGovernor> GetInflationGovernor()
+        /// <inheritdoc cref="IRpcClient.GetInflationGovernor"/>
+        public RequestResult<InflationGovernor> GetInflationGovernor(Commitment commitment = Commitment.Finalized)
             => GetInflationGovernorAsync().Result;
 
-        /// <summary>
-        /// Gets the specific inflation values for the current epoch.
-        /// </summary>
-        /// <returns>A task which may return a request result and an object representing the current inflation rate.</returns>
+        /// <inheritdoc cref="IRpcClient.GetInflationRateAsync"/>
         public async Task<RequestResult<InflationRate>> GetInflationRateAsync()
         {
             return await SendRequestAsync<InflationRate>("getInflationRate");
         }
 
-        /// <inheritdoc cref="GetInflationRateAsync"/>
+        /// <inheritdoc cref="IRpcClient.GetInflationRate"/>
         public RequestResult<InflationRate> GetInflationRate()
             => GetInflationRateAsync().Result;
 
-        /// <summary>
-        /// Gets the inflation reward for a list of addresses for an epoch.
-        /// </summary>
-        /// <param name="addresses">The list of addresses to query for, as base-58 encoded strings.</param>
-        /// <param name="epoch">The epoch.</param>
-        /// <returns>A task which may return a request result and a list of objects representing the inflation reward.</returns>
-        public async Task<RequestResult<List<InflationReward>>> GetInflationRewardAsync(List<string> addresses, ulong epoch = 0)
+        /// <inheritdoc cref="IRpcClient.GetInflationRewardAsync"/>
+        public async Task<RequestResult<List<InflationReward>>> GetInflationRewardAsync(List<string> addresses, ulong epoch = 0, Commitment commitment = Commitment.Finalized)
         {
-            if (epoch != 0)
-                return await SendRequestAsync<List<InflationReward>>("getInflationReward",
-                    new List<object> { addresses, epoch });
-            return await SendRequestAsync<List<InflationReward>>("getInflationReward", new List<object> { addresses });
+            return await SendRequestAsync<List<InflationReward>>("getInflationReward",
+                Parameters.Create(
+                    addresses,
+                    ConfigObject.Create(
+                        HandleCommitment(commitment),
+                        KeyValue.Create("epoch", epoch > 0 ? epoch : null))));
         }
 
-        /// <inheritdoc cref="GetInflationRewardAsync"/>
-        public RequestResult<List<InflationReward>> GetInflationReward(List<string> addresses, ulong epoch = 0)
-            => GetInflationRewardAsync(addresses, epoch).Result;
+        /// <inheritdoc cref="IRpcClient.GetInflationReward"/>
+        public RequestResult<List<InflationReward>> GetInflationReward(List<string> addresses, ulong epoch = 0, Commitment commitment = Commitment.Finalized)
+            => GetInflationRewardAsync(addresses, epoch, commitment).Result;
 
-        /// <summary>
-        /// Gets the 20 largest accounts, by lamport balance.
-        /// </summary>
-        /// <param name="filter">Filter results by account type. Available types: circulating/nonCirculating </param>
-        /// <returns>A task which may return a request result the current slot.</returns>
-        /// <remarks>Results may be cached up to two hours.</remarks>
-        public async Task<RequestResult<ResponseValue<List<LargeAccount>>>> GetLargestAccountsAsync(string filter)
+        /// <inheritdoc cref="IRpcClient.GetLargestAccountsAsync"/>
+        public async Task<RequestResult<ResponseValue<List<LargeAccount>>>> GetLargestAccountsAsync(AccountFilterType? filter = null, Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<ResponseValue<List<LargeAccount>>>("getLargestAccounts",
-                new List<object> { new Dictionary<string, string> { { "filter", filter } } });
+                Parameters.Create(
+                    ConfigObject.Create(
+                        HandleCommitment(commitment), 
+                        KeyValue.Create("filter", filter))));
         }
 
-        /// <inheritdoc cref="GetSlotAsync"/>
-        public RequestResult<ResponseValue<List<LargeAccount>>> GetLargestAccounts(string filter) =>
-            GetLargestAccountsAsync(filter).Result;
+        /// <inheritdoc cref="IRpcClient.GetLargestAccounts"/>
+        public RequestResult<ResponseValue<List<LargeAccount>>> GetLargestAccounts(AccountFilterType? filter = null, Commitment commitment = Commitment.Finalized) =>
+            GetLargestAccountsAsync(filter, commitment).Result;
 
         /// <summary>
         /// Gets the highest slot that the node has a snapshot for.
@@ -619,54 +614,38 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="GetSnapshotSlotAsync"/>
         public RequestResult<ulong> GetSnapshotSlot() => GetSnapshotSlotAsync().Result;
 
-        /// <summary>
-        /// Gets a list of recent performance samples.
-        /// <remarks>
-        /// Unless <c>searchTransactionHistory</c> is included, this method only searches the recent status cache of signatures.
-        /// </remarks>
-        /// </summary>
-        /// <param name="limit">Maximum transaction signatures to return, between 1-720. Default is 720.</param>
-        /// <returns>A task which may return a request result the signatures for the transactions.</returns>
+        /// <inheritdoc cref="IRpcClient.GetRecentPerformanceSamplesAsync"/>
         public async Task<RequestResult<List<PerformanceSample>>> GetRecentPerformanceSamplesAsync(ulong limit = 720)
         {
             return await SendRequestAsync<List<PerformanceSample>>("getRecentPerformanceSamples",
                 new List<object> { limit });
         }
 
-        /// <inheritdoc cref="GetRecentPerformanceSamplesAsync"/>
+        /// <inheritdoc cref="IRpcClient.GetRecentPerformanceSamples"/>
         public RequestResult<List<PerformanceSample>> GetRecentPerformanceSamples(ulong limit = 720)
             => GetRecentPerformanceSamplesAsync(limit).Result;
 
-        /// <summary>
-        /// Gets confirmed signatures for transactions involving the address.
-        /// <remarks>
-        /// Unless <c>searchTransactionHistory</c> is included, this method only searches the recent status cache of signatures.
-        /// </remarks>
-        /// </summary>
-        /// <param name="accountPubKey">The account address as base-58 encoded string.</param>
-        /// <param name="limit">Maximum transaction signatures to return, between 1-1000. Default is 1000.</param>
-        /// <param name="before">Start searching backwards from this transaction signature.</param>
-        /// <param name="until">Search until this transaction signature, if found before limit is reached.</param>
-        /// <returns>A task which may return a request result the signatures for the transactions.</returns>
-        public async Task<RequestResult<List<SignatureStatusInfo>>> GetSignaturesForAddressAsync(
-            string accountPubKey, ulong limit = 1000, string before = "", string until = "")
+        /// <inheritdoc cref="IRpcClient.GetSignaturesForAddressAsync"/>
+        public async Task<RequestResult<List<SignatureStatusInfo>>> GetSignaturesForAddressAsync(string accountPubKey, 
+            ulong limit = 1000, string before = null, string until = null, Commitment commitment = Commitment.Finalized)
         {
-            var dictionary = new Dictionary<string, object> { { "limit", limit } };
-
-            if (!string.IsNullOrWhiteSpace(before))
-                dictionary.Add("before", before);
-
-            if (!string.IsNullOrWhiteSpace(until))
-                dictionary.Add("until", until);
+            if(commitment == Commitment.Processed)
+                throw new ArgumentException("Commitment.Processed is not supported for this method.");
 
             return await SendRequestAsync<List<SignatureStatusInfo>>("getSignaturesForAddress",
-                new List<object> { accountPubKey, dictionary });
+                Parameters.Create(
+                    accountPubKey,
+                    ConfigObject.Create(
+                        KeyValue.Create("limit", limit != 1000 ? limit : null),
+                        KeyValue.Create("before", before),
+                        KeyValue.Create("until", until),
+                        HandleCommitment(commitment))));
         }
 
-        /// <inheritdoc cref="GetSignaturesForAddressAsync"/>
-        public RequestResult<List<SignatureStatusInfo>> GetSignaturesForAddress(
-            string accountPubKey, ulong limit = 1000, string before = "", string until = "")
-            => GetSignaturesForAddressAsync(accountPubKey, limit, before, until).Result;
+        /// <inheritdoc cref="IRpcClient.GetSignaturesForAddress"/>
+        public RequestResult<List<SignatureStatusInfo>> GetSignaturesForAddress(string accountPubKey, ulong limit = 1000, 
+            string before = null, string until = null, Commitment commitment = Commitment.Finalized)
+            => GetSignaturesForAddressAsync(accountPubKey, limit, before, until, commitment).Result;
 
         /// <summary>
         /// Gets the status of a list of signatures.
@@ -788,7 +767,7 @@ namespace Solnet.Rpc
         /// <param name="tokenProgramId">Public key of the Token program ID that owns the accounts, as base-58 encoded string.</param>
         /// <returns>A task which may return a request result and information about token accounts by delegate.</returns>
         public async Task<RequestResult<ResponseValue<List<TokenAccount>>>> GetTokenAccountsByDelegateAsync(
-            string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "")
+            string ownerPubKey, string tokenMintPubKey = null, string tokenProgramId = null)
         {
             if (string.IsNullOrWhiteSpace(tokenMintPubKey) && string.IsNullOrWhiteSpace(tokenProgramId))
                 throw new ArgumentException("either tokenProgramId or tokenMintPubKey must be set");
@@ -802,7 +781,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="GetTokenAccountsByDelegateAsync"/>
         public RequestResult<ResponseValue<List<TokenAccount>>> GetTokenAccountsByDelegate(
-            string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "")
+            string ownerPubKey, string tokenMintPubKey = null, string tokenProgramId = null)
             => GetTokenAccountsByDelegateAsync(ownerPubKey, tokenMintPubKey, tokenProgramId).Result;
 
         /// <summary>
@@ -813,7 +792,7 @@ namespace Solnet.Rpc
         /// <param name="tokenProgramId">Public key of the Token program ID that owns the accounts, as base-58 encoded string.</param>
         /// <returns>A task which may return a request result and information about token accounts by owner.</returns>
         public async Task<RequestResult<ResponseValue<List<TokenAccount>>>> GetTokenAccountsByOwnerAsync(
-            string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "")
+            string ownerPubKey, string tokenMintPubKey = null, string tokenProgramId = null)
         {
             if (string.IsNullOrWhiteSpace(tokenMintPubKey) && string.IsNullOrWhiteSpace(tokenProgramId))
                 throw new ArgumentException("either tokenProgramId or tokenMintPubKey must be set");
@@ -827,7 +806,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="GetTokenAccountsByOwnerAsync"/>
         public RequestResult<ResponseValue<List<TokenAccount>>> GetTokenAccountsByOwner(
-            string ownerPubKey, string tokenMintPubKey = "", string tokenProgramId = "")
+            string ownerPubKey, string tokenMintPubKey = null, string tokenProgramId = null)
             => GetTokenAccountsByOwnerAsync(ownerPubKey, tokenMintPubKey, tokenProgramId).Result;
 
         /// <summary>
