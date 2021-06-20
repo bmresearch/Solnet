@@ -27,11 +27,6 @@ namespace Solnet.Examples
         private const string MnemonicWords =
             "route clerk disease box emerge airport loud waste attitude film army tray " +
             "forward deal onion eight catalog surface unit card window walnut wealth medal";
-<<<<<<< HEAD
-=======
-
-
->>>>>>> Work in progress on token and system program.
 
         static void Example(string[] args)
         {
@@ -59,7 +54,7 @@ namespace Solnet.Examples
             Console.WriteLine($"First Tx Signature: {firstSig.Result}");
         }
 
-        static void CreateInitializeAndMintToExample(string[] args)
+        static void Main(string[] args)
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
 
