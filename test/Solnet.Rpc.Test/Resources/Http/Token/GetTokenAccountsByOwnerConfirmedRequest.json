@@ -1,0 +1,1 @@
+{"method":"getTokenAccountsByOwner","params":["9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5",{"mint":"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"},{"commitment":"confirmed","encoding":"jsonParsed"}],"jsonrpc":"2.0","id":0}

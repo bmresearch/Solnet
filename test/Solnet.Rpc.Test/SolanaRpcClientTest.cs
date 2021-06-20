@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Moq.Protected;
 using Solnet.Rpc.Models;
+using Solnet.Rpc.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,56 +14,8 @@ using System.Threading.Tasks;
 namespace Solnet.Rpc.Test
 {
     [TestClass]
-    public partial class SolanaRpcClientTest
+    public class SolanaRpcClientTest : SolanaRpcClientTestBase
     {
-        private const string TestnetUrl = "https://testnet.solana.com";
-        private static readonly Uri TestnetUri = new Uri(TestnetUrl);
-
-        /// <summary>
-        /// Setup the test with the request and response data.
-        /// </summary>
-        /// <param name="sentPayloadCapture">Capture the sent content.</param>
-        /// <param name="responseContent">The response content.</param>
-        private Mock<HttpMessageHandler> SetupTest(Action<string> sentPayloadCapture, string responseContent)
-        {
-            var messageHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-            messageHandlerMock
-                .Protected()
-                .Setup<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    ItExpr.Is<HttpRequestMessage>(
-                        message => message.Method == HttpMethod.Post &&
-                                   message.RequestUri == TestnetUri),
-                    ItExpr.IsAny<CancellationToken>()
-                )
-                .Callback<HttpRequestMessage, CancellationToken>((httpRequest, ct) =>
-                    sentPayloadCapture(httpRequest.Content.ReadAsStringAsync(ct).Result))
-                .ReturnsAsync(new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(responseContent),
-                })
-                .Verifiable();
-            return messageHandlerMock;
-        }
-
-        /// <summary>
-        /// Finish the test by asserting the http request went as expected.
-        /// </summary>
-        /// <param name="expectedUri">The request uri.</param>
-        private void FinishTest(Mock<HttpMessageHandler> mockHandler, Uri expectedUri)
-        {
-            mockHandler.Protected().Verify(
-                "SendAsync",
-                Times.Exactly(1),
-                ItExpr.Is<HttpRequestMessage>(req =>
-                    req.Method == HttpMethod.Post
-                    && req.RequestUri == expectedUri
-                ),
-                ItExpr.IsAny<CancellationToken>()
-            );
-        }
-
         [TestMethod]
         public void TestEmptyPayloadRequest()
         {
@@ -238,8 +191,8 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetEpochInfo()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetEpochInfoResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetEpochInfoRequest.json");
+            var responseData = File.ReadAllText("Resources/Http/Epoch/GetEpochInfoResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Epoch/GetEpochInfoRequest.json");
             var sentMessage = string.Empty;
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
@@ -267,8 +220,8 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetEpochInfoProcessed()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetEpochInfoResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetEpochInfoProcessedRequest.json");
+            var responseData = File.ReadAllText("Resources/Http/Epoch/GetEpochInfoResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Epoch/GetEpochInfoProcessedRequest.json");
             var sentMessage = string.Empty;
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
@@ -296,8 +249,8 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetEpochSchedule()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetEpochScheduleResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetEpochScheduleRequest.json");
+            var responseData = File.ReadAllText("Resources/Http/Epoch/GetEpochScheduleResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Epoch/GetEpochScheduleRequest.json");
             var sentMessage = string.Empty;
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
@@ -318,65 +271,6 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(8192UL, result.Result.LeaderScheduleSlotOffset);
             Assert.AreEqual(8192UL, result.Result.SlotsPerEpoch);
             Assert.AreEqual(true, result.Result.Warmup);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetFeeRateGovernor()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetFeeRateGovernorResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetFeeRateGovernorRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetFeeRateGovernor();
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(54UL, result.Result.Context.Slot);
-            Assert.AreEqual(50, result.Result.Value.FeeRateGovernor.BurnPercent);
-            Assert.AreEqual(100000UL, result.Result.Value.FeeRateGovernor.MaxLamportsPerSignature);
-            Assert.AreEqual(5000UL, result.Result.Value.FeeRateGovernor.MinLamportsPerSignature);
-            Assert.AreEqual(10000UL, result.Result.Value.FeeRateGovernor.TargetLamportsPerSignature);
-            Assert.AreEqual(20000UL, result.Result.Value.FeeRateGovernor.TargetSignaturesPerSlot);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetFees()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetFeesResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetFeesRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetFees();
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(1UL, result.Result.Context.Slot);
-            Assert.AreEqual("CSymwgTNX1j3E4qhKfJAUE41nBWEwXufoYryPbkde5RR", result.Result.Value.Blockhash);
-            Assert.AreEqual(5000UL, result.Result.Value.FeeCalculator.LamportsPerSignature);
-            Assert.AreEqual(297UL, result.Result.Value.LastValidSlot);
-            Assert.AreEqual(296UL, result.Result.Value.LastValidBlockHeight);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -432,163 +326,6 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
-        public void TestGetInflationGovernor()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetInflationGovernorResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetInflationGovernorRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetInflationGovernor();
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual((decimal)0.05, result.Result.Foundation);
-            Assert.AreEqual(7, result.Result.FoundationTerm);
-            Assert.AreEqual((decimal)0.15, result.Result.Initial);
-            Assert.AreEqual((decimal)0.15, result.Result.Taper);
-            Assert.AreEqual((decimal)0.015, result.Result.Terminal);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetInflationRate()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetInflationRateResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetInflationRateRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetInflationRate();
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(100, result.Result.Epoch);
-            Assert.AreEqual((decimal)0.149, result.Result.Total);
-            Assert.AreEqual((decimal)0.148, result.Result.Validator);
-            Assert.AreEqual((decimal)0.001, result.Result.Foundation);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetInflationReward()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetInflationRewardResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetInflationRewardRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetInflationReward(
-                new List<string>
-                {
-                    "6dmNQ5jwLeLk5REvio1JcMshcbvkYMwy26sJ8pbkvStu",
-                    "BGsqMegLpV6n6Ve146sSX2dTjUMj3M92HnU8BbNRMhF2"
-                }, 2);
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(2, result.Result.Count);
-            Assert.AreEqual(2500UL, result.Result[0].Amount);
-            Assert.AreEqual(224UL, result.Result[0].EffectiveSlot);
-            Assert.AreEqual(2UL, result.Result[0].Epoch);
-            Assert.AreEqual(499999442500UL, result.Result[0].PostBalance);
-            Assert.AreEqual(null, result.Result[1]);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetInflationRewardNoEpoch()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetInflationRewardNoEpochResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetInflationRewardNoEpochRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetInflationReward(
-                new List<string>
-                {
-                    "25xzEf8cqLLEm2wyZTEBtCDchsUFm3SVESjs6eEFHJWe",
-                    "GPQdoUUDQXM1gWgRVwBbYmDqAgxoZN3bhVeKr1P8jd4c"
-                });
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(2, result.Result.Count);
-            Assert.AreEqual(1758149777313UL, result.Result[0].Amount);
-            Assert.AreEqual(81216004UL, result.Result[0].EffectiveSlot);
-            Assert.AreEqual(187UL, result.Result[0].Epoch);
-            Assert.AreEqual(1759149777313UL, result.Result[0].PostBalance);
-            Assert.AreEqual(null, result.Result[1]);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetLargestAccounts()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetLargestAccountsResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetLargestAccountsRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetLargestAccounts("circulating");
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(20, result.Result.Value.Count);
-            Assert.AreEqual("6caH6ayzofHnP8kcPQTEBrDPG4A2qDo1STE5xTMJ52k8", result.Result.Value[0].Address);
-            Assert.AreEqual(20161157050000000UL, result.Result.Value[0].Lamports);
-            Assert.AreEqual("gWgqQ4udVxE3uNxRHEwvftTHwpEmPHAd8JR9UzaHbR2", result.Result.Value[19].Address);
-            Assert.AreEqual(2499999990454560UL, result.Result.Value[19].Lamports);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-
-        [TestMethod]
         public void TestGetMaxRetransmitSlot()
         {
             var responseData = File.ReadAllText("Resources/Http/GetMaxRetransmitSlotResponse.json");
@@ -641,8 +378,8 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetSlotLeadersEmpty()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetSlotLeadersEmptyResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetSlotLeadersEmptyRequest.json");
+            var responseData = File.ReadAllText("Resources/Http/Slot/GetSlotLeadersEmptyResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Slot/GetSlotLeadersEmptyRequest.json");
             var sentMessage = string.Empty;
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
@@ -665,8 +402,8 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetSlotLeaders()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetSlotLeadersResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetSlotLeadersRequest.json");
+            var responseData = File.ReadAllText("Resources/Http/Slot/GetSlotLeadersResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Slot/GetSlotLeadersRequest.json");
             var sentMessage = string.Empty;
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
@@ -693,8 +430,8 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetSlotLeader()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetSlotLeaderResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetSlotLeaderRequest.json");
+            var responseData = File.ReadAllText("Resources/Http/Slot/GetSlotLeaderResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Slot/GetSlotLeaderRequest.json");
             var sentMessage = string.Empty;
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
@@ -716,10 +453,35 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
+        public void TestGetSlotLeaderConfirmed()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Slot/GetSlotLeaderResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Slot/GetSlotLeaderConfirmedRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetSlotLeader(Commitment.Confirmed);
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual("ENvAW7JScgYq6o4zKZwewtkzzJgDzuJAFxYasvmEQdpS", result.Result);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
         public void TestGetSlot()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetSlotResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetSlotRequest.json");
+            var responseData = File.ReadAllText("Resources/Http/Slot/GetSlotResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Slot/GetSlotRequest.json");
             var sentMessage = string.Empty;
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
@@ -731,6 +493,31 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetSlot();
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(1234UL, result.Result);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetSlotProcessed()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Slot/GetSlotResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Slot/GetSlotProcessedRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetSlot(Types.Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -765,170 +552,6 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(348125UL, result.Result[0].Slot);
             Assert.AreEqual(126UL, result.Result[0].NumTransactions);
             Assert.AreEqual(60, result.Result[0].SamplePeriodSecs);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetSignaturesForAddress()
-        {
-            var responseData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetSignaturesForAddress("4Rf9mGD7FeYknun5JczX5nGLTfQuS1GRjNVfkEMKE92b", limit: 3);
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(3, result.Result.Count);
-            Assert.AreEqual(1616245823UL, result.Result[0].BlockTime);
-            Assert.AreEqual(68710495UL, result.Result[0].Slot);
-            Assert.AreEqual("5Jofwx5JcPT1dMsgo6DkyT6x61X5chS9K7hM7huGKAnUq8xxHwGKuDnnZmPGoapWVZcN4cPvQtGNCicnWZfPHowr", result.Result[0].Signature);
-            Assert.AreEqual(null, result.Result[0].Memo);
-            Assert.AreEqual(null, result.Result[0].Error);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetSignaturesForAddressUntil()
-        {
-            var responseData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressUntilResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressUntilRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetSignaturesForAddress(
-                "Vote111111111111111111111111111111111111111",
-                1, until: "Vote111111111111111111111111111111111111111");
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(1, result.Result.Count);
-            Assert.AreEqual(null, result.Result[0].BlockTime);
-            Assert.AreEqual(114UL, result.Result[0].Slot);
-            Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", result.Result[0].Signature);
-            Assert.AreEqual(null, result.Result[0].Memo);
-            Assert.AreEqual(null, result.Result[0].Error);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetSignaturesForAddressBefore()
-        {
-            var responseData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressBeforeResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressBeforeRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetSignaturesForAddress(
-                "Vote111111111111111111111111111111111111111",
-                1, before: "Vote111111111111111111111111111111111111111");
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(1, result.Result.Count);
-            Assert.AreEqual(null, result.Result[0].BlockTime);
-            Assert.AreEqual(114UL, result.Result[0].Slot);
-            Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", result.Result[0].Signature);
-            Assert.AreEqual(null, result.Result[0].Memo);
-            Assert.AreEqual(null, result.Result[0].Error);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetSignatureStatuses()
-        {
-            var responseData = File.ReadAllText("Resources/Http/Signatures/GetSignatureStatusesResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Signatures/GetSignatureStatusesRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetSignatureStatuses(
-                new List<string>
-                {
-                    "5VERv8NMvzbJMEkV8xnrLkEaWRtSz9CosKDYjCJjBRnbJLgp8uirBgmQpjKhoR4tjF3ZpRzrFmBV6UjKdiSZkQUW",
-                    "5j7s6NiJS3JAkvgkoc18WVAsiSaci2pxB2A6ueCJP4tprA2TFg9wSyTLeYouxPBJEMzJinENTkpA52YStRW5Dia7"
-                });
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(82UL, result.Result.Context.Slot);
-            Assert.AreEqual(2, result.Result.Value.Count);
-            Assert.AreEqual(null, result.Result.Value[1]);
-            Assert.AreEqual(72UL, result.Result.Value[0].Slot);
-            Assert.AreEqual(10UL, result.Result.Value[0].Confirmations);
-            Assert.AreEqual("confirmed", result.Result.Value[0].ConfirmationStatus);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetSignatureStatusesWithHistory()
-        {
-            var responseData = File.ReadAllText("Resources/Http/Signatures/GetSignatureStatusesWithHistoryResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Signatures/GetSignatureStatusesWithHistoryRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetSignatureStatuses(
-                new List<string>
-                {
-                    "5VERv8NMvzbJMEkV8xnrLkEaWRtSz9CosKDYjCJjBRnbJLgp8uirBgmQpjKhoR4tjF3ZpRzrFmBV6UjKdiSZkQUW",
-                    "5j7s6NiJS3JAkvgkoc18WVAsiSaci2pxB2A6ueCJP4tprA2TFg9wSyTLeYouxPBJEMzJinENTkpA52YStRW5Dia7"
-                }, true);
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(82UL, result.Result.Context.Slot);
-            Assert.AreEqual(2, result.Result.Value.Count);
-            Assert.AreEqual(null, result.Result.Value[1]);
-            Assert.AreEqual(48UL, result.Result.Value[0].Slot);
-            Assert.AreEqual(null, result.Result.Value[0].Confirmations);
-            Assert.AreEqual("finalized", result.Result.Value[0].ConfirmationStatus);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -974,6 +597,34 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetSupply();
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(79266564UL, result.Result.Context.Slot);
+            Assert.AreEqual(1359481823340465122UL, result.Result.Value.Circulating);
+            Assert.AreEqual(122260000000UL, result.Result.Value.NonCirculating);
+            Assert.AreEqual(16, result.Result.Value.NonCirculatingAccounts.Count);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetSupplyProcessed()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetSupplyResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetSupplyProcessedRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetSupply(Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -1041,10 +692,10 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
-        public void TestGetTokenSupply()
+        public void TestGetStakeActivationWithEpochProcessed()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetTokenSupplyResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetTokenSupplyRequest.json");
+            var responseData = File.ReadAllText("Resources/Http/GetStakeActivationWithEpochResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetStakeActivationWithEpochProcessedRequest.json");
             var sentMessage = string.Empty;
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
@@ -1055,152 +706,18 @@ namespace Solnet.Rpc.Test
             };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetTokenSupply("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
+            var result = sut.GetStakeActivation("CYRJWqiSjLitBAcRxPvWpgX3s5TvmN2SuRY3eEYypFvT", 4, Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(79266576UL, result.Result.Context.Slot);
-            Assert.AreEqual("1000", result.Result.Value.Amount);
-            Assert.AreEqual(2, result.Result.Value.Decimals);
-            Assert.AreEqual("10", result.Result.Value.UiAmountString);
+            Assert.AreEqual(124429280UL, result.Result.Active);
+            Assert.AreEqual(73287840UL, result.Result.Inactive);
+            Assert.AreEqual("activating", result.Result.State);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(AggregateException))]
-        public void TestGetTokenAccountsByOwnerException()
-        {
-            var httpClient = new HttpClient
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            _ = sut.GetTokenAccountsByOwner("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
-        }
-
-        [TestMethod]
-        public void TestGetTokenAccountsByOwner()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetTokenAccountsByOwnerResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetTokenAccountsByOwnerRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetTokenAccountsByOwner(
-                "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5",
-                tokenProgramId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(79200468UL, result.Result.Context.Slot);
-            Assert.AreEqual(7, result.Result.Value.Count);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetTokenAccountsByDelegate()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetTokenAccountsByDelegateResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetTokenAccountsByDelegateRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetTokenAccountsByDelegate(
-                "4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T",
-                tokenProgramId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(1114UL, result.Result.Context.Slot);
-            Assert.AreEqual(1, result.Result.Value.Count);
-            Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", result.Result.Value[0].Account.Owner);
-            Assert.AreEqual(false, result.Result.Value[0].Account.Executable);
-            Assert.AreEqual(4UL, result.Result.Value[0].Account.RentEpoch);
-            Assert.AreEqual(1726080UL, result.Result.Value[0].Account.Lamports);
-            Assert.AreEqual("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T",
-                result.Result.Value[0].Account.Data.Parsed.Info.Delegate);
-            Assert.AreEqual(1UL, result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetTokenAccountBalance()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetTokenAccountBalanceResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetTokenAccountBalanceRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetTokenAccountBalance("7247amxcSBamBSKZJrqbj373CiJSa1v21cRav56C3WfZ");
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(79207643UL, result.Result.Context.Slot);
-            Assert.AreEqual("1000", result.Result.Value.Amount);
-            Assert.AreEqual(2, result.Result.Value.Decimals);
-            Assert.AreEqual("10", result.Result.Value.UiAmountString);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetTokenLargestAccounts()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetTokenLargestAccountsResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetTokenLargestAccountsRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(79207653UL, result.Result.Context.Slot);
-            Assert.AreEqual(1, result.Result.Value.Count);
-            Assert.AreEqual("7247amxcSBamBSKZJrqbj373CiJSa1v21cRav56C3WfZ", result.Result.Value[0].Address);
-            Assert.AreEqual("1000", result.Result.Value[0].Amount);
-            Assert.AreEqual(2, result.Result.Value[0].Decimals);
-            Assert.AreEqual("10", result.Result.Value[0].UiAmountString);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
 
         [TestMethod]
         public void TestGetMinimumLedgerSlot()
@@ -1250,174 +767,6 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(1082270801UL, result.Result.FeatureSet);
             Assert.AreEqual("1.6.11", result.Result.SolanaCore);
 
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetVoteAccounts()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetVoteAccountsResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetVoteAccountsRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetVoteAccounts();
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(1, result.Result.Current.Length);
-            Assert.AreEqual(1, result.Result.Delinquent.Length);
-
-            Assert.AreEqual(81274518UL, result.Result.Current[0].RootSlot);
-            Assert.AreEqual("3ZT31jkAGhUaw8jsy4bTknwBMP8i4Eueh52By4zXcsVw", result.Result.Current[0].VotePublicKey);
-            Assert.AreEqual("B97CCUW3AEZFGy6uUg6zUdnNYvnVq5VG8PUtb2HayTDD", result.Result.Current[0].NodePublicKey);
-            Assert.AreEqual(42UL, result.Result.Current[0].ActivatedStake);
-            Assert.AreEqual(0, result.Result.Current[0].Commission);
-            Assert.AreEqual(147UL, result.Result.Current[0].LastVote);
-            Assert.AreEqual(true, result.Result.Current[0].EpochVoteAccount);
-            Assert.AreEqual(2, result.Result.Current[0].EpochCredits.Length);
-
-            Assert.AreEqual(1234UL, result.Result.Delinquent[0].RootSlot);
-            Assert.AreEqual("CmgCk4aMS7KW1SHX3s9K5tBJ6Yng2LBaC8MFov4wx9sm", result.Result.Delinquent[0].VotePublicKey);
-            Assert.AreEqual("6ZPxeQaDo4bkZLRsdNrCzchNQr5LN9QMc9sipXv9Kw8f", result.Result.Delinquent[0].NodePublicKey);
-            Assert.AreEqual(0UL, result.Result.Delinquent[0].ActivatedStake);
-            Assert.AreEqual(false, result.Result.Delinquent[0].EpochVoteAccount);
-            Assert.AreEqual(127UL, result.Result.Delinquent[0].Commission);
-            Assert.AreEqual(0UL, result.Result.Delinquent[0].LastVote);
-            Assert.AreEqual(0, result.Result.Delinquent[0].EpochCredits.Length);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetTransactionCount()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetTransactionCountResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetTransactionCountRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetTransactionCount();
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(23632393337UL, result.Result);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestSendTransaction()
-        {
-            var responseData = File.ReadAllText("Resources/Http/SendTransactionResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/SendTransactionRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var txData = "ASIhFkj3HRTDLiPxrxudL7eXCQ3DKrBB6Go/pn0sHWYIYgIHWYu2jZjbDXQseCEu73Li53BP7AEt8lCwKz" +
-                         "X5awcBAAIER2mrlyBLqD\u002Bwyu4X94aPHgdOUhWBoNidlDedqmW3F7J7rHLZwOnCKOnqrRmjOO1w2JcV0XhP" +
-                         "LlWiw5thiFgQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABUpTUPhdyILWFKVWcniKKW3fHqur0KY" +
-                         "GeIhJMvTu9qCKNNRNmSFNMnUzw5\u002BFDszWV6YvuvspBr0qlIoAdeg67wICAgABDAIAAACAlpgAAAAAAAMBA" +
-                         "BVIZWxsbyBmcm9tIFNvbC5OZXQgOik=";
-
-            var result = sut.SendTransaction(txData);
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual("gaSFQXFqbYQypZdMFZy4Fe7uB2VFDEo4sGDypyrVxFgzZqc5MqWnRWTT9hXamcrFRcsiiH15vWii5ACSsyNScbp",
-                result.Result);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestSimulateTransaction()
-        {
-            var responseData = File.ReadAllText("Resources/Http/SimulateTransactionResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/SimulateTransactionRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var txData = "ASIhFkj3HRTDLiPxrxudL7eXCQ3DKrBB6Go/pn0sHWYIYgIHWYu2jZjbDXQseCEu73Li53BP7AEt8lCwKz" +
-                         "X5awcBAAIER2mrlyBLqD\u002Bwyu4X94aPHgdOUhWBoNidlDedqmW3F7J7rHLZwOnCKOnqrRmjOO1w2JcV0XhP" +
-                         "LlWiw5thiFgQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABUpTUPhdyILWFKVWcniKKW3fHqur0KY" +
-                         "GeIhJMvTu9qCKNNRNmSFNMnUzw5\u002BFDszWV6YvuvspBr0qlIoAdeg67wICAgABDAIAAACAlpgAAAAAAAMBA" +
-                         "BVIZWxsbyBmcm9tIFNvbC5OZXQgOik=";
-
-            var result = sut.SimulateTransaction(txData);
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result.Value);
-            Assert.AreEqual(79206888UL, result.Result.Context.Slot);
-            Assert.AreEqual(null, result.Result.Value.Error);
-            Assert.AreEqual(5, result.Result.Value.Logs.Length);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestSimulateTransactionInsufficientLamports()
-        {
-            var responseData = File.ReadAllText("Resources/Http/SimulateTransactionInsufficientLamportsResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/SimulateTransactionInsufficientLamportsRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var txData = "ARymmnVB6PB0x//jV2vsTFFdeOkzD0FFoQq6P\u002BwzGKlMD\u002BXLb/hWnOebNaYlg/" +
-                         "\u002Bj6jdm9Fe2Sba/ACnvcv9KIA4BAAIEUy4zulRg8z2yKITZaNwcnq6G6aH8D0ITae862qbJ" +
-                         "\u002B3eE3M6r5DRwldquwlqOuXDDOWZagXmbHnAU3w5Dg44kogAAAAAAAAAAAAAAAAAAAAAAAA" +
-                         "AAAAAAAAAAAAAAAAAABUpTUPhdyILWFKVWcniKKW3fHqur0KYGeIhJMvTu9qBann0itTd6uxx69h" +
-                         "ION5Js4E4drRP8CWwoLTdorAFUqAICAgABDAIAAACAlpgAAAAAAAMBABVIZWxsbyBmcm9tIFNvbC5OZXQgOik=";
-
-            var result = sut.SimulateTransaction(txData);
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result.Value);
-            Assert.AreEqual(79203980UL, result.Result.Context.Slot);
-            Assert.AreEqual(3, result.Result.Value.Logs.Length);
-            Assert.IsNotNull(result.Result.Value.Error);
-            Assert.AreEqual(TransactionErrorType.InstructionError, result.Result.Value.Error.Type);
-            Assert.IsNotNull(result.Result.Value.Error.InstructionError);
-            Assert.AreEqual(InstructionErrorType.Custom, result.Result.Value.Error.InstructionError.Type);
-            Assert.AreEqual(1, result.Result.Value.Error.InstructionError.CustomError);
             FinishTest(messageHandlerMock, TestnetUri);
         }
 
@@ -1474,12 +823,13 @@ namespace Solnet.Rpc.Test
             FinishTest(messageHandlerMock, TestnetUri);
         }
 
+
         [TestMethod]
-        public void TestGetLeaderSchedule_SlotArgsRequest()
+        public void TestGetMinimumBalanceForRentExemption()
         {
 
-            var responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleSlotArgsRequest.json");
+            var responseData = File.ReadAllText("Resources/Http/GetMinimumBalanceForRateExemptionResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetMinimumBalanceForRateExemptionRequest.json");
             var sentMessage = string.Empty;
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
@@ -1490,27 +840,20 @@ namespace Solnet.Rpc.Test
             };
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var res = sut.GetLeaderSchedule(79700000);
+            var res = sut.GetMinimumBalanceForRentExemption(50);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
             Assert.IsTrue(res.WasSuccessful);
-
-            Assert.AreEqual(2, res.Result.Count);
-            Assert.IsTrue(res.Result.ContainsKey("4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"));
-
-            Assert.AreEqual(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"].Count);
-            Assert.AreEqual(0UL, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"][0]);
+            Assert.AreEqual(500UL, res.Result);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
 
         [TestMethod]
-        public void TestGetLeaderSchedule_IdentityArgsRequest()
+        public void TestGetMinimumBalanceForRentExemptionConfirmed()
         {
-
-            var responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleIdentityArgsRequest.json");
+            var responseData = File.ReadAllText("Resources/Http/GetMinimumBalanceForRateExemptionResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetMinimumBalanceForRateExemptionConfirmedRequest.json");
             var sentMessage = string.Empty;
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
@@ -1521,27 +864,20 @@ namespace Solnet.Rpc.Test
             };
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var res = sut.GetLeaderSchedule(identity: "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu");
+            var res = sut.GetMinimumBalanceForRentExemption(50, Types.Commitment.Confirmed);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
             Assert.IsTrue(res.WasSuccessful);
-
-            Assert.AreEqual(2, res.Result.Count);
-            Assert.IsTrue(res.Result.ContainsKey("4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"));
-
-            Assert.AreEqual(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"].Count);
-            Assert.AreEqual(0UL, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"][0]);
+            Assert.AreEqual(500UL, res.Result);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
 
         [TestMethod]
-        public void TestGetLeaderSchedule_SlotIdentityArgsRequest()
+        public void TestRequestAirdrop()
         {
-
-            var responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleSlotIdentityArgsRequest.json");
+            var responseData = File.ReadAllText("Resources/Http/RequestAirdropResult.json");
+            var requestData = File.ReadAllText("Resources/Http/RequestAirdropRequest.json");
             var sentMessage = string.Empty;
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
@@ -1552,50 +888,14 @@ namespace Solnet.Rpc.Test
             };
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var res = sut.GetLeaderSchedule(79700000, "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu");
+            var res = sut.RequestAirdrop("6bhhceZToGG9RsTe1nfNFXEMjavhj6CV55EsvearAt2z", 100000000000);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
             Assert.IsTrue(res.WasSuccessful);
-
-            Assert.AreEqual(2, res.Result.Count);
-            Assert.IsTrue(res.Result.ContainsKey("4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"));
-
-            Assert.AreEqual(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"].Count);
-            Assert.AreEqual(0UL, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"][0]);
+            Assert.AreEqual("2iyRQZmksTfkmyH9Fnho61x4Y7TeSN8g3GRZCHmQjzzFB1e3DwKEVrYfR7AnKjiE5LiDEfCowtzoE2Pau646g1Vf", res.Result);
 
             FinishTest(messageHandlerMock, TestnetUri);
-        }
 
-        [TestMethod]
-        public void TestGetLeaderSchedule_NoArgsRequest()
-        {
-
-            var responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleNoArgsRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri
-            };
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-
-            var res = sut.GetLeaderSchedule();
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
-            Assert.IsTrue(res.WasSuccessful);
-
-            Assert.AreEqual(2, res.Result.Count);
-            Assert.IsTrue(res.Result.ContainsKey("4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"));
-
-            Assert.AreEqual(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"].Count);
-            Assert.AreEqual(0UL, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"][0]);
-
-            FinishTest(messageHandlerMock, TestnetUri);
         }
     }
 }

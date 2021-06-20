@@ -36,9 +36,15 @@ namespace Solnet.Rpc.Models
         public string Signature { get; set; }
     }
 
+    /// <summary>
+    /// Represents the result of a transaction simulation.
+    /// </summary>
     public class SimulationLogs
     {
-        public object[] Accounts { get; set; }
+        /// <summary>
+        /// Account infos as requested in the simulateTransaction method.
+        /// </summary>
+        public AccountInfo[] Accounts { get; set; }
 
         /// <summary>
         /// The error associated with the transaction simulation.

@@ -27,6 +27,15 @@
     <None Update="Resources\Http\Accounts\GetAccountInfoConfirmedRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Http\Accounts\GetLargestAccountsNonCirculatingProcessedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Accounts\GetMultipleAccountsConfirmedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Accounts\GetProgramAccountsProcessedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Http\Accounts\GetProgramAccountsRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -90,7 +99,22 @@
     <None Update="Resources\Http\Blocks\GetBlocksResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\Blocks\GetTransactionRequest.json">
+    <None Update="Resources\Http\RequestAirdropRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\RequestAirdropResult.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\GetVoteAccountsWithParamsRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Transaction\GetTransactionCountProcessedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Transaction\GetTransactionProcessedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Transaction\GetTransactionRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\Blocks\GetBlockRequest.json">
@@ -99,16 +123,40 @@
     <None Update="Resources\Http\Blocks\GetBlockProductionNoArgsResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\Blocks\GetTransactionResponse.json">
+    <None Update="Resources\Http\Transaction\GetTransactionResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\Blocks\GetBlockResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Http\Fees\GetFeeCalculatorForBlockhashConfirmedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Fees\GetFeesConfirmedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Http\GetBalanceConfirmedRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetEpochInfoProcessedRequest.json">
+    <None Update="Resources\Http\Epoch\GetEpochInfoProcessedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\GetMinimumBalanceForRateExemptionConfirmedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\GetMinimumBalanceForRateExemptionRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\GetMinimumBalanceForRateExemptionResponse.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\GetRecentBlockhashProcessedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\GetStakeActivationWithEpochProcessedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\GetSupplyProcessedRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\Health\GetHealthUnhealthyResponse.json">
@@ -118,6 +166,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\Health\GetHealthHealthyResponse.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Inflation\GetInflationGovernorConfirmedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Inflation\GetInflationRewardProcessedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\LeaderSchedule\GetLeaderScheduleProcessedRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\LeaderSchedule\GetLeaderScheduleSlotIdentityArgsRequest.json">
@@ -133,6 +190,36 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\LeaderSchedule\GetLeaderScheduleResponse.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Signatures\GetSignaturesForAddressBeforeConfirmedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Slot\GetSlotLeaderConfirmedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Slot\GetSlotProcessedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Token\GetTokenAccountBalanceConfirmedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Token\GetTokenAccountsByDelegateProcessedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Token\GetTokenAccountsByOwnerConfirmedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Token\GetTokenLargestAccountsProcessedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Token\GetTokenSupplyProcessedRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Transaction\SendTransactionWithParamsRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Http\Transaction\SimulateTransactionExtraParamsRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Streaming\Account\AccountSubscribeProcessed.json">
@@ -231,19 +318,19 @@
     <None Update="Resources\Http\Blocks\GetBlockCommitmentRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetTokenAccountsByOwnerRequest.json">
+    <None Update="Resources\Http\Token\GetTokenAccountsByOwnerRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetTokenAccountsByOwnerResponse.json">
+    <None Update="Resources\Http\Token\GetTokenAccountsByOwnerResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\Blocks\GetBlockCommitmentResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\SimulateTransactionInsufficientLamportsRequest.json">
+    <None Update="Resources\Http\Transaction\SimulateTransactionInsufficientLamportsRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\SimulateTransactionInsufficientLamportsResponse.json">
+    <None Update="Resources\Http\Transaction\SimulateTransactionInsufficientLamportsResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\GetRecentBlockhashResponse.json">
@@ -252,28 +339,28 @@
     <None Update="Resources\Http\GetRecentBlockhashRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\SimulateTransactionRequest.json">
+    <None Update="Resources\Http\Transaction\SimulateTransactionRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\SimulateTransactionResponse.json">
+    <None Update="Resources\Http\Transaction\SimulateTransactionResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\SendTransactionRequest.json">
+    <None Update="Resources\Http\Transaction\SendTransactionRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\SendTransactionResponse.json">
+    <None Update="Resources\Http\Transaction\SendTransactionResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetTokenLargestAccountsResponse.json">
+    <None Update="Resources\Http\Token\GetTokenLargestAccountsResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetTokenLargestAccountsRequest.json">
+    <None Update="Resources\Http\Token\GetTokenLargestAccountsRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetTokenAccountBalanceRequest.json">
+    <None Update="Resources\Http\Token\GetTokenAccountBalanceRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetTokenAccountBalanceResponse.json">
+    <None Update="Resources\Http\Token\GetTokenAccountBalanceResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\EmptyPayloadResponse.json">
@@ -285,16 +372,16 @@
     <None Update="Resources\Http\GetSupplyResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetTokenSupplyRequest.json">
+    <None Update="Resources\Http\Token\GetTokenSupplyRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetTokenSupplyResponse.json">
+    <None Update="Resources\Http\Token\GetTokenSupplyResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetTransactionCountRequest.json">
+    <None Update="Resources\Http\Transaction\GetTransactionCountRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetTransactionCountResponse.json">
+    <None Update="Resources\Http\Transaction\GetTransactionCountResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\GetMinimumLedgerSlotRequest.json">
@@ -315,10 +402,10 @@
     <None Update="Resources\Http\GetBalanceResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetTokenAccountsByDelegateResponse.json">
+    <None Update="Resources\Http\Token\GetTokenAccountsByDelegateResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetTokenAccountsByDelegateRequest.json">
+    <None Update="Resources\Http\Token\GetTokenAccountsByDelegateRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\EmptyPayloadRequest.json">
@@ -336,22 +423,22 @@
     <None Update="Resources\Http\GetIdentityResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetInflationGovernorRequest.json">
+    <None Update="Resources\Http\Inflation\GetInflationGovernorRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetInflationGovernorResponse.json">
+    <None Update="Resources\Http\Inflation\GetInflationGovernorResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetInflationRateResponse.json">
+    <None Update="Resources\Http\Inflation\GetInflationRateResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetInflationRateRequest.json">
+    <None Update="Resources\Http\Inflation\GetInflationRateRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetInflationRewardRequest.json">
+    <None Update="Resources\Http\Inflation\GetInflationRewardRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetInflationRewardResponse.json">
+    <None Update="Resources\Http\Inflation\GetInflationRewardResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\GetVoteAccountsResponse.json">
@@ -366,28 +453,28 @@
     <None Update="Resources\Http\GetVersionRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetSlotLeaderRequest.json">
+    <None Update="Resources\Http\Slot\GetSlotLeaderRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetSlotLeaderResponse.json">
+    <None Update="Resources\Http\Slot\GetSlotLeaderResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetSlotLeadersRequest.json">
+    <None Update="Resources\Http\Slot\GetSlotLeadersRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetSlotLeadersResponse.json">
+    <None Update="Resources\Http\Slot\GetSlotLeadersResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetSlotRequest.json">
+    <None Update="Resources\Http\Slot\GetSlotRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetSlotResponse.json">
+    <None Update="Resources\Http\Slot\GetSlotResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetSlotLeadersEmptyResponse.json">
+    <None Update="Resources\Http\Slot\GetSlotLeadersEmptyResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetSlotLeadersEmptyRequest.json">
+    <None Update="Resources\Http\Slot\GetSlotLeadersEmptyRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\GetMaxShredInsertSlotRequest.json">
@@ -399,10 +486,10 @@
     <None Update="Resources\Http\GetMaxRetransmitSlotRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetLargestAccountsRequest.json">
+    <None Update="Resources\Http\Accounts\GetLargestAccountsRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetLargestAccountsResponse.json">
+    <None Update="Resources\Http\Accounts\GetLargestAccountsResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\GetMaxRetransmitSlotResponse.json">
@@ -414,40 +501,40 @@
     <None Update="Resources\Http\GetSnapshotSlotRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetInflationRewardNoEpochResponse.json">
+    <None Update="Resources\Http\Inflation\GetInflationRewardNoEpochResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetInflationRewardNoEpochRequest.json">
+    <None Update="Resources\Http\Inflation\GetInflationRewardNoEpochRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetEpochInfoRequest.json">
+    <None Update="Resources\Http\Epoch\GetEpochInfoRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetEpochInfoResponse.json">
+    <None Update="Resources\Http\Epoch\GetEpochInfoResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetEpochScheduleRequest.json">
+    <None Update="Resources\Http\Epoch\GetEpochScheduleRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetFeeCalculatorForBlockhashRequest.json">
+    <None Update="Resources\Http\Fees\GetFeeCalculatorForBlockhashRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetFeeCalculatorForBlockhashResponse.json">
+    <None Update="Resources\Http\Fees\GetFeeCalculatorForBlockhashResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetFeeRateGovernorRequest.json">
+    <None Update="Resources\Http\Fees\GetFeeRateGovernorRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetFeeRateGovernorResponse.json">
+    <None Update="Resources\Http\Fees\GetFeeRateGovernorResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetFeesRequest.json">
+    <None Update="Resources\Http\Fees\GetFeesRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetFeesResponse.json">
+    <None Update="Resources\Http\Fees\GetFeesResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Http\GetEpochScheduleResponse.json">
+    <None Update="Resources\Http\Epoch\GetEpochScheduleResponse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Http\GetStakeActivationResponse.json">

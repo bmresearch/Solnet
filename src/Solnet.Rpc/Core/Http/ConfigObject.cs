@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Solnet.Rpc.Core.Http
 {
+    /// <summary>
+    /// Helper class that holds a key-value config pair that filters out null values.
+    /// </summary>
     internal class KeyValue : Tuple<string, object>
     {
         private KeyValue(string item1, object item2) : base(item1, item2)
@@ -22,6 +25,9 @@ namespace Solnet.Rpc.Core.Http
         }
     }
 
+    /// <summary>
+    /// Helper class to create configuration objects with key-value pairs that filters out null values.
+    /// </summary>
     internal static class ConfigObject
     {
         internal static Dictionary<string, object> Create(KeyValue pair1)
@@ -68,8 +74,23 @@ namespace Solnet.Rpc.Core.Http
 
             return dict.Count > 0 ? dict : null;
         }
+
+        internal static Dictionary<string, object> Create(KeyValue pair1, KeyValue pair2, KeyValue pair3, KeyValue pair4, KeyValue pair5) 
+        {
+            var dict = Create(pair1, pair2, pair3, pair4) ?? new Dictionary<string, object>();
+
+            if(pair5 != null)
+            {
+                dict.Add(pair5.Item1, pair5.Item2);
+            }
+
+            return dict.Count > 0 ? dict : null;
+        }
     }
 
+    /// <summary>
+    /// Helper class that creates a List of parameters and filters out null values.
+    /// </summary>
     internal static class Parameters
     {
         internal static List<object> Create(object val1)

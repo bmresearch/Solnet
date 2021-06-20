@@ -362,7 +362,7 @@ namespace Solnet.Rpc
         /// <param name="epoch">The epoch.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<List<InflationReward>>> GetInflationRewardAsync(List<string> addresses,
+        Task<RequestResult<List<InflationReward>>> GetInflationRewardAsync(IList<string> addresses,
             ulong epoch = 0, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
@@ -372,7 +372,7 @@ namespace Solnet.Rpc
         /// <param name="epoch">The epoch.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<List<InflationReward>> GetInflationReward(List<string> addresses, ulong epoch = 0,
+        RequestResult<List<InflationReward>> GetInflationReward(IList<string> addresses, ulong epoch = 0,
             Commitment commitment = Commitment.Finalized);
 
         /// <summary>
@@ -584,10 +584,9 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="transactionHashes">The list of transactions to search status info for.</param>
         /// <param name="searchTransactionHistory">If the node should search for signatures in it's ledger cache.</param>
-        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
         Task<RequestResult<ResponseValue<List<SignatureStatusInfo>>>> GetSignatureStatusesAsync(List<string> transactionHashes,
-            bool searchTransactionHistory = false, Commitment commitment = Commitment.Finalized);
+            bool searchTransactionHistory = false);
 
         /// <summary>
         /// Gets the status of a list of signatures.
@@ -597,10 +596,9 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="transactionHashes">The list of transactions to search status info for.</param>
         /// <param name="searchTransactionHistory">If the node should search for signatures in it's ledger cache.</param>
-        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<ResponseValue<List<SignatureStatusInfo>>> GetSignatureStatuses(List<string> transactionHashes,
-            bool searchTransactionHistory = false, Commitment commitment = Commitment.Finalized);
+            bool searchTransactionHistory = false);
 
         /// <summary>
         /// Gets the current slot the node is processing
@@ -838,16 +836,18 @@ namespace Solnet.Rpc
         /// <summary>
         /// Gets the account info and associated stake for all voting accounts in the current bank.
         /// </summary>
+        /// <param name="votePubKey">Filter by validator vote address, base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<VoteAccounts>> GetVoteAccountsAsync(Commitment commitment = Commitment.Finalized);
+        Task<RequestResult<VoteAccounts>> GetVoteAccountsAsync(string votePubKey = null, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Gets the account info and associated stake for all voting accounts in the current bank.
         /// </summary>
+        /// <param name="votePubKey">Filter by validator vote address, base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<VoteAccounts> GetVoteAccounts(Commitment commitment = Commitment.Finalized);
+        RequestResult<VoteAccounts> GetVoteAccounts(string votePubKey = null, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Requests an airdrop to the passed <c>pubKey</c> of the passed <c>lamports</c> amount.
@@ -878,75 +878,97 @@ namespace Solnet.Rpc
         /// <summary>
         /// Sends a transaction.
         /// </summary>
-        /// <param name="transaction">The signed transaction as base-58 or base-64 encoded string.</param>
-        /// <param name="encoding">The encoding of the transaction.</param>
-        /// <param name="commitment">The block commitment used to retrieve block hashes and verify success.</param>
+        /// <param name="transaction">The signed transaction as base-64 encoded string.</param>
+        /// <param name="skipPreflight">If true skip the prflight transaction checks (default false).</param>
+        /// <param name="preFlightCommitment">The block commitment used for preflight.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<string>> SendTransactionAsync(string transaction,
-            BinaryEncoding encoding = BinaryEncoding.Base64, Commitment commitment = Commitment.Finalized);
+        Task<RequestResult<string>> SendTransactionAsync(string transaction, bool skipPreflight = false, 
+            Commitment preFlightCommitment = Commitment.Finalized);
 
         /// <summary>
         /// Sends a transaction.
         /// </summary>
-        /// <param name="transaction">The signed transaction as base-58 or base-64 encoded string.</param>
-        /// <param name="encoding">The encoding of the transaction.</param>
-        /// <param name="commitment">The block commitment used to retrieve block hashes and verify success.</param>
+        /// <param name="transaction">The signed transaction as base-64 encoded string.</param>
+        /// <param name="skipPreflight">If true skip the prflight transaction checks (default false).</param>
+        /// <param name="preFlightCommitment">The block commitment used for preflight.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<string> SendTransaction(string transaction, BinaryEncoding encoding = BinaryEncoding.Base64, 
-            Commitment commitment = Commitment.Finalized);
-
-        /// <summary>
-        /// Sends a transaction.
-        /// </summary>
-        /// <param name="transaction">The signed transaction as byte array.</param>
-        /// <param name="commitment">The block commitment used to retrieve block hashes and verify success.</param>
-        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<string>> SendTransactionAsync(byte[] transaction, Commitment commitment = Commitment.Finalized);
+        RequestResult<string> SendTransaction(string transaction, bool skipPreflight = false,
+            Commitment preFlightCommitment = Commitment.Finalized);
 
         /// <summary>
         /// Sends a transaction.
         /// </summary>
         /// <param name="transaction">The signed transaction as byte array.</param>
-        /// <param name="commitment">The block commitment used to retrieve block hashes and verify success.</param>
-        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<string> SendTransaction(byte[] transaction, Commitment commitment = Commitment.Finalized);
-
-        /// <summary>
-        /// Simulate sending a transaction.
-        /// </summary>
-        /// <param name="transaction">The signed transaction as a byte array.</param>
-        /// <param name="encoding">The encoding of the transaction.</param>
+        /// <param name="skipPreflight">If true skip the prflight transaction checks (default false).</param>
         /// <param name="commitment">The block commitment used to retrieve block hashes and verify success.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<ResponseValue<SimulationLogs>>> SimulateTransactionAsync(string transaction,
-            BinaryEncoding encoding = BinaryEncoding.Base64, Commitment commitment = Commitment.Finalized);
+        Task<RequestResult<string>> SendTransactionAsync(byte[] transaction, bool skipPreflight = false,
+             Commitment commitment = Commitment.Finalized);
 
         /// <summary>
-        /// Simulate sending a transaction.
+        /// Sends a transaction.
         /// </summary>
-        /// <param name="transaction">The signed transaction as a byte array.</param>
-        /// <param name="encoding">The encoding of the transaction.</param>
+        /// <param name="transaction">The signed transaction as byte array.</param>
+        /// <param name="skipPreflight">If true skip the prflight transaction checks (default false).</param>
         /// <param name="commitment">The block commitment used to retrieve block hashes and verify success.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<ResponseValue<SimulationLogs>> SimulateTransaction(string transaction,
-            BinaryEncoding encoding = BinaryEncoding.Base64, Commitment commitment = Commitment.Finalized);
-
-        /// <summary>
-        /// Simulate sending a transaction.
-        /// </summary>
-        /// <param name="transaction">The signed transaction as a byte array.</param>
-        /// <param name="commitment">The block commitment used to retrieve block hashes and verify success.</param>
-        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        Task<RequestResult<ResponseValue<SimulationLogs>>> SimulateTransactionAsync(byte[] transaction, 
+        RequestResult<string> SendTransaction(byte[] transaction, bool skipPreflight = false, 
             Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Simulate sending a transaction.
         /// </summary>
-        /// <param name="transaction">The signed transaction as a byte array.</param>
+        /// <param name="transaction">The signed transaction as a base-64 encoded string.</param>
+        /// <param name="sigVerify">If the transaction signatures should be verified 
+        /// (default false, conflicts with <c>replaceRecentBlockHash</c>.</param>
         /// <param name="commitment">The block commitment used to retrieve block hashes and verify success.</param>
+        /// <param name="replaceRecentBlockhash">If the transaction recent blockhash should be replaced with the most recent blockhash 
+        /// (default false, conflicts with <c>sigVerify</c></param>
+        /// <param name="accountsToReturn">List of accounts to return, as base-58 encoded strings.</param>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        Task<RequestResult<ResponseValue<SimulationLogs>>> SimulateTransactionAsync(string transaction, bool sigVerify = false, 
+            Commitment commitment = Commitment.Finalized, bool replaceRecentBlockhash = false, IList<string> accountsToReturn = null);
+
+        /// <summary>
+        /// Simulate sending a transaction.
+        /// </summary>
+        /// <param name="transaction">The signed transaction base-64 encoded string.</param>
+        /// <param name="sigVerify">If the transaction signatures should be verified 
+        /// (default false, conflicts with <c>replaceRecentBlockHash</c>.</param>
+        /// <param name="commitment">The block commitment used to retrieve block hashes and verify success.</param>
+        /// <param name="replaceRecentBlockhash">If the transaction recent blockhash should be replaced with the most recent blockhash 
+        /// (default false, conflicts with <c>sigVerify</c></param>
+        /// <param name="accountsToReturn">List of accounts to return, as base-58 encoded strings.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<ResponseValue<SimulationLogs>> SimulateTransaction(byte[] transaction, 
-            Commitment commitment = Commitment.Finalized);
+        RequestResult<ResponseValue<SimulationLogs>> SimulateTransaction(string transaction, bool sigVerify = false,
+            Commitment commitment = Commitment.Finalized, bool replaceRecentBlockhash = false, IList<string> accountsToReturn = null);
+
+        /// <summary>
+        /// Simulate sending a transaction.
+        /// </summary>
+        /// <param name="transaction">The signed transaction as a byte array.</param>
+        /// <param name="sigVerify">If the transaction signatures should be verified 
+        /// (default false, conflicts with <c>replaceRecentBlockHash</c>.</param>
+        /// <param name="commitment">The block commitment used to retrieve block hashes and verify success.</param>
+        /// <param name="replaceRecentBlockhash">If the transaction recent blockhash should be replaced with the most recent blockhash 
+        /// (default false, conflicts with <c>sigVerify</c></param>
+        /// <param name="accountsToReturn">List of accounts to return, as base-58 encoded strings.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        Task<RequestResult<ResponseValue<SimulationLogs>>> SimulateTransactionAsync(byte[] transaction, bool sigVerify = false,
+            Commitment commitment = Commitment.Finalized, bool replaceRecentBlockhash = false, IList<string> accountsToReturn = null);
+
+        /// <summary>
+        /// Simulate sending a transaction.
+        /// </summary>
+        /// <param name="transaction">The signed transaction as a byte array.</param>
+        /// <param name="sigVerify">If the transaction signatures should be verified 
+        /// (default false, conflicts with <c>replaceRecentBlockHash</c>.</param>
+        /// <param name="commitment">The block commitment used to retrieve block hashes and verify success.</param>
+        /// <param name="replaceRecentBlockhash">If the transaction recent blockhash should be replaced with the most recent blockhash 
+        /// (default false, conflicts with <c>sigVerify</c></param>
+        /// <param name="accountsToReturn">List of accounts to return, as base-58 encoded strings.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<ResponseValue<SimulationLogs>> SimulateTransaction(byte[] transaction, bool sigVerify = false,
+            Commitment commitment = Commitment.Finalized, bool replaceRecentBlockhash = false, IList<string> accountsToReturn = null);
     }
 }
