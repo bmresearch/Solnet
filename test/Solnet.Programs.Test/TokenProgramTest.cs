@@ -426,6 +426,7 @@ namespace Solnet.Programs.Test
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
 
+            var mintAccount = wallet.GetAccount(21);
             var sourceAccount = wallet.GetAccount(69);
             var delegateAccount = wallet.GetAccount(420);
             var ownerAccount = wallet.GetAccount(1);
