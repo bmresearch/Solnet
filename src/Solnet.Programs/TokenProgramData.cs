@@ -98,7 +98,7 @@ namespace Solnet.Programs
         /// <returns>The byte array with the encoded data.</returns>
         internal static byte[] EncodeSetAuthorityData(AuthorityType authorityType, int newAuthorityOption, byte[] newAuthority)
         {
-            byte[] methodBuffer = new byte[34];
+            byte[] methodBuffer = new byte[35];
 
             methodBuffer[0] = (byte)TokenProgramInstructions.SetAuthority;
             methodBuffer[1] = (byte)authorityType;
