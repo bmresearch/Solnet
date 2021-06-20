@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Solnet.Wallet;
 using System.Collections.Generic;
 
 namespace Solnet.Programs.Test
@@ -33,15 +34,31 @@ namespace Solnet.Programs.Test
             160, 216, 157, 148, 55, 157, 170, 101, 183, 23, 178, 1, 71, 105, 171, 151, 32, 75, 168, 63, 176,
             202, 238, 23, 247, 134, 143, 30, 7, 78, 82, 21, 129, 160, 216, 157, 148, 55, 157, 170, 101, 183, 23, 178
         };
+        
+        private static readonly byte[] ExpectedInitializeMultiSignatureData = { 2,3 };
 
         private static readonly byte[] ExpectedMintToData =
         {
             7, 168, 97, 0, 0, 0, 0, 0, 0
         };
+        private static readonly byte[] ExpectedMintToCheckedData =
+        {
+            14, 168, 97, 0, 0, 0, 0, 0, 0,2
+        };
+        
+        private static readonly byte[] ExpectedBurnData =
+        {
+            8, 168, 97, 0, 0, 0, 0, 0, 0
+        };
+        private static readonly byte[] ExpectedBurnCheckedData =
+        {
+            15, 168, 97, 0, 0, 0, 0, 0, 0,2
+        };
 
         private static readonly byte[] ExpectedInitializeAccountData = { 1 };
 
         private static readonly byte[] ExpectedApproveData = { 4, 168, 97, 0, 0, 0, 0, 0, 0 };
+        private static readonly byte[] ExpectedApproveCheckedData = { 13, 168, 97, 0, 0, 0, 0, 0, 0, 2 };
 
         private static readonly byte[] ExpectedRevokeData = { 5 };
 
@@ -88,6 +105,37 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedTransferCheckedData, txInstruction.Data);
         }
+        
+        [TestMethod]
+        public void TestTransferCheckedMultiSignature()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+
+            var mintAccount = wallet.GetAccount(21);
+            var ownerAccount = wallet.GetAccount(10);
+            var initialAccount = wallet.GetAccount(26);
+            var newAccount = wallet.GetAccount(27);
+            var signers = new List<Account>();
+            
+            for (int i = 0; i < 5; i++)
+            {
+                signers.Add(wallet.GetAccount(420+i));
+            }
+            
+            var txInstruction = TokenProgram.TransferChecked(
+                initialAccount.PublicKey,
+                newAccount.PublicKey,
+                25000,
+                2,
+                ownerAccount,
+                mintAccount.PublicKey,
+                signers);
+
+
+            Assert.AreEqual(9, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
+            CollectionAssert.AreEqual(ExpectedTransferCheckedData, txInstruction.Data);
+        }
 
         [TestMethod]
         public void TestInitializeAccount()
@@ -131,6 +179,20 @@ namespace Solnet.Programs.Test
         [TestMethod]
         public void TestInitializeMultisig()
         {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+
+            var multiSig = wallet.GetAccount(420);
+            var signers = new List<PublicKey>();
+
+            for (int i = 0; i < 5; i++)
+            {
+                signers.Add(wallet.GetAccount(420+i).PublicKey);
+            }
+            var txInstruction = TokenProgram.InitializeMultiSignature(multiSig.PublicKey, signers, 3);
+            
+            Assert.AreEqual(7, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
+            CollectionAssert.AreEqual(ExpectedInitializeMultiSignatureData, txInstruction.Data);
             
         }
 
@@ -154,7 +216,105 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedMintToData, txInstruction.Data);
         }
+        
+        [TestMethod]
+        public void TestMintToChecked()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
 
+            var mintAccount = wallet.GetAccount(21);
+            var ownerAccount = wallet.GetAccount(10);
+            var initialAccount = wallet.GetAccount(22);
+
+            var txInstruction =
+                TokenProgram.MintToChecked(
+                    mintAccount.PublicKey,
+                    initialAccount.PublicKey,
+                    ownerAccount,
+                    25000,
+                    2);
+
+            Assert.AreEqual(3, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
+            CollectionAssert.AreEqual(ExpectedMintToCheckedData, txInstruction.Data);
+        }
+
+        [TestMethod]
+        public void TestMintToCheckedMultiSignature()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+
+            var mintAccount = wallet.GetAccount(21);
+            var ownerAccount = wallet.GetAccount(10);
+            var initialAccount = wallet.GetAccount(22);
+            var signers = new List<Account>();
+
+            for (int i = 0; i < 5; i++)
+            {
+                signers.Add(wallet.GetAccount(420+i));
+            }
+            var txInstruction =
+                TokenProgram.MintToChecked(
+                    mintAccount.PublicKey,
+                    initialAccount.PublicKey,
+                    ownerAccount,
+                    25000,
+                    2, signers);
+
+            Assert.AreEqual(8, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
+            CollectionAssert.AreEqual(ExpectedMintToCheckedData, txInstruction.Data);
+        }
+        
+        [TestMethod]
+        public void TestBurnChecked()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+
+            var mintAccount = wallet.GetAccount(21);
+            var ownerAccount = wallet.GetAccount(10);
+            var initialAccount = wallet.GetAccount(22);
+
+            var txInstruction =
+                TokenProgram.BurnChecked(
+                    mintAccount.PublicKey,
+                    initialAccount.PublicKey,
+                    ownerAccount,
+                    25000,
+                    2);
+
+            Assert.AreEqual(3, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
+            CollectionAssert.AreEqual(ExpectedBurnCheckedData, txInstruction.Data);
+        }
+
+        [TestMethod]
+        public void TestBurnCheckedMultiSignature()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+
+            var mintAccount = wallet.GetAccount(21);
+            var ownerAccount = wallet.GetAccount(10);
+            var initialAccount = wallet.GetAccount(22);
+            var signers = new List<Account>();
+
+            for (int i = 0; i < 5; i++)
+            {
+                signers.Add(wallet.GetAccount(420+i));
+            }
+            var txInstruction =
+                TokenProgram.BurnChecked(
+                    mintAccount.PublicKey,
+                    initialAccount.PublicKey,
+                    ownerAccount,
+                    25000,
+                    2, signers);
+
+            Assert.AreEqual(8, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
+            CollectionAssert.AreEqual(ExpectedBurnCheckedData, txInstruction.Data);
+        }
+        
         [TestMethod]
         public void TestApprove()
         {
@@ -166,12 +326,95 @@ namespace Solnet.Programs.Test
 
             var txInstruction =
                 TokenProgram.Approve(
-                    sourceAccount.PublicKey,
+                    sourceAccount.PublicKey, 
                     delegateAccount.PublicKey,
                     ownerAccount,
-                    25000, null);
+                    25000);
 
             Assert.AreEqual(3, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
+            CollectionAssert.AreEqual(ExpectedApproveData, txInstruction.Data);
+        }
+        
+        [TestMethod]
+        public void TestApproveMultiSignature()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+
+            var sourceAccount = wallet.GetAccount(69);
+            var delegateAccount = wallet.GetAccount(420);
+            var ownerAccount = wallet.GetAccount(1);
+            var signers = new List<Account>();
+            
+            for (int i = 0; i < 5; i++)
+            {
+                signers.Add(wallet.GetAccount(420+i));
+            }
+            var txInstruction =
+                TokenProgram.Approve(
+                    sourceAccount.PublicKey, 
+                    delegateAccount.PublicKey,
+                    ownerAccount,
+                    25000, signers);
+
+            Assert.AreEqual(8, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
+            CollectionAssert.AreEqual(ExpectedApproveData, txInstruction.Data);
+        }
+        
+        [TestMethod]
+        public void TestApproveChecked()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+
+            var mintAccount = wallet.GetAccount(21);
+            var sourceAccount = wallet.GetAccount(69);
+            var delegateAccount = wallet.GetAccount(420);
+            var ownerAccount = wallet.GetAccount(1);
+            var signers = new List<Account>();
+            
+            for (int i = 0; i < 5; i++)
+            {
+                signers.Add(wallet.GetAccount(420+i));
+            }
+            
+            var txInstruction =
+                TokenProgram.ApproveChecked(
+                    sourceAccount.PublicKey, 
+                    delegateAccount.PublicKey,
+                    25000,
+                    2,
+                    ownerAccount,
+                    mintAccount.PublicKey,
+                    signers);
+
+            Assert.AreEqual(9, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
+            CollectionAssert.AreEqual(ExpectedApproveCheckedData, txInstruction.Data);
+        }
+        
+        [TestMethod]
+        public void TestApproveCheckedMultiSignature()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+
+            var sourceAccount = wallet.GetAccount(69);
+            var delegateAccount = wallet.GetAccount(420);
+            var ownerAccount = wallet.GetAccount(1);
+            var signers = new List<Account>();
+            
+            for (int i = 0; i < 5; i++)
+            {
+                signers.Add(wallet.GetAccount(420+i));
+            }
+            var txInstruction =
+                TokenProgram.Approve(
+                    sourceAccount.PublicKey, 
+                    delegateAccount.PublicKey,
+                    ownerAccount,
+                    25000, signers);
+
+            Assert.AreEqual(8, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedApproveData, txInstruction.Data);
         }
@@ -181,18 +424,96 @@ namespace Solnet.Programs.Test
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
 
-            var sourceAccount = wallet.GetAccount(69);
             var delegateAccount = wallet.GetAccount(420);
             var ownerAccount = wallet.GetAccount(1);
 
             var txInstruction =
-                TokenProgram.Revoke(
-                    delegateAccount.PublicKey,
-                    ownerAccount, null);
+                TokenProgram.Revoke(delegateAccount.PublicKey, ownerAccount);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedRevokeData, txInstruction.Data);
+        }
+        
+        [TestMethod]
+        public void TestRevokeMultiSignature()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+
+            var delegateAccount = wallet.GetAccount(420);
+            var ownerAccount = wallet.GetAccount(1);
+            var signers = new List<Account>();
+            
+            for (int i = 0; i < 5; i++)
+            {
+                signers.Add(wallet.GetAccount(420+i));
+            }
+            var txInstruction =
+                TokenProgram.Revoke(delegateAccount.PublicKey, ownerAccount, signers);
+
+            Assert.AreEqual(7, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
+            CollectionAssert.AreEqual(ExpectedRevokeData, txInstruction.Data);
+        }
+
+        [TestMethod]
+        public void TestSetAuthority()
+        {
+            
+        }
+        
+        [TestMethod]
+        public void TestSetAuthorityMultiSignature()
+        {
+            
+        }
+        
+        [TestMethod]
+        public void TestBurn()
+        {
+            
+        }
+        
+        [TestMethod]
+        public void TestBurnMultiSignature()
+        {
+            
+        }
+        
+        [TestMethod]
+        public void TestCloseAccount()
+        {
+            
+        }
+        
+        [TestMethod]
+        public void TestCloseAccountMultiSignature()
+        {
+            
+        }
+        
+        [TestMethod]
+        public void TestFreezeAccount()
+        {
+            
+        }
+        
+        [TestMethod]
+        public void TestFreezeAccountMultiSignature()
+        {
+            
+        }
+        
+        [TestMethod]
+        public void TestThawAccount()
+        {
+            
+        }
+        
+        [TestMethod]
+        public void TestThawAccountMultiSignature()
+        {
+            
         }
     }
 }

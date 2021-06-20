@@ -21,7 +21,7 @@ namespace Solnet.Programs
         /// <param name="amount">The amount of tokens to approve the transfer of.</param>
         /// <returns>The byte array with the encoded data.</returns>
         internal static byte[] EncodeApproveData(ulong amount)
-            => EncodeAmountLayout((byte)TokenProgramInstructions.Transfer, amount);
+            => EncodeAmountLayout((byte)TokenProgramInstructions.Approve, amount);
         
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.InitializeAccount"/> method.

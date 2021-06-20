@@ -243,7 +243,7 @@ namespace Solnet.Programs
         /// <param name="signers">Signing accounts if the <c>account</c> is a multi signature.</param>
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction SetAuthority(
-            PublicKey account, AuthorityType authority, Account currentAuthority, PublicKey newAuthority, IEnumerable<Account> signers = null)
+            PublicKey account, AuthorityType authority, Account currentAuthority, PublicKey newAuthority = null, IEnumerable<Account> signers = null)
         {
             List<AccountMeta> keys = new()
             {
@@ -252,6 +252,7 @@ namespace Solnet.Programs
             keys = AddSigners(keys, currentAuthority, signers);
 
             int newAuthorityOpt = newAuthority != null ? 1 : 0;
+            newAuthority ??= new Account().PublicKey;
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,

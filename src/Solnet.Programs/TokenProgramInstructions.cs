@@ -3,7 +3,7 @@ namespace Solnet.Programs
     /// <summary>
     /// Represents the instruction types for the <see cref="TokenProgram"/>.
     /// </summary>
-    public enum TokenProgramInstructions : byte
+    internal enum TokenProgramInstructions : byte
     {
         /// <summary>
         /// Initialize a token mint.

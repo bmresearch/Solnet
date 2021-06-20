@@ -46,7 +46,7 @@ namespace Solnet.Programs
                 new AccountMeta(toPublicKey, true)
             };
             byte[] data = new byte[12];
-            Utils.Uint32ToByteArrayLe(ProgramIndexTransfer, data, 0);
+            data[0] = (byte)SystemProgramInstructions.Transfer;
             Utils.Int64ToByteArrayLe(lamports, data, 4);
 
             return new TransactionInstruction
@@ -76,7 +76,7 @@ namespace Solnet.Programs
             };
             byte[] data = new byte[52];
 
-            Utils.Uint32ToByteArrayLe(ProgramIndexCreateAccount, data, 0);
+            data[0] = (byte)SystemProgramInstructions.CreateAccount;
             Utils.Int64ToByteArrayLe(lamports, data, 4);
             Utils.Int64ToByteArrayLe(space, data, 12);
             Array.Copy(programId.KeyBytes, 0, data, 20, 32);
