@@ -744,7 +744,6 @@ namespace Solnet.Programs.Test
         [TestMethod]
         public void TestThawAccount()
         {
-            
             var wallet = new Wallet.Wallet(MnemonicWords);
 
             var mintAccount = wallet.GetAccount(21);
