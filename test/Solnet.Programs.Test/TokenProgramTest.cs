@@ -343,6 +343,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(ExpectedBurnCheckedData, txInstruction.Data);
         }
         
+        
         [TestMethod]
         public void TestApprove()
         {
