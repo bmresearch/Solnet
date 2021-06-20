@@ -63,7 +63,7 @@ namespace Solnet.Examples
             var inflation = c.GetInflationReward(
                 new List<string> { "25xzEf8cqLLEm2wyZTEBtCDchsUFm3SVESjs6eEFHJWe", "GPQdoUUDQXM1gWgRVwBbYmDqAgxoZN3bhVeKr1P8jd4c" });
             Console.WriteLine(inflation.Result.Count);
-            var res = c.GetLargestAccounts("circulating");
+            var res = c.GetLargestAccounts(Rpc.Types.AccountFilterType.Circulating);
             Console.WriteLine(res.Result.Value.Count);
 
             var accs = c.GetMultipleAccounts(new List<string> { "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu", "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5" });
