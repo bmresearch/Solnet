@@ -1,5 +1,3 @@
-// unset
-
 using Solnet.Programs;
 using Solnet.Rpc;
 using Solnet.Rpc.Builders;
@@ -49,6 +47,7 @@ namespace Solnet.Examples
             PublicKey nameAccountKey = NameServiceProgram.DeriveNameAccountKey(hashedName, null, TwitterRootParentRegistryKey);
             return nameAccountKey;
         }
+        
         static void Main()
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
@@ -56,12 +55,14 @@ namespace Solnet.Examples
             var blockHash = rpcClient.GetRecentBlockHash();
             var minBalanceForExemptionNameAcc =
                 rpcClient.GetMinimumBalanceForRentExemption(NameServiceProgram.NameAccountSize + 96).Result;
+            
+            Console.WriteLine($"MinBalanceForRentExemption NameAccount >> {minBalanceForExemptionNameAcc}");
             var minBalanceForExemptionNameReverseRegistry =
                 rpcClient.GetMinimumBalanceForRentExemption(96+18).Result;
-            Console.WriteLine($"MinBalanceForRentExemption NameAccount >> {minBalanceForExemptionNameReverseRegistry}");
+            Console.WriteLine($"MinBalanceForRentExemption ReverseRegistry >> {minBalanceForExemptionNameReverseRegistry}");
             
             var payerAccount = wallet.GetAccount(10);
-            var ownerAccount = wallet.GetAccount(150);
+            var ownerAccount = wallet.GetAccount(152);
             Console.WriteLine($"PayerAccount: {payerAccount.PublicKey.Key}");
             Console.WriteLine($"OwnerAccount: {ownerAccount.PublicKey.Key}");
 

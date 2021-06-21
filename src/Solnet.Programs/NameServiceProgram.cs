@@ -125,7 +125,7 @@ namespace Solnet.Programs
                 nameClass != null
                     ? new AccountMeta(nameClass, false)
                     : new AccountMeta(new PublicKey(new byte[32]), false),
-                nameClass != null
+                parentName != null
                     ? new AccountMeta(parentName, false)
                     : new AccountMeta(new PublicKey(new byte[32]), false)
             };
@@ -232,6 +232,7 @@ namespace Solnet.Programs
         {
             byte[] methodBuffer = new byte[49];
 
+            methodBuffer[0] = (byte)NameServiceInstructions.Create;
             Utils.Uint32ToByteArrayLe(hashedName.Length, methodBuffer, 1);
             Array.Copy(hashedName, 0, methodBuffer, 5, hashedName.Length);
             Utils.Int64ToByteArrayLe(lamports, methodBuffer, 37);
@@ -250,7 +251,7 @@ namespace Solnet.Programs
         {
             byte[] methodBuffer = new byte[data.Length + 5];
             
-            methodBuffer[0] = (byte)NameServiceInstructions.Transfer;
+            methodBuffer[0] = (byte)NameServiceInstructions.Update;
             Utils.Uint32ToByteArrayLe(offset, methodBuffer, 1);
             Array.Copy(data, 0, methodBuffer, 5, data.Length);
 
@@ -266,7 +267,7 @@ namespace Solnet.Programs
         {
             byte[] methodBuffer = new byte[33];
             methodBuffer[0] = (byte)NameServiceInstructions.Transfer;
-            Array.Copy(publicKey, 0, methodBuffer, 2, publicKey.Length);
+            Array.Copy(publicKey, 0, methodBuffer, 1, 32);
             return methodBuffer;
         }        
         
