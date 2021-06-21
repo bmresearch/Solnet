@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 
 namespace Solnet.Rpc.Test
 {
-    public partial class SolanaRpcClientTest
+    [TestClass]
+    public class SolanaRpcClientBlockTest : SolanaRpcClientTestBase
     {
         [TestMethod]
         public void TestGetBlock()
@@ -273,8 +274,8 @@ namespace Solnet.Rpc.Test
         public void TestGetTransaction()
         {
 
-            var responseData = File.ReadAllText("Resources/Http/Blocks/GetTransactionResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Blocks/GetTransactionRequest.json");
+            var responseData = File.ReadAllText("Resources/Http/Transaction/GetTransactionResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Transaction/GetTransactionRequest.json");
             var sentMessage = string.Empty;
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
@@ -326,6 +327,29 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(4, first.Transaction.Message.Instructions[0].ProgramIdIndex);
 
             Assert.AreEqual("6XGYfEJ5CGGBA5E8E7Gw4ToyDLDNNAyUCb7CJj1rLk21", first.Transaction.Message.RecentBlockhash);
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetTransactionProcessed()
+        {
+
+            var responseData = File.ReadAllText("Resources/Http/Transaction/GetTransactionResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Transaction/GetTransactionProcessedRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri
+            };
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var res = sut.GetTransaction("5as3w4KMpY23MP5T1nkPVksjXjN7hnjHKqiDxRMxUNcw5XsCGtStayZib1kQdyR2D9w8dR11Ha9Xk38KP3kbAwM1", Commitment.Processed);
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(res.Result);
             FinishTest(messageHandlerMock, TestnetUri);
         }
 
@@ -597,32 +621,6 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
-        public void TestGetFeeCalculatorForBlockhash()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetFeeCalculatorForBlockhashResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetFeeCalculatorForBlockhashRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetFeeCalculatorForBlockhash("GJxqhuxcgfn5Tcj6y3f8X4FeCDd2RQ6SnEMo1AAxrPRZ");
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(221UL, result.Result.Context.Slot);
-            Assert.AreEqual(5000UL, result.Result.Value.FeeCalculator.LamportsPerSignature);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
         public void TestGetRecentBlockHash()
         {
             var responseData = File.ReadAllText("Resources/Http/GetRecentBlockhashResponse.json");
@@ -638,6 +636,33 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetRecentBlockHash();
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(79206433UL, result.Result.Context.Slot);
+            Assert.AreEqual("FJGZeJiYkwCZCnFbGujHxfVGnFgrgZiomczHr247Tn2p", result.Result.Value.Blockhash);
+            Assert.AreEqual(5000UL, result.Result.Value.FeeCalculator.LamportsPerSignature);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetRecentBlockHashProcessed()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetRecentBlockhashResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/GetRecentBlockhashProcessedRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetRecentBlockHash(Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);

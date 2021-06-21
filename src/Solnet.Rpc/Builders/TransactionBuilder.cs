@@ -35,7 +35,7 @@ namespace Solnet.Rpc.Builders
         private byte[] _serializedMessage;
 
         /// <summary>
-        /// Initialize the transaction builder.
+        /// Default constructor that initializes the transaction builder.
         /// </summary>
         public TransactionBuilder()
         {

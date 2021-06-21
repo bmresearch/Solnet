@@ -6,7 +6,7 @@ namespace Solnet.Rpc.Core.Http
     /// <summary>
     /// Represents the result of a given request.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of the result.</typeparam>
     public class RequestResult<T>
     {
         /// <summary>

@@ -51,11 +51,11 @@ namespace Solnet.Rpc
             {
                 Cluster.DevNet => RpcDevNet,
                 Cluster.TestNet => RpcTestNet,
-                Cluster.MainNet => RpcMainNet,
+                _ => RpcMainNet,
             };
 
 #if DEBUG
-            logger = logger ?? LoggerFactory.Create(x =>
+            logger ??= LoggerFactory.Create(x =>
             {
                 x.AddSimpleConsole(o =>
                 {
@@ -95,10 +95,10 @@ namespace Solnet.Rpc
             {
                 Cluster.DevNet => StreamingRpcDevNet,
                 Cluster.TestNet => StreamingRpcTestNet,
-                Cluster.MainNet => StreamingRpcMainNet,
+                _ => StreamingRpcMainNet,
             };
 #if DEBUG
-            logger = logger ?? LoggerFactory.Create(x =>
+            logger ??= LoggerFactory.Create(x =>
             {
                 x.AddSimpleConsole(o =>
                {

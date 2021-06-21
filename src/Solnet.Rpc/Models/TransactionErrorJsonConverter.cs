@@ -4,8 +4,16 @@ using System.Text.Json.Serialization;
 
 namespace Solnet.Rpc.Models
 {
+    /// <inheritdoc cref="JsonConverter"/>
     public class TransactionErrorJsonConverter : JsonConverter<TransactionError>
     {
+        /// <summary>
+        /// Reads and converts the JSON to type <c>TransactionError</c>.
+        /// </summary>
+        /// <param name="reader">The reader.</param>
+        /// <param name="typeToConvert"> The type to convert.</param>
+        /// <param name="options">An object that specifies serialization options to use.</param>
+        /// <returns>The converted value.</returns>
         public override TransactionError Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType == JsonTokenType.Null) return null;
@@ -115,6 +123,12 @@ namespace Solnet.Rpc.Models
             return err;
         }
 
+        /// <summary>
+        /// Not implemented.
+        /// </summary>
+        /// <param name="writer">n/a</param>
+        /// <param name="value">n/a</param>
+        /// <param name="options">n/a</param>
         public override void Write(Utf8JsonWriter writer, TransactionError value, JsonSerializerOptions options)
         {
             throw new NotImplementedException();

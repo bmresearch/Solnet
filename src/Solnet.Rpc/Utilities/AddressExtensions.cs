@@ -7,6 +7,9 @@ using System.Text;
 
 namespace Solnet.Rpc.Utilities
 {
+    /// <summary>
+    /// Contains helper methods to handle program addresses.
+    /// </summary>
     public static class AddressExtensions
     {
         /// <summary>

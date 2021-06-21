@@ -5,7 +5,15 @@
       "slot": 79206888
     },
     "value": {
-      "accounts": null,
+      "accounts": [
+        {
+          "data": [ "", "base64" ],
+          "executable": false,
+          "lamports": 2551360,
+          "owner": "11111111111111111111111111111111",
+          "rentEpoch": 202
+        }
+      ],
       "err": null,
       "logs": [
         "Program 11111111111111111111111111111111 invoke [1]",

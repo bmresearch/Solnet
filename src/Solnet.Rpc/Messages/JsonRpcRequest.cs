@@ -3,10 +3,19 @@ using System.Text.Json.Serialization;
 
 namespace Solnet.Rpc.Messages
 {
+    /// <summary>
+    /// Rpc request message.
+    /// </summary>
     public class JsonRpcRequest : JsonRpcBase
     {
+        /// <summary>
+        /// The request method.
+        /// </summary>
         public string Method { get; }
 
+        /// <summary>
+        /// The method parameters list.
+        /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public IList<object> Params { get; }
 
