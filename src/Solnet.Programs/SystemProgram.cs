@@ -17,14 +17,9 @@ namespace Solnet.Programs
         public static readonly PublicKey ProgramIdKey = new ("11111111111111111111111111111111");
 
         /// <summary>
-        /// 
+        /// The public key of the Rent System Variable.
         /// </summary>
-        private const int ProgramIndexCreateAccount = 0;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private const int ProgramIndexTransfer = 2;
+        public static readonly PublicKey SysVarRentKey = new ("SysvarRent111111111111111111111111111111111");
 
         /// <summary>
         /// Account layout size.

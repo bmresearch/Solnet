@@ -222,7 +222,6 @@ namespace Solnet.Programs.Test
             Assert.AreEqual(7, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedInitializeMultiSignatureData, txInstruction.Data);
-            
         }
 
         [TestMethod]
@@ -745,7 +744,6 @@ namespace Solnet.Programs.Test
         [TestMethod]
         public void TestThawAccount()
         {
-            
             var wallet = new Wallet.Wallet(MnemonicWords);
 
             var mintAccount = wallet.GetAccount(21);
