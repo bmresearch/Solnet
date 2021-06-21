@@ -31,7 +31,7 @@ Solnet is Solana's .NET integration library.
 - Programs
     - SystemProgram
     - MemoProgram
-    - TokenProgram (no multisig)
+    - Full TokenProgram
 
 ## Requirements
 - net 5.0

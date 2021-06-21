@@ -25,7 +25,7 @@ namespace Solnet.Programs
         /// <param name="val">The value to write.</param>
         /// <param name="array">The array to write in.</param>
         /// <param name="offset">The offset at which to start writing.</param>
-        public static void Int64ToByteArrayLe(long val, byte[] array, int offset)
+        public static void Int64ToByteArrayLe(ulong val, byte[] array, int offset)
         {
             array[offset] = (byte)(0xFF & val);
             array[offset + 1] = (byte)(0xFF & (val >> 8));
