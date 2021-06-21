@@ -248,10 +248,11 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction data.</returns>
         private static byte[] EncodeUpdateNameRegistryData(int offset, byte[] data)
         {
-            byte[] methodBuffer = new byte[49];
+            byte[] methodBuffer = new byte[data.Length + 5];
             
             methodBuffer[0] = (byte)NameServiceInstructions.Transfer;
-            Array.Copy(data, 0, methodBuffer, 2, data.Length);
+            Utils.Uint32ToByteArrayLe(offset, methodBuffer, 1);
+            Array.Copy(data, 0, methodBuffer, 5, data.Length);
 
             return methodBuffer;
         }

@@ -3,6 +3,7 @@
 using Solnet.Programs;
 using Solnet.Rpc;
 using Solnet.Rpc.Builders;
+using Solnet.Wallet;
 using System;
 
 namespace Solnet.Examples
@@ -15,6 +16,39 @@ namespace Solnet.Examples
             "route clerk disease box emerge airport loud waste attitude film army tray " +
             "forward deal onion eight catalog surface unit card window walnut wealth medal";
 
+        /// <summary>
+        /// The public key of the Twitter Verification Authority.
+        /// </summary>
+        public static readonly PublicKey TwitterVerificationAuthorityKey = new PublicKey("867BLob5b52i81SNaV9Awm5ejkZV6VGSv9SxLcwukDDJ");
+        
+        /// <summary>
+        /// The public key of the Twitter Root Parent Registry.
+        /// </summary>
+        public static readonly PublicKey TwitterRootParentRegistryKey = new PublicKey("AFrGkxNmVLBn3mKhvfJJABvm8RJkTtRhHDoaF97pQZaA");
+
+        /// <summary>
+        /// Get the derived account address for the reverse lookup.
+        /// </summary>
+        /// <param name="publicKey">The public key.</param>
+        /// <returns>The derived account public key.</returns>
+        public static PublicKey GetReverseRegistryKey(string publicKey)
+        {
+            byte[] hashedName = NameServiceProgram.ComputeHashedName(publicKey);
+            PublicKey nameAccountKey = NameServiceProgram.DeriveNameAccountKey(hashedName, TwitterVerificationAuthorityKey, null);
+            return nameAccountKey;
+        }
+        
+        /// <summary>
+        /// Get the derived account address for the twitter handle registry.
+        /// </summary>
+        /// <param name="twitterHandle">The twitter handle.</param>
+        /// <returns>The derived account public key.</returns>
+        public static PublicKey GetTwitterHandleRegistryKey(string twitterHandle)
+        {
+            byte[] hashedName = NameServiceProgram.ComputeHashedName(twitterHandle);
+            PublicKey nameAccountKey = NameServiceProgram.DeriveNameAccountKey(hashedName, null, TwitterRootParentRegistryKey);
+            return nameAccountKey;
+        }
         static void Main()
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
@@ -33,11 +67,11 @@ namespace Solnet.Examples
 
             var hashedTwitterHandle = NameServiceProgram.ComputeHashedName("hoaktrades");
             Console.WriteLine($"HashedTwitterHandle: {hashedTwitterHandle}");
-            var twitterHandleRegistry = NameServiceProgram.GetTwitterHandleRegistryKey("hoaktrades");
+            var twitterHandleRegistry = GetTwitterHandleRegistryKey("hoaktrades");
             Console.WriteLine($"TwitterHandleRegistryKey: {twitterHandleRegistry.Key}");
             var hashedVerifiedPubkey = NameServiceProgram.ComputeHashedName(ownerAccount.PublicKey.Key);
             Console.WriteLine($"HashedVerifiedKey: {hashedVerifiedPubkey}");
-            var reverseRegistry = NameServiceProgram.GetReverseRegistryKey(ownerAccount.PublicKey.Key);
+            var reverseRegistry = GetReverseRegistryKey(ownerAccount.PublicKey.Key);
             Console.WriteLine($"ReverseRegistryKey: {reverseRegistry.Key}");
 
             var tx = new TransactionBuilder().

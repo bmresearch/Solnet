@@ -20,7 +20,6 @@ namespace Solnet.Examples
             return logString;
         }
     }
-
     public class TransactionBuilderExample
     {
         private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
