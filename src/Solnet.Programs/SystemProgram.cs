@@ -38,7 +38,7 @@ namespace Solnet.Programs
         /// <param name="toPublicKey">The account to transfer to.</param>
         /// <param name="lamports">The amount of lamports</param>
         /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction Transfer(Account fromPublicKey, PublicKey toPublicKey, long lamports)
+        public static TransactionInstruction Transfer(Account fromPublicKey, PublicKey toPublicKey, ulong lamports)
         {
             List<AccountMeta> keys = new ()
             {
@@ -46,7 +46,7 @@ namespace Solnet.Programs
                 new AccountMeta(toPublicKey, true)
             };
             byte[] data = new byte[12];
-            Utils.Uint32ToByteArrayLe(ProgramIndexTransfer, data, 0);
+            data[0] = (byte)SystemProgramInstructions.Transfer;
             Utils.Int64ToByteArrayLe(lamports, data, 4);
 
             return new TransactionInstruction
@@ -67,7 +67,7 @@ namespace Solnet.Programs
         /// <param name="programId">The program id of the account.</param>
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction CreateAccount(
-            Account fromAccount, Account newAccountPublicKey, long lamports, long space, PublicKey programId)
+            Account fromAccount, Account newAccountPublicKey, ulong lamports, ulong space, PublicKey programId)
         {
             List<AccountMeta> keys = new ()
             {
@@ -76,7 +76,7 @@ namespace Solnet.Programs
             };
             byte[] data = new byte[52];
 
-            Utils.Uint32ToByteArrayLe(ProgramIndexCreateAccount, data, 0);
+            data[0] = (byte)SystemProgramInstructions.CreateAccount;
             Utils.Int64ToByteArrayLe(lamports, data, 4);
             Utils.Int64ToByteArrayLe(space, data, 12);
             Array.Copy(programId.KeyBytes, 0, data, 20, 32);

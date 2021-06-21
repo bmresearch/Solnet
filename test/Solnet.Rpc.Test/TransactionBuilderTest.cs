@@ -43,9 +43,11 @@ namespace Solnet.Rpc.Test
             var wallet = new Wallet.Wallet(MnemonicWords);
             var fromAccount = wallet.GetAccount(0);
             var toAccount = wallet.GetAccount(1);
-            var tx = new TransactionBuilder().SetRecentBlockHash(Blockhash)
+            var tx = new TransactionBuilder()
+                .SetRecentBlockHash(Blockhash)
+                .SetFeePayer(fromAccount)
                 .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
-                .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)")).Build(fromAccount);
+                .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)")).Build();
 
             Assert.AreEqual(ExpectedTransactionHashWithTransferAndMemo, Convert.ToBase64String(tx));
         }
@@ -57,9 +59,22 @@ namespace Solnet.Rpc.Test
             var wallet = new Wallet.Wallet(MnemonicWords);
             var fromAccount = wallet.GetAccount(0);
             var toAccount = wallet.GetAccount(1);
-            _ = new TransactionBuilder()
+            _ = new TransactionBuilder().SetFeePayer(fromAccount)
                 .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
-                .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)")).Build(fromAccount);
+                .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)")).Build();
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void TestTransactionBuilderBuildNullFeePayerException()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+            var fromAccount = wallet.GetAccount(0);
+            var toAccount = wallet.GetAccount(1);
+            _ = new TransactionBuilder()
+                .SetRecentBlockHash(Blockhash)
+                .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
+                .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)")).Build();
         }
 
         [TestMethod]
@@ -68,7 +83,7 @@ namespace Solnet.Rpc.Test
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
             var fromAccount = wallet.GetAccount(0);
-            _ = new TransactionBuilder().SetRecentBlockHash(Blockhash).Build(fromAccount);
+            _ = new TransactionBuilder().SetRecentBlockHash(Blockhash).Build();
         }
 
         [TestMethod]
@@ -77,37 +92,49 @@ namespace Solnet.Rpc.Test
             var wallet = new Wallet.Wallet(MnemonicWords);
 
             var blockHash = "G9JC6E7LfG6ayxARq5zDV5RdDr6P8NJEdzTUJ8ttrSKs";
-            var minBalanceForAccount = 2039280L;
-            var minBalanceForMintAccount = 1461600L;
+            var minBalanceForAccount = 2039280UL;
+            var minBalanceForMintAccount = 1461600UL;
 
             var mintAccount = wallet.GetAccount(17);
             var ownerAccount = wallet.GetAccount(10);
             var initialAccount = wallet.GetAccount(18);
 
-            var tx = new TransactionBuilder().SetRecentBlockHash(blockHash).AddInstruction(SystemProgram.CreateAccount(
+            var tx = new TransactionBuilder()
+                .SetRecentBlockHash(blockHash)
+                .SetFeePayer(ownerAccount)
+                .AddInstruction(
+                    SystemProgram.CreateAccount(
                     ownerAccount,
                     mintAccount,
                     minBalanceForMintAccount,
                     TokenProgram.MintAccountDataSize,
-                    TokenProgram.ProgramIdKey)).AddInstruction(TokenProgram.InitializeMint(
+                    TokenProgram.ProgramIdKey))
+                .AddInstruction(
+                    TokenProgram.InitializeMint(
                     mintAccount.PublicKey,
                     2,
                     ownerAccount.PublicKey,
-                    ownerAccount.PublicKey)).AddInstruction(SystemProgram.CreateAccount(
+                    ownerAccount.PublicKey))
+                .AddInstruction(
+                    SystemProgram.CreateAccount(
                     ownerAccount,
                     initialAccount,
                     minBalanceForAccount,
                     SystemProgram.AccountDataSize,
-                    TokenProgram.ProgramIdKey)).AddInstruction(TokenProgram.InitializeAccount(
+                    TokenProgram.ProgramIdKey))
+                .AddInstruction(
+                    TokenProgram.InitializeAccount(
                     initialAccount.PublicKey,
                     mintAccount.PublicKey,
-                    ownerAccount.PublicKey)).AddInstruction(TokenProgram.MintTo(
+                    ownerAccount.PublicKey))
+                .AddInstruction(
+                    TokenProgram.MintTo(
                     mintAccount.PublicKey,
                     initialAccount.PublicKey,
                     25000,
                     ownerAccount))
                 .AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net"))
-                .Build(new List<Account> { ownerAccount, mintAccount, initialAccount });
+                .Build();
 
             Assert.AreEqual(ExpectedTransactionHashCreateInitializeAndMintTo, Convert.ToBase64String(tx));
         }
