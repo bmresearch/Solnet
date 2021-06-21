@@ -20,11 +20,6 @@ namespace Solnet.Programs
         public static readonly PublicKey ProgramIdKey = new("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 
         /// <summary>
-        /// The public key of the sysvar rent.
-        /// </summary>
-        public static readonly PublicKey SysvarRentKey = new ("SysvarRent111111111111111111111111111111111");
-
-        /// <summary>
         /// Mint account account layout size.
         /// </summary>
         public const int MintAccountDataSize = 82;
@@ -112,7 +107,7 @@ namespace Solnet.Programs
                 new AccountMeta(account, true),
                 new AccountMeta(mint, false),
                 new AccountMeta(owner, false),
-                new AccountMeta(SysvarRentKey, false)
+                new AccountMeta(SystemProgram.SysVarRentKey, false)
             };
             return new TransactionInstruction
             {
@@ -133,7 +128,7 @@ namespace Solnet.Programs
             List<AccountMeta> keys = new ()
             {
                 new AccountMeta(multiSignature, true),
-                new AccountMeta(SysvarRentKey, false)
+                new AccountMeta(SystemProgram.SysVarRentKey, false)
             };
             keys.AddRange(signers.Select(signer => new AccountMeta(signer, false)));
             return new TransactionInstruction
@@ -157,7 +152,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                new AccountMeta(mint, true), new AccountMeta(SysvarRentKey, false)
+                new AccountMeta(mint, true), new AccountMeta(SystemProgram.SysVarRentKey, false)
             };
 
             int freezeAuthorityOpt = freezeAuthority != null ? 1 : 0;
@@ -247,7 +242,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                new AccountMeta(account, true), new AccountMeta(SysvarRentKey, false)
+                new AccountMeta(account, true), new AccountMeta(SystemProgram.SysVarRentKey, false)
             };
             keys = AddSigners(keys, currentAuthority, signers);
 
