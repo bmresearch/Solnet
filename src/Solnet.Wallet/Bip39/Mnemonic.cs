@@ -1,3 +1,6 @@
+using Org.BouncyCastle.Crypto.Digests;
+using Org.BouncyCastle.Crypto.Generators;
+using Org.BouncyCastle.Crypto.Parameters;
 using Solnet.Wallet.Utilities;
 using System;
 using System.Collections;
@@ -26,7 +29,7 @@ namespace Solnet.Wallet.Bip39
                 throw new ArgumentNullException(nameof(mnemonic));
             _mnemonic = mnemonic.Trim();
             
-            wordList ??= Bip39.WordList.AutoDetect(mnemonic) ?? Bip39.WordList.English;
+            wordList ??= WordList.AutoDetect(mnemonic) ?? WordList.English;
             
             string[] words = mnemonic.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
             _mnemonic = string.Join(wordList.Space.ToString(), words);
@@ -48,13 +51,13 @@ namespace Solnet.Wallet.Bip39
         /// <param name="entropy">The entropy.</param>
         private Mnemonic(WordList wordList, byte[] entropy = null)
         {
-            wordList ??= Bip39.WordList.English;
+            wordList ??= WordList.English;
             WordList = wordList;
             entropy ??= RandomUtils.GetBytes(32);
 
             int i = Array.IndexOf(EntArray, entropy.Length * 8);
             if (i == -1)
-                throw new ArgumentException("The length for entropy should be " + string.Join(",", EntArray) + " bits", "entropy");
+                throw new ArgumentException("The length for entropy should be " + string.Join(",", EntArray) + " bits", nameof(entropy));
 
             int cs = CsArray[i];
             byte[] checksum = Utils.Sha256(entropy);
@@ -126,7 +129,7 @@ namespace Solnet.Wallet.Bip39
                 int ent = EntArray[i];
 
                 BitWriter writer = new ();
-                BitArray bits = Bip39.WordList.ToBits(Indices);
+                BitArray bits = WordList.ToBits(Indices);
                 writer.Write(bits, ent);
                 byte[] entropy = writer.ToBytes();
                 byte[] checksum = Utils.Sha256(entropy);
@@ -178,9 +181,21 @@ namespace Solnet.Wallet.Bip39
             passphrase ??= "";
             byte[] salt = Concat(_noBomutf8.GetBytes("mnemonic"), Normalize(passphrase));
             byte[] bytes = Normalize(_mnemonic);
-
-            using System.Security.Cryptography.Rfc2898DeriveBytes derive = new(bytes, salt, 2048, System.Security.Cryptography.HashAlgorithmName.SHA512);
-            return derive.GetBytes(64);
+            
+            return GenerateSeed(bytes, salt);
+        }
+        
+        /// <summary>
+        /// Generate the seed using pbkdf with sha 512.
+        /// </summary>
+        /// <param name="password">The password to derive the key from.</param>
+        /// <param name="salt">The salt to use for key derivation.</param>
+        /// <returns>The derived key.</returns>
+        private static byte[] GenerateSeed(byte[] password, byte[] salt)
+        {
+            Pkcs5S2ParametersGenerator gen = new (new Sha512Digest());
+            gen.Init(password, salt, 2048);
+            return ((KeyParameter) gen.GenerateDerivedParameters( 512)).GetKey();
         }
 
         /// <summary>

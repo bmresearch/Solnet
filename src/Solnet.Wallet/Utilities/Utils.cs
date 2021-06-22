@@ -1,7 +1,7 @@
 using Chaos.NaCl;
+using Org.BouncyCastle.Crypto.Digests;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 
 namespace Solnet.Wallet.Utilities
 {
@@ -78,7 +78,7 @@ namespace Solnet.Wallet.Utilities
         /// </summary>
         /// <param name="data">The data to hash.</param>
         /// <returns>The hash.</returns>
-        internal static byte[] Sha256(ReadOnlySpan<byte> data)
+        public static byte[] Sha256(ReadOnlySpan<byte> data)
         {
             return Sha256(data.ToArray(), 0, data.Length);
         }
@@ -92,11 +92,13 @@ namespace Solnet.Wallet.Utilities
         /// <returns>The hash.</returns>
         private static byte[] Sha256(byte[] data, int offset, int count)
         {
-            using SHA256Managed sha = new();
-            return sha.ComputeHash(data, offset, count);
+            byte[] i = new byte[32];
+            Sha256Digest digest = new ();
+            digest.BlockUpdate(data, offset, count);
+            digest.DoFinal(i, 0);
+            return i;
         }
-        
-        
+
         /// <summary>
         /// Gets the corresponding ed25519 key pair from the passed seed.
         /// </summary>

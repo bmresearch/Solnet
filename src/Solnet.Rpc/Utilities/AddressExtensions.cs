@@ -1,8 +1,8 @@
+using Org.BouncyCastle.Crypto.Digests;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Solnet.Rpc.Utilities
@@ -27,9 +27,9 @@ namespace Solnet.Rpc.Utilities
         /// <exception cref="Exception">Throws exception when the resulting address doesn't fall off the Ed25519 curve.</exception>
         public static byte[] CreateProgramAddress(IList<byte[]> seeds, byte[] programId)
         {
-            var buffer = new MemoryStream(32 * seeds.Count + ProgramDerivedAddressBytes.Length + programId.Length);
+            MemoryStream buffer = new (32 * seeds.Count + ProgramDerivedAddressBytes.Length + programId.Length);
 
-            foreach (var seed in seeds)
+            foreach (byte[] seed in seeds)
             {
                 if (seed.Length > 32)
                 {
@@ -42,7 +42,7 @@ namespace Solnet.Rpc.Utilities
             buffer.Write(programId);
             buffer.Write(ProgramDerivedAddressBytes);
 
-            var hash = SHA256.HashData(buffer.ToArray());
+            byte[] hash = Sha256(buffer.ToArray());
 
             if (hash.IsOnCurve())
             {
@@ -61,8 +61,8 @@ namespace Solnet.Rpc.Utilities
         /// <exception cref="Exception">Throws exception when it is unable to find a viable nonce for the address.</exception>
         public static (byte[] Address, int Nonce) FindProgramAddress(IEnumerable<byte[]> seeds, byte[] programId)
         {
-            var nonce = 255;
-            var buffer = seeds.ToList();
+            int nonce = 255;
+            List<byte[]> buffer = seeds.ToList();
 
             while (nonce-- != 0)
             {
@@ -82,6 +82,20 @@ namespace Solnet.Rpc.Utilities
             }
 
             throw new Exception("unable to find viable program address nonce");
+        }
+        
+        /// <summary>
+        /// Calculates the SHA256 of the given data.
+        /// </summary>
+        /// <param name="data">The data to hash.</param>
+        /// <returns>The hash.</returns>
+        private static byte[] Sha256(byte[] data)
+        {
+            byte[] i = new byte[32];
+            Sha256Digest digest = new ();
+            digest.BlockUpdate(data, 0, data.Length);
+            digest.DoFinal(i, 0);
+            return i;
         }
     }
 }
