@@ -15,5 +15,5 @@
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.2" />
   </ItemGroup>
 
-  <Import Project="..\..\SharedBuildProperties.props"/>
+  <Import Project="..\..\SharedBuildProperties.props" />
 </Project>

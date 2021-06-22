@@ -426,6 +426,7 @@ namespace Solnet.Programs.Test
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
 
+            var mintAccount = wallet.GetAccount(21);
             var sourceAccount = wallet.GetAccount(69);
             var delegateAccount = wallet.GetAccount(420);
             var ownerAccount = wallet.GetAccount(1);
@@ -457,6 +458,9 @@ namespace Solnet.Programs.Test
 
             var txInstruction =
                 TokenProgram.Revoke(delegateAccount.PublicKey, ownerAccount);
+                TokenProgram.Revoke(
+                    delegateAccount.PublicKey,
+                    ownerAccount, null);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
