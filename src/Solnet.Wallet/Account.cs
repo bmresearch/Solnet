@@ -1,7 +1,6 @@
 using Chaos.NaCl;
+using Org.BouncyCastle.Security;
 using Solnet.Wallet.Utilities;
-using System;
-using System.Security.Cryptography;
 
 namespace Solnet.Wallet
 {
@@ -81,7 +80,7 @@ namespace Solnet.Wallet
         private static byte[] GenerateRandomSeed()
         {
             byte[] bytes = new byte[Ed25519.PrivateKeySeedSizeInBytes];
-            RandomNumberGenerator.Create().GetBytes(bytes);
+            RandomUtils.GetBytes(bytes);
             return bytes;
         }
     }

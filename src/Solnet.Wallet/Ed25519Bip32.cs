@@ -1,8 +1,10 @@
+using Org.BouncyCastle.Crypto.Digests;
+using Org.BouncyCastle.Crypto.Macs;
+using Org.BouncyCastle.Crypto.Parameters;
 using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -76,8 +78,13 @@ namespace Solnet.Wallet
         /// <returns>A tuple consisting of the key and corresponding chain code.</returns>
         private static (byte[] Key, byte[] ChainCode) HmacSha512(byte[] keyBuffer, byte[] data)
         {
-            using HMACSHA512 hmacSha512 = new (keyBuffer);
-            byte[] i = hmacSha512.ComputeHash(data);
+            byte[] i = new byte[64];
+            Sha512Digest digest = new ();
+            HMac hmac = new (digest);
+            
+            hmac.Init(new KeyParameter(keyBuffer));
+            hmac.BlockUpdate(data, 0, data.Length);
+            hmac.DoFinal(i, 0);
 
             byte[] il = i.Slice(0, 32);
             byte[] ir = i.Slice(32);

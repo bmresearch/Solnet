@@ -1,5 +1,5 @@
+using Org.BouncyCastle.Security;
 using System;
-using System.Security.Cryptography;
 
 namespace Solnet.Wallet.Utilities
 {
@@ -11,14 +11,14 @@ namespace Solnet.Wallet.Utilities
         /// <summary>
         /// The instance of the crypto service provider.
         /// </summary>
-        private readonly RNGCryptoServiceProvider _instance;
+        private readonly SecureRandom _instance;
 
         /// <summary>
         /// Initialize the random number generator.
         /// </summary>
         public RngCryptoServiceProviderRandom()
         {
-            _instance = new RNGCryptoServiceProvider();
+            _instance = new SecureRandom();
         }
 
         #region IRandom Members
@@ -26,7 +26,7 @@ namespace Solnet.Wallet.Utilities
         /// <inheritdoc cref="IRandom.GetBytes(byte[])"/>
         public void GetBytes(byte[] output)
         {
-            _instance.GetBytes(output);
+            _instance.NextBytes(output);
         }
 
         #endregion
@@ -86,6 +86,21 @@ namespace Solnet.Wallet.Utilities
             Random.GetBytes(data);
             PushEntropy(data);
             return data;
+        }
+        
+        /// <summary>
+        /// Get random bytes.
+        /// </summary>
+        /// <param name="output">The array of bytes to write the random bytes to.</param>
+        /// <returns>The byte array.</returns>
+        /// <exception cref="InvalidOperationException">Thrown when the random number generator has not been initialized</exception>
+        public static byte[] GetBytes(byte[] output)
+        {
+            if (Random == null)
+                throw new InvalidOperationException("You must initialize the random number generator before generating numbers.");
+            Random.GetBytes(output);
+            PushEntropy(output);
+            return output;
         }
 
         /// <summary>
