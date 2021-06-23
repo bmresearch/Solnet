@@ -6,6 +6,7 @@ using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
@@ -18,6 +19,7 @@ namespace Solnet.Rpc
     /// <summary>
     /// Implementation of the Solana streaming RPC API abstraction client.
     /// </summary>
+    [DebuggerDisplay("Cluster = {" + nameof(NodeAddress) + "}")]
     internal class SolanaStreamingRpcClient : StreamingRpcClient, IStreamingRpcClient
     {
         /// <summary>

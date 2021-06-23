@@ -4,6 +4,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 using Solnet.Wallet.Utilities;
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -14,6 +15,7 @@ namespace Solnet.Wallet.Bip39
     /// BIP39 specification used as reference located here: https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
     /// This implementation was taken from NBitcoin: https://github.com/MetacoSA/NBitcoin/
     /// </summary>
+    [DebuggerDisplay("Mnemonic = {" + nameof(_mnemonic) + "}")]
     public class Mnemonic
     {
         /// <summary>

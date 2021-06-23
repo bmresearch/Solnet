@@ -1,12 +1,14 @@
 using Chaos.NaCl;
 using Org.BouncyCastle.Security;
 using Solnet.Wallet.Utilities;
+using System.Diagnostics;
 
 namespace Solnet.Wallet
 {
     /// <summary>
     /// Implements account functionality.
     /// </summary>
+    [DebuggerDisplay("PubKey = {" + nameof(Account.PublicKey.Key) + "}")]
     public class Account
     {
         /// <summary>
@@ -83,5 +85,19 @@ namespace Solnet.Wallet
             RandomUtils.GetBytes(bytes);
             return bytes;
         }
+        
+        /// <summary>
+        /// Conversion between a <see cref="Account"/> object and the corresponding private key.
+        /// </summary>
+        /// <param name="account">The Account object.</param>
+        /// <returns>The private key.</returns>
+        public static implicit operator PrivateKey(Account account) => account.PrivateKey;
+
+        /// <summary>
+        /// Conversion between a <see cref="Account"/> object and the corresponding public key.
+        /// </summary>
+        /// <param name="account">The Account object.</param>
+        /// <returns>The public key as a byte array.</returns>
+        public static implicit operator PublicKey(Account account) => account.PublicKey;
     }
 }
