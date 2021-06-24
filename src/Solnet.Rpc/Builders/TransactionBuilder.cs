@@ -56,6 +56,8 @@ namespace Solnet.Rpc.Builders
                 signers.AddRange(from accountMeta in instruction.Keys where accountMeta.Signer && !signers.Contains(accountMeta.Account) select accountMeta.Account);
             }
 
+            if (!signers.Contains(_messageBuilder.FeePayer)) signers.Add(_messageBuilder.FeePayer);
+
             return signers;
         }
         
