@@ -12,7 +12,7 @@ namespace Solnet.Rpc.Core.Http
     /// <summary>
     /// Base Rpc client class that abstracts the HttpClient handling.
     /// </summary>
-    public abstract class JsonRpcClient
+    internal abstract class JsonRpcClient
     {
         /// <summary>
         /// The Json serializer options to be reused between calls.

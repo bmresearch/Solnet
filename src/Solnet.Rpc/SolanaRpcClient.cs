@@ -6,6 +6,7 @@ using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -15,7 +16,8 @@ namespace Solnet.Rpc
     /// <summary>
     /// Implements functionality to interact with the Solana JSON RPC API.
     /// </summary>
-    public class SolanaRpcClient : JsonRpcClient, IRpcClient
+    [DebuggerDisplay("Cluster = {" + nameof(NodeAddress) + "}")]
+    internal class SolanaRpcClient : JsonRpcClient, IRpcClient
     {
         /// <summary>
         /// Message Id generator.
