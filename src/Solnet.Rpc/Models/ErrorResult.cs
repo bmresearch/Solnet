@@ -11,6 +11,6 @@ namespace Solnet.Rpc.Models
         /// The error string.
         /// </summary>
         [JsonPropertyName("err")]
-        public string Error { get; set; }
+        public TransactionError Error { get; set; }
     }
 }

@@ -234,6 +234,9 @@
     <None Update="Resources\Streaming\Program\ProgramSubscribeConfirmed.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Streaming\Signature\SignatureSubscribeErrorNotification.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Streaming\Signature\SignatureSubscribeProcessed.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
