@@ -228,12 +228,20 @@ namespace Solnet.Rpc.Builders
         {
             IList<AccountMeta> keysList = _accountKeysList.AccountList;
             int feePayerIndex = FindAccountIndex(keysList, FeePayer.PublicKey.KeyBytes);
+            if (feePayerIndex == -1)
+            {
+                _accountKeysList.Add(new AccountMeta(FeePayer, true));
+
+            }
+            else
+            {
+                keysList.RemoveAt(feePayerIndex);
+            }
 
             List<AccountMeta> newList = new List<AccountMeta>
             {
                 new (FeePayer, true)
             };
-            keysList.RemoveAt(feePayerIndex);
             newList.AddRange(keysList);
 
             return newList;
@@ -248,12 +256,13 @@ namespace Solnet.Rpc.Builders
         /// <exception cref="Exception"></exception>
         private static int FindAccountIndex(IList<AccountMeta> accountMetas, byte[] publicKey)
         {
+            var encodedKey = Encoder.EncodeData(publicKey);
             for (int index = 0; index < accountMetas.Count; index++)
             {
-                if (accountMetas[index].PublicKey == Encoder.EncodeData(publicKey)) return index;
+                if (accountMetas[index].PublicKey == encodedKey) return index;
             }
 
-            throw new Exception($"could not find account index for public key: {Encoder.EncodeData(publicKey)}");
+            return -1;
         }
     }
 }
