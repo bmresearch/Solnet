@@ -509,9 +509,59 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
-            Assert.AreEqual("dummy error", resultNotification.Value.Error);
+            Assert.IsNull(resultNotification.Value.Error);
 
             Assert.IsTrue(subscriptionEvent.WaitOne());
+            Assert.AreEqual(SubscriptionStatus.Unsubscribed, evt.Status);
+            Assert.AreEqual(SubscriptionStatus.Unsubscribed, sub.State);
+        }
+
+        [TestMethod]
+        public void SubscribeSignature_ErrorNotificationTest()
+        {
+            var expected = File.ReadAllText("Resources/Streaming/Signature/SignatureSubscribe.json");
+            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            var notificationContents = File.ReadAllBytes("Resources/Streaming/Signature/SignatureSubscribeErrorNotification.json");
+            ResponseValue<ErrorResult> resultNotification = null;
+            AutoResetEvent subscriptionEvent = new AutoResetEvent(false);
+            var result = new ReadOnlyMemory<byte>();
+
+            SetupAction(out Action<SubscriptionState, ResponseValue<ErrorResult>> action,
+                (x) => resultNotification = x,
+                (x) => result = x,
+                subConfirmContent,
+                notificationContents);
+
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+
+            SubscriptionEvent evt = null;
+
+
+            sut.Init().Wait();
+            var sub = sut.SubscribeSignature("4orRpuqStpJDvcpBy3vDSV4TDTGNbefmqYUnG2yVnKwjnLFqCwY4h5cBTAKakKek4inuxHF71LuscBS1vwSLtWcx", action);
+            sub.SubscriptionChanged += (s, e) =>
+            {
+                evt = e;
+                if (e.Status == SubscriptionStatus.Unsubscribed)
+                    subscriptionEvent.Set();
+            };
+            _subConfirmEvent.Set();
+
+            _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
+                WebSocketMessageType.Text,
+                true,
+                It.IsAny<CancellationToken>()));
+            var res = Encoding.UTF8.GetString(result.Span);
+            Assert.AreEqual(expected, res);
+
+            Assert.IsTrue(_notificationEvent.WaitOne());
+
+            Assert.IsTrue(subscriptionEvent.WaitOne());
+
+            Assert.AreEqual(TransactionErrorType.InstructionError, resultNotification.Value.Error.Type);
+            Assert.AreEqual(InstructionErrorType.Custom, resultNotification.Value.Error.InstructionError.Type);
+            Assert.AreEqual(0, resultNotification.Value.Error.InstructionError.CustomError);
+
             Assert.AreEqual(SubscriptionStatus.Unsubscribed, evt.Status);
             Assert.AreEqual(SubscriptionStatus.Unsubscribed, sub.State);
         }
@@ -555,7 +605,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
-            Assert.AreEqual("dummy error", resultNotification.Value.Error);
+            Assert.IsNull(resultNotification.Value.Error);
 
             Assert.IsTrue(subscriptionEvent.WaitOne());
             Assert.AreEqual(SubscriptionStatus.Unsubscribed, evt.Status);
