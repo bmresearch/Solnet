@@ -7,22 +7,17 @@ using System.Text;
 namespace Solnet.Programs
 {
     /// <summary>
-    /// Helper class for the Memo Program.
+    /// Implements the Memo Program methods.
     /// <remarks>
-    /// Used to write UTF-8 data into Solana transactions.
+    /// For more information see: https://spl.solana.com/memo
     /// </remarks>
     /// </summary>
     public static class MemoProgram
     {
         /// <summary>
-        /// The base58 encoder instance.
+        /// The public key of the Memo Program.
         /// </summary>
-        private static readonly Base58Encoder Encoder = new();
-
-        /// <summary>
-        /// The address of the Memo Program.
-        /// </summary>
-        private static readonly string ProgramId = "Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo";
+        private static readonly PublicKey ProgramIdKey = new("Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo");
 
         /// <summary>
         /// Initialize a new transaction instruction which interacts with the Memo Program.
@@ -40,7 +35,7 @@ namespace Solnet.Programs
 
             return new TransactionInstruction
             {
-                ProgramId = Encoder.DecodeData(ProgramId),
+                ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
                 Data = memoBytes
             };

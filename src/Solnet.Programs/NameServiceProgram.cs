@@ -233,10 +233,10 @@ namespace Solnet.Programs
             byte[] methodBuffer = new byte[49];
 
             methodBuffer[0] = (byte)NameServiceInstructions.Create;
-            Utils.Uint32ToByteArrayLe(hashedName.Length, methodBuffer, 1);
+            Utils.Uint32ToByteArrayLe((ulong) hashedName.Length, methodBuffer, 1);
             Array.Copy(hashedName, 0, methodBuffer, 5, hashedName.Length);
             Utils.Int64ToByteArrayLe(lamports, methodBuffer, 37);
-            Utils.Uint32ToByteArrayLe(space, methodBuffer, 45);
+            Utils.Uint32ToByteArrayLe((ulong) space, methodBuffer, 45);
 
             return methodBuffer;
         }
@@ -252,7 +252,7 @@ namespace Solnet.Programs
             byte[] methodBuffer = new byte[data.Length + 5];
             
             methodBuffer[0] = (byte)NameServiceInstructions.Update;
-            Utils.Uint32ToByteArrayLe(offset, methodBuffer, 1);
+            Utils.Uint32ToByteArrayLe((ulong) offset, methodBuffer, 1);
             Array.Copy(data, 0, methodBuffer, 5, data.Length);
 
             return methodBuffer;
