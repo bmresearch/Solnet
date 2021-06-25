@@ -43,6 +43,13 @@ jobs:
           artifactName: 'NuGet packages'
           targetPath: 'artifacts/packages'
 
+      - task: NuGetCommand@2
+        inputs:
+          command: 'push'
+          packagesToPush: 'artifacts/packages/*.nupkg'
+          nuGetFeedType: 'external'
+          publishFeedCredentials: 'blockmountain nuget'
+
       - task: GithubRelease@0
         displayName: 'Create GitHub Release'
         condition: eq(variables.isMaster, true)

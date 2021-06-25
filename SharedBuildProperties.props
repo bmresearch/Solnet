@@ -2,9 +2,9 @@
   xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Product>Solnet</Product>
-    <Version>0.1.1</Version>
+    <Version>0.2.0</Version>
     <Copyright>Copyright 2021 &#169; Solnet</Copyright>
-    <Authors>Tiago Carvalho &amp; Hugo Carvalho</Authors>
+    <Authors>blockmountain</Authors>
     <PublisherName>blockmountain</PublisherName>
     <RepositoryUrl>https://github.com/bmresearch/Solnet</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -12,7 +12,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
     <PackageDescription>Solnet is Solana's .NET integration library.</PackageDescription>
-    <PackageTags>solana;solnet;sol;net5</PackageTags>
+    <PackageTags>solana;solnet;sol;net5;spl</PackageTags>
     <PackageReleaseNotes>https://github.com/bmresearch/Solnet/releases</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
