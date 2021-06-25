@@ -1,6 +1,8 @@
-![solnet](docs/assets/solnet-horizontal.png)
-
 <p align="center">
+    <img src="https://raw.githubusercontent.com/bmresearch/Solnet/5f799e4e5cc5978c3f5cb15b96ad855162a4f085/assets/icon.png" margin="auto" height="175"/>
+</p>
+
+<div align="center">
     <a href="https://dev.azure.com/bmresearch/solnet/_build/latest?definitionId=2&branchName=refs%2Fpull%2F7%2Fmerge">
         <img src="https://img.shields.io/azure-devops/build/bmresearch/solnet/2/master?style=flat-square"
             alt="Azure DevOps Build Status (master)" ></a>
@@ -15,13 +17,22 @@
         <img src="https://img.shields.io/twitter/follow/blockmountainio?style=flat-square&logo=twitter"
             alt="Follow on Twitter"></a>
     <a href="https://discord.gg/YHMbpuS3Tx">
-       <img alt="Discord" src="https://img.shields.io/discord/849407317761064961?style=flat-square"
+        <img alt="Discord" src="https://img.shields.io/discord/849407317761064961?style=flat-square"
             alt="Join the discussion!"></a>
-</p>
+</div>
+
+<div style="text-align:center">
+
+<p>
 
 # What is Solnet?
 
 Solnet is Solana's .NET integration library.
+
+</p>
+
+</div>
+
 
 ## Features
 - Full JSON RPC API coverage
@@ -52,16 +63,21 @@ make it intuitive and easy to use the library.
 
 ```c#
 // To initialize a wallet and have access to the same keys generated in solana-keygen
-var wallet = new Wallet("mnemonic words ...", Wordlist.English, "passphrase");
+var wallet = new Wallet("mnemonic words ...", Wordlist.English, "passphrase", SeedMode.Bip39);
 
-// To initialize a wallet and have access to the same keys generated in sollet
+// To initialize a wallet and have access to the same keys generated in sollet (the default)
 var sollet = new Wallet("mnemonic words ...", Wordlist.English);
+
 // Retrieve accounts by derivation path index
 var account = sollet.GetAccount(10);
 
+
+// Restore by mnemonic
 var mnemonic = new Mnemonic("mnemonic words ...");
 var wallet = new Wallet(mnemonic);
 
+// Generate a new mnemonic
+var mnemonic2 = new Mnemonic(WordList.English, WordCount.TwentyFour);
 ``` 
 
 ### Sending a transaction

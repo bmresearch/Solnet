@@ -47,10 +47,10 @@ namespace Solnet.Rpc.Core.Http
         
         /// <summary>
         /// Initialize the request result.
+        /// <param name="resultMsg">An http request result.</param>
+        /// <param name="result">The type of the request result.</param>
         /// </summary>
-        public RequestResult(){}
-
-        internal RequestResult(HttpResponseMessage resultMsg, T result = default(T))
+        public RequestResult(HttpResponseMessage resultMsg, T result = default(T))
         {
             HttpStatusCode = resultMsg.StatusCode;
             WasHttpRequestSuccessful = resultMsg.IsSuccessStatusCode;
