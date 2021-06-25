@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/bmresearch/Solnet/5f799e4e5cc5978c3f5cb15b96ad855162a4f085/assets/icon.png" margin="auto" height="175"/>
+    <img src="https://raw.githubusercontent.com/bmresearch/Solnet/master/assets/icon.png" margin="auto" height="175"/>
 </p>
 
 <div align="center">
@@ -40,12 +40,19 @@ Solnet is Solana's .NET integration library.
 - Wallet and accounts (sollet and solana-keygen compatible)
 - Keystore (sollet and solana-keygen compatible)
 - Programs
-    - System Program
-    - Memo Program
-    - Token Program
-    - Associated Token Account Program
-    - Name Service Program
-    - Shared Memory Program
+    - Native Programs
+      - System Program
+    - Solana Program Library (SPL)
+      - Memo Program
+      - Token Program
+      - Associated Token Account Program
+      - Name Service Program
+      - Shared Memory Program
+
+For the sake of maintainability and sometimes due to the size and complexity of some other programs, this repository will only contain Solana's Native Programs and Programs who are part of the SPL,
+for a list of other commonly needed programs see below:
+
+- [Serum](https://github.com/bmresearch/Solnet.Serum/)
 
 ## Requirements
 - net 5.0
