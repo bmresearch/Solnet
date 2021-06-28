@@ -1,0 +1,20 @@
+{
+  "jsonrpc": "2.0",
+  "method": "logsNotification",
+  "params": {
+    "result": {
+      "context": { "slot": 84392429 },
+      "value": {
+        "err": {
+          "InstructionError": [
+            1,
+            { "Custom": 41 }
+          ]
+        },
+        "logs": [ "Program 9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin invoke [1]", "Program 9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin consumed 3769 of 200000 compute units", "Program 9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin success", "Program 9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin invoke [1]", "Program 9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin consumed 5619 of 200000 compute units", "Program 9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin failed: custom program error: 0x29" ],
+        "signature": "bGNVGCa1WFchzJStauKFVk7anzuFvA7hkMcx8Zi2o4euJaivzpwz8346yJ4Xn8H7XzMp44coTxdcDRd9d4yzj4m"
+      }
+    },
+    "subscription": 23784
+  }
+}

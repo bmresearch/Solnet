@@ -231,6 +231,9 @@
     <None Update="Resources\Streaming\Logs\LogsSubscribeMentionConfirmed.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Streaming\Logs\LogsSubscribeNotificationWithError.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Streaming\Program\ProgramSubscribeConfirmed.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

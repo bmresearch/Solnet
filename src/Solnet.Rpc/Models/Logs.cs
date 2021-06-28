@@ -14,7 +14,7 @@ namespace Solnet.Rpc.Models
         /// The error associated with the transaction simulation.
         /// </summary>
         [JsonPropertyName("err")]
-        public string Error { get; set; }
+        public TransactionError Error { get; set; }
 
         /// <summary>
         /// The log messages the transaction instructions output during execution.

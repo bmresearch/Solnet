@@ -3,7 +3,7 @@
     /// <summary>
     /// Base JpnRpc message.
     /// </summary>
-    public class JsonRpcBase
+    public abstract class JsonRpcBase
     {
         /// <summary>
         /// The rpc version.

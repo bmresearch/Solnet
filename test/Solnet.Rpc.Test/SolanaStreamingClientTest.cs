@@ -330,6 +330,42 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
+        public void SubscribeLogsWithErrors()
+        {
+            var expected = File.ReadAllText("Resources/Streaming/Logs/LogsSubscribeAllProcessed.json");
+            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            var notificationContents = File.ReadAllBytes("Resources/Streaming/Logs/LogsSubscribeNotificationWithError.json");
+            ResponseValue<LogInfo> resultNotification = null;
+            var result = new ReadOnlyMemory<byte>();
+
+            SetupAction(out Action<SubscriptionState, ResponseValue<LogInfo>> action,
+                (x) => resultNotification = x,
+                (x) => result = x,
+                subConfirmContent,
+                notificationContents);
+
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+
+            sut.Init().Wait();
+            _ = sut.SubscribeLogInfo(Types.LogsSubscriptionType.All, action, Types.Commitment.Processed);
+            _subConfirmEvent.Set();
+
+            _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
+                WebSocketMessageType.Text,
+                true,
+                It.IsAny<CancellationToken>()));
+            var res = Encoding.UTF8.GetString(result.Span);
+            Assert.AreEqual(expected, res);
+
+            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.AreEqual(TransactionErrorType.InstructionError, resultNotification.Value.Error.Type);
+            Assert.AreEqual(InstructionErrorType.Custom, resultNotification.Value.Error.InstructionError.Type);
+            Assert.AreEqual(41, resultNotification.Value.Error.InstructionError.CustomError);
+
+            Assert.AreEqual("bGNVGCa1WFchzJStauKFVk7anzuFvA7hkMcx8Zi2o4euJaivzpwz8346yJ4Xn8H7XzMp44coTxdcDRd9d4yzj4m", resultNotification.Value.Signature);
+        }
+
+        [TestMethod]
         public void SubscribeProgramTest()
         {
             var expected = File.ReadAllText("Resources/Streaming/Program/ProgramSubscribe.json");
