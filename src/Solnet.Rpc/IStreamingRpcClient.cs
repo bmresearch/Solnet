@@ -180,9 +180,14 @@ namespace Solnet.Rpc
         void Unsubscribe(SubscriptionState subscription);
 
         /// <summary>
-        /// Asynchronously initializes the client connection asynchronously.
+        /// Asynchronously initializes the client connection and starts listening for socket messages.
         /// </summary>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        Task Init();
+        Task ConnectAsync();
+        /// <summary>
+        /// Asynchronously disconnects and removes all running subscriptions.
+        /// </summary>
+        /// <returns>The task object representing the asynchronous operation.</returns>
+        Task DisconnectAsync();
     }
 }

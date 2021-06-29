@@ -12,6 +12,7 @@ namespace Solnet.Rpc.Core.Sockets
     /// </summary>
     internal abstract class StreamingRpcClient
     {
+
         /// <summary>
         /// The web socket client abstraction.
         /// </summary>
@@ -42,7 +43,7 @@ namespace Solnet.Rpc.Core.Sockets
         /// Initializes the websocket connection and starts receiving messages asynchronously.
         /// </summary>
         /// <returns>Returns the task representing the asynchronous task.</returns>
-        public async Task Init()
+        public async Task ConnectAsync()
         {
             await ClientSocket.ConnectAsync(NodeAddress, CancellationToken.None).ConfigureAwait(false);
             _ = Task.Run(StartListening);

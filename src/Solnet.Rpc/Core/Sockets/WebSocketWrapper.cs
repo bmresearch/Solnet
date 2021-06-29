@@ -14,6 +14,10 @@ namespace Solnet.Rpc.Core.Sockets
             this.webSocket = webSocket;
         }
 
+        public WebSocketCloseStatus? CloseStatus => webSocket.CloseStatus;
+
+        public string CloseStatusDescription => webSocket.CloseStatusDescription;
+
         public WebSocketState State => webSocket.State;
 
         public Task CloseAsync(WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken)
