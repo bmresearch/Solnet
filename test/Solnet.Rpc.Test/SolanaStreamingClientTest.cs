@@ -105,7 +105,7 @@ namespace Solnet.Rpc.Test
 
             const string pubKey = "CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12";
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             _ = sut.SubscribeAccountInfo(pubKey, action);
             _subConfirmEvent.Set();
 
@@ -143,7 +143,7 @@ namespace Solnet.Rpc.Test
 
             const string pubKey = "CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12";
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             _ = sut.SubscribeAccountInfo(pubKey, action, Types.Commitment.Processed);
             _subConfirmEvent.Set();
 
@@ -180,7 +180,7 @@ namespace Solnet.Rpc.Test
 
             const string pubKey = "CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12";
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             var sub = sut.SubscribeAccountInfo(pubKey, action);
             sub.SubscriptionChanged += (_, e) =>
             {
@@ -217,7 +217,7 @@ namespace Solnet.Rpc.Test
 
             const string pubKey = "11111111111111111111111111111111";
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             _ = sut.SubscribeLogInfo(pubKey, action);
 
             _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
@@ -247,7 +247,7 @@ namespace Solnet.Rpc.Test
 
             const string pubKey = "11111111111111111111111111111111";
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             _ = sut.SubscribeLogInfo(pubKey, action, Types.Commitment.Confirmed);
 
             _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
@@ -276,7 +276,7 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             _ = sut.SubscribeLogInfo(Types.LogsSubscriptionType.All, action);
             _subConfirmEvent.Set();
 
@@ -311,7 +311,7 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             _ = sut.SubscribeLogInfo(Types.LogsSubscriptionType.All, action, Types.Commitment.Processed);
             _subConfirmEvent.Set();
 
@@ -346,7 +346,7 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             _ = sut.SubscribeLogInfo(Types.LogsSubscriptionType.All, action, Types.Commitment.Processed);
             _subConfirmEvent.Set();
 
@@ -382,7 +382,7 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             _ = sut.SubscribeProgram("11111111111111111111111111111111", action);
             _subConfirmEvent.Set();
 
@@ -419,7 +419,7 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             _ = sut.SubscribeProgram("11111111111111111111111111111111", action, Types.Commitment.Confirmed);
             _subConfirmEvent.Set();
 
@@ -456,7 +456,7 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             _ = sut.SubscribeSlotInfo(action);
             _subConfirmEvent.Set();
 
@@ -491,7 +491,7 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             var sub = sut.SubscribeRoot(action);
             _subConfirmEvent.Set();
 
@@ -527,7 +527,7 @@ namespace Solnet.Rpc.Test
             SubscriptionEvent evt = null;
 
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             var sub = sut.SubscribeSignature("4orRpuqStpJDvcpBy3vDSV4TDTGNbefmqYUnG2yVnKwjnLFqCwY4h5cBTAKakKek4inuxHF71LuscBS1vwSLtWcx", action);
             sub.SubscriptionChanged += (s, e) =>
             {
@@ -573,7 +573,7 @@ namespace Solnet.Rpc.Test
             SubscriptionEvent evt = null;
 
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             var sub = sut.SubscribeSignature("4orRpuqStpJDvcpBy3vDSV4TDTGNbefmqYUnG2yVnKwjnLFqCwY4h5cBTAKakKek4inuxHF71LuscBS1vwSLtWcx", action);
             sub.SubscriptionChanged += (s, e) =>
             {
@@ -623,7 +623,7 @@ namespace Solnet.Rpc.Test
             SubscriptionEvent evt = null;
 
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             var sub = sut.SubscribeSignature("4orRpuqStpJDvcpBy3vDSV4TDTGNbefmqYUnG2yVnKwjnLFqCwY4h5cBTAKakKek4inuxHF71LuscBS1vwSLtWcx", action, Types.Commitment.Processed);
             sub.SubscriptionChanged += (s, e) =>
             {
@@ -666,7 +666,7 @@ namespace Solnet.Rpc.Test
 
             const string pubKey = "invalidkey1";
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             var sub = sut.SubscribeAccountInfo(pubKey, action);
             SubscriptionEvent subEvent = null;
             sub.SubscriptionChanged += (sub, evt) =>
@@ -747,7 +747,7 @@ namespace Solnet.Rpc.Test
 
             const string pubKey = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
 
-            sut.Init().Wait();
+            sut.ConnectAsync().Wait();
             var sub = sut.SubscribeAccountInfo(pubKey, actionMock.Object);
             SubscriptionEvent subEvent = null;
             sub.SubscriptionChanged += (sub, evt) =>
