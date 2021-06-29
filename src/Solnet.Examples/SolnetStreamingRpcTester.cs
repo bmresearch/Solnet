@@ -9,7 +9,7 @@ namespace Solnet.Examples
         static void Example(string[] args)
         {
             IStreamingRpcClient c = ClientFactory.GetStreamingClient(Cluster.MainNet);
-            c.Init().Wait();
+            c.ConnectAsync().Wait();
 
             var sub = c.SubscribeAccountInfo(
                 "4tSvZvnbyzHXLMTiFonMyxZoHmFqau1XArcRCVHLZ5gX",

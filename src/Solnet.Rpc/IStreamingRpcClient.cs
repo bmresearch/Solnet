@@ -3,6 +3,7 @@ using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
 using System;
+using System.Net.WebSockets;
 using System.Threading.Tasks;
 
 namespace Solnet.Rpc
@@ -10,8 +11,18 @@ namespace Solnet.Rpc
     /// <summary>
     /// Represents the streaming RPC client for the solana API.
     /// </summary>
-    public interface IStreamingRpcClient
+    public interface IStreamingRpcClient : IDisposable
     {
+        /// <summary>
+        /// Current connection state.
+        /// </summary>
+        WebSocketState State { get; }
+
+        /// <summary>
+        /// Event triggered when the connection status changes between connected and disconnected.
+        /// </summary>
+        event EventHandler<WebSocketState> ConnectionStateChangedEvent;
+
         /// <summary>
         /// The address this client connects to.
         /// </summary>

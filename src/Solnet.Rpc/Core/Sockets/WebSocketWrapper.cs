@@ -26,6 +26,9 @@ namespace Solnet.Rpc.Core.Sockets
         public Task ConnectAsync(Uri uri, CancellationToken cancellationToken)
             => webSocket.ConnectAsync(uri, cancellationToken);
 
+        public Task CloseAsync(CancellationToken cancellationToken)
+            => webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, cancellationToken);
+
         public ValueTask<ValueWebSocketReceiveResult> ReceiveAsync(Memory<byte> buffer, CancellationToken cancellationToken)
             => webSocket.ReceiveAsync(buffer, cancellationToken);
 
