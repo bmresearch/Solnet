@@ -28,7 +28,7 @@ namespace Solnet.Rpc.Core.Sockets
         /// <param name="status">The new status.</param>
         /// <param name="error">The possible error message.</param>
         /// <param name="code">The possible error code.</param>
-        internal SubscriptionEvent(SubscriptionStatus status, string error = default, string code = default)
+        public SubscriptionEvent(SubscriptionStatus status, string error = default, string code = default)
         {
             Status = status;
             Error = error;
