@@ -18,7 +18,7 @@ namespace Solnet.Rpc.Core.Http
         /// <summary>
         /// Returns <c>true</c> if the HTTP request was successful (e.g. Code 200).
         /// </summary>
-        public bool WasHttpRequestSuccessful { get; }
+        public bool WasHttpRequestSuccessful { get; set; }
 
         /// <summary>
         /// Returns <c>true</c> if the request was successfully handled by the server and no error parameters are found in the result.
@@ -38,13 +38,13 @@ namespace Solnet.Rpc.Core.Http
         /// <summary>
         /// Returns the <see cref="HttpStatusCode"/> of the request.
         /// </summary>
-        public HttpStatusCode HttpStatusCode { get; }
+        public HttpStatusCode HttpStatusCode { get; set; }
 
         /// <summary>
         /// Returns the error code if one was found in the error object when the server is unable to handle the request.
         /// </summary>
         public int ServerErrorCode { get; set; }
-        
+
         /// <summary>
         /// Initialize the request result.
         /// <param name="resultMsg">An http request result.</param>
@@ -57,6 +57,11 @@ namespace Solnet.Rpc.Core.Http
             Reason = resultMsg.ReasonPhrase;
             Result = result;
         }
+
+        /// <summary>
+        /// Added default constructor to facilitate unit tests.
+        /// </summary>
+        public RequestResult() { }
 
         internal RequestResult(HttpStatusCode code, string reason)
         {

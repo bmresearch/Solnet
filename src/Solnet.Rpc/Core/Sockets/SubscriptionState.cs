@@ -13,7 +13,7 @@ namespace Solnet.Rpc.Core.Sockets
         /// <summary>
         /// Streaming client reference for easy unsubscription.
         /// </summary>
-        private readonly SolanaStreamingRpcClient _rpcClient;
+        private readonly IStreamingRpcClient _rpcClient;
 
         /// <summary>
         /// The subscription ID as confirmed by the node.
@@ -23,27 +23,27 @@ namespace Solnet.Rpc.Core.Sockets
         /// <summary>
         /// The channel subscribed.
         /// </summary>
-        public SubscriptionChannel Channel { get; }
+        public SubscriptionChannel Channel { get; protected set; }
 
         /// <summary>
         /// The current state of the subscription.
         /// </summary>
-        public SubscriptionStatus State { get; private set; }
+        public SubscriptionStatus State { get; protected set; }
 
         /// <summary>
         /// The last error message.
         /// </summary>
-        public string LastError { get; private set; }
+        public string LastError { get; protected set; }
 
         /// <summary>
         /// The last error code.
         /// </summary>
-        public string LastCode { get; private set; }
+        public string LastCode { get; protected set; }
 
         /// <summary>
         /// The collection of parameters that were submitted for this subscription.
         /// </summary>
-        public ImmutableList<object> AdditionalParameters { get; }
+        public ImmutableList<object> AdditionalParameters { get; protected set; }
 
         /// <summary>
         /// Event fired when the state of the subcription changes.
@@ -56,12 +56,17 @@ namespace Solnet.Rpc.Core.Sockets
         /// <param name="rpcClient">The streaming rpc client reference.</param>
         /// <param name="chan">The channel of this subscription.</param>
         /// <param name="aditionalParameters">Aditional parameters for this given subscription.</param>
-        internal SubscriptionState(SolanaStreamingRpcClient rpcClient, SubscriptionChannel chan, IList<object> aditionalParameters = default)
+        protected SubscriptionState(IStreamingRpcClient rpcClient, SubscriptionChannel chan, IList<object> aditionalParameters = default)
         {
             _rpcClient = rpcClient;
             Channel = chan;
             AdditionalParameters = aditionalParameters?.ToImmutableList();
         }
+
+        /// <summary>
+        /// Default constructor to help setup tests.
+        /// </summary>
+        protected SubscriptionState() { }
 
         /// <summary>
         /// Changes the state of the subscription and invokes the event.
