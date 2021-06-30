@@ -10,12 +10,16 @@ namespace Solnet.Rpc.Core.Sockets
     /// <summary>
     /// Base streaming Rpc client class that abstracts the websocket handling.
     /// </summary>
-    internal abstract class StreamingRpcClient
+    internal abstract class StreamingRpcClient : IDisposable
     {
+        private SemaphoreSlim _sem;
+
         /// <summary>
         /// The web socket client abstraction.
         /// </summary>
-        protected readonly IWebSocket ClientSocket;
+        protected IWebSocket ClientSocket;
+
+        private bool disposedValue;
 
         /// <summary>
         /// The logger instance.
@@ -24,6 +28,12 @@ namespace Solnet.Rpc.Core.Sockets
 
         /// <inheritdoc cref="IStreamingRpcClient.NodeAddress"/>
         public Uri NodeAddress { get; }
+
+        /// <inheritdoc cref="IStreamingRpcClient.State"/>
+        public WebSocketState State => ClientSocket.State;
+
+        /// <inheritdoc cref="IStreamingRpcClient.ConnectionStateChangedEvent"/>
+        public event EventHandler<WebSocketState> ConnectionStateChangedEvent;
 
         /// <summary>
         /// The internal constructor that setups the client.
@@ -36,16 +46,42 @@ namespace Solnet.Rpc.Core.Sockets
             NodeAddress = new Uri(url);
             ClientSocket = socket ?? new WebSocketWrapper(new ClientWebSocket());
             _logger = logger;
+            _sem = new SemaphoreSlim(1, 1);
         }
 
         /// <summary>
         /// Initializes the websocket connection and starts receiving messages asynchronously.
         /// </summary>
         /// <returns>Returns the task representing the asynchronous task.</returns>
-        public async Task Init()
+        public async Task ConnectAsync()
         {
-            await ClientSocket.ConnectAsync(NodeAddress, CancellationToken.None).ConfigureAwait(false);
-            _ = Task.Run(StartListening);
+            _sem.Wait();
+            if (ClientSocket.State != WebSocketState.Open)
+            {
+                await ClientSocket.ConnectAsync(NodeAddress, CancellationToken.None).ConfigureAwait(false);
+                _ = Task.Run(StartListening);
+                ConnectionStateChangedEvent?.Invoke(this, State);
+            }
+            _sem.Release();
+        }
+
+        /// <inheritdoc cref="IStreamingRpcClient.DisconnectAsync"/>
+        public async Task DisconnectAsync()
+        {
+            _sem.Wait();
+            if (ClientSocket.State == WebSocketState.Open)
+            {
+                await ClientSocket.CloseAsync(CancellationToken.None);
+
+                //notify at the end of StartListening loop, given that it should end as soon as we terminate connection here
+                //and will also notify when there is a non-user triggered disconnection event
+
+                // handle disconnection cleanup
+                ClientSocket.Dispose();
+                ClientSocket = new WebSocketWrapper(new ClientWebSocket());
+                CleanupSubscriptions();
+            }
+            _sem.Release();
         }
 
         /// <summary>
@@ -66,6 +102,7 @@ namespace Solnet.Rpc.Core.Sockets
                 }
             }
             _logger?.LogDebug(new EventId(), $"Stopped reading messages. ClientSocket.State changed to {ClientSocket.State}");
+            ConnectionStateChangedEvent?.Invoke(this, State);
         }
 
         /// <summary>
@@ -115,5 +152,41 @@ namespace Solnet.Rpc.Core.Sockets
         /// </summary>
         /// <param name="messagePayload">The message payload.</param>
         protected abstract void HandleNewMessage(Memory<byte> messagePayload);
+
+        /// <summary>
+        /// Clean up subscription objects after disconnection.
+        /// </summary>
+        protected abstract void CleanupSubscriptions();
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ClientSocket.Dispose();
+                    _sem.Dispose();
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~StreamingRpcClient()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        /// <inheritdoc cref="IDisposable.Dispose"/>
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

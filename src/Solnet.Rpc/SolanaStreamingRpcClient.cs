@@ -47,6 +47,23 @@ namespace Solnet.Rpc
         {
         }
 
+        /// <inheritdoc cref="StreamingRpcClient.CleanupSubscriptions"/>
+        protected override void CleanupSubscriptions()
+        {
+            foreach(var sub in confirmedSubscriptions)
+            {
+                sub.Value.ChangeState(SubscriptionStatus.Unsubscribed, "Connection terminated");
+            }
+
+            foreach (var sub in unconfirmedRequests)
+            {
+                sub.Value.ChangeState(SubscriptionStatus.Unsubscribed, "Connection terminated");
+            }
+            unconfirmedRequests.Clear();
+            confirmedSubscriptions.Clear();
+        }
+
+
         /// <inheritdoc cref="StreamingRpcClient.HandleNewMessage(Memory{byte})"/>
         protected override void HandleNewMessage(Memory<byte> messagePayload)
         {

@@ -14,6 +14,10 @@ namespace Solnet.Rpc.Core.Sockets
             this.webSocket = webSocket;
         }
 
+        public WebSocketCloseStatus? CloseStatus => webSocket.CloseStatus;
+
+        public string CloseStatusDescription => webSocket.CloseStatusDescription;
+
         public WebSocketState State => webSocket.State;
 
         public Task CloseAsync(WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken)
@@ -21,6 +25,9 @@ namespace Solnet.Rpc.Core.Sockets
 
         public Task ConnectAsync(Uri uri, CancellationToken cancellationToken)
             => webSocket.ConnectAsync(uri, cancellationToken);
+
+        public Task CloseAsync(CancellationToken cancellationToken)
+            => webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, cancellationToken);
 
         public ValueTask<ValueWebSocketReceiveResult> ReceiveAsync(Memory<byte> buffer, CancellationToken cancellationToken)
             => webSocket.ReceiveAsync(buffer, cancellationToken);
