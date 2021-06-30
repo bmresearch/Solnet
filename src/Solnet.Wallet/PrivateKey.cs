@@ -17,41 +17,77 @@ namespace Solnet.Wallet
         /// </summary>
         private const int PrivateKeyLength = 64;
 
+        private string _key;
+
         /// <summary>
         /// The key as base-58 encoded string.
         /// </summary>
-        public string Key;
+        public string Key
+        {
+            get
+            {
+                if (_key == null)
+                {
+                    Key = Encoders.Base58.EncodeData(KeyBytes);
+                }
+                return _key;
+            }
+            set { _key = value; }
+        }
+
+
+        private byte[] _keyBytes;
 
         /// <summary>
         /// The bytes of the key.
         /// </summary>
-        public byte[] KeyBytes;
+        public byte[] KeyBytes
+        {
+            get
+            {
+                if (_keyBytes == null)
+                {
+                    KeyBytes = Encoders.Base58.DecodeData(Key);
+                }
+                return _keyBytes;
+            }
+            set { _keyBytes = value; }
+        }
+
 
         /// <summary>
-        /// Initialize the private key from the given byte array.
+        /// Initialize the public key from the given byte array.
         /// </summary>
-        /// <param name="key">The private key as byte array.</param>
+        /// <param name="key">The public key as byte array.</param>
         public PrivateKey(byte[] key)
         {
             if (key.Length != PrivateKeyLength)
                 throw new ArgumentException("invalid key length", nameof(key));
-            KeyBytes = key;
-            Key = Encoders.Base58.EncodeData(key);
+            KeyBytes = new byte[PrivateKeyLength];
+            Array.Copy(key, KeyBytes, PrivateKeyLength);
         }
-        
+
         /// <summary>
-        /// Initialize the private key from the given string.
+        /// Initialize the public key from the given string.
         /// </summary>
-        /// <param name="key">The private key as base58 encoded string.</param>
+        /// <param name="key">The public key as base58 encoded string.</param>
         public PrivateKey(string key)
         {
-            byte[] decodedKey = Encoders.Base58.DecodeData(key);
-            if (decodedKey.Length != PrivateKeyLength)
-                throw new ArgumentException("invalid key length", nameof(key));
-            KeyBytes = decodedKey;
             Key = key;
         }
-        
+
+        /// <summary>
+        /// Initialize the public key from the given string.
+        /// </summary>
+        /// <param name="key">The public key as base58 encoded string.</param>
+        public PrivateKey(ReadOnlySpan<byte> key)
+        {
+            if (key.Length != PrivateKeyLength)
+                throw new ArgumentException("invalid key length", nameof(key));
+            KeyBytes = new byte[PrivateKeyLength];
+            key.CopyTo(KeyBytes.AsSpan());
+        }
+
         /// <summary>
         /// Conversion between a <see cref="PrivateKey"/> object and the corresponding base-58 encoded private key.
         /// </summary>

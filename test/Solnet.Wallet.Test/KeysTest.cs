@@ -8,8 +8,6 @@ namespace Solnet.Wallet.Test
     [TestClass]
     public class KeysTest
     {
-        private static readonly string InvalidPublicKeyLength = "ALSzrjtGi8MZGmAZa6ZhtUZq3rwurWuJqWFdgcj9MMFLasdasasd";
-        private const string InvalidPrivateKeyLength = "5ZD7ntKtyHrnqMhfSuKBLdqHzT5N3a2aYnCGBasdcz4N78b84TKpasdwQ4QBsapEnpnZFchM7F1BpqDasdkSuLdwMZwM8hLi";
         private const string PrivateKey = "5ZD7ntKtyHrnqMhfSuKBLdqHzT5N3a2aYnCGBcz4N78b84TKpjwQ4QBsapEnpnZFchM7F1BpqDkSuLdwMZwM8hLi";
         private static readonly byte[] ExpectedPrivateKeyBytes =
         {
@@ -19,20 +17,6 @@ namespace Solnet.Wallet.Test
             252, 108, 26, 186, 0, 196, 69, 57, 102, 15, 151, 149, 242,
             119, 181, 171, 113, 120, 224, 0, 118, 155, 61, 246, 56, 178, 47
         };
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void TestPublicKeyStringException()
-        {
-            _ = new PublicKey(InvalidPublicKeyLength);
-        }
-        
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void TestPrivateKeyStringException()
-        {
-            _ = new PublicKey(InvalidPrivateKeyLength);
-        }
 
         [TestMethod]
         public void TestPrivateKeyBytes()
