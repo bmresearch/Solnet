@@ -4,9 +4,9 @@ using System;
 
 namespace Solnet.Examples
 {
-    public class SolanaKeygenWallet
+    public class SolanaKeygenWallet : IExample
     {
-        static void Example()
+        public void Run()
         {
             const string expectedSolKeygenPublicKey = "AZzmpdbZWARkPzL8GKRHjjwY74st4URgk9v7QBubeWba";
             const string expectedSolKeygenPrivateKey = "2RitwnKZwoigHk9S3ftvFQhoTy5QQKAipNjZHDgCet8hyciUbJSuhMWDKRL8JKE784pK8jJPFaNerFsS6KXhY9K6";

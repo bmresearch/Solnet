@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Solnet.Examples
 {
-    public class SolletKeyGeneration
+    public class SolletKeyGeneration : IExample
     {
-        static void Example(string[] args)
+        public void Run()
         {
             var expectedSolletAddresses = new List<string[]>
             {

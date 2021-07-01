@@ -6,7 +6,7 @@ using System;
 
 namespace Solnet.Examples
 {
-    public class NameServiceProgramExamples
+    public class NameServiceProgramExamples : IExample
     {
         private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
 
@@ -48,7 +48,7 @@ namespace Solnet.Examples
             return nameAccountKey;
         }
         
-        static void Main()
+        public void Run()
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
 

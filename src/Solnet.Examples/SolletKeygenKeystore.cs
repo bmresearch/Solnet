@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Solnet.Examples
 {
-    public class SolletKeygenKeystore
+    public class SolletKeygenKeystore : IExample
     {
-        static void Example(string[] args)
+        public void Run()
         {
             var expectedSolletAddresses = new List<string[]>
             {
