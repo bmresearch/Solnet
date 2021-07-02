@@ -24,9 +24,9 @@
 
 <p>
 
-# What is Solnet?
+# Introduction
 
-Solnet is Solana's .NET integration library.
+Solnet is Solana's .NET SDK to integrate with the .NET ecosystem. Wherever you are developing for the Web or Desktop, we are here to help. Learn more about the provided samples, documentation, integrating the SDK into your app, and more [here](https://blockmountain.io/Solnet/).
 
 </p>
 

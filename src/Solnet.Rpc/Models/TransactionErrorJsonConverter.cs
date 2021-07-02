@@ -4,7 +4,9 @@ using System.Text.Json.Serialization;
 
 namespace Solnet.Rpc.Models
 {
-    /// <inheritdoc cref="JsonConverter"/>
+    /// <summary>
+    /// Converts a TransactionError from json into its model representation.
+    /// </summary>
     public class TransactionErrorJsonConverter : JsonConverter<TransactionError>
     {
         /// <summary>
