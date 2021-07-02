@@ -151,6 +151,8 @@ button, a, .btn-primary {
     font-size: 48px;
   }
 
+  .hide{display:none!important}
+
   @media only screen and (max-width: 1024px) {
     .logomark
     {

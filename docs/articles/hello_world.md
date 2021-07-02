@@ -88,7 +88,7 @@ To start using the `IStreamingRpcClient` is very similar to the `IRpcClient`, ju
 ```
 IStreamingRpcClient streamingRpcClient = ClientFactory.GetStreamingClient(Cluster.TestNet);
 
-streamingRpcClient.Init().Wait();
+streamingRpcClient.ConnectAsync().Wait();
 ```
 
 Now we are connected using WebSockets to the cluster and ready to subscribe to data changes. In this case, we'll subscribe to the transaction confirmation.
@@ -161,6 +161,9 @@ You should be presented with all the details, and most important:
 
 <strong>Congratulations, you just called your first on-chain Solana program :)</strong>
 
+You can see the entire example on our [github](https://github.com/bmresearch/Solnet/blob/master/src/Solnet.Examples/HelloWorldExample.cs).
+
 Next steps:
-Add links to more programs ??????
-Read the docs (api)
+See more [examples](https://github.com/bmresearch/Solnet/blob/master/src/Solnet.Examples/).
+
+Read the [API](../api/Solnet.Wallet.yml).
