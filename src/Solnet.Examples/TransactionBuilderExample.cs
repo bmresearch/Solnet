@@ -12,7 +12,7 @@ namespace Solnet.Examples
         public static string PrettyPrintTransactionSimulationLogs(string[] logMessages)
         {
             var logString = "";
-                foreach (var log in logMessages)
+            foreach (var log in logMessages)
             {
                 logString += $"\t\t{log}\n";
             }
@@ -20,7 +20,7 @@ namespace Solnet.Examples
             return logString;
         }
     }
-    public class TransactionBuilderExample
+    public class TransactionBuilderExample : IExample
     {
         private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
 
@@ -28,7 +28,7 @@ namespace Solnet.Examples
             "route clerk disease box emerge airport loud waste attitude film army tray " +
             "forward deal onion eight catalog surface unit card window walnut wealth medal";
 
-        static void Example(string[] args)
+        public void Run()
         {
             var rpcClient = ClientFactory.GetClient(Cluster.TestNet);
             var wallet = new Wallet.Wallet(MnemonicWords);
@@ -53,8 +53,16 @@ namespace Solnet.Examples
             var firstSig = rpcClient.SendTransaction(tx);
             Console.WriteLine($"First Tx Signature: {firstSig.Result}");
         }
+    }
+    public class CreateInitializeAndMintToExample : IExample
+    {
+        private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
 
-        static void CreateInitializeAndMintToExample(string[] args)
+        private const string MnemonicWords =
+            "route clerk disease box emerge airport loud waste attitude film army tray " +
+            "forward deal onion eight catalog surface unit card window walnut wealth medal";
+
+        public void Run()
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
 
@@ -115,8 +123,16 @@ namespace Solnet.Examples
             Console.WriteLine($"Tx Signature: {txReq.Result}");
         }
 
+    }
+    public class TransferTokenExample : IExample
+    {
+        private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
 
-        static void TransferTokenExample(string[] args)
+        private const string MnemonicWords =
+            "route clerk disease box emerge airport loud waste attitude film army tray " +
+            "forward deal onion eight catalog surface unit card window walnut wealth medal";
+
+        public void Run()
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
 
@@ -162,8 +178,17 @@ namespace Solnet.Examples
             var txReq = rpcClient.SendTransaction(tx);
             Console.WriteLine($"Tx Signature: {txReq.Result}");
         }
+    }
 
-        static void TransferTokenChecked(string[] args)
+    public class TransferTokenChecked : IExample
+    { 
+        private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
+
+        private const string MnemonicWords =
+            "route clerk disease box emerge airport loud waste attitude film army tray " +
+            "forward deal onion eight catalog surface unit card window walnut wealth medal";
+
+    public void Run()
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
 
@@ -214,21 +239,6 @@ namespace Solnet.Examples
 
             var txReq = rpcClient.SendTransaction(tx);
             Console.WriteLine($"Tx Signature: {txReq.Result}");
-        }
-
-        static void InitializeMultiSignatureExample()
-        {
-            var wallet = new Wallet.Wallet(MnemonicWords);
-
-            var blockHash = rpcClient.GetRecentBlockHash();
-            var minBalanceForExemptionAcc =
-                rpcClient.GetMinimumBalanceForRentExemption(SystemProgram.AccountDataSize).Result;
-            Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
-
-            var minBalanceForExemptionMint =
-                rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
-            Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
-
         }
     }
 }

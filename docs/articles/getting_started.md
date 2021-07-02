@@ -14,7 +14,7 @@ Given that we've achieve full coverage of the API, you can rest assured that the
 - Keystore (sollet and solana-keygen compatible)
 - Programs
     - Native Programs
-        - System Program
+      - System Program
     - Solana Program Library (SPL)
       - Memo Program
       - Token Program
