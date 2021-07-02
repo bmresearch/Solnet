@@ -161,8 +161,8 @@ namespace Solnet.Programs
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
                 Data = TokenProgramData.EncodeInitializeMintData(
-                    mintAuthority.KeyBytes,
-                    freezeAuthority != null ? freezeAuthority.KeyBytes : new Account().PublicKey.KeyBytes,
+                    mintAuthority,
+                    freezeAuthority ?? new Account().PublicKey,
                     decimals,
                     freezeAuthorityOpt)
             };
@@ -252,7 +252,7 @@ namespace Solnet.Programs
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = TokenProgramData.EncodeSetAuthorityData(authority, newAuthorityOpt, newAuthority.KeyBytes)
+                Data = TokenProgramData.EncodeSetAuthorityData(authority, newAuthorityOpt, newAuthority)
             };
         }
 

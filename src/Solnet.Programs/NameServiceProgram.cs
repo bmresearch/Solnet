@@ -1,3 +1,4 @@
+using Solnet.Programs.Utilities;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
@@ -45,13 +46,11 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         /// <exception cref="Exception">Thrown when it was not possible to derive a program address for the account.</exception>
         public static TransactionInstruction CreateNameRegistry(
-            PublicKey name, Account payer, PublicKey nameOwner, ulong lamports, int space, Account nameClass = null, 
+            PublicKey name, Account payer, PublicKey nameOwner, ulong lamports, uint space, Account nameClass = null, 
             Account parentNameOwner = null, PublicKey parentName = null)
         {
             byte[] hashedName = ComputeHashedName(name.Key);
-            Console.WriteLine("Hashed Name: " + Convert.ToHexString(hashedName).ToLowerInvariant());
             PublicKey nameAccountKey = DeriveNameAccountKey(hashedName, nameClass?.PublicKey, parentName);
-            Console.WriteLine("Name Account Key: " + nameAccountKey.Key);
             if (nameAccountKey == null) throw new Exception("could not derive an address for the name account");
             return CreateNameRegistryInstruction(
                 nameAccountKey, nameOwner, payer, hashedName, lamports, space, nameClass, parentNameOwner, parentName);
@@ -65,7 +64,6 @@ namespace Solnet.Programs
         public static byte[] ComputeHashedName(string name)
         {
             string prefixedName = HashPrefix + name;
-            Console.WriteLine(prefixedName);
             byte[] fullNameBytes = Encoding.UTF8.GetBytes(prefixedName);
             using SHA256Managed sha = new();
             return sha.ComputeHash(fullNameBytes, 0, fullNameBytes.Length);
@@ -78,7 +76,7 @@ namespace Solnet.Programs
         /// <param name="nameClass">The account of the name class.</param>
         /// <param name="parentName">The public key of the parent name.</param>
         /// <returns>The program derived address for the name.</returns>
-        public static PublicKey DeriveNameAccountKey(byte[] hashedName, PublicKey nameClass = null, PublicKey parentName = null)
+        public static PublicKey DeriveNameAccountKey(ReadOnlySpan<byte> hashedName, PublicKey nameClass = null, PublicKey parentName = null)
         {
             byte[] nameClassKey = new byte[32];
             byte[] parentNameKeyBytes = new byte[32];
@@ -89,7 +87,7 @@ namespace Solnet.Programs
             try
             {
                 (byte[] nameAccountPublicKey, _) = AddressExtensions.FindProgramAddress(
-                    new List<byte[]> {hashedName, nameClassKey, parentNameKeyBytes}, ProgramIdKey.KeyBytes);
+                    new List<byte[]> {hashedName.ToArray(), nameClassKey, parentNameKeyBytes}, ProgramIdKey.KeyBytes);
                 return new PublicKey(nameAccountPublicKey);
             }
             catch (Exception)
@@ -113,7 +111,7 @@ namespace Solnet.Programs
         /// <param name="parentNameOwner">The account of the parent name owner.</param>
         /// <returns>The transaction instruction.</returns>
         private static TransactionInstruction CreateNameRegistryInstruction(
-            PublicKey nameKey, PublicKey nameOwner, Account payer, byte[] hashedName, ulong lamports, int space,
+            PublicKey nameKey, PublicKey nameOwner, Account payer, ReadOnlySpan<byte> hashedName, ulong lamports, uint space,
             Account nameClass = null, Account parentNameOwner = null, PublicKey parentName = null)
         {
             List<AccountMeta> keys = new()
@@ -151,7 +149,7 @@ namespace Solnet.Programs
         /// <param name="nameClass">The account of the name class.</param>
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction UpdateNameRegistry(
-            PublicKey nameKey, int offset, byte[] data, Account nameOwner = null, Account nameClass = null)
+            PublicKey nameKey, uint offset, ReadOnlySpan<byte> data, Account nameOwner = null, Account nameClass = null)
         {
             List<AccountMeta> keys = new() {new AccountMeta(nameKey, true)};
             
@@ -194,7 +192,7 @@ namespace Solnet.Programs
 
             return new TransactionInstruction
             {
-                Keys = keys, ProgramId = ProgramIdKey.KeyBytes, Data = EncodeTransferNameRegistryData(newOwner.KeyBytes)
+                Keys = keys, ProgramId = ProgramIdKey.KeyBytes, Data = EncodeTransferNameRegistryData(newOwner)
             };
         }
         
@@ -228,15 +226,15 @@ namespace Solnet.Programs
         /// <param name="lamports">The number of lamports for rent exemption.</param>
         /// <param name="space">The space for the account.</param>
         /// <returns>The transaction instruction data.</returns>
-        private static byte[] EncodeCreateNameRegistryData(byte[] hashedName, ulong lamports, int space)
+        private static byte[] EncodeCreateNameRegistryData(ReadOnlySpan<byte> hashedName, ulong lamports, uint space)
         {
             byte[] methodBuffer = new byte[49];
 
-            methodBuffer[0] = (byte)NameServiceInstructions.Create;
-            Utils.Uint32ToByteArrayLe((ulong) hashedName.Length, methodBuffer, 1);
-            Array.Copy(hashedName, 0, methodBuffer, 5, hashedName.Length);
-            Utils.Int64ToByteArrayLe(lamports, methodBuffer, 37);
-            Utils.Uint32ToByteArrayLe((ulong) space, methodBuffer, 45);
+            methodBuffer.WriteU8((byte)NameServiceInstructions.Create, 0);
+            methodBuffer.WriteU32((uint) hashedName.Length, 1);
+            methodBuffer.WriteSpan(hashedName, 5);
+            methodBuffer.WriteU64(lamports, 37);
+            methodBuffer.WriteU32(space, 45);
 
             return methodBuffer;
         }
@@ -247,13 +245,13 @@ namespace Solnet.Programs
         /// <param name="offset">The offset at which to update the data.</param>
         /// <param name="data">The data to insert.</param>
         /// <returns>The transaction instruction data.</returns>
-        private static byte[] EncodeUpdateNameRegistryData(int offset, byte[] data)
+        private static byte[] EncodeUpdateNameRegistryData(uint offset, ReadOnlySpan<byte> data)
         {
             byte[] methodBuffer = new byte[data.Length + 5];
             
-            methodBuffer[0] = (byte)NameServiceInstructions.Update;
-            Utils.Uint32ToByteArrayLe((ulong) offset, methodBuffer, 1);
-            Array.Copy(data, 0, methodBuffer, 5, data.Length);
+            methodBuffer.WriteU8((byte)NameServiceInstructions.Update, 0);
+            methodBuffer.WriteU32(offset, 1);
+            methodBuffer.WriteSpan(data, 5);
 
             return methodBuffer;
         }
@@ -261,13 +259,15 @@ namespace Solnet.Programs
         /// <summary>
         /// Encode the instruction data to be used with the <see cref="NameServiceInstructions.Transfer"/> instruction.
         /// </summary>
-        /// <param name="publicKey">The public key of the account to transfer ownership to.</param>
+        /// <param name="newOwner">The public key of the account to transfer ownership to.</param>
         /// <returns>The transaction instruction data.</returns>
-        private static byte[] EncodeTransferNameRegistryData(byte[] publicKey)
+        private static byte[] EncodeTransferNameRegistryData(PublicKey newOwner)
         {
             byte[] methodBuffer = new byte[33];
-            methodBuffer[0] = (byte)NameServiceInstructions.Transfer;
-            Array.Copy(publicKey, 0, methodBuffer, 1, 32);
+            
+            methodBuffer.WriteU8((byte)NameServiceInstructions.Transfer, 0);
+            methodBuffer.WritePubKey(newOwner, 1);
+            
             return methodBuffer;
         }        
         
@@ -278,7 +278,9 @@ namespace Solnet.Programs
         private static byte[] EncodeDeleteNameRegistryData()
         {
             byte[] methodBuffer = new byte[1];
-            methodBuffer[0] = (byte)NameServiceInstructions.Delete;
+            
+            methodBuffer.WriteU8((byte)NameServiceInstructions.Delete, 0);
+            
             return methodBuffer;
         }
     }

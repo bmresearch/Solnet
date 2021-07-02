@@ -27,11 +27,11 @@ namespace Solnet.Programs
         /// <returns>The <see cref="TransactionInstruction"/> which includes the memo data.</returns>
         public static TransactionInstruction NewMemo(Account account, string memo)
         {
-            var keys = new List<AccountMeta>
+            List<AccountMeta> keys = new ()
             {
-                new (account, false)
+                new AccountMeta(account, false)
             };
-            var memoBytes = Encoding.UTF8.GetBytes(memo);
+            byte[] memoBytes = Encoding.UTF8.GetBytes(memo);
 
             return new TransactionInstruction
             {
