@@ -1,5 +1,7 @@
 // unset
 
+using Solnet.Programs.Utilities;
+using Solnet.Wallet;
 using System;
 
 namespace Solnet.Programs
@@ -39,15 +41,15 @@ namespace Solnet.Programs
         /// <remarks>The <c>freezeAuthorityOption</c> parameter is related to the existence or not of a freeze authority.</remarks>
         /// <returns>The byte array with the encoded data.</returns>
         internal static byte[] EncodeInitializeMintData(
-            byte[] mintAuthority, byte[] freezeAuthority, int decimals, int freezeAuthorityOption)
+            PublicKey mintAuthority, PublicKey freezeAuthority, int decimals, int freezeAuthorityOption)
         {
             byte[] methodBuffer = new byte[67];
 
-            methodBuffer[0] = (byte)TokenProgramInstructions.InitializeMint;
-            methodBuffer[1] = (byte)decimals;
-            Array.Copy(mintAuthority, 0, methodBuffer, 2, 32);
-            methodBuffer[34] = (byte)freezeAuthorityOption;
-            Array.Copy(freezeAuthority, 0, methodBuffer, 35, 32);
+            methodBuffer.WriteU8((byte)TokenProgramInstructions.InitializeMint, 0);
+            methodBuffer.WriteU8((byte)decimals, 1);
+            methodBuffer.WritePubKey(mintAuthority, 2);
+            methodBuffer.WriteU8((byte)freezeAuthorityOption, 34);
+            methodBuffer.WritePubKey(freezeAuthority, 35);
 
             return methodBuffer;
         }
@@ -86,8 +88,8 @@ namespace Solnet.Programs
         {
             byte[] methodBuffer = new byte[2];
             
-            methodBuffer[0] = (byte)TokenProgramInstructions.InitializeMultiSignature;
-            methodBuffer[1] = (byte)m;
+            methodBuffer.WriteU8((byte)TokenProgramInstructions.InitializeMultiSignature, 0);
+            methodBuffer.WriteU8((byte)m, 1);
 
             return methodBuffer;
         }
@@ -96,14 +98,14 @@ namespace Solnet.Programs
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.SetAuthority"/> method.
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
-        internal static byte[] EncodeSetAuthorityData(AuthorityType authorityType, int newAuthorityOption, byte[] newAuthority)
+        internal static byte[] EncodeSetAuthorityData(AuthorityType authorityType, int newAuthorityOption, PublicKey newAuthority)
         {
             byte[] methodBuffer = new byte[35];
 
-            methodBuffer[0] = (byte)TokenProgramInstructions.SetAuthority;
-            methodBuffer[1] = (byte)authorityType;
-            methodBuffer[2] = (byte)newAuthorityOption;
-            Array.Copy(newAuthority, 0, methodBuffer, 3, 32);
+            methodBuffer.WriteU8((byte)TokenProgramInstructions.SetAuthority, 0);
+            methodBuffer.WriteU8((byte)authorityType, 1);
+            methodBuffer.WriteU8((byte)newAuthorityOption, 2);
+            methodBuffer.WritePubKey(newAuthority, 3);
 
             return methodBuffer;
         }
@@ -170,8 +172,10 @@ namespace Solnet.Programs
         private static byte[] EncodeAmountLayout(byte method, ulong amount)
         {
             byte[] methodBuffer = new byte[9];
-            methodBuffer[0] = method;
-            Utils.Int64ToByteArrayLe(amount, methodBuffer, 1);
+            
+            methodBuffer.WriteU8(method, 0);
+            methodBuffer.WriteU64(amount, 1);
+            
             return methodBuffer;
         }
 
@@ -185,9 +189,11 @@ namespace Solnet.Programs
         private static byte[] EncodeAmountCheckedLayout(byte method, ulong amount, byte decimals)
         {
             byte[] methodBuffer = new byte[10];
-            methodBuffer[0] = method;
-            Utils.Int64ToByteArrayLe(amount, methodBuffer, 1);
-            methodBuffer[9] = decimals;
+            
+            methodBuffer.WriteU8(method, 0);
+            methodBuffer.WriteU64(amount, 1);
+            methodBuffer.WriteU8(decimals, 9);
+            
             return methodBuffer;
         }
     }

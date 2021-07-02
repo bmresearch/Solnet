@@ -12,7 +12,6 @@
     <a href="">
         <img src="https://img.shields.io/github/license/bmresearch/solnet?style=flat-square"
             alt="Code License"></a>
-    <br>
     <a href="https://twitter.com/intent/follow?screen_name=blockmountainio">
         <img src="https://img.shields.io/twitter/follow/blockmountainio?style=flat-square&logo=twitter"
             alt="Follow on Twitter"></a>
