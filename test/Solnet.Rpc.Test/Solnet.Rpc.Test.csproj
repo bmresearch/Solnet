@@ -591,6 +591,9 @@
     <None Update="Resources\Http\GetRecentPerformanceSamplesRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Http\Accounts\GetProgramAccountsDataSizeRequest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

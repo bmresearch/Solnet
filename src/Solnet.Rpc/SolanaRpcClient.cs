@@ -103,19 +103,22 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="IRpcClient.GetProgramAccountsAsync"/>
         public async Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey,
-            Commitment commitment = Commitment.Finalized)
+            Commitment commitment = Commitment.Finalized, int? dataSize = null)
         {
             return await SendRequestAsync<List<AccountKeyPair>>("getProgramAccounts",
                 Parameters.Create(
                     pubKey,
                     ConfigObject.Create(
                         KeyValue.Create("encoding", "base64"),
+                        KeyValue.Create("filters", 
+                            Parameters.Create(
+                                ConfigObject.Create(KeyValue.Create("dataSize", dataSize)))),
                         HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetProgramAccounts"/>
-        public RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey, Commitment commitment = Commitment.Finalized)
-            => GetProgramAccountsAsync(pubKey, commitment).Result;
+        public RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey, Commitment commitment = Commitment.Finalized,
+            int? dataSize = null) => GetProgramAccountsAsync(pubKey, commitment, dataSize).Result;
 
 
         /// <inheritdoc cref="IRpcClient.GetMultipleAccountsAsync"/>
