@@ -1,5 +1,4 @@
-// unset
-
+using Solnet.Programs.Utilities;
 using Solnet.Wallet;
 using System;
 using System.Text;
@@ -21,10 +20,12 @@ namespace Solnet.Programs
         internal static byte[] EncodeCreateAccountData(PublicKey owner, ulong lamports, ulong space)
         {
             byte[] data = new byte[52];
-            Utils.Uint32ToByteArrayLe((ulong) SystemProgramInstructions.CreateAccount, data, 0);
-            Utils.Int64ToByteArrayLe(lamports, data, 4);
-            Utils.Int64ToByteArrayLe(space, data, 12);
-            Array.Copy(owner.KeyBytes, 0, data, 20, 32);
+            
+            data.WriteU32((uint) SystemProgramInstructions.CreateAccount, 0);
+            data.WriteU64(lamports, 4);
+            data.WriteU64(space, 12);
+            data.WritePubKey(owner, 20);
+            
             return data;
         }
 
@@ -36,8 +37,10 @@ namespace Solnet.Programs
         internal static byte[] EncodeAssignData(PublicKey programId)
         {
             byte[] data = new byte[36];
-            Utils.Uint32ToByteArrayLe((ulong) SystemProgramInstructions.Assign, data, 0);
-            Array.Copy(programId.KeyBytes, 0, data, 4, 32);
+            
+            data.WriteU32((uint) SystemProgramInstructions.Assign, 0);
+            data.WritePubKey(programId, 4);
+            
             return data;
         }
 
@@ -49,8 +52,10 @@ namespace Solnet.Programs
         internal static byte[] EncodeTransferData(ulong lamports)
         {
             byte[] data = new byte[12];
-            Utils.Uint32ToByteArrayLe((ulong) SystemProgramInstructions.Transfer, data, 0);
-            Utils.Int64ToByteArrayLe(lamports, data, 4);
+            
+            data.WriteU32((uint) SystemProgramInstructions.Transfer, 0);
+            data.WriteU64(lamports, 4);
+            
             return data;
         }
 
@@ -68,12 +73,14 @@ namespace Solnet.Programs
         {
             byte[] encodedSeed = EncodeRustString(seed);
             byte[] data = new byte[84 + encodedSeed.Length];
-            Utils.Uint32ToByteArrayLe((ulong) SystemProgramInstructions.CreateAccountWithSeed, data,0);
-            Array.Copy(baseAccount.KeyBytes, 0, data, 4, 32);
-            Array.Copy(encodedSeed, 0, data, 36, encodedSeed.Length);
-            Utils.Int64ToByteArrayLe(lamports, data, 36 + encodedSeed.Length);
-            Utils.Int64ToByteArrayLe(space, data, 44 + encodedSeed.Length);
-            Array.Copy(owner.KeyBytes, 0, data, 52 + encodedSeed.Length, 32);
+            
+            data.WriteU32((uint) SystemProgramInstructions.CreateAccountWithSeed, 0);
+            data.WritePubKey(baseAccount, 4);
+            data.WriteSpan(encodedSeed, 36);
+            data.WriteU64(lamports, 36 + encodedSeed.Length);
+            data.WriteU64(space, 44 + encodedSeed.Length);
+            data.WritePubKey(owner, 52 + encodedSeed.Length);
+            
             return data;
         }
         
@@ -84,7 +91,9 @@ namespace Solnet.Programs
         internal static byte[] EncodeAdvanceNonceAccountData()
         {
             byte[] data = new byte[4];
-            Utils.Uint32ToByteArrayLe((ulong) SystemProgramInstructions.AdvanceNonceAccount, data,0);
+            
+            data.WriteU32((uint) SystemProgramInstructions.AdvanceNonceAccount, 0);
+            
             return data;
         }
         
@@ -96,8 +105,10 @@ namespace Solnet.Programs
         internal static byte[] EncodeWithdrawNonceAccountData(ulong lamports)
         {
             byte[] data = new byte[12];
-            Utils.Uint32ToByteArrayLe((ulong) SystemProgramInstructions.WithdrawNonceAccount, data, 0);
-            Utils.Int64ToByteArrayLe(lamports, data, 4);
+            
+            data.WriteU32((uint) SystemProgramInstructions.WithdrawNonceAccount, 0);
+            data.WriteU64(lamports, 4);
+            
             return data;
         }
         
@@ -109,8 +120,10 @@ namespace Solnet.Programs
         internal static byte[] EncodeInitializeNonceAccountData(PublicKey authorized)
         {
             byte[] data = new byte[36];
-            Utils.Uint32ToByteArrayLe((ulong) SystemProgramInstructions.InitializeNonceAccount, data, 0);
-            Array.Copy(authorized.KeyBytes, 0, data, 4, 32);
+            
+            data.WriteU32((uint) SystemProgramInstructions.InitializeNonceAccount, 0);
+            data.WritePubKey(authorized, 4);
+            
             return data;
         }
         
@@ -122,8 +135,10 @@ namespace Solnet.Programs
         internal static byte[] EncodeAuthorizeNonceAccountData(PublicKey authorized)
         {
             byte[] data = new byte[36];
-            Utils.Uint32ToByteArrayLe((ulong) SystemProgramInstructions.AuthorizeNonceAccount, data, 0);
-            Array.Copy(authorized.KeyBytes, 0, data, 4, 32);
+            
+            data.WriteU32((uint) SystemProgramInstructions.AuthorizeNonceAccount, 0);
+            data.WritePubKey(authorized, 4);
+            
             return data;
         }
         
@@ -135,8 +150,10 @@ namespace Solnet.Programs
         internal static byte[] EncodeAllocateData(ulong space)
         {
             byte[] data = new byte[12];
-            Utils.Uint32ToByteArrayLe((ulong) SystemProgramInstructions.Allocate, data, 0);
-            Utils.Int64ToByteArrayLe(space, data, 4);
+            
+            data.WriteU32((uint) SystemProgramInstructions.Allocate, 0);
+            data.WriteU64(space, 4);
+            
             return data;
         }
         
@@ -153,11 +170,13 @@ namespace Solnet.Programs
         {
             byte[] encodedSeed = EncodeRustString(seed);
             byte[] data = new byte[76 + encodedSeed.Length];
-            Utils.Uint32ToByteArrayLe((ulong) SystemProgramInstructions.AllocateWithSeed, data,0);
-            Array.Copy(baseAccount.KeyBytes, 0, data, 4, 32);
-            Array.Copy(encodedSeed, 0, data, 36, encodedSeed.Length);
-            Utils.Int64ToByteArrayLe(space, data, 36 + encodedSeed.Length);
-            Array.Copy(owner.KeyBytes, 0, data, 44 + encodedSeed.Length, 32);
+            
+            data.WriteU32((uint) SystemProgramInstructions.AllocateWithSeed, 0);
+            data.WritePubKey(baseAccount, 4);
+            data.WriteSpan(encodedSeed, 36);
+            data.WriteU64(space, 36 + encodedSeed.Length);
+            data.WritePubKey(owner, 44 + encodedSeed.Length);
+            
             return data;
         }
         
@@ -173,10 +192,12 @@ namespace Solnet.Programs
         {
             byte[] encodedSeed = EncodeRustString(seed);
             byte[] data = new byte[68 + encodedSeed.Length];
-            Utils.Uint32ToByteArrayLe((ulong) SystemProgramInstructions.AssignWithSeed, data, 0);
-            Array.Copy(baseAccount.KeyBytes, 0, data, 4, 32);
-            Array.Copy(encodedSeed, 0, data, 36, encodedSeed.Length);
-            Array.Copy(owner.KeyBytes, 0, data, 36 + encodedSeed.Length, 32);
+            
+            data.WriteU32((uint) SystemProgramInstructions.AssignWithSeed, 0);
+            data.WritePubKey(baseAccount, 4);
+            data.WriteSpan(encodedSeed, 36);
+            data.WritePubKey(owner, 36 + encodedSeed.Length);
+            
             return data;
         }
         
@@ -191,10 +212,12 @@ namespace Solnet.Programs
         {
             byte[] encodedSeed = EncodeRustString(seed);
             byte[] data = new byte[44 + encodedSeed.Length];
-            Utils.Uint32ToByteArrayLe((ulong) SystemProgramInstructions.TransferWithSeed, data, 0);
-            Utils.Int64ToByteArrayLe(lamports, data, 4);
-            Array.Copy(encodedSeed, 0, data, 8, encodedSeed.Length);
-            Array.Copy(owner.KeyBytes, 0, data, 8 + encodedSeed.Length, 32);
+            
+            data.WriteU32((uint) SystemProgramInstructions.TransferWithSeed, 0);
+            data.WriteU64(lamports, 4);
+            data.WriteSpan(encodedSeed, 12);
+            data.WritePubKey(owner, 12 + encodedSeed.Length);
+            
             return data;
         }
 
@@ -210,8 +233,9 @@ namespace Solnet.Programs
         {
             byte[] stringBytes = Encoding.ASCII.GetBytes(data);
             byte[] encoded = new byte[stringBytes.Length + 4];
-            Utils.Uint32ToByteArrayLe((ulong) stringBytes.Length, encoded, 0);
-            Array.Copy(stringBytes, 0, encoded, 4, stringBytes.Length);
+            
+            encoded.WriteU32((uint) stringBytes.Length, 0);
+            encoded.WriteSpan(stringBytes, 4);
             return encoded;
         }
     }

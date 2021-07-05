@@ -1,6 +1,8 @@
-﻿using Solnet.Rpc.Models;
+﻿using Solnet.Programs.Utilities;
+using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,7 +12,7 @@ namespace Solnet.Programs
     /// Helper class for the Shared Memory Program.
     /// <remarks>
     /// Used to write data to a given account data.
-    /// Note: this programm, as of writting this, was inactive in some clusters.
+    /// Note: this program, as of writing this, was inactive in some clusters.
     /// </remarks>
     /// </summary>
     public static class SharedMemoryProgram
@@ -28,18 +30,17 @@ namespace Solnet.Programs
         /// <param name="payload">The data to be written.</param>
         /// <param name="offset">The offset of the account data to write to.</param>
         /// <returns>The <see cref="TransactionInstruction"/> encoded that interacts with the shared memory program..</returns>
-        public static TransactionInstruction Write(PublicKey dest, byte[] payload, ulong offset)
+        public static TransactionInstruction Write(PublicKey dest, ReadOnlySpan<byte> payload, ulong offset)
         {
-            var keys = new List<AccountMeta>
+            List<AccountMeta> keys = new ()
             {
-                new (dest, true)
+                new AccountMeta(dest, true)
             };
 
-            var transactionData = new byte[payload.Length + 8];
+            byte[] transactionData = new byte[payload.Length + 8];
 
-            Utils.Int64ToByteArrayLe(offset, transactionData, 0);
-
-            payload.CopyTo(transactionData, 8);
+            transactionData.WriteU64(offset, 0);
+            transactionData.WriteSpan(payload, 8);
 
             return new TransactionInstruction
             {

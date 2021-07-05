@@ -12,7 +12,6 @@
     <a href="">
         <img src="https://img.shields.io/github/license/bmresearch/solnet?style=flat-square"
             alt="Code License"></a>
-    <br>
     <a href="https://twitter.com/intent/follow?screen_name=blockmountainio">
         <img src="https://img.shields.io/twitter/follow/blockmountainio?style=flat-square&logo=twitter"
             alt="Follow on Twitter"></a>
@@ -25,9 +24,9 @@
 
 <p>
 
-# What is Solnet?
+# Introduction
 
-Solnet is Solana's .NET integration library.
+Solnet is Solana's .NET SDK to integrate with the .NET ecosystem. Wherever you are developing for the Web or Desktop, we are here to help. Learn more about the provided samples, documentation, integrating the SDK into your app, and more [here](https://blockmountain.io/Solnet/).
 
 </p>
 
