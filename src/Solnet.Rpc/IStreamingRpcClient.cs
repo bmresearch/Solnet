@@ -29,6 +29,11 @@ namespace Solnet.Rpc
         Uri NodeAddress { get; }
 
         /// <summary>
+        /// Statistics of the current connection.
+        /// </summary>
+        IConnectionStatistics Statistics { get; }
+
+        /// <summary>
         /// Subscribes asynchronously to AccountInfo notifications.
         /// </summary>
         /// <remarks>
