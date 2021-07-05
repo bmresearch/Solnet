@@ -502,8 +502,8 @@ namespace Solnet.Rpc
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <param name="dataSize">The data size of the account.</param>
         /// <returns>A task which may return a request result holding the context and account info.</returns>
-        Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey, int? dataSize = null,
-            Commitment commitment = Commitment.Finalized);
+        Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey, Commitment commitment = Commitment.Finalized,
+            int? dataSize = null);
 
         /// <summary>
         /// Returns all accounts owned by the provided program Pubkey.
@@ -512,8 +512,8 @@ namespace Solnet.Rpc
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <param name="dataSize">The data size of the account.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey, int? dataSize = null,
-            Commitment commitment = Commitment.Finalized);
+        RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey, Commitment commitment = Commitment.Finalized,
+            int? dataSize = null);
 
         /// <summary>
         /// Gets a recent block hash.
