@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Solnet.Rpc.Types;
 using System;
 using System.IO;
 using System.Net.WebSockets;
@@ -35,6 +36,13 @@ namespace Solnet.Rpc.Core.Sockets
         /// <inheritdoc cref="IStreamingRpcClient.ConnectionStateChangedEvent"/>
         public event EventHandler<WebSocketState> ConnectionStateChangedEvent;
 
+        private ConnectionStats _connectionStats;
+
+        /// <summary>
+        /// Statistics of the current connection.
+        /// </summary>
+        public IConnectionStatistics Statistics => _connectionStats;
+
         /// <summary>
         /// The internal constructor that setups the client.
         /// </summary>
@@ -47,6 +55,7 @@ namespace Solnet.Rpc.Core.Sockets
             ClientSocket = socket ?? new WebSocketWrapper(new ClientWebSocket());
             _logger = logger;
             _sem = new SemaphoreSlim(1, 1);
+            _connectionStats = new ConnectionStats();
         }
 
         /// <summary>
@@ -142,7 +151,7 @@ namespace Solnet.Rpc.Core.Sockets
                 {
                     mem = mem.Slice(0, count);
                 }
-
+                _connectionStats.AddReceived((uint)count);
                 HandleNewMessage(mem);
             }
         }
