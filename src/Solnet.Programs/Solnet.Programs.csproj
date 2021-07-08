@@ -2,6 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>Solnet.Programs</AssemblyName>
+    <RootNamespace>Solnet.Programs</RootNamespace>
+    <Authors>BTCTrader</Authors>
+    <Company>BTCTrader</Company>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/BTCTrader/Solnet</RepositoryUrl>
+    <Copyright>Portions Copyright (c) 2020 BlockMountain Research, Portions Copyright (c) 2021 BTCTrader</Copyright>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <PackageId>BTCTrader.Solnet.Programs</PackageId>
+    <Product>BTCTrader.Solnet.Programs</Product>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

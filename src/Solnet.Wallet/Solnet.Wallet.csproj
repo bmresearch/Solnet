@@ -5,6 +5,18 @@
       Solnet.Wallet uses BIP32 and BIP39 to generate an HD tree of Solana compatible addresses from a randomly generated word seed.
     </Description>
     <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>Solnet.Wallet</AssemblyName>
+    <RootNamespace>Solnet.Wallet</RootNamespace>
+    <Authors>BTCTrader</Authors>
+    <Company>BTCTrader</Company>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/BTCTrader/Solnet</RepositoryUrl>
+    <Copyright>Portions Copyright (c) 2020 BlockMountain Research, Portions Copyright (c) 2021 BTCTrader</Copyright>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <PackageId>BTCTrader.Solnet.Wallet</PackageId>
+    <Product>BTCTrader.Solnet.Wallet</Product>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
