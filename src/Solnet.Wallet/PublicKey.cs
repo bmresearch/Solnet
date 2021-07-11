@@ -15,7 +15,7 @@ namespace Solnet.Wallet
         /// <summary>
         /// Public key length.
         /// </summary>
-        private const int PublicKeyLength = 32;
+        public const int PublicKeyLength = 32;
 
         private string _key;
 
