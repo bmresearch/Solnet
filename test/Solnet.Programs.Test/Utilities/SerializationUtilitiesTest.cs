@@ -15,6 +15,16 @@ namespace Solnet.Programs.Test.Utilities
             225, 70, 206, 235, 121, 172, 28, 180, 133, 237,
             95, 91, 55, 145, 58, 140, 245, 133, 126, 255, 0, 169
         };
+
+        private static readonly byte[] DoubleBytes =
+        {
+            108, 251, 85, 215, 136, 134, 245, 63
+        };
+        
+        private static readonly byte[] SingleBytes =
+        {
+            71, 52, 172, 63,
+        };
         
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
@@ -197,6 +207,42 @@ namespace Solnet.Programs.Test.Utilities
             {
                 153, 153, 153, 153, 153, 153, 153, 153, 153, 153, 153, 153, 153, 153, 153, 25,
             }, sut);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void TestWriteDoubleException()
+        {
+            const double value = 1.34534534564565;
+            byte[] bytes = new byte[8];
+            bytes.WriteDouble(value, 1);
+        }
+        
+        [TestMethod]
+        public void TestWriteDouble()
+        {
+            const double value = 1.34534534564565;
+            byte[] bytes = new byte[8];
+            bytes.WriteDouble(value, 0);
+            CollectionAssert.AreEqual(DoubleBytes, bytes);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void TestWriteSingleException()
+        {
+            const float value = 1.34534534f;
+            byte[] bytes = new byte[4];
+            bytes.WriteSingle(value, 1);
+        }
+        
+        [TestMethod]
+        public void TestWriteSingle()
+        {
+            const float value = 1.34534534f;
+            byte[] bytes = new byte[4];
+            bytes.WriteSingle(value, 0);
+            CollectionAssert.AreEqual(SingleBytes, bytes);
         }
     }
 }

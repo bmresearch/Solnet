@@ -172,5 +172,35 @@ namespace Solnet.Programs.Utilities
                 throw new ArgumentOutOfRangeException(nameof(offset));
             return new BigInteger(data.Slice(offset, length), isSigned, isBigEndian);
         }
+
+        /// <summary>
+        /// Get a double-precision floating-point number from the span at the given offset.
+        /// </summary>
+        /// <param name="data">The span to get data from.</param>
+        /// <param name="offset">The offset at which the arbitrarily long number begins.</param>
+        /// <returns>The <see cref="double"/> instance that represents the value.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
+        public static double GetDouble(this ReadOnlySpan<byte> data, int offset)
+        {
+            if (offset + 8 > data.Length)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+
+            return BinaryPrimitives.ReadDoubleLittleEndian(data.Slice(offset, 8));
+        }
+        
+        /// <summary>
+        /// Get a single-precision floating-point number from the span at the given offset.
+        /// </summary>
+        /// <param name="data">The span to get data from.</param>
+        /// <param name="offset">The offset at which the arbitrarily long number begins.</param>
+        /// <returns>The <see cref="float"/> instance that represents the value.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
+        public static float GetSingle(this ReadOnlySpan<byte> data, int offset)
+        {
+            if (offset + 4 > data.Length)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+
+            return BinaryPrimitives.ReadSingleLittleEndian(data.Slice(offset, 4));
+        }
     }
 }
