@@ -177,7 +177,7 @@ namespace Solnet.Programs.Utilities
         /// Get a double-precision floating-point number from the span at the given offset.
         /// </summary>
         /// <param name="data">The span to get data from.</param>
-        /// <param name="offset">The offset at which the arbitrarily long number begins.</param>
+        /// <param name="offset">The offset at which the double-precision floating-point number begins.</param>
         /// <returns>The <see cref="double"/> instance that represents the value.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static double GetDouble(this ReadOnlySpan<byte> data, int offset)
@@ -192,7 +192,7 @@ namespace Solnet.Programs.Utilities
         /// Get a single-precision floating-point number from the span at the given offset.
         /// </summary>
         /// <param name="data">The span to get data from.</param>
-        /// <param name="offset">The offset at which the arbitrarily long number begins.</param>
+        /// <param name="offset">The offset at which the single-precision floating-point number begins.</param>
         /// <returns>The <see cref="float"/> instance that represents the value.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static float GetSingle(this ReadOnlySpan<byte> data, int offset)
