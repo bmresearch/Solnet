@@ -22,6 +22,16 @@ namespace Solnet.Programs.Test.Utilities
             153, 153, 153, 153, 153, 153, 153, 25,
         };
         
+        private static readonly byte[] DoubleBytes =
+        {
+            108, 251, 85, 215, 136, 134, 245, 63
+        };
+        
+        private static readonly byte[] SingleBytes =
+        {
+            71, 52, 172, 63,
+        };
+        
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadU8Exception()
@@ -206,6 +216,40 @@ namespace Solnet.Programs.Test.Utilities
             BigInteger actual = new(BigIntBytes);
             ReadOnlySpan<byte> span = BigIntBytes.AsSpan();
             BigInteger bi = span.GetBigInt(0, 16);
+            Assert.AreEqual(actual, bi);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void TestReadDoubleException()
+        {
+            ReadOnlySpan<byte> span = DoubleBytes.AsSpan();
+            double bi = span.GetDouble(1);
+        }
+        
+        [TestMethod]
+        public void TestReadDouble()
+        {
+            const double actual = 1.34534534564565;
+            ReadOnlySpan<byte> span = DoubleBytes.AsSpan();
+            double bi = span.GetDouble(0);
+            Assert.AreEqual(actual, bi);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void TestReadSingleException()
+        {
+            ReadOnlySpan<byte> span = SingleBytes.AsSpan();
+            float bi = span.GetSingle(1);
+        }
+        
+        [TestMethod]
+        public void TestReadSingle()
+        {
+            const float actual = 1.34534534f;
+            ReadOnlySpan<byte> span = SingleBytes.AsSpan();
+            float bi = span.GetSingle(0);
             Assert.AreEqual(actual, bi);
         }
     }
