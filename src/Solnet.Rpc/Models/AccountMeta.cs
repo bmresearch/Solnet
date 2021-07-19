@@ -21,45 +21,44 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// A boolean which defines if the account is a signer account.
         /// </summary>
-        internal bool Signer { get; }
+        internal bool IsSigner { get; }
 
         /// <summary>
         /// A boolean which defines if the account is a writable account.
         /// </summary>
-        internal bool Writable { get; }
+        internal bool IsWritable { get; }
 
-        /// <summary>
-        /// The account.
-        /// </summary>
-        internal Account Account { get; }
-
-        /// <summary>
-        /// Initialize the account meta with the passed account, being a signing account for the transaction.
-        /// </summary>
-        /// <param name="account">The account.</param>
-        /// <param name="isWritable">If the account is writable.</param>
-        public AccountMeta(Account account, bool isWritable)
-        {
-            PublicKey = account.PublicKey.Key;
-            PublicKeyBytes = account.PublicKey.KeyBytes;
-            Account = account;
-            Signer = true;
-            Writable = isWritable;
-        }
-        
         /// <summary>
         /// Initialize the account meta with the passed public key, being a non-signing account for the transaction.
         /// </summary>
         /// <param name="publicKey">The public key.</param>
-        /// <param name="isWritable">If the account is writable.</param>
-        public AccountMeta(PublicKey publicKey, bool isWritable)
+        /// <param name="isWritable">Whether the account is writable.</param>
+        /// <param name="isSigner">Whether the account is a signer.</param>
+        internal AccountMeta(PublicKey publicKey, bool isWritable, bool isSigner)
         {
-            Account = null;
             PublicKey = publicKey.Key;
             PublicKeyBytes = publicKey.KeyBytes;
-            Signer = false;
-            Writable = isWritable;
+            IsSigner = isSigner;
+            IsWritable = isWritable;
         }
+        
+        /// <summary>
+        /// Initializes an <see cref="AccountMeta"/> for a writable account with the given <see cref="PublicKey"/>
+        /// and a bool that signals whether the account is a signer or not.
+        /// </summary>
+        /// <param name="publicKey">The public key.</param>
+        /// <param name="isSigner">Whether the account is a signer.</param>
+        /// <returns>The <see cref="AccountMeta"/> instance.</returns>
+        public static AccountMeta Writable(PublicKey publicKey, bool isSigner) => new (publicKey, true, isSigner);
+
+        /// <summary>
+        /// Initializes an <see cref="AccountMeta"/> for a read-only account with the given <see cref="PublicKey"/>
+        /// and a bool that signals whether the account is a signer or not.
+        /// </summary>
+        /// <param name="publicKey">The public key.</param>
+        /// <param name="isSigner">Whether the account is a signer.</param>
+        /// <returns>The <see cref="AccountMeta"/> instance.</returns>
+        public static AccountMeta ReadOnly(PublicKey publicKey, bool isSigner) => new (publicKey, false, isSigner);
 
         /// <summary>
         /// Compares the account meta instance with another account meta.
@@ -77,13 +76,13 @@ namespace Solnet.Rpc.Models
                 throw new ArgumentNullException(nameof(other));
             }
             
-            int cmpSigner = Signer == other.Signer ? 0 : Signer ? -1 : 1;
+            int cmpSigner = IsSigner == other.IsSigner ? 0 : IsSigner ? -1 : 1;
             if (cmpSigner != 0)
             {
                 return cmpSigner;
             }
 
-            int cmpWritable = Writable == other.Writable ? 0 : Writable ? -1 : 1;
+            int cmpWritable = IsWritable == other.IsWritable ? 0 : IsWritable ? -1 : 1;
             return cmpWritable != 0 ? cmpWritable : 0;
         }
     }
