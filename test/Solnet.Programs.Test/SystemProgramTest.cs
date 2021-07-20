@@ -331,5 +331,11 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TransferWithSeedInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
+        
+        [TestMethod]
+        public void TestNonceAccountDeserialization()
+        {
+            
+        }
     }
 }

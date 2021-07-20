@@ -47,7 +47,8 @@ namespace Solnet.Rpc.Test
                 .SetRecentBlockHash(Blockhash)
                 .SetFeePayer(fromAccount)
                 .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
-                .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)")).Build();
+                .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)"))
+                .Build(fromAccount);
 
             Assert.AreEqual(ExpectedTransactionHashWithTransferAndMemo, Convert.ToBase64String(tx));
         }
@@ -61,7 +62,8 @@ namespace Solnet.Rpc.Test
             var toAccount = wallet.GetAccount(1);
             _ = new TransactionBuilder().SetFeePayer(fromAccount)
                 .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
-                .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)")).Build();
+                .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)"))
+                .Build(fromAccount);
         }
         
         [TestMethod]
@@ -74,7 +76,22 @@ namespace Solnet.Rpc.Test
             _ = new TransactionBuilder()
                 .SetRecentBlockHash(Blockhash)
                 .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
-                .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)")).Build();
+                .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)"))
+                .Build(fromAccount);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void TestTransactionBuilderBuildEmptySignersException()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+            var fromAccount = wallet.GetAccount(0);
+            var toAccount = wallet.GetAccount(1);
+            _ = new TransactionBuilder()
+                .SetRecentBlockHash(Blockhash)
+                .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
+                .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)"))
+                .Build(new List<Account>());
         }
 
         [TestMethod]
@@ -83,7 +100,8 @@ namespace Solnet.Rpc.Test
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
             var fromAccount = wallet.GetAccount(0);
-            _ = new TransactionBuilder().SetRecentBlockHash(Blockhash).Build();
+            _ = new TransactionBuilder().SetRecentBlockHash(Blockhash)
+                .Build(fromAccount);
         }
 
         [TestMethod]
@@ -134,7 +152,7 @@ namespace Solnet.Rpc.Test
                     25000,
                     ownerAccount))
                 .AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net"))
-                .Build();
+                .Build(new List<Account> { ownerAccount, mintAccount, initialAccount});
 
             Assert.AreEqual(ExpectedTransactionHashCreateInitializeAndMintTo, Convert.ToBase64String(tx));
         }

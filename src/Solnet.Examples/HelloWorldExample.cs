@@ -44,7 +44,8 @@ namespace Solnet.Examples
 
                     var recentHash = rpcClient.GetRecentBlockHash();
 
-                    var tx = new TransactionBuilder().AddInstruction(memoInstruction).SetFeePayer(wallet.Account).SetRecentBlockHash(recentHash.Result.Value.Blockhash).Build();
+                    var tx = new TransactionBuilder().AddInstruction(memoInstruction).SetFeePayer(wallet.Account)
+                        .SetRecentBlockHash(recentHash.Result.Value.Blockhash).Build(wallet.Account);
 
                     var txHash = rpcClient.SendTransaction(tx);
 

@@ -44,7 +44,7 @@ namespace Solnet.Examples
                 SetFeePayer(fromAccount).
                 AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000)).
                 AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)")).
-                Build();
+                Build(fromAccount);
 
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
             var txSim = rpcClient.SimulateTransaction(tx);
@@ -111,7 +111,8 @@ namespace Solnet.Examples
                     initialAccount.PublicKey,
                     25000,
                     ownerAccount)).
-                AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net")).Build();
+                AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net")).
+                Build(new List<Account>{ ownerAccount, mintAccount, initialAccount });
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
@@ -167,7 +168,8 @@ namespace Solnet.Examples
                     newAccount.PublicKey,
                     25000,
                     ownerAccount)).
-                AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net")).Build();
+                AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net")).
+                Build(new List<Account>{ownerAccount, newAccount, initialAccount});
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
@@ -180,7 +182,7 @@ namespace Solnet.Examples
         }
     }
 
-    public class TransferTokenChecked : IExample
+    public class TransferTokenCheckedExample : IExample
     { 
         private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
 
@@ -188,7 +190,7 @@ namespace Solnet.Examples
             "route clerk disease box emerge airport loud waste attitude film army tray " +
             "forward deal onion eight catalog surface unit card window walnut wealth medal";
 
-    public void Run()
+        public void Run()
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
 
@@ -229,7 +231,8 @@ namespace Solnet.Examples
                     mintAccount.PublicKey)).AddInstruction(
                 MemoProgram.NewMemo(
                     initialAccount,
-                    "Hello from Sol.Net")).Build();
+                    "Hello from Sol.Net")).
+                Build(new List<Account>{ownerAccount, newAccount, initialAccount});
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 

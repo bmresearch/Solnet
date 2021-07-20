@@ -19,41 +19,6 @@ namespace Solnet.Rpc.Builders
         private static readonly Base58Encoder Encoder = new();
 
         /// <summary>
-        /// The message header.
-        /// </summary>
-        private class MessageHeader
-        {
-            /// <summary>
-            /// The message header length.
-            /// </summary>
-            internal const int HeaderLength = 3;
-
-            /// <summary>
-            /// The number of required signatures.
-            /// </summary>
-            internal byte RequiredSignatures { get; set; }
-
-            /// <summary>
-            /// The number of read-only signed accounts.
-            /// </summary>
-            internal byte ReadOnlySignedAccounts { get; set; }
-
-            /// <summary>
-            /// The number of read-only non-signed accounts.
-            /// </summary>
-            internal byte ReadOnlyUnsignedAccounts { get; set; }
-
-            /// <summary>
-            /// Convert the message header to byte array format.
-            /// </summary>
-            /// <returns>The byte array.</returns>
-            internal byte[] ToBytes()
-            {
-                return new[] { RequiredSignatures, ReadOnlySignedAccounts, ReadOnlyUnsignedAccounts };
-            }
-        }
-
-        /// <summary>
         /// A compiled instruction within the message.
         /// </summary>
         private class CompiledInstruction
@@ -125,7 +90,7 @@ namespace Solnet.Rpc.Builders
         internal MessageBuilder AddInstruction(TransactionInstruction instruction)
         {
             _accountKeysList.Add(instruction.Keys);
-            _accountKeysList.Add(new AccountMeta(new PublicKey(instruction.ProgramId), false));
+            _accountKeysList.Add(AccountMeta.ReadOnly(new PublicKey(instruction.ProgramId), false));
             Instructions.Add(instruction);
 
             return this;
@@ -179,15 +144,15 @@ namespace Solnet.Rpc.Builders
             foreach (AccountMeta accountMeta in keysList)
             {
                 accountKeysBuffer.Write(accountMeta.PublicKeyBytes);
-                if (accountMeta.Signer)
+                if (accountMeta.IsSigner)
                 {
                     _messageHeader.RequiredSignatures += 1;
-                    if (!accountMeta.Writable)
+                    if (!accountMeta.IsWritable)
                         _messageHeader.ReadOnlySignedAccounts += 1;
                 }
                 else
                 {
-                    if (!accountMeta.Writable)
+                    if (!accountMeta.IsWritable)
                         _messageHeader.ReadOnlyUnsignedAccounts += 1;
                 }
             }
@@ -230,7 +195,7 @@ namespace Solnet.Rpc.Builders
             int feePayerIndex = FindAccountIndex(keysList, FeePayer.PublicKey.KeyBytes);
             if (feePayerIndex == -1)
             {
-                _accountKeysList.Add(new AccountMeta(FeePayer, true));
+                _accountKeysList.Add(AccountMeta.Writable(FeePayer.PublicKey, true));
 
             }
             else
@@ -240,7 +205,7 @@ namespace Solnet.Rpc.Builders
 
             List<AccountMeta> newList = new List<AccountMeta>
             {
-                new (FeePayer, true)
+                AccountMeta.Writable(FeePayer.PublicKey, true)
             };
             newList.AddRange(keysList);
 
