@@ -68,7 +68,7 @@ namespace Solnet.Rpc.Models
         /// </remarks>
         /// </summary>
         public NonceInformation NonceInformation { get; set; }
-
+        
         /// <summary>
         /// The signatures for the transaction.
         /// <remarks>
