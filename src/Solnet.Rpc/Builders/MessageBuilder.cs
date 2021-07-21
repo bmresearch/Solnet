@@ -61,12 +61,17 @@ namespace Solnet.Rpc.Builders
         /// <summary>
         /// The list of instructions contained within this transaction.
         /// </summary>
-        internal readonly List<TransactionInstruction> Instructions;
+        internal List<TransactionInstruction> Instructions { get; private set; }
 
         /// <summary>
         /// The hash of a recent block.
         /// </summary>
         internal string RecentBlockHash { get; set; }
+        
+        /// <summary>
+        /// The nonce information to be used instead of the recent blockhash.
+        /// </summary>
+        internal NonceInformation NonceInformation { get; set; }
 
         /// <summary>
         /// The transaction fee payer.
@@ -92,7 +97,6 @@ namespace Solnet.Rpc.Builders
             _accountKeysList.Add(instruction.Keys);
             _accountKeysList.Add(AccountMeta.ReadOnly(new PublicKey(instruction.ProgramId), false));
             Instructions.Add(instruction);
-
             return this;
         }
 
@@ -102,17 +106,31 @@ namespace Solnet.Rpc.Builders
         /// <returns></returns>
         internal byte[] Build()
         {
-            if (RecentBlockHash == null)
-                throw new Exception("recent block hash is required");
+            if (RecentBlockHash == null && NonceInformation == null)
+                throw new Exception("recent block hash or nonce information is required");
             if (Instructions == null)
                 throw new Exception("no instructions provided in the transaction");
+
+            // In case the user specified nonce information, we'll use it.
+            if (NonceInformation != null)
+            {
+                RecentBlockHash = NonceInformation.Nonce;
+                _accountKeysList.Add(NonceInformation.Instruction.Keys);
+                _accountKeysList.Add(AccountMeta.ReadOnly(new PublicKey(NonceInformation.Instruction.ProgramId), false));
+                List<TransactionInstruction> newInstructions = new (){NonceInformation.Instruction};
+                newInstructions.AddRange(Instructions);
+                Instructions = newInstructions;
+            }
+            
+            if (RecentBlockHash == null)
+                throw new Exception("either recent block hash was not provided or nonce information is invalid");
 
             _messageHeader = new MessageHeader();
 
             List<AccountMeta> keysList = GetAccountKeys();
             byte[] accountAddressesLength = ShortVectorEncoding.EncodeLength(keysList.Count);
             int compiledInstructionsLength = 0;
-            List<CompiledInstruction> compiledInstructions = new List<CompiledInstruction>();
+            List<CompiledInstruction> compiledInstructions = new ();
 
             foreach (TransactionInstruction instruction in Instructions)
             {
@@ -136,7 +154,6 @@ namespace Solnet.Rpc.Builders
                 compiledInstructionsLength += compiledInstruction.Length();
             }
 
-
             int accountKeysBufferSize = _accountKeysList.AccountList.Count * 32;
             MemoryStream accountKeysBuffer = new MemoryStream(accountKeysBufferSize);
             byte[] instructionsLength = ShortVectorEncoding.EncodeLength(compiledInstructions.Count);
@@ -158,10 +175,9 @@ namespace Solnet.Rpc.Builders
             }
 
             #region Build Message Body
-
-
+            
             int messageBufferSize = MessageHeader.HeaderLength + BlockHashLength + accountAddressesLength.Length +
-                                    +instructionsLength.Length + compiledInstructionsLength + accountKeysBufferSize;
+                                    + instructionsLength.Length + compiledInstructionsLength + accountKeysBufferSize;
             MemoryStream buffer = new MemoryStream(messageBufferSize);
             byte[] messageHeaderBytes = _messageHeader.ToBytes();
 
@@ -196,7 +212,6 @@ namespace Solnet.Rpc.Builders
             if (feePayerIndex == -1)
             {
                 _accountKeysList.Add(AccountMeta.Writable(FeePayer.PublicKey, true));
-
             }
             else
             {
@@ -221,7 +236,7 @@ namespace Solnet.Rpc.Builders
         /// <exception cref="Exception"></exception>
         private static int FindAccountIndex(IList<AccountMeta> accountMetas, byte[] publicKey)
         {
-            var encodedKey = Encoder.EncodeData(publicKey);
+            string encodedKey = Encoder.EncodeData(publicKey);
             for (int index = 0; index < accountMetas.Count; index++)
             {
                 if (accountMetas[index].PublicKey == encodedKey) return index;

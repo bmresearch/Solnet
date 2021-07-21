@@ -12,6 +12,11 @@ namespace Solnet.Programs.Models
     /// </summary>
     public class NonceAccount
     {
+        /// <summary>
+        /// The size of the data for a nonce account.
+        /// </summary>
+        public const int AccountDataSize = 80;
+        
         #region Layout
 
         /// <summary>
@@ -19,11 +24,6 @@ namespace Solnet.Programs.Models
         /// </summary>
         internal static class Layout
         {
-            /// <summary>
-            /// The size of the data for a nonce account.
-            /// </summary>
-            internal const int SpanLength = 80;
-
             /// <summary>
             /// The offset at which the version value begins.
             /// </summary>
@@ -84,10 +84,10 @@ namespace Solnet.Programs.Models
         /// <returns>The Nonce Account structure.</returns>
         public static NonceAccount Deserialize(ReadOnlySpan<byte> data)
         {
-            if (data.Length != Layout.SpanLength)
+            if (data.Length != AccountDataSize)
                 return null;
-
-            return new NonceAccount
+            
+            return new ()
             {
                 Version = data.GetU32(Layout.VersionOffset),
                 State = data.GetU32(Layout.StateOffset),
