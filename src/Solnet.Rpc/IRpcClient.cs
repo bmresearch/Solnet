@@ -830,7 +830,6 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        [Obsolete]
         Task<RequestResult<ulong>> GetTransactionCountAsync(Commitment commitment = Commitment.Finalized);
 
         /// <summary>
