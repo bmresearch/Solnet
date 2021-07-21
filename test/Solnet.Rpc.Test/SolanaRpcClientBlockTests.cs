@@ -271,9 +271,67 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
+        public void TestGetConfirmedTransaction()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Transaction/GetConfirmedTransactionResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Transaction/GetConfirmedTransactionRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri
+            };
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var res = sut.GetConfirmedTransaction("5as3w4KMpY23MP5T1nkPVksjXjN7hnjHKqiDxRMxUNcw5XsCGtStayZib1kQdyR2D9w8dR11Ha9Xk38KP3kbAwM1");
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(res.Result);
+            Assert.AreEqual(79700345UL, res.Result.Slot);
+
+            Assert.AreEqual(1622655364, res.Result.BlockTime);
+
+            TransactionMetaInfo first = res.Result;
+
+            Assert.IsNull(first.Meta.Error);
+
+            Assert.AreEqual(5000UL, first.Meta.Fee);
+            Assert.AreEqual(0, first.Meta.InnerInstructions.Length);
+            Assert.AreEqual(2, first.Meta.LogMessages.Length);
+            Assert.AreEqual(5, first.Meta.PostBalances.Length);
+            Assert.AreEqual(395383573380UL, first.Meta.PostBalances[0]);
+            Assert.AreEqual(5, first.Meta.PreBalances.Length);
+            Assert.AreEqual(395383578380UL, first.Meta.PreBalances[0]);
+            Assert.AreEqual(0, first.Meta.PostTokenBalances.Length);
+            Assert.AreEqual(0, first.Meta.PreTokenBalances.Length);
+
+            Assert.AreEqual(1, first.Transaction.Signatures.Length);
+            Assert.AreEqual("5as3w4KMpY23MP5T1nkPVksjXjN7hnjHKqiDxRMxUNcw5XsCGtStayZib1kQdyR2D9w8dR11Ha9Xk38KP3kbAwM1", first.Transaction.Signatures[0]);
+
+            Assert.AreEqual(5, first.Transaction.Message.AccountKeys.Length);
+            Assert.AreEqual("EvVrzsxoj118sxxSTrcnc9u3fRdQfCc7d4gRzzX6TSqj", first.Transaction.Message.AccountKeys[0]);
+
+            Assert.AreEqual(0, first.Transaction.Message.Header.NumReadonlySignedAccounts);
+            Assert.AreEqual(3, first.Transaction.Message.Header.NumReadonlyUnsignedAccounts);
+            Assert.AreEqual(1, first.Transaction.Message.Header.NumRequiredSignatures);
+
+            Assert.AreEqual(1, first.Transaction.Message.Instructions.Length);
+            Assert.AreEqual(4, first.Transaction.Message.Instructions[0].Accounts.Length);
+            Assert.AreEqual("2kr3BYaDkghC7rvHsQYnBNoB4dhXrUmzgYMM4kbHSG7ALa3qsMPxfC9cJTFDKyJaC8VYSjrey9pvyRivtESUJrC3qzr89pvS2o6MQ"
+                + "hyRVxmh3raQStxFFYwZ6WyKFNoQXvcchBwy8uQGfhhUqzuLNREwRmZ5U2VgTjFWX8Vikqya6iyzvALQNZEvqz7ZoGEyRtJ6AzNyWbkUyEo63rZ5w3wnxmhr3Uood",
+                first.Transaction.Message.Instructions[0].Data);
+
+            Assert.AreEqual(4, first.Transaction.Message.Instructions[0].ProgramIdIndex);
+
+            Assert.AreEqual("6XGYfEJ5CGGBA5E8E7Gw4ToyDLDNNAyUCb7CJj1rLk21", first.Transaction.Message.RecentBlockhash);
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+        
+        [TestMethod]
         public void TestGetTransaction()
         {
-
             var responseData = File.ReadAllText("Resources/Http/Transaction/GetTransactionResponse.json");
             var requestData = File.ReadAllText("Resources/Http/Transaction/GetTransactionRequest.json");
             var sentMessage = string.Empty;
