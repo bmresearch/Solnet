@@ -796,7 +796,7 @@ namespace Solnet.Rpc
         /// <summary>
         /// Returns transaction details for a confirmed transaction.
         /// </summary>
-        /// <param name="signature">ransaction signature as base-58 encoded string.</param>
+        /// <param name="signature">Transaction signature as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
         Task<RequestResult<TransactionMetaSlotInfo>> GetTransactionAsync(string signature,
@@ -806,10 +806,25 @@ namespace Solnet.Rpc
         /// Returns transaction details for a confirmed transaction.
         /// </summary>
         /// <param name="signature">Transaction signature as base-58 encoded string.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        Task<RequestResult<TransactionMetaSlotInfo>> GetConfirmedTransactionAsync(string signature);
+        
+        /// <summary>
+        /// Returns transaction details for a confirmed transaction.
+        /// </summary>
+        /// <param name="signature">Transaction signature as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature, Commitment commitment = Commitment.Finalized);
 
+        /// <summary>
+        /// Returns transaction details for a confirmed transaction.
+        /// </summary>
+        /// <param name="signature">Transaction signature as base-58 encoded string.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        [Obsolete]
+        RequestResult<TransactionMetaSlotInfo> GetConfirmedTransaction(string signature);
+        
         /// <summary>
         /// Gets the total transaction count of the ledger.
         /// </summary>

@@ -295,10 +295,17 @@ namespace Solnet.Rpc
                 Parameters.Create(signature, ConfigObject.Create(KeyValue.Create("encoding","json"), HandleCommitment(commitment))));
         }
 
+        public async Task<RequestResult<TransactionMetaSlotInfo>> GetConfirmedTransactionAsync(string signature)
+        {
+            return await SendRequestAsync<TransactionMetaSlotInfo>("getConfirmedTransaction",
+                Parameters.Create(signature, ConfigObject.Create(KeyValue.Create("encoding","json"), HandleCommitment(Commitment.Confirmed))));
+        }
+
         /// <inheritdoc cref="IRpcClient.GetTransaction"/>
         public RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature, Commitment commitment = Commitment.Finalized)
             => GetTransactionAsync(signature, commitment).Result;
 
+        public RequestResult<TransactionMetaSlotInfo> GetConfirmedTransaction(string signature) => GetConfirmedTransactionAsync(signature).Result;
 
         /// <inheritdoc cref="IRpcClient.GetBlockHeightAsync"/>
         public async Task<RequestResult<ulong>> GetBlockHeightAsync(Commitment commitment = Commitment.Finalized)
