@@ -25,11 +25,6 @@ namespace Solnet.Programs.Models
         internal static class Layout
         {
             /// <summary>
-            /// The size of the data for a nonce account.
-            /// </summary>
-            internal const int SpanLength = 80;
-
-            /// <summary>
             /// The offset at which the version value begins.
             /// </summary>
             internal const int VersionOffset = 0;

@@ -34,11 +34,6 @@ namespace Solnet.Rpc.Builders
         private byte[] _serializedMessage;
 
         /// <summary>
-        /// The nonce information.
-        /// </summary>
-        private NonceInformation _nonceInformation;
-
-        /// <summary>
         /// Default constructor that initializes the transaction builder.
         /// </summary>
         public TransactionBuilder()

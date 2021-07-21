@@ -37,7 +37,7 @@ namespace Solnet.Rpc.Builders
         /// The hash of a recent block.
         /// </summary>
         internal string RecentBlockHash { get; set; }
-
+        
         /// <summary>
         /// The nonce information to be used instead of the recent blockhash.
         /// </summary>
@@ -97,7 +97,7 @@ namespace Solnet.Rpc.Builders
 
             List<AccountMeta> keysList = GetAccountKeys();
             byte[] accountAddressesLength = ShortVectorEncoding.EncodeLength(keysList.Count);
-            int compiledInstructionsLength = 0;
+            int compiledInstructionsLength = 0; 
             List<CompiledInstruction> compiledInstructions = new();
 
             foreach (TransactionInstruction instruction in Instructions)
