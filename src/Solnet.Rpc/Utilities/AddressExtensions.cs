@@ -1,8 +1,11 @@
 using Org.BouncyCastle.Crypto.Digests;
+using Solnet.Wallet.Utilities;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 
 namespace Solnet.Rpc.Utilities
@@ -64,7 +67,7 @@ namespace Solnet.Rpc.Utilities
             int nonce = 255;
             List<byte[]> buffer = seeds.ToList();
 
-            while (nonce-- != 0)
+            while (nonce != 0)
             {
                 byte[] address;
                 try
@@ -75,6 +78,7 @@ namespace Solnet.Rpc.Utilities
                 catch (Exception)
                 {
                     buffer.RemoveAt(buffer.Count - 1);
+                    nonce--;
                     continue;
                 }
 

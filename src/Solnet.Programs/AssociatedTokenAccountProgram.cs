@@ -1,6 +1,8 @@
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
+using Solnet.Wallet.Utilities;
+using System;
 using System.Collections.Generic;
 
 namespace Solnet.Programs
@@ -28,14 +30,12 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction CreateAssociatedTokenAccount(Account payer, PublicKey owner, PublicKey mint)
         {
-            (byte[] associatedTokenAddress, _) = AddressExtensions.FindProgramAddress(
-                new List<byte[]> { owner.KeyBytes, TokenProgram.ProgramIdKey.KeyBytes, mint.KeyBytes },
-                ProgramIdKey.KeyBytes);
+            PublicKey associatedTokenAddress = DeriveAssociatedTokenAccount(owner, mint);
             
             List<AccountMeta> keys = new()
             {
                 new AccountMeta(payer, true),
-                new AccountMeta(new PublicKey(associatedTokenAddress), false),
+                new AccountMeta(associatedTokenAddress, true),
                 new AccountMeta(owner, false),
                 new AccountMeta(mint, false),
                 new AccountMeta(SystemProgram.ProgramIdKey, false),
@@ -49,6 +49,20 @@ namespace Solnet.Programs
                 Keys = keys,
                 Data = System.Array.Empty<byte>()
             };
+        }
+
+        /// <summary>
+        /// Derive the public key of the associated token account for the
+        /// </summary>
+        /// <param name="owner">The public key of the owner account for the new associated token account.</param>
+        /// <param name="mint">The public key of the mint for the new associated token account.</param>
+        /// <returns>The public key of the associated token account.</returns>
+        public static PublicKey DeriveAssociatedTokenAccount(PublicKey owner, PublicKey mint)
+        {
+            (byte[] associatedTokenAddress, int nonce) = AddressExtensions.FindProgramAddress(
+                new List<byte[]> { owner.KeyBytes, TokenProgram.ProgramIdKey.KeyBytes, mint.KeyBytes },
+                ProgramIdKey.KeyBytes);
+            return new PublicKey(associatedTokenAddress);
         }
     }
 }
