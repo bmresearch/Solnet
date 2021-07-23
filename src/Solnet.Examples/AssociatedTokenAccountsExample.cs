@@ -34,7 +34,7 @@ namespace Solnet.Examples
             RequestResult<ResponseValue<BlockHash>> blockHash = RpcClient.GetRecentBlockHash();
             
             ulong minBalanceForExemptionAcc =
-                RpcClient.GetMinimumBalanceForRentExemption(SystemProgram.AccountDataSize).Result;
+                RpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
             ulong minBalanceForExemptionMint =
                 RpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             
@@ -66,7 +66,7 @@ namespace Solnet.Examples
                     ownerAccount,
                     initialAccount,
                     minBalanceForExemptionAcc,
-                    SystemProgram.AccountDataSize,
+                    TokenProgram.TokenAccountDataSize,
                     TokenProgram.ProgramIdKey)).
                 AddInstruction(TokenProgram.InitializeAccount(
                     initialAccount.PublicKey,

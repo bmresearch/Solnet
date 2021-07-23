@@ -120,7 +120,7 @@ namespace Solnet.Rpc.Test
                     ownerAccount,
                     initialAccount,
                     minBalanceForAccount,
-                    SystemProgram.AccountDataSize,
+                    TokenProgram.TokenAccountDataSize,
                     TokenProgram.ProgramIdKey))
                 .AddInstruction(
                     TokenProgram.InitializeAccount(
