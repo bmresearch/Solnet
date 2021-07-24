@@ -55,7 +55,7 @@ namespace Solnet.Rpc
         /// <returns>A task which may return a request result.</returns>
         private async Task<RequestResult<T>> SendRequestAsync<T>(string method)
         {
-            var req = BuildRequest<T>(method, null);
+            JsonRpcRequest req = BuildRequest<T>(method, null);
             return await SendRequest<T>(req);
         }
 
@@ -68,14 +68,14 @@ namespace Solnet.Rpc
         /// <returns>A task which may return a request result.</returns>
         private async Task<RequestResult<T>> SendRequestAsync<T>(string method, IList<object> parameters)
         {
-            var req = BuildRequest<T>(method, parameters);
+            JsonRpcRequest req = BuildRequest<T>(method, parameters);
             return await SendRequest<T>(req);
         }
 
         private KeyValue HandleCommitment(Commitment parameter, Commitment defaultValue = Commitment.Finalized)
-         =>  parameter != defaultValue ? KeyValue.Create("commitment", parameter) : null;
-        
-        private KeyValue HandleTransactionDetails(TransactionDetailsFilterType parameter, 
+            => parameter != defaultValue ? KeyValue.Create("commitment", parameter) : null;
+
+        private KeyValue HandleTransactionDetails(TransactionDetailsFilterType parameter,
             TransactionDetailsFilterType defaultValue = TransactionDetailsFilterType.Full)
             => parameter != defaultValue ? KeyValue.Create("transactionDetails", parameter) : null;
 
@@ -107,6 +107,11 @@ namespace Solnet.Rpc
             Commitment commitment = Commitment.Finalized, int? dataSize = null, int? memOffset = null,
             string memBytes = null)
         {
+            Dictionary<string, object> memCmp = memOffset != null
+                ? ConfigObject.Create(
+                    KeyValue.Create("offset", memOffset),
+                    KeyValue.Create("bytes", memBytes))
+                : null;
             return await SendRequestAsync<List<AccountKeyPair>>("getProgramAccounts",
                 Parameters.Create(
                     pubKey,
@@ -115,12 +120,7 @@ namespace Solnet.Rpc
                         KeyValue.Create("filters",
                             Parameters.Create(
                                 ConfigObject.Create(KeyValue.Create("dataSize", dataSize)),
-                                memOffset != null
-                                    ? ConfigObject.Create(KeyValue.Create("memcmp",
-                                        ConfigObject.Create(
-                                            KeyValue.Create("offset", memOffset),
-                                            KeyValue.Create("bytes", memBytes))))
-                                    : null)),
+                                ConfigObject.Create(KeyValue.Create("memcmp", memCmp)))),
                         HandleCommitment(commitment))));
         }
 
@@ -179,8 +179,10 @@ namespace Solnet.Rpc
 
             return await SendRequestAsync<BlockInfo>("getBlock",
                 Parameters.Create(slot, ConfigObject.Create(
-                    KeyValue.Create("encoding", "json"), HandleTransactionDetails(transactionDetails),
-                    blockRewards ? KeyValue.Create("rewards", true) : null, HandleCommitment(commitment))));
+                    KeyValue.Create("encoding", "json"),
+                    HandleTransactionDetails(transactionDetails),
+                    KeyValue.Create("rewards", blockRewards ? blockRewards : null),
+                    HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetBlock"/>
@@ -219,7 +221,8 @@ namespace Solnet.Rpc
                 Parameters.Create(slot, ConfigObject.Create(
                     KeyValue.Create("encoding", "json"),
                     HandleTransactionDetails(transactionDetails),
-                    blockRewards ? KeyValue.Create("rewards", true) : null, HandleCommitment(commitment))));
+                    KeyValue.Create("rewards", blockRewards ? blockRewards : null),
+                    HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetConfirmedBlock"/>
@@ -309,7 +312,7 @@ namespace Solnet.Rpc
             string identity = null, ulong? firstSlot = null, ulong? lastSlot = null,
             Commitment commitment = Commitment.Finalized)
         {
-            var parameters = new Dictionary<string, object>();
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
 
             if (commitment != Commitment.Finalized)
             {
@@ -323,7 +326,7 @@ namespace Solnet.Rpc
 
             if (firstSlot.HasValue)
             {
-                var range = new Dictionary<string, object> {{"firstSlot", firstSlot.Value}};
+                Dictionary<string, object> range = new Dictionary<string, object> {{"firstSlot", firstSlot.Value}};
 
                 if (lastSlot.HasValue)
                 {
@@ -388,7 +391,8 @@ namespace Solnet.Rpc
                     ConfigObject.Create(KeyValue.Create("encoding", "json"), HandleCommitment(commitment))));
         }
 
-        public async Task<RequestResult<TransactionMetaSlotInfo>> GetConfirmedTransactionAsync(string signature, Commitment commitment = Commitment.Finalized)
+        public async Task<RequestResult<TransactionMetaSlotInfo>> GetConfirmedTransactionAsync(string signature,
+            Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<TransactionMetaSlotInfo>("getConfirmedTransaction",
                 Parameters.Create(signature,
@@ -400,7 +404,8 @@ namespace Solnet.Rpc
             Commitment commitment = Commitment.Finalized)
             => GetTransactionAsync(signature, commitment).Result;
 
-        public RequestResult<TransactionMetaSlotInfo> GetConfirmedTransaction(string signature, Commitment commitment = Commitment.Finalized) =>
+        public RequestResult<TransactionMetaSlotInfo> GetConfirmedTransaction(string signature,
+            Commitment commitment = Commitment.Finalized) =>
             GetConfirmedTransactionAsync(signature, commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetBlockHeightAsync"/>
@@ -469,7 +474,7 @@ namespace Solnet.Rpc
         public async Task<RequestResult<ResponseValue<FeeCalculatorInfo>>> GetFeeCalculatorForBlockhashAsync(
             string blockhash, Commitment commitment = Commitment.Finalized)
         {
-            var parameters = Parameters.Create(blockhash, ConfigObject.Create(HandleCommitment(commitment)));
+            List<object> parameters = Parameters.Create(blockhash, ConfigObject.Create(HandleCommitment(commitment)));
 
             return await SendRequestAsync<ResponseValue<FeeCalculatorInfo>>("getFeeCalculatorForBlockhash", parameters);
         }
@@ -661,8 +666,9 @@ namespace Solnet.Rpc
         }
 
         /// <inheritdoc cref="IRpcClient.GetConfirmedSignaturesForAddress2Async"/>
-        public async Task<RequestResult<List<SignatureStatusInfo>>> GetConfirmedSignaturesForAddress2Async(string accountPubKey,
-            ulong limit = 1000, string before = null, string until = null, Commitment commitment = Commitment.Finalized)
+        public async Task<RequestResult<List<SignatureStatusInfo>>> GetConfirmedSignaturesForAddress2Async(
+            string accountPubKey, ulong limit = 1000, string before = null, string until = null,
+            Commitment commitment = Commitment.Finalized)
         {
             if (commitment == Commitment.Processed)
                 throw new ArgumentException("Commitment.Processed is not supported for this method.");
@@ -978,11 +984,11 @@ namespace Solnet.Rpc
                         KeyValue.Create("encoding", BinaryEncoding.Base64),
                         KeyValue.Create("replaceRecentBlockhash",
                             replaceRecentBlockhash ? replaceRecentBlockhash : null),
-                        accountsToReturn == null
-                            ? null
-                            : KeyValue.Create("accounts", ConfigObject.Create(
+                        KeyValue.Create("accounts", accountsToReturn != null
+                            ? ConfigObject.Create(
                                 KeyValue.Create("encoding", BinaryEncoding.Base64),
-                                KeyValue.Create("addresses", accountsToReturn))))));
+                                KeyValue.Create("addresses", accountsToReturn))
+                            : null))));
         }
 
         /// <inheritdoc cref="IRpcClient.SimulateTransactionAsync(byte[], bool, Commitment, bool, IList{string})"/>
