@@ -75,7 +75,7 @@ namespace Solnet.Programs
         /// <param name="hashedName">The hash of the name with the name service hash prefix.</param>
         /// <param name="nameClass">The account of the name class.</param>
         /// <param name="parentName">The public key of the parent name.</param>
-        /// <returns>The program derived address for the name.</returns>
+        /// <returns>The program derived address for the name if it could be found, otherwise null.</returns>
         public static PublicKey DeriveNameAccountKey(ReadOnlySpan<byte> hashedName, PublicKey nameClass = null, PublicKey parentName = null)
         {
             byte[] nameClassKey = new byte[32];
@@ -84,16 +84,9 @@ namespace Solnet.Programs
             if (nameClass != null) nameClassKey = nameClass.KeyBytes;
             if (parentName != null) parentNameKeyBytes = parentName.KeyBytes;
 
-            try
-            {
-                (byte[] nameAccountPublicKey, _) = AddressExtensions.FindProgramAddress(
-                    new List<byte[]> {hashedName.ToArray(), nameClassKey, parentNameKeyBytes}, ProgramIdKey.KeyBytes);
-                return new PublicKey(nameAccountPublicKey);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            bool success = AddressExtensions.TryFindProgramAddress(
+                new List<byte[]> {hashedName.ToArray(), nameClassKey, parentNameKeyBytes}, ProgramIdKey.KeyBytes, out byte[] nameAccountPublicKey, out _);
+            return success ? new PublicKey(nameAccountPublicKey) : null;
         }
 
 
