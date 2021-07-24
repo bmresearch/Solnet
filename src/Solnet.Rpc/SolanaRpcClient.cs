@@ -55,7 +55,7 @@ namespace Solnet.Rpc
         /// <returns>A task which may return a request result.</returns>
         private async Task<RequestResult<T>> SendRequestAsync<T>(string method)
         {
-            var req = BuildRequest<T>(method, null);
+            JsonRpcRequest req = BuildRequest<T>(method, null);
             return await SendRequest<T>(req);
         }
 
@@ -68,25 +68,25 @@ namespace Solnet.Rpc
         /// <returns>A task which may return a request result.</returns>
         private async Task<RequestResult<T>> SendRequestAsync<T>(string method, IList<object> parameters)
         {
-            var req = BuildRequest<T>(method, parameters);
+            JsonRpcRequest req = BuildRequest<T>(method, parameters);
             return await SendRequest<T>(req);
         }
 
         private KeyValue HandleCommitment(Commitment parameter, Commitment defaultValue = Commitment.Finalized)
-        {
-            if (parameter != defaultValue)
-            {
-                return KeyValue.Create("commitment", parameter);
-            }
-            return null;
-        }
+            => parameter != defaultValue ? KeyValue.Create("commitment", parameter) : null;
+
+        private KeyValue HandleTransactionDetails(TransactionDetailsFilterType parameter,
+            TransactionDetailsFilterType defaultValue = TransactionDetailsFilterType.Full)
+            => parameter != defaultValue ? KeyValue.Create("transactionDetails", parameter) : null;
+
         #endregion
 
 
-
         #region Accounts
+
         /// <inheritdoc cref="IRpcClient.GetAccountInfoAsync(string,Commitment)"/>
-        public async Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey, Commitment commitment = Commitment.Finalized)
+        public async Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey,
+            Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<ResponseValue<AccountInfo>>("getAccountInfo",
                 Parameters.Create(
@@ -97,32 +97,43 @@ namespace Solnet.Rpc
         }
 
         /// <inheritdoc cref="IRpcClient.GetAccountInfo(string,Commitment)"/>
-        public RequestResult<ResponseValue<AccountInfo>> GetAccountInfo(string pubKey, Commitment commitment = Commitment.Finalized)
+        public RequestResult<ResponseValue<AccountInfo>> GetAccountInfo(string pubKey,
+            Commitment commitment = Commitment.Finalized)
             => GetAccountInfoAsync(pubKey, commitment).Result;
 
 
         /// <inheritdoc cref="IRpcClient.GetProgramAccountsAsync"/>
         public async Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey,
-            Commitment commitment = Commitment.Finalized, int? dataSize = null)
+            Commitment commitment = Commitment.Finalized, int? dataSize = null, int? memOffset = null,
+            string memBytes = null)
         {
+            Dictionary<string, object> memCmp = memOffset != null
+                ? ConfigObject.Create(
+                    KeyValue.Create("offset", memOffset),
+                    KeyValue.Create("bytes", memBytes))
+                : null;
             return await SendRequestAsync<List<AccountKeyPair>>("getProgramAccounts",
                 Parameters.Create(
                     pubKey,
                     ConfigObject.Create(
                         KeyValue.Create("encoding", "base64"),
-                        KeyValue.Create("filters", 
+                        KeyValue.Create("filters",
                             Parameters.Create(
-                                ConfigObject.Create(KeyValue.Create("dataSize", dataSize)))),
+                                ConfigObject.Create(KeyValue.Create("dataSize", dataSize)),
+                                ConfigObject.Create(KeyValue.Create("memcmp", memCmp)))),
                         HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetProgramAccounts"/>
-        public RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey, Commitment commitment = Commitment.Finalized,
-            int? dataSize = null) => GetProgramAccountsAsync(pubKey, commitment, dataSize).Result;
+        public RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey,
+            Commitment commitment = Commitment.Finalized,
+            int? dataSize = null, int? memOffset = null, string memBytes = null)
+            => GetProgramAccountsAsync(pubKey, commitment, dataSize, memOffset, memBytes).Result;
 
 
         /// <inheritdoc cref="IRpcClient.GetMultipleAccountsAsync"/>
-        public async Task<RequestResult<ResponseValue<List<AccountInfo>>>> GetMultipleAccountsAsync(IList<string> accounts,
+        public async Task<RequestResult<ResponseValue<List<AccountInfo>>>> GetMultipleAccountsAsync(
+            IList<string> accounts,
             Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<ResponseValue<List<AccountInfo>>>("getMultipleAccounts",
@@ -149,12 +160,17 @@ namespace Solnet.Rpc
         }
 
         /// <inheritdoc cref="IRpcClient.GetBalance"/>
-        public RequestResult<ResponseValue<ulong>> GetBalance(string pubKey, Commitment commitment = Commitment.Finalized)
+        public RequestResult<ResponseValue<ulong>> GetBalance(string pubKey,
+            Commitment commitment = Commitment.Finalized)
             => GetBalanceAsync(pubKey, commitment).Result;
 
         #region Blocks
+
         /// <inheritdoc cref="IRpcClient.GetBlockAsync"/>
-        public async Task<RequestResult<BlockInfo>> GetBlockAsync(ulong slot, Commitment commitment = Commitment.Finalized)
+        public async Task<RequestResult<BlockInfo>> GetBlockAsync(ulong slot,
+            Commitment commitment = Commitment.Finalized,
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full,
+            bool blockRewards = false)
         {
             if (commitment == Commitment.Processed)
             {
@@ -162,12 +178,18 @@ namespace Solnet.Rpc
             }
 
             return await SendRequestAsync<BlockInfo>("getBlock",
-                Parameters.Create(slot, ConfigObject.Create(KeyValue.Create("encoding", "json"), HandleCommitment(commitment))));
+                Parameters.Create(slot, ConfigObject.Create(
+                    KeyValue.Create("encoding", "json"),
+                    HandleTransactionDetails(transactionDetails),
+                    KeyValue.Create("rewards", blockRewards ? blockRewards : null),
+                    HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetBlock"/>
-        public RequestResult<BlockInfo> GetBlock(ulong slot, Commitment commitment = Commitment.Finalized)
-            => GetBlockAsync(slot, commitment).Result;
+        public RequestResult<BlockInfo> GetBlock(ulong slot, Commitment commitment = Commitment.Finalized,
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full,
+            bool blockRewards = false)
+            => GetBlockAsync(slot, commitment, transactionDetails, blockRewards).Result;
 
 
         /// <inheritdoc cref="IRpcClient.GetBlocksAsync"/>
@@ -180,17 +202,82 @@ namespace Solnet.Rpc
             }
 
             return await SendRequestAsync<List<ulong>>("getBlocks",
-                Parameters.Create(startSlot, endSlot > 0 ? endSlot : null, ConfigObject.Create(HandleCommitment(commitment))));
+                Parameters.Create(startSlot, endSlot > 0 ? endSlot : null,
+                    ConfigObject.Create(HandleCommitment(commitment))));
         }
 
+        /// <inheritdoc cref="IRpcClient.GetConfirmedBlockAsync"/>
+        public async Task<RequestResult<BlockInfo>> GetConfirmedBlockAsync(ulong slot,
+            Commitment commitment = Commitment.Finalized,
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full,
+            bool blockRewards = false)
+        {
+            if (commitment == Commitment.Processed)
+            {
+                throw new ArgumentException("Commitment.Processed is not supported for this method.");
+            }
+
+            return await SendRequestAsync<BlockInfo>("getConfirmedBlock",
+                Parameters.Create(slot, ConfigObject.Create(
+                    KeyValue.Create("encoding", "json"),
+                    HandleTransactionDetails(transactionDetails),
+                    KeyValue.Create("rewards", blockRewards ? blockRewards : null),
+                    HandleCommitment(commitment))));
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetConfirmedBlock"/>
+        public RequestResult<BlockInfo> GetConfirmedBlock(ulong slot, Commitment commitment = Commitment.Finalized,
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full,
+            bool blockRewards = false)
+            => GetConfirmedBlockAsync(slot, commitment, transactionDetails, blockRewards).Result;
+
+
         /// <inheritdoc cref="IRpcClient.GetBlocks"/>
-        public RequestResult<List<ulong>> GetBlocks(ulong startSlot, ulong endSlot = 0, Commitment commitment = Commitment.Finalized)
+        public RequestResult<List<ulong>> GetBlocks(ulong startSlot, ulong endSlot = 0,
+            Commitment commitment = Commitment.Finalized)
             => GetBlocksAsync(startSlot, endSlot, commitment).Result;
 
+        /// <inheritdoc cref="IRpcClient.GetConfirmedBlocksAsync"/>
+        public async Task<RequestResult<List<ulong>>> GetConfirmedBlocksAsync(ulong startSlot, ulong endSlot = 0,
+            Commitment commitment = Commitment.Finalized)
+        {
+            if (commitment == Commitment.Processed)
+            {
+                throw new ArgumentException("Commitment.Processed is not supported for this method.");
+            }
+
+            return await SendRequestAsync<List<ulong>>("getConfirmedBlocks",
+                Parameters.Create(startSlot, endSlot > 0 ? endSlot : null,
+                    ConfigObject.Create(HandleCommitment(commitment))));
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetConfirmedBlocks"/>
+        public RequestResult<List<ulong>> GetConfirmedBlocks(ulong startSlot, ulong endSlot = 0,
+            Commitment commitment = Commitment.Finalized)
+            => GetConfirmedBlocksAsync(startSlot, endSlot, commitment).Result;
+
+        /// <inheritdoc cref="IRpcClient.GetConfirmedBlocksWithLimitAsync"/>
+        public async Task<RequestResult<List<ulong>>> GetConfirmedBlocksWithLimitAsync(ulong startSlot, ulong limit,
+            Commitment commitment = Commitment.Finalized)
+        {
+            if (commitment == Commitment.Processed)
+            {
+                throw new ArgumentException("Commitment.Processed is not supported for this method.");
+            }
+
+            return await SendRequestAsync<List<ulong>>("getConfirmedBlocksWithLimit",
+                Parameters.Create(startSlot, limit, ConfigObject.Create(HandleCommitment(commitment))));
+        }
 
         /// <inheritdoc cref="IRpcClient.GetBlocksWithLimit"/>
-        public RequestResult<List<ulong>> GetBlocksWithLimit(ulong startSlot, ulong limit, Commitment commitment = Commitment.Finalized)
+        public RequestResult<List<ulong>> GetBlocksWithLimit(ulong startSlot, ulong limit,
+            Commitment commitment = Commitment.Finalized)
             => GetBlocksWithLimitAsync(startSlot, limit, commitment).Result;
+
+        /// <inheritdoc cref="IRpcClient.GetConfirmedBlocksWithLimit"/>
+        public RequestResult<List<ulong>> GetConfirmedBlocksWithLimit(ulong startSlot, ulong limit,
+            Commitment commitment = Commitment.Finalized)
+            => GetConfirmedBlocksWithLimitAsync(startSlot, limit, commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetBlocksWithLimitAsync"/>
         public async Task<RequestResult<List<ulong>>> GetBlocksWithLimitAsync(ulong startSlot, ulong limit,
@@ -202,7 +289,7 @@ namespace Solnet.Rpc
             }
 
             return await SendRequestAsync<List<ulong>>("getBlocksWithLimit",
-                 Parameters.Create(startSlot, limit, ConfigObject.Create(HandleCommitment(commitment))));
+                Parameters.Create(startSlot, limit, ConfigObject.Create(HandleCommitment(commitment))));
         }
 
 
@@ -215,13 +302,17 @@ namespace Solnet.Rpc
         {
             return await SendRequestAsync<ulong>("getFirstAvailableBlock");
         }
+
         #endregion
 
         #region Block Production
+
         /// <inheritdoc cref="IRpcClient.GetBlockProductionAsync(string, ulong?, ulong?, Commitment)"/>
-        public async Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync(string identity = null, ulong? firstSlot = null, ulong? lastSlot = null, Commitment commitment = Commitment.Finalized)
+        public async Task<RequestResult<ResponseValue<BlockProductionInfo>>> GetBlockProductionAsync(
+            string identity = null, ulong? firstSlot = null, ulong? lastSlot = null,
+            Commitment commitment = Commitment.Finalized)
         {
-            var parameters = new Dictionary<string, object>();
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
 
             if (commitment != Commitment.Finalized)
             {
@@ -235,27 +326,31 @@ namespace Solnet.Rpc
 
             if (firstSlot.HasValue)
             {
-                var range = new Dictionary<string, object> { { "firstSlot", firstSlot.Value } };
+                Dictionary<string, object> range = new Dictionary<string, object> {{"firstSlot", firstSlot.Value}};
 
                 if (lastSlot.HasValue)
                 {
                     range.Add("lastSlot", lastSlot.Value);
                 }
+
                 parameters.Add("range", range);
             }
             else if (lastSlot.HasValue)
             {
-                throw new ArgumentException("Range parameters are optional, but the lastSlot argument must be paired with a firstSlot.");
+                throw new ArgumentException(
+                    "Range parameters are optional, but the lastSlot argument must be paired with a firstSlot.");
             }
 
-            List<object> args = parameters.Count > 0 ? new List<object> { parameters } : null;
+            List<object> args = parameters.Count > 0 ? new List<object> {parameters} : null;
 
             return await SendRequestAsync<ResponseValue<BlockProductionInfo>>("getBlockProduction", args);
         }
 
         /// <inheritdoc cref="IRpcClient.GetBlockProduction(string, ulong?, ulong?, Commitment)"/>
-        public RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction(string identity = null, ulong? firstSlot = null, ulong? lastSlot = null, Commitment commitment = Commitment.Finalized)
+        public RequestResult<ResponseValue<BlockProductionInfo>> GetBlockProduction(string identity = null,
+            ulong? firstSlot = null, ulong? lastSlot = null, Commitment commitment = Commitment.Finalized)
             => GetBlockProductionAsync(identity, firstSlot, lastSlot, commitment).Result;
+
         #endregion
 
         /// <inheritdoc cref="IRpcClient.GetHealth()"/>
@@ -292,25 +387,32 @@ namespace Solnet.Rpc
             Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<TransactionMetaSlotInfo>("getTransaction",
-                Parameters.Create(signature, ConfigObject.Create(KeyValue.Create("encoding","json"), HandleCommitment(commitment))));
+                Parameters.Create(signature,
+                    ConfigObject.Create(KeyValue.Create("encoding", "json"), HandleCommitment(commitment))));
         }
 
-        public async Task<RequestResult<TransactionMetaSlotInfo>> GetConfirmedTransactionAsync(string signature)
+        public async Task<RequestResult<TransactionMetaSlotInfo>> GetConfirmedTransactionAsync(string signature,
+            Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<TransactionMetaSlotInfo>("getConfirmedTransaction",
-                Parameters.Create(signature, ConfigObject.Create(KeyValue.Create("encoding","json"), HandleCommitment(Commitment.Confirmed))));
+                Parameters.Create(signature,
+                    ConfigObject.Create(KeyValue.Create("encoding", "json"), HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetTransaction"/>
-        public RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature, Commitment commitment = Commitment.Finalized)
+        public RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature,
+            Commitment commitment = Commitment.Finalized)
             => GetTransactionAsync(signature, commitment).Result;
 
-        public RequestResult<TransactionMetaSlotInfo> GetConfirmedTransaction(string signature) => GetConfirmedTransactionAsync(signature).Result;
+        public RequestResult<TransactionMetaSlotInfo> GetConfirmedTransaction(string signature,
+            Commitment commitment = Commitment.Finalized) =>
+            GetConfirmedTransactionAsync(signature, commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetBlockHeightAsync"/>
         public async Task<RequestResult<ulong>> GetBlockHeightAsync(Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<ulong>("getBlockHeight", Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
+            return await SendRequestAsync<ulong>("getBlockHeight",
+                Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetBlockHeight"/>
@@ -350,11 +452,13 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="IRpcClient.GetEpochInfoAsync"/>
         public async Task<RequestResult<EpochInfo>> GetEpochInfoAsync(Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<EpochInfo>("getEpochInfo", Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
+            return await SendRequestAsync<EpochInfo>("getEpochInfo",
+                Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetEpochInfo"/>
-        public RequestResult<EpochInfo> GetEpochInfo(Commitment commitment = Commitment.Finalized) => GetEpochInfoAsync(commitment).Result;
+        public RequestResult<EpochInfo> GetEpochInfo(Commitment commitment = Commitment.Finalized) =>
+            GetEpochInfoAsync(commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetEpochScheduleAsync"/>
         public async Task<RequestResult<EpochScheduleInfo>> GetEpochScheduleAsync()
@@ -370,13 +474,14 @@ namespace Solnet.Rpc
         public async Task<RequestResult<ResponseValue<FeeCalculatorInfo>>> GetFeeCalculatorForBlockhashAsync(
             string blockhash, Commitment commitment = Commitment.Finalized)
         {
-            var parameters = Parameters.Create(blockhash, ConfigObject.Create(HandleCommitment(commitment)));
+            List<object> parameters = Parameters.Create(blockhash, ConfigObject.Create(HandleCommitment(commitment)));
 
             return await SendRequestAsync<ResponseValue<FeeCalculatorInfo>>("getFeeCalculatorForBlockhash", parameters);
         }
 
         /// <inheritdoc cref="IRpcClient.GetFeeCalculatorForBlockhash"/>
-        public RequestResult<ResponseValue<FeeCalculatorInfo>> GetFeeCalculatorForBlockhash(string blockhash, Commitment commitment = Commitment.Finalized) =>
+        public RequestResult<ResponseValue<FeeCalculatorInfo>> GetFeeCalculatorForBlockhash(string blockhash,
+            Commitment commitment = Commitment.Finalized) =>
             GetFeeCalculatorForBlockhashAsync(blockhash, commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetFeeRateGovernorAsync"/>
@@ -390,7 +495,8 @@ namespace Solnet.Rpc
             => GetFeeRateGovernorAsync().Result;
 
         /// <inheritdoc cref="IRpcClient.GetFeesAsync"/>
-        public async Task<RequestResult<ResponseValue<FeesInfo>>> GetFeesAsync(Commitment commitment = Commitment.Finalized)
+        public async Task<RequestResult<ResponseValue<FeesInfo>>> GetFeesAsync(
+            Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<ResponseValue<FeesInfo>>("getFees",
                 Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
@@ -402,7 +508,8 @@ namespace Solnet.Rpc
             => GetFeesAsync(commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetRecentBlockHashAsync"/>
-        public async Task<RequestResult<ResponseValue<BlockHash>>> GetRecentBlockHashAsync(Commitment commitment = Commitment.Finalized)
+        public async Task<RequestResult<ResponseValue<BlockHash>>> GetRecentBlockHashAsync(
+            Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<ResponseValue<BlockHash>>("getRecentBlockhash",
                 Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
@@ -441,7 +548,8 @@ namespace Solnet.Rpc
         }
 
         /// <inheritdoc cref="IRpcClient.GetMinimumBalanceForRentExemption"/>
-        public RequestResult<ulong> GetMinimumBalanceForRentExemption(long accountDataSize, Commitment commitment = Commitment.Finalized)
+        public RequestResult<ulong> GetMinimumBalanceForRentExemption(long accountDataSize,
+            Commitment commitment = Commitment.Finalized)
             => GetMinimumBalanceForRentExemptionAsync(accountDataSize, commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetGenesisHashAsync"/>
@@ -465,7 +573,8 @@ namespace Solnet.Rpc
             => GetIdentityAsync().Result;
 
         /// <inheritdoc cref="IRpcClient.GetInflationGovernorAsync"/>
-        public async Task<RequestResult<InflationGovernor>> GetInflationGovernorAsync(Commitment commitment = Commitment.Finalized)
+        public async Task<RequestResult<InflationGovernor>> GetInflationGovernorAsync(
+            Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<InflationGovernor>("getInflationGovernor",
                 Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
@@ -503,7 +612,8 @@ namespace Solnet.Rpc
             => GetInflationRewardAsync(addresses, epoch, commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetLargestAccountsAsync"/>
-        public async Task<RequestResult<ResponseValue<List<LargeAccount>>>> GetLargestAccountsAsync(AccountFilterType? filter = null,
+        public async Task<RequestResult<ResponseValue<List<LargeAccount>>>> GetLargestAccountsAsync(
+            AccountFilterType? filter = null,
             Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<ResponseValue<List<LargeAccount>>>("getLargestAccounts",
@@ -531,7 +641,7 @@ namespace Solnet.Rpc
         public async Task<RequestResult<List<PerformanceSample>>> GetRecentPerformanceSamplesAsync(ulong limit = 720)
         {
             return await SendRequestAsync<List<PerformanceSample>>("getRecentPerformanceSamples",
-                new List<object> { limit });
+                new List<object> {limit});
         }
 
         /// <inheritdoc cref="IRpcClient.GetRecentPerformanceSamples"/>
@@ -555,60 +665,95 @@ namespace Solnet.Rpc
                         HandleCommitment(commitment))));
         }
 
+        /// <inheritdoc cref="IRpcClient.GetConfirmedSignaturesForAddress2Async"/>
+        public async Task<RequestResult<List<SignatureStatusInfo>>> GetConfirmedSignaturesForAddress2Async(
+            string accountPubKey, ulong limit = 1000, string before = null, string until = null,
+            Commitment commitment = Commitment.Finalized)
+        {
+            if (commitment == Commitment.Processed)
+                throw new ArgumentException("Commitment.Processed is not supported for this method.");
+
+            return await SendRequestAsync<List<SignatureStatusInfo>>("getConfirmedSignaturesForAddress2",
+                Parameters.Create(
+                    accountPubKey,
+                    ConfigObject.Create(
+                        KeyValue.Create("limit", limit != 1000 ? limit : null),
+                        KeyValue.Create("before", before),
+                        KeyValue.Create("until", until),
+                        HandleCommitment(commitment))));
+        }
+
         /// <inheritdoc cref="IRpcClient.GetSignaturesForAddress"/>
-        public RequestResult<List<SignatureStatusInfo>> GetSignaturesForAddress(string accountPubKey, ulong limit = 1000,
+        public RequestResult<List<SignatureStatusInfo>> GetSignaturesForAddress(string accountPubKey,
+            ulong limit = 1000,
             string before = null, string until = null, Commitment commitment = Commitment.Finalized)
             => GetSignaturesForAddressAsync(accountPubKey, limit, before, until, commitment).Result;
 
+        /// <inheritdoc cref="IRpcClient.GetConfirmedSignaturesForAddress2"/>
+        public RequestResult<List<SignatureStatusInfo>> GetConfirmedSignaturesForAddress2(string accountPubKey,
+            ulong limit = 1000, string before = null,
+            string until = null, Commitment commitment = Commitment.Finalized)
+            => GetConfirmedSignaturesForAddress2Async(accountPubKey, limit, before, until, commitment).Result;
+
         /// <inheritdoc cref="IRpcClient.GetSignatureStatusesAsync"/>
-        public async Task<RequestResult<ResponseValue<List<SignatureStatusInfo>>>> GetSignatureStatusesAsync(List<string> transactionHashes,
+        public async Task<RequestResult<ResponseValue<List<SignatureStatusInfo>>>> GetSignatureStatusesAsync(
+            List<string> transactionHashes,
             bool searchTransactionHistory = false)
         {
             return await SendRequestAsync<ResponseValue<List<SignatureStatusInfo>>>("getSignatureStatuses",
                 Parameters.Create(
                     transactionHashes,
                     ConfigObject.Create(
-                        KeyValue.Create("searchTransactionHistory", searchTransactionHistory ? searchTransactionHistory : null))));
+                        KeyValue.Create("searchTransactionHistory",
+                            searchTransactionHistory ? searchTransactionHistory : null))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetSignatureStatuses"/>
-        public RequestResult<ResponseValue<List<SignatureStatusInfo>>> GetSignatureStatuses(List<string> transactionHashes,
+        public RequestResult<ResponseValue<List<SignatureStatusInfo>>> GetSignatureStatuses(
+            List<string> transactionHashes,
             bool searchTransactionHistory = false)
             => GetSignatureStatusesAsync(transactionHashes, searchTransactionHistory).Result;
 
         /// <inheritdoc cref="IRpcClient.GetSlotAsync"/>
         public async Task<RequestResult<ulong>> GetSlotAsync(Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<ulong>("getSlot", Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
+            return await SendRequestAsync<ulong>("getSlot",
+                Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetSlot"/>
-        public RequestResult<ulong> GetSlot(Commitment commitment = Commitment.Finalized) => GetSlotAsync(commitment).Result;
+        public RequestResult<ulong> GetSlot(Commitment commitment = Commitment.Finalized) =>
+            GetSlotAsync(commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetSlotLeaderAsync"/>
         public async Task<RequestResult<string>> GetSlotLeaderAsync(Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<string>("getSlotLeader", Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
+            return await SendRequestAsync<string>("getSlotLeader",
+                Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetSlotLeader"/>
-        public RequestResult<string> GetSlotLeader(Commitment commitment = Commitment.Finalized) => GetSlotLeaderAsync(commitment).Result;
+        public RequestResult<string> GetSlotLeader(Commitment commitment = Commitment.Finalized) =>
+            GetSlotLeaderAsync(commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetSlotLeadersAsync"/>
-        public async Task<RequestResult<List<string>>> GetSlotLeadersAsync(ulong start, ulong limit, Commitment commitment = Commitment.Finalized)
+        public async Task<RequestResult<List<string>>> GetSlotLeadersAsync(ulong start, ulong limit,
+            Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<List<string>>("getSlotLeaders",
                 Parameters.Create(start, limit, ConfigObject.Create(HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetSlotLeaders"/>
-        public RequestResult<List<string>> GetSlotLeaders(ulong start, ulong limit, Commitment commitment = Commitment.Finalized)
+        public RequestResult<List<string>> GetSlotLeaders(ulong start, ulong limit,
+            Commitment commitment = Commitment.Finalized)
             => GetSlotLeadersAsync(start, limit, commitment).Result;
 
         #region Token Supply and Balances
 
         /// <inheritdoc cref="IRpcClient.GetStakeActivationAsync"/>
-        public async Task<RequestResult<StakeActivationInfo>> GetStakeActivationAsync(string publicKey, ulong epoch = 0, Commitment commitment = Commitment.Finalized)
+        public async Task<RequestResult<StakeActivationInfo>> GetStakeActivationAsync(string publicKey, ulong epoch = 0,
+            Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<StakeActivationInfo>("getStakeActivation",
                 Parameters.Create(
@@ -619,13 +764,16 @@ namespace Solnet.Rpc
         }
 
         /// <inheritdoc cref="IRpcClient.GetStakeActivation"/>
-        public RequestResult<StakeActivationInfo> GetStakeActivation(string publicKey, ulong epoch = 0, Commitment commitment = Commitment.Finalized) =>
+        public RequestResult<StakeActivationInfo> GetStakeActivation(string publicKey, ulong epoch = 0,
+            Commitment commitment = Commitment.Finalized) =>
             GetStakeActivationAsync(publicKey, epoch, commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetSupplyAsync"/>
-        public async Task<RequestResult<ResponseValue<Supply>>> GetSupplyAsync(Commitment commitment = Commitment.Finalized)
+        public async Task<RequestResult<ResponseValue<Supply>>> GetSupplyAsync(
+            Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<ResponseValue<Supply>>("getSupply", Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
+            return await SendRequestAsync<ResponseValue<Supply>>("getSupply",
+                Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetSupply"/>
@@ -641,12 +789,14 @@ namespace Solnet.Rpc
         }
 
         /// <inheritdoc cref="IRpcClient.GetTokenAccountBalance"/>
-        public RequestResult<ResponseValue<TokenBalance>> GetTokenAccountBalance(string splTokenAccountPublicKey, Commitment commitment = Commitment.Finalized)
+        public RequestResult<ResponseValue<TokenBalance>> GetTokenAccountBalance(string splTokenAccountPublicKey,
+            Commitment commitment = Commitment.Finalized)
             => GetTokenAccountBalanceAsync(splTokenAccountPublicKey, commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetTokenAccountsByDelegateAsync"/>
         public async Task<RequestResult<ResponseValue<List<TokenAccount>>>> GetTokenAccountsByDelegateAsync(
-            string ownerPubKey, string tokenMintPubKey = null, string tokenProgramId = null, Commitment commitment = Commitment.Finalized)
+            string ownerPubKey, string tokenMintPubKey = null, string tokenProgramId = null,
+            Commitment commitment = Commitment.Finalized)
         {
             if (string.IsNullOrWhiteSpace(tokenMintPubKey) && string.IsNullOrWhiteSpace(tokenProgramId))
                 throw new ArgumentException("either tokenProgramId or tokenMintPubKey must be set");
@@ -669,7 +819,8 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="IRpcClient.GetTokenAccountsByOwnerAsync"/>
         public async Task<RequestResult<ResponseValue<List<TokenAccount>>>> GetTokenAccountsByOwnerAsync(
-            string ownerPubKey, string tokenMintPubKey = null, string tokenProgramId = null, Commitment commitment = Commitment.Finalized)
+            string ownerPubKey, string tokenMintPubKey = null, string tokenProgramId = null,
+            Commitment commitment = Commitment.Finalized)
         {
             if (string.IsNullOrWhiteSpace(tokenMintPubKey) && string.IsNullOrWhiteSpace(tokenProgramId))
                 throw new ArgumentException("either tokenProgramId or tokenMintPubKey must be set");
@@ -687,7 +838,8 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="IRpcClient.GetTokenAccountsByOwner"/>
         public RequestResult<ResponseValue<List<TokenAccount>>> GetTokenAccountsByOwner(
-            string ownerPubKey, string tokenMintPubKey = null, string tokenProgramId = null, Commitment commitment = Commitment.Finalized)
+            string ownerPubKey, string tokenMintPubKey = null, string tokenProgramId = null,
+            Commitment commitment = Commitment.Finalized)
             => GetTokenAccountsByOwnerAsync(ownerPubKey, tokenMintPubKey, tokenProgramId, commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetTokenLargestAccountsAsync"/>
@@ -695,22 +847,25 @@ namespace Solnet.Rpc
             string tokenMintPubKey, Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<ResponseValue<List<LargeTokenAccount>>>("getTokenLargestAccounts",
-                 Parameters.Create(tokenMintPubKey, ConfigObject.Create(HandleCommitment(commitment))));
+                Parameters.Create(tokenMintPubKey, ConfigObject.Create(HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetTokenLargestAccounts"/>
-        public RequestResult<ResponseValue<List<LargeTokenAccount>>> GetTokenLargestAccounts(string tokenMintPubKey, Commitment commitment = Commitment.Finalized)
+        public RequestResult<ResponseValue<List<LargeTokenAccount>>> GetTokenLargestAccounts(string tokenMintPubKey,
+            Commitment commitment = Commitment.Finalized)
             => GetTokenLargestAccountsAsync(tokenMintPubKey, commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetTokenSupplyAsync"/>
-        public async Task<RequestResult<ResponseValue<TokenBalance>>> GetTokenSupplyAsync(string tokenMintPubKey, Commitment commitment = Commitment.Finalized)
+        public async Task<RequestResult<ResponseValue<TokenBalance>>> GetTokenSupplyAsync(string tokenMintPubKey,
+            Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<ResponseValue<TokenBalance>>("getTokenSupply",
                 Parameters.Create(tokenMintPubKey, ConfigObject.Create(HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetTokenSupply"/>
-        public RequestResult<ResponseValue<TokenBalance>> GetTokenSupply(string tokenMintPubKey, Commitment commitment = Commitment.Finalized)
+        public RequestResult<ResponseValue<TokenBalance>> GetTokenSupply(string tokenMintPubKey,
+            Commitment commitment = Commitment.Finalized)
             => GetTokenSupplyAsync(tokenMintPubKey, commitment).Result;
 
         #endregion
@@ -737,14 +892,17 @@ namespace Solnet.Rpc
             => GetVersionAsync().Result;
 
         /// <inheritdoc cref="IRpcClient.GetVoteAccountsAsync"/>
-        public async Task<RequestResult<VoteAccounts>> GetVoteAccountsAsync(string votePubKey = null, Commitment commitment = Commitment.Finalized)
+        public async Task<RequestResult<VoteAccounts>> GetVoteAccountsAsync(string votePubKey = null,
+            Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<VoteAccounts>("getVoteAccounts",
-                Parameters.Create(ConfigObject.Create(HandleCommitment(commitment), KeyValue.Create("votePubkey", votePubKey))));
+                Parameters.Create(ConfigObject.Create(HandleCommitment(commitment),
+                    KeyValue.Create("votePubkey", votePubKey))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetVoteAccounts"/>
-        public RequestResult<VoteAccounts> GetVoteAccounts(string votePubKey = null, Commitment commitment = Commitment.Finalized)
+        public RequestResult<VoteAccounts> GetVoteAccounts(string votePubKey = null,
+            Commitment commitment = Commitment.Finalized)
             => GetVoteAccountsAsync(votePubKey, commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetMinimumLedgerSlotAsync"/>
@@ -761,7 +919,8 @@ namespace Solnet.Rpc
         public async Task<RequestResult<string>> RequestAirdropAsync(string pubKey, ulong lamports,
             Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<string>("requestAirdrop", Parameters.Create(pubKey, lamports, ConfigObject.Create(HandleCommitment(commitment))));
+            return await SendRequestAsync<string>("requestAirdrop",
+                Parameters.Create(pubKey, lamports, ConfigObject.Create(HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.RequestAirdrop"/>
@@ -770,8 +929,10 @@ namespace Solnet.Rpc
             => RequestAirdropAsync(pubKey, lamports, commitment).Result;
 
         #region Transactions
+
         /// <inheritdoc cref="IRpcClient.SendTransactionAsync(byte[], bool, Commitment)"/>
-        public async Task<RequestResult<string>> SendTransactionAsync(byte[] transaction, bool skipPreflight = false, Commitment preflightCommitment = Commitment.Finalized)
+        public async Task<RequestResult<string>> SendTransactionAsync(byte[] transaction, bool skipPreflight = false,
+            Commitment preflightCommitment = Commitment.Finalized)
         {
             return await SendTransactionAsync(Convert.ToBase64String(transaction), skipPreflight, preflightCommitment)
                 .ConfigureAwait(false);
@@ -779,32 +940,39 @@ namespace Solnet.Rpc
 
 
         /// <inheritdoc cref="IRpcClient.SendTransactionAsync(string, bool, Commitment)"/>
-        public async Task<RequestResult<string>> SendTransactionAsync(string transaction, bool skipPreflight = false, Commitment preflightCommitment = Commitment.Finalized)
+        public async Task<RequestResult<string>> SendTransactionAsync(string transaction, bool skipPreflight = false,
+            Commitment preflightCommitment = Commitment.Finalized)
         {
             return await SendRequestAsync<string>("sendTransaction",
                 Parameters.Create(
                     transaction,
                     ConfigObject.Create(
                         KeyValue.Create("skipPreflight", skipPreflight ? skipPreflight : null),
-                        KeyValue.Create("preflightCommitment", preflightCommitment == Commitment.Finalized ? null : preflightCommitment),
+                        KeyValue.Create("preflightCommitment",
+                            preflightCommitment == Commitment.Finalized ? null : preflightCommitment),
                         KeyValue.Create("encoding", BinaryEncoding.Base64))));
         }
 
         /// <inheritdoc cref="IRpcClient.SendTransaction(string, bool, Commitment)"/>
-        public RequestResult<string> SendTransaction(string transaction, bool skipPreFlight = false, Commitment preFlightCommitment = Commitment.Finalized)
+        public RequestResult<string> SendTransaction(string transaction, bool skipPreFlight = false,
+            Commitment preFlightCommitment = Commitment.Finalized)
             => SendTransactionAsync(transaction, skipPreFlight, preFlightCommitment).Result;
 
         /// <inheritdoc cref="IRpcClient.SendTransactionAsync(byte[], bool, Commitment)"/>
-        public RequestResult<string> SendTransaction(byte[] transaction, bool skipPreFlight = false, Commitment preFlightCommitment = Commitment.Finalized)
+        public RequestResult<string> SendTransaction(byte[] transaction, bool skipPreFlight = false,
+            Commitment preFlightCommitment = Commitment.Finalized)
             => SendTransactionAsync(transaction, skipPreFlight, preFlightCommitment).Result;
 
         /// <inheritdoc cref="IRpcClient.SimulateTransactionAsync(string, bool, Commitment, bool, IList{string})"/>
-        public async Task<RequestResult<ResponseValue<SimulationLogs>>> SimulateTransactionAsync(string transaction, bool sigVerify = false,
-            Commitment commitment = Commitment.Finalized, bool replaceRecentBlockhash = false, IList<string> accountsToReturn = null)
+        public async Task<RequestResult<ResponseValue<SimulationLogs>>> SimulateTransactionAsync(string transaction,
+            bool sigVerify = false,
+            Commitment commitment = Commitment.Finalized, bool replaceRecentBlockhash = false,
+            IList<string> accountsToReturn = null)
         {
             if (sigVerify && replaceRecentBlockhash)
             {
-                throw new ArgumentException($"Parameters {nameof(sigVerify)} and {nameof(replaceRecentBlockhash)} are incompatible, only one can be set to true.");
+                throw new ArgumentException(
+                    $"Parameters {nameof(sigVerify)} and {nameof(replaceRecentBlockhash)} are incompatible, only one can be set to true.");
             }
 
             return await SendRequestAsync<ResponseValue<SimulationLogs>>("simulateTransaction",
@@ -814,29 +982,41 @@ namespace Solnet.Rpc
                         KeyValue.Create("sigVerify", sigVerify ? sigVerify : null),
                         HandleCommitment(commitment),
                         KeyValue.Create("encoding", BinaryEncoding.Base64),
-                        KeyValue.Create("replaceRecentBlockhash", replaceRecentBlockhash ? replaceRecentBlockhash : null),
-                        accountsToReturn == null ? null : KeyValue.Create("accounts", ConfigObject.Create(
-                            KeyValue.Create("encoding", BinaryEncoding.Base64),
-                            KeyValue.Create("addresses", accountsToReturn))))));
+                        KeyValue.Create("replaceRecentBlockhash",
+                            replaceRecentBlockhash ? replaceRecentBlockhash : null),
+                        KeyValue.Create("accounts", accountsToReturn != null
+                            ? ConfigObject.Create(
+                                KeyValue.Create("encoding", BinaryEncoding.Base64),
+                                KeyValue.Create("addresses", accountsToReturn))
+                            : null))));
         }
 
         /// <inheritdoc cref="IRpcClient.SimulateTransactionAsync(byte[], bool, Commitment, bool, IList{string})"/>
-        public async Task<RequestResult<ResponseValue<SimulationLogs>>> SimulateTransactionAsync(byte[] transaction, bool sigVerify = false,
-            Commitment commitment = Commitment.Finalized, bool replaceRecentBlockhash = false, IList<string> accountsToReturn = null)
+        public async Task<RequestResult<ResponseValue<SimulationLogs>>> SimulateTransactionAsync(byte[] transaction,
+            bool sigVerify = false,
+            Commitment commitment = Commitment.Finalized, bool replaceRecentBlockhash = false,
+            IList<string> accountsToReturn = null)
         {
-            return await SimulateTransactionAsync(Convert.ToBase64String(transaction), sigVerify, commitment, replaceRecentBlockhash, accountsToReturn)
+            return await SimulateTransactionAsync(Convert.ToBase64String(transaction), sigVerify, commitment,
+                    replaceRecentBlockhash, accountsToReturn)
                 .ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="IRpcClient.SimulateTransaction(string, bool, Commitment, bool, IList{string})"/>
-        public RequestResult<ResponseValue<SimulationLogs>> SimulateTransaction(string transaction, bool sigVerify = false,
-            Commitment commitment = Commitment.Finalized, bool replaceRecentBlockhash = false, IList<string> accountsToReturn = null)
-            => SimulateTransactionAsync(transaction, sigVerify, commitment, replaceRecentBlockhash, accountsToReturn).Result;
+        public RequestResult<ResponseValue<SimulationLogs>> SimulateTransaction(string transaction,
+            bool sigVerify = false,
+            Commitment commitment = Commitment.Finalized, bool replaceRecentBlockhash = false,
+            IList<string> accountsToReturn = null)
+            => SimulateTransactionAsync(transaction, sigVerify, commitment, replaceRecentBlockhash, accountsToReturn)
+                .Result;
 
         /// <inheritdoc cref="IRpcClient.SimulateTransaction(byte[], bool, Commitment, bool, IList{string})"/>
-        public RequestResult<ResponseValue<SimulationLogs>> SimulateTransaction(byte[] transaction, bool sigVerify = false,
-            Commitment commitment = Commitment.Finalized, bool replaceRecentBlockhash = false, IList<string> accountsToReturn = null)
-            => SimulateTransactionAsync(transaction, sigVerify, commitment, replaceRecentBlockhash, accountsToReturn).Result;
+        public RequestResult<ResponseValue<SimulationLogs>> SimulateTransaction(byte[] transaction,
+            bool sigVerify = false,
+            Commitment commitment = Commitment.Finalized, bool replaceRecentBlockhash = false,
+            IList<string> accountsToReturn = null)
+            => SimulateTransactionAsync(transaction, sigVerify, commitment, replaceRecentBlockhash, accountsToReturn)
+                .Result;
 
         #endregion
     }
