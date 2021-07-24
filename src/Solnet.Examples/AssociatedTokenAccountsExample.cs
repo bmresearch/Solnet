@@ -7,6 +7,7 @@ using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
 using Solnet.Wallet;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Solnet.Examples
@@ -77,7 +78,8 @@ namespace Solnet.Examples
                     initialAccount.PublicKey,
                     1_000_000,
                     ownerAccount)).
-                AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net")).Build();
+                AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net")).
+                Build(new List<Account> { ownerAccount, mintAccount, initialAccount});
             
             string createAndInitializeMintToTxSignature = SubmitTxAndLog(createAndInitializeMintToTx);
 
@@ -112,7 +114,8 @@ namespace Solnet.Examples
                     associatedTokenAccount,
                     25000,
                     ownerAccount)).// the ownerAccount was set as the mint authority
-                AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net")).Build();
+                AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net")).
+                Build(new List<Account> {ownerAccount});
             
             string createAssociatedTokenAccountTxSignature = SubmitTxAndLog(createAssociatedTokenAccountTx);
             

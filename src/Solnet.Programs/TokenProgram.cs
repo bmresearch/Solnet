@@ -43,7 +43,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(source, true), AccountMeta.Writable(destination, true), AccountMeta.ReadOnly(owner, false)
+                AccountMeta.Writable(source, false), AccountMeta.Writable(destination, false), AccountMeta.ReadOnly(owner, true)
             };
             return new TransactionInstruction
             {
@@ -78,7 +78,7 @@ namespace Solnet.Programs
             {
                 AccountMeta.Writable(source, true),
                 AccountMeta.ReadOnly(tokenMint, false),
-                AccountMeta.Writable(destination, true),
+                AccountMeta.Writable(destination, false),
             };
             keys = AddSigners(keys, owner, signers);
             return new TransactionInstruction
@@ -109,7 +109,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(account, true),
+                AccountMeta.Writable(account, false),
                 AccountMeta.ReadOnly(mint, false),
                 AccountMeta.ReadOnly(owner, false),
                 AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
@@ -132,7 +132,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new ()
             {
-                AccountMeta.Writable(multiSignature, true),
+                AccountMeta.Writable(multiSignature, false),
                 AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
             };
             keys.AddRange(signers.Select(signer => AccountMeta.ReadOnly(signer, false)));
@@ -157,7 +157,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(mint, true), AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+                AccountMeta.Writable(mint, false), AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
             };
 
             int freezeAuthorityOpt = freezeAuthority != null ? 1 : 0;
@@ -185,9 +185,9 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(mint, true),
-                AccountMeta.ReadOnly(destination, true),
-                AccountMeta.ReadOnly(mintAuthority, false)
+                AccountMeta.Writable(mint, false),
+                AccountMeta.Writable(destination, false),
+                AccountMeta.ReadOnly(mintAuthority, true)
             };
 
             return new TransactionInstruction { ProgramId = ProgramIdKey.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeMintToData(amount) };
@@ -205,7 +205,7 @@ namespace Solnet.Programs
         public static TransactionInstruction Approve(
             PublicKey source, PublicKey delegatePublicKey, PublicKey owner, ulong amount, IEnumerable<PublicKey> signers = null)
         {
-            List<AccountMeta> keys = new() { AccountMeta.Writable(source, true), AccountMeta.ReadOnly(delegatePublicKey, false) };
+            List<AccountMeta> keys = new() { AccountMeta.Writable(source, false), AccountMeta.ReadOnly(delegatePublicKey, false) };
 
             keys = AddSigners(keys, owner, signers);
 
@@ -247,7 +247,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(account, true), AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+                AccountMeta.Writable(account, false), AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
             };
             keys = AddSigners(keys, currentAuthority, signers);
 
@@ -274,7 +274,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(account, true),
+                AccountMeta.Writable(account, false),
                 AccountMeta.ReadOnly(mint, false),
             };
             keys = AddSigners(keys, owner, signers);
@@ -299,8 +299,8 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(account, true),
-                AccountMeta.Writable(destination, true),
+                AccountMeta.Writable(account, false),
+                AccountMeta.Writable(destination, false),
             };
             keys = AddSigners(keys, owner, signers);
             return new TransactionInstruction()
@@ -324,7 +324,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(account, true),
+                AccountMeta.Writable(account, false),
                 AccountMeta.ReadOnly(mint, false),
             };
             keys = AddSigners(keys, owner, signers);
@@ -349,7 +349,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(account, true),
+                AccountMeta.Writable(account, false),
                 AccountMeta.ReadOnly(mint, false),
             };
             keys = AddSigners(keys, owner, signers);
@@ -381,7 +381,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(source, true),
+                AccountMeta.Writable(source, false),
                 AccountMeta.ReadOnly(mint, false),
                 AccountMeta.ReadOnly(delegatePublicKey, false),
             };
@@ -412,8 +412,8 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(mint, true),
-                AccountMeta.Writable(destination, true),
+                AccountMeta.Writable(mint, false),
+                AccountMeta.Writable(destination, false),
             };
             keys = AddSigners(keys, mintAuthority, signers);
             return new TransactionInstruction
@@ -442,8 +442,8 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(account, true),
-                AccountMeta.Writable(mint, true),
+                AccountMeta.Writable(account, false),
+                AccountMeta.Writable(mint, false),
             };
             keys = AddSigners(keys, owner, signers);
             return new TransactionInstruction
@@ -466,12 +466,12 @@ namespace Solnet.Programs
         {
             if (signers != null)
             {
-                keys.Add(AccountMeta.ReadOnly(owner,  false));
-                keys.AddRange(signers.Select(signer => AccountMeta.ReadOnly(signer, false)));
+                keys.Add(AccountMeta.ReadOnly(owner,  true));
+                keys.AddRange(signers.Select(signer => AccountMeta.ReadOnly(signer, true)));
             }
             else
             {
-                keys.Add(AccountMeta.ReadOnly(owner, false));
+                keys.Add(AccountMeta.ReadOnly(owner, true));
             }
             return keys;
         }

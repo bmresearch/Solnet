@@ -159,11 +159,11 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new ()
             {
-                AccountMeta.Writable(nonceAccountPublicKey, true),
-                AccountMeta.Writable(toPublicKey, true),
+                AccountMeta.Writable(nonceAccountPublicKey, false),
+                AccountMeta.Writable(toPublicKey, false),
                 AccountMeta.ReadOnly(SysVarRecentBlockHashesKey, false),
                 AccountMeta.ReadOnly(SysVarRentKey, false),
-                AccountMeta.ReadOnly(authorized, false)
+                AccountMeta.ReadOnly(authorized, true)
             };
             return new TransactionInstruction
             {
@@ -184,7 +184,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new ()
             {
-                AccountMeta.Writable(nonceAccountPublicKey, true),
+                AccountMeta.Writable(nonceAccountPublicKey, false),
                 AccountMeta.ReadOnly(SysVarRecentBlockHashesKey, false),
                 AccountMeta.ReadOnly(SysVarRentKey, false),
             };
@@ -208,8 +208,8 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new ()
             {
-                AccountMeta.Writable(nonceAccountPublicKey, true),
-                AccountMeta.ReadOnly(authorized, false),
+                AccountMeta.Writable(nonceAccountPublicKey, false),
+                AccountMeta.ReadOnly(authorized, true),
             };
             return new TransactionInstruction
             {
@@ -255,8 +255,8 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new ()
             {
-                AccountMeta.Writable(account, true),
-                AccountMeta.ReadOnly(baseAccount, false)
+                AccountMeta.Writable(account, false),
+                AccountMeta.ReadOnly(baseAccount, true)
             };
             return new TransactionInstruction
             {
@@ -280,8 +280,8 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new ()
             {
-                AccountMeta.Writable(account, true),
-                AccountMeta.ReadOnly(baseAccount, false)
+                AccountMeta.Writable(account, false),
+                AccountMeta.ReadOnly(baseAccount, true)
             };
             return new TransactionInstruction
             {
@@ -308,8 +308,8 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new ()
             {
-                AccountMeta.Writable(fromPublicKey, true),
-                AccountMeta.ReadOnly(fromBaseAccount, false),
+                AccountMeta.Writable(fromPublicKey, false),
+                AccountMeta.ReadOnly(fromBaseAccount, true),
                 AccountMeta.ReadOnly(toPublicKey, false)
             };
             return new TransactionInstruction

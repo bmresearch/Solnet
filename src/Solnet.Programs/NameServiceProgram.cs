@@ -114,11 +114,11 @@ namespace Solnet.Programs
                 AccountMeta.Writable(nameKey, true),
                 AccountMeta.ReadOnly(nameOwner, false),
                 nameClass != null
-                    ? AccountMeta.ReadOnly(nameClass, false)
-                    : AccountMeta.ReadOnly(new PublicKey(new byte[32]), false),
+                    ? AccountMeta.ReadOnly(nameClass, true)
+                    : AccountMeta.ReadOnly(new PublicKey(new byte[32]), true),
                 parentName != null
-                    ? AccountMeta.ReadOnly(parentName, false)
-                    : AccountMeta.ReadOnly(new PublicKey(new byte[32]), false)
+                    ? AccountMeta.ReadOnly(parentName, true)
+                    : AccountMeta.ReadOnly(new PublicKey(new byte[32]), true)
             };
             if (parentNameOwner != null) keys.Add(AccountMeta.ReadOnly(parentNameOwner, false));
             return new TransactionInstruction
@@ -144,13 +144,13 @@ namespace Solnet.Programs
         public static TransactionInstruction UpdateNameRegistry(
             PublicKey nameKey, uint offset, ReadOnlySpan<byte> data, PublicKey nameOwner = null, PublicKey nameClass = null)
         {
-            List<AccountMeta> keys = new() {AccountMeta.Writable(nameKey, true)};
+            List<AccountMeta> keys = new() {AccountMeta.Writable(nameKey, false)};
             
             if (nameOwner != null)
-                keys.Add(AccountMeta.ReadOnly(nameOwner, false));
+                keys.Add(AccountMeta.ReadOnly(nameOwner, true));
             
             if (nameClass != null)
-                keys.Add(AccountMeta.ReadOnly(nameClass, false));
+                keys.Add(AccountMeta.ReadOnly(nameClass, true));
 
             return new TransactionInstruction
             {
@@ -176,12 +176,12 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(nameKey, true),
-                AccountMeta.ReadOnly(nameOwner, false),
+                AccountMeta.Writable(nameKey, false),
+                AccountMeta.ReadOnly(nameOwner, true),
             };
 
             if (nameClass != null)
-                keys.Add(AccountMeta.ReadOnly(nameClass, false));
+                keys.Add(AccountMeta.ReadOnly(nameClass, true));
 
             return new TransactionInstruction
             {
@@ -201,9 +201,9 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(nameKey, true),
-                AccountMeta.ReadOnly(nameOwner, false),
-                AccountMeta.Writable(refundPublicKey, true)
+                AccountMeta.Writable(nameKey, false),
+                AccountMeta.ReadOnly(nameOwner, true),
+                AccountMeta.Writable(refundPublicKey, false)
             };
 
             return new TransactionInstruction

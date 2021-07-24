@@ -34,7 +34,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new ()
             {
-                AccountMeta.Writable(dest, true)
+                AccountMeta.Writable(dest, false)
             };
 
             byte[] transactionData = new byte[payload.Length + 8];

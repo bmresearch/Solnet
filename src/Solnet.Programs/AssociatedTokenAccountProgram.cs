@@ -37,7 +37,7 @@ namespace Solnet.Programs
             List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(payer, true),
-                AccountMeta.ReadOnly(associatedTokenAddress, true),
+                AccountMeta.Writable(associatedTokenAddress, false),
                 AccountMeta.ReadOnly(owner, false),
                 AccountMeta.ReadOnly(mint, false),
                 AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),

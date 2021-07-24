@@ -34,7 +34,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new ()
             {
-                AccountMeta.ReadOnly(account, false)
+                AccountMeta.ReadOnly(account, true)
             };
             byte[] memoBytes = Encoding.UTF8.GetBytes(memo);
 
