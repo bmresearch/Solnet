@@ -28,11 +28,6 @@ namespace Solnet.Programs
         public static readonly PublicKey SysVarRentKey = new ("SysvarRent111111111111111111111111111111111");
 
         /// <summary>
-        /// Account layout size.
-        /// </summary>
-        public const int AccountDataSize = 165;
-
-        /// <summary>
         /// Initialize a new transaction instruction which interacts with the System Program to create a new account.
         /// </summary>
         /// <param name="fromAccount">The account from which the lamports will be transferred.</param>

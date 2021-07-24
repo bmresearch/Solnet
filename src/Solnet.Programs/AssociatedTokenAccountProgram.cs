@@ -1,6 +1,8 @@
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
+using Solnet.Wallet.Utilities;
+using System;
 using System.Collections.Generic;
 
 namespace Solnet.Programs
@@ -25,17 +27,17 @@ namespace Solnet.Programs
         /// <param name="payer">The account used to fund the associated token account.</param>
         /// <param name="owner">The public key of the owner account for the new associated token account.</param>
         /// <param name="mint">The public key of the mint for the new associated token account.</param>
-        /// <returns>The transaction instruction.</returns>
+        /// <returns>The transaction instruction, returns null whenever an associated token address could not be derived..</returns>
         public static TransactionInstruction CreateAssociatedTokenAccount(Account payer, PublicKey owner, PublicKey mint)
         {
-            (byte[] associatedTokenAddress, _) = AddressExtensions.FindProgramAddress(
-                new List<byte[]> { owner.KeyBytes, TokenProgram.ProgramIdKey.KeyBytes, mint.KeyBytes },
-                ProgramIdKey.KeyBytes);
+            PublicKey associatedTokenAddress = DeriveAssociatedTokenAccount(owner, mint);
+
+            if (associatedTokenAddress == null) return null;
             
             List<AccountMeta> keys = new()
             {
                 new AccountMeta(payer, true),
-                new AccountMeta(new PublicKey(associatedTokenAddress), false),
+                new AccountMeta(associatedTokenAddress, true),
                 new AccountMeta(owner, false),
                 new AccountMeta(mint, false),
                 new AccountMeta(SystemProgram.ProgramIdKey, false),
@@ -47,8 +49,22 @@ namespace Solnet.Programs
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = System.Array.Empty<byte>()
+                Data = Array.Empty<byte>()
             };
+        }
+
+        /// <summary>
+        /// Derive the public key of the associated token account for the
+        /// </summary>
+        /// <param name="owner">The public key of the owner account for the new associated token account.</param>
+        /// <param name="mint">The public key of the mint for the new associated token account.</param>
+        /// <returns>The public key of the associated token account if it could be found, otherwise null.</returns>
+        public static PublicKey DeriveAssociatedTokenAccount(PublicKey owner, PublicKey mint)
+        {
+            bool success = AddressExtensions.TryFindProgramAddress(
+                new List<byte[]> { owner.KeyBytes, TokenProgram.ProgramIdKey.KeyBytes, mint.KeyBytes },
+                ProgramIdKey.KeyBytes, out byte[] derivedAssociatedTokenAddress, out _);
+            return success ? new PublicKey(derivedAssociatedTokenAddress) : null;
         }
     }
 }

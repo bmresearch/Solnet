@@ -23,6 +23,11 @@ namespace Solnet.Programs
         /// Mint account account layout size.
         /// </summary>
         public const int MintAccountDataSize = 82;
+        
+        /// <summary>
+        /// Account layout size.
+        /// </summary>
+        public const int TokenAccountDataSize = 165;
 
         /// <summary>
         /// Initializes an instruction to transfer tokens from one account to another either directly or via a delegate.

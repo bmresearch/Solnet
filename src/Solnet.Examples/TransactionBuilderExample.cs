@@ -68,7 +68,7 @@ namespace Solnet.Examples
 
             var blockHash = rpcClient.GetRecentBlockHash();
             var minBalanceForExemptionAcc =
-                rpcClient.GetMinimumBalanceForRentExemption(SystemProgram.AccountDataSize).Result;
+                rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
 
             var minBalanceForExemptionMint =
@@ -100,7 +100,7 @@ namespace Solnet.Examples
                     ownerAccount,
                     initialAccount,
                     minBalanceForExemptionAcc,
-                    SystemProgram.AccountDataSize,
+                    TokenProgram.TokenAccountDataSize,
                     TokenProgram.ProgramIdKey)).
                 AddInstruction(TokenProgram.InitializeAccount(
                     initialAccount.PublicKey,
@@ -137,7 +137,7 @@ namespace Solnet.Examples
             var wallet = new Wallet.Wallet(MnemonicWords);
 
             var blockHash = rpcClient.GetRecentBlockHash();
-            var minBalanceForExemptionAcc = rpcClient.GetMinimumBalanceForRentExemption(SystemProgram.AccountDataSize).Result;
+            var minBalanceForExemptionAcc = rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
 
             var mintAccount = wallet.GetAccount(31);
@@ -156,7 +156,7 @@ namespace Solnet.Examples
                     ownerAccount,
                     newAccount,
                     minBalanceForExemptionAcc,
-                    SystemProgram.AccountDataSize,
+                    TokenProgram.TokenAccountDataSize,
                     TokenProgram.ProgramIdKey)).
                 AddInstruction(TokenProgram.InitializeAccount(
                     newAccount.PublicKey,
@@ -194,7 +194,7 @@ namespace Solnet.Examples
 
             var blockHash = rpcClient.GetRecentBlockHash();
             var minBalanceForExemptionAcc =
-                rpcClient.GetMinimumBalanceForRentExemption(SystemProgram.AccountDataSize).Result;
+                rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
 
             var mintAccount = wallet.GetAccount(21);
@@ -214,7 +214,7 @@ namespace Solnet.Examples
                     ownerAccount,
                     newAccount,
                     minBalanceForExemptionAcc,
-                    SystemProgram.AccountDataSize,
+                    TokenProgram.TokenAccountDataSize,
                     TokenProgram.ProgramIdKey)).AddInstruction(
                 TokenProgram.InitializeAccount(
                     newAccount.PublicKey,
