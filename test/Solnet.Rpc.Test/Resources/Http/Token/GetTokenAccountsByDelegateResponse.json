@@ -19,7 +19,12 @@
                   "uiAmountString": "0.1"
                 },
                 "delegate": "4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T",
-                "delegatedAmount": 1,
+                "delegatedAmount": {
+                  "amount": "1",
+                  "decimals": 1,
+                  "uiAmount": 0.1,
+                  "uiAmountString": "0.1"
+                },
                 "state": "initialized",
                 "isNative": false,
                 "mint": "3wyAj7Rt1TWVPZVteFJPLa26JmLvdb1CAKEFZm3NY75E",
