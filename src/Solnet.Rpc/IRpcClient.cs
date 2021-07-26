@@ -623,27 +623,27 @@ namespace Solnet.Rpc
 
         /// <summary>
         /// Returns all accounts owned by the provided program Pubkey.
+        /// <remarks>Accounts must meet all filter criteria to be included in the results.</remarks>
         /// </summary>
         /// <param name="pubKey">The program public key.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
-        /// <param name="dataSize">The data size of the account.</param>
-        /// <param name="memOffset">The offset into program account to start comparison.</param>
-        /// <param name="memBytes">The data to match against the program data, as base-58 encoded string and limited to 129 bytes.</param>
+        /// <param name="dataSize">The data size of the account to compare against the program account data.</param>
+        /// <param name="memCmpList">The list of comparisons to match against the program account data.</param>
         /// <returns>A task which may return a request result holding the context and account info.</returns>
         Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey, Commitment commitment = Commitment.Finalized,
-            int? dataSize = null, int? memOffset = null, string memBytes = null);
+            int? dataSize = null, IList<MemCmp> memCmpList = null);
 
         /// <summary>
         /// Returns all accounts owned by the provided program Pubkey.
+        /// <remarks>Accounts must meet all filter criteria to be included in the results.</remarks>
         /// </summary>
         /// <param name="pubKey">The program public key.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
-        /// <param name="dataSize">The data size of the account.</param>
-        /// <param name="memOffset">The offset into program account to start comparison.</param>
-        /// <param name="memBytes">The data to match against the program data, as base-58 encoded string and limited to 129 bytes.</param>
+        /// <param name="dataSize">The data size of the account to compare against the program account data.</param>
+        /// <param name="memCmpList">The list of comparisons to match against the program account data.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey, Commitment commitment = Commitment.Finalized,
-            int? dataSize = null, int? memOffset = null, string memBytes = null);
+            int? dataSize = null, IList<MemCmp> memCmpList = null);
 
         /// <summary>
         /// Gets a recent block hash.

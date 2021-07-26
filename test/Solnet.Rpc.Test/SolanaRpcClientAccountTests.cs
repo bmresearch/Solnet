@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
 using System;
 using System.Collections.Generic;
@@ -173,7 +174,8 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var result = sut.GetProgramAccounts("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T", dataSize: 500, memOffset: 25, memBytes: "3Mc6vR");
+            var result = sut.GetProgramAccounts("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T", dataSize: 500, 
+                memCmpList: new List<MemCmp>{ new() { Offset = 25, Bytes = "3Mc6vR" }});
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
             Assert.IsTrue(result.WasSuccessful);
