@@ -14,18 +14,6 @@ namespace Solnet.Rpc.Messages
         public string Method { get; }
 
         /// <summary>
-        /// The raw RPC payload for this request
-        /// </summary>
-        [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
-        public string RawRequest { get; internal set; }
-
-        /// <summary>
-        /// The raw RPC response 
-        /// </summary>
-        [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
-        public string RawResponse { get; internal set; }
-
-        /// <summary>
         /// The method parameters list.
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
