@@ -42,6 +42,11 @@ namespace Solnet.Rpc.Test
             Assert.IsFalse(result.WasSuccessful);
             Assert.AreEqual("Invalid param: WrongSize", result.Reason);
             Assert.AreEqual(-32602, result.ServerErrorCode);
+            Assert.IsNotNull(result.RawRpcRequest);
+            Assert.IsNotNull(result.RawRpcResponse);
+            Assert.AreEqual(requestData, result.RawRpcRequest);
+            Assert.AreEqual(responseData, result.RawRpcResponse);
+
         }
 
         [TestMethod]
@@ -72,6 +77,9 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(msg, result.Reason);
             Assert.IsFalse(result.WasHttpRequestSuccessful);
             Assert.IsFalse(result.WasRequestSuccessfullyHandled);
+            Assert.IsNotNull(result.RawRpcRequest);
+            Assert.IsNull(result.RawRpcResponse);
+            Assert.AreEqual(requestData, result.RawRpcRequest);
         }
 
         [TestMethod]
@@ -102,6 +110,10 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(msg, result.Reason);
             Assert.IsFalse(result.WasHttpRequestSuccessful);
             Assert.IsFalse(result.WasRequestSuccessfullyHandled);
+            Assert.IsNotNull(result.RawRpcRequest);
+            Assert.IsNull(result.RawRpcResponse);
+            Assert.AreEqual(requestData, result.RawRpcRequest);
+
         }
 
         [TestMethod]
@@ -120,12 +132,15 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetBalance("hoakwpFB8UoLnPpLC56gsjpY7XbVwaCuRQRMQzN5TVh");
-
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(79274779UL, result.Result.Context.Slot);
             Assert.AreEqual(168855000000UL, result.Result.Value);
+            Assert.IsNotNull(result.RawRpcRequest);
+            Assert.IsNotNull(result.RawRpcResponse);
+            Assert.AreEqual(requestData, result.RawRpcRequest);
+            Assert.AreEqual(responseData, result.RawRpcResponse);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }

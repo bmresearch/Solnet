@@ -62,15 +62,15 @@ namespace Solnet.Rpc.Core.Http
         protected async Task<RequestResult<T>> SendRequest<T>(JsonRpcRequest req)
         {
             RequestResult<T> result;
-            var requestJson = JsonSerializer.Serialize(req, _serializerOptions);
+            req.RawRequest = JsonSerializer.Serialize(req, _serializerOptions);
 
             try
             {
-                _logger?.LogInformation(new EventId(req.Id, req.Method), $"Sending request: {requestJson}");
+                _logger?.LogInformation(new EventId(req.Id, req.Method), $"Sending request: {req.RawRequest}");
 
                 using (var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Post, "/")
                 {
-                    Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
+                    Content = new StringContent(req.RawRequest, Encoding.UTF8, "application/json")
                 }).ConfigureAwait(false))
                 {
                     return await HandleResult<T>(req, response).ConfigureAwait(false);
@@ -79,12 +79,14 @@ namespace Solnet.Rpc.Core.Http
             catch (HttpRequestException e)
             {
                 result = new RequestResult<T>(e.StatusCode ?? System.Net.HttpStatusCode.BadRequest, e.Message);
+                result.RawRpcRequest = req.RawRequest;
                 _logger?.LogDebug(new EventId(req.Id, req.Method), $"Caught exception: {e.Message}");
                 return result;
             }
             catch (Exception e)
             {
                 result = new RequestResult<T>(System.Net.HttpStatusCode.BadRequest, e.Message);
+                result.RawRpcRequest = req.RawRequest;
                 _logger?.LogDebug(new EventId(req.Id, req.Method), $"Caught exception: {e.Message}");
                 return result;
             }
@@ -102,15 +104,16 @@ namespace Solnet.Rpc.Core.Http
         private async Task<RequestResult<T>> HandleResult<T>(JsonRpcRequest req, HttpResponseMessage response)
         {
             RequestResult<T> result = new RequestResult<T>(response);
+            result.RawRpcRequest = req.RawRequest;
             if (!result.WasHttpRequestSuccessful) return result;
 
             try
             {
-                var requestRes = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                req.RawResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                result.RawRpcResponse = req.RawResponse;
 
-                _logger?.LogInformation(new EventId(req.Id, req.Method), $"Result: {requestRes}");
-
-                var res = JsonSerializer.Deserialize<JsonRpcResponse<T>>(requestRes, _serializerOptions);
+                _logger?.LogInformation(new EventId(req.Id, req.Method), $"Result: {req.RawResponse}");
+                var res = JsonSerializer.Deserialize<JsonRpcResponse<T>>(req.RawResponse, _serializerOptions);
 
                 if (res.Result != null)
                 {
@@ -119,7 +122,7 @@ namespace Solnet.Rpc.Core.Http
                 }
                 else
                 {
-                    var errorRes = JsonSerializer.Deserialize<JsonRpcErrorResponse>(requestRes, _serializerOptions);
+                    var errorRes = JsonSerializer.Deserialize<JsonRpcErrorResponse>(req.RawResponse, _serializerOptions);
                     if (errorRes is { Error: { } })
                     {
                         result.Reason = errorRes.Error.Message;

@@ -46,6 +46,16 @@ namespace Solnet.Rpc.Core.Http
         public int ServerErrorCode { get; set; }
 
         /// <summary>
+        /// Contains the JSON RPC request payload
+        /// </summary>
+        public string RawRpcRequest { get; internal set; }
+
+        /// <summary>
+        /// Contains the JSON RPC response payload
+        /// </summary>
+        public string RawRpcResponse { get; internal set; }
+
+        /// <summary>
         /// Initialize the request result.
         /// <param name="resultMsg">An http request result.</param>
         /// <param name="result">The type of the request result.</param>
