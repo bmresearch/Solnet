@@ -31,9 +31,9 @@ namespace Solnet.Rpc.Models
         public string Delegate { get; set; }
 
         /// <summary>
-        /// The delegated amount of tokens.
+        /// The token balance that has been delegated.
         /// </summary>
-        public ulong DelegatedAmount { get; set; }
+        public TokenBalance DelegatedAmount { get; set; }
 
         /// <summary>
         /// The account's state.
