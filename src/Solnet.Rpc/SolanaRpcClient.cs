@@ -104,31 +104,30 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="IRpcClient.GetProgramAccountsAsync"/>
         public async Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey,
-            Commitment commitment = Commitment.Finalized, int? dataSize = null, int? memOffset = null,
-            string memBytes = null)
+            Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null)
         {
-            Dictionary<string, object> memCmp = memOffset != null
-                ? ConfigObject.Create(
-                    KeyValue.Create("offset", memOffset),
-                    KeyValue.Create("bytes", memBytes))
-                : null;
+            List<object> filters = Parameters.Create(ConfigObject.Create(KeyValue.Create("dataSize", dataSize)));
+            if (memCmpList != null)
+            {
+                filters.AddRange(memCmpList.Select(filter => ConfigObject.Create(KeyValue.Create("memcmp",
+                    ConfigObject.Create(KeyValue.Create("offset", filter.Offset),
+                        KeyValue.Create("bytes", filter.Bytes))))));
+            }
+
             return await SendRequestAsync<List<AccountKeyPair>>("getProgramAccounts",
                 Parameters.Create(
                     pubKey,
                     ConfigObject.Create(
                         KeyValue.Create("encoding", "base64"),
-                        KeyValue.Create("filters",
-                            Parameters.Create(
-                                ConfigObject.Create(KeyValue.Create("dataSize", dataSize)),
-                                ConfigObject.Create(KeyValue.Create("memcmp", memCmp)))),
+                        KeyValue.Create("filters", filters),
                         HandleCommitment(commitment))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetProgramAccounts"/>
         public RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey,
             Commitment commitment = Commitment.Finalized,
-            int? dataSize = null, int? memOffset = null, string memBytes = null)
-            => GetProgramAccountsAsync(pubKey, commitment, dataSize, memOffset, memBytes).Result;
+            int? dataSize = null, IList<MemCmp> memCmpList = null)
+            => GetProgramAccountsAsync(pubKey, commitment, dataSize, memCmpList).Result;
 
 
         /// <inheritdoc cref="IRpcClient.GetMultipleAccountsAsync"/>
