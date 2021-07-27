@@ -70,10 +70,6 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual("1000", result.Result.Value.Amount);
             Assert.AreEqual(2, result.Result.Value.Decimals);
             Assert.AreEqual("10", result.Result.Value.UiAmountString);
-            Assert.IsNotNull(result.RawRpcRequest);
-            Assert.IsNotNull(result.RawRpcResponse);
-            Assert.AreEqual(requestData, result.RawRpcRequest);
-            Assert.AreEqual(responseData, result.RawRpcResponse);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -118,10 +114,6 @@ namespace Solnet.Rpc.Test
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(79200468UL, result.Result.Context.Slot);
             Assert.AreEqual(7, result.Result.Value.Count);
-            Assert.IsNotNull(result.RawRpcRequest);
-            Assert.IsNotNull(result.RawRpcResponse);
-            Assert.AreEqual(requestData, result.RawRpcRequest);
-            Assert.AreEqual(responseData, result.RawRpcResponse);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
