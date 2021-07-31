@@ -9,40 +9,58 @@ using System.IO;
 namespace Solnet.Rpc.Builders
 {
     /// <summary>
+    /// A compiled instruction within the message.
+    /// </summary>
+    public class CompiledInstruction
+    {
+        #region Layout
+
+        /// <summary>
+        /// Represents the layout of the <see cref="CompiledInstruction"/> encoded values.
+        /// </summary>
+        internal static class Layout
+        {
+            /// <summary>
+            /// The offset at which the program's id index value begins.
+            /// </summary>
+            internal const int ProgramIdIndexOffset = 0;
+
+            /// <summary>
+            /// The offset at which the array containing the indices of the instruction's keys in the transaction's account keys begins.
+            /// </summary>
+            internal const int KeyIndicesCountOffset = 2;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// The index of the program's key in the transaction's account keys.
+        /// </summary>
+        internal byte ProgramIdIndex { get; init; }
+
+        internal byte[] KeyIndicesCount { get; init; }
+
+        internal byte[] KeyIndices { get; init; }
+
+        internal byte[] DataLength { get; init; }
+
+        internal byte[] Data { get; init; }
+
+        /// <summary>
+        /// Get the length of the compiled instruction.
+        /// </summary>
+        /// <returns>The length.</returns>
+        internal int Length()
+        {
+            return 1 + KeyIndicesCount.Length + KeyIndices.Length + DataLength.Length + Data.Length;
+        }
+    }
+
+    /// <summary>
     /// The message builder.
     /// </summary>
     internal class MessageBuilder
     {
-        /// <summary>
-        /// The base58 encoder instance.
-        /// </summary>
-        private static readonly Base58Encoder Encoder = new();
-
-        /// <summary>
-        /// A compiled instruction within the message.
-        /// </summary>
-        private class CompiledInstruction
-        {
-            internal byte ProgramIdIndex { get; init; }
-
-            internal byte[] KeyIndicesCount { get; init; }
-
-            internal byte[] KeyIndices { get; init; }
-
-            internal byte[] DataLength { get; init; }
-
-            internal byte[] Data { get; init; }
-
-            /// <summary>
-            /// Get the length of the compiled instruction.
-            /// </summary>
-            /// <returns>The length.</returns>
-            internal int Length()
-            {
-                return 1 + KeyIndicesCount.Length + KeyIndices.Length + DataLength.Length + Data.Length;
-            }
-        }
-
         /// <summary>
         /// The length of the block hash.
         /// </summary>
@@ -67,7 +85,7 @@ namespace Solnet.Rpc.Builders
         /// The hash of a recent block.
         /// </summary>
         internal string RecentBlockHash { get; set; }
-        
+
         /// <summary>
         /// The nonce information to be used instead of the recent blockhash.
         /// </summary>
@@ -116,12 +134,13 @@ namespace Solnet.Rpc.Builders
             {
                 RecentBlockHash = NonceInformation.Nonce;
                 _accountKeysList.Add(NonceInformation.Instruction.Keys);
-                _accountKeysList.Add(AccountMeta.ReadOnly(new PublicKey(NonceInformation.Instruction.ProgramId), false));
-                List<TransactionInstruction> newInstructions = new (){NonceInformation.Instruction};
+                _accountKeysList.Add(AccountMeta.ReadOnly(new PublicKey(NonceInformation.Instruction.ProgramId),
+                    false));
+                List<TransactionInstruction> newInstructions = new() {NonceInformation.Instruction};
                 newInstructions.AddRange(Instructions);
                 Instructions = newInstructions;
             }
-            
+
             if (RecentBlockHash == null)
                 throw new Exception("either recent block hash was not provided or nonce information is invalid");
 
@@ -130,7 +149,7 @@ namespace Solnet.Rpc.Builders
             List<AccountMeta> keysList = GetAccountKeys();
             byte[] accountAddressesLength = ShortVectorEncoding.EncodeLength(keysList.Count);
             int compiledInstructionsLength = 0;
-            List<CompiledInstruction> compiledInstructions = new ();
+            List<CompiledInstruction> compiledInstructions = new();
 
             foreach (TransactionInstruction instruction in Instructions)
             {
@@ -175,16 +194,17 @@ namespace Solnet.Rpc.Builders
             }
 
             #region Build Message Body
-            
-            int messageBufferSize = MessageHeader.HeaderLength + BlockHashLength + accountAddressesLength.Length +
-                                    + instructionsLength.Length + compiledInstructionsLength + accountKeysBufferSize;
+
+            int messageBufferSize = MessageHeader.Layout.HeaderLength + BlockHashLength +
+                                    accountAddressesLength.Length +
+                                    +instructionsLength.Length + compiledInstructionsLength + accountKeysBufferSize;
             MemoryStream buffer = new MemoryStream(messageBufferSize);
             byte[] messageHeaderBytes = _messageHeader.ToBytes();
 
             buffer.Write(messageHeaderBytes);
             buffer.Write(accountAddressesLength);
             buffer.Write(accountKeysBuffer.ToArray());
-            buffer.Write(Encoder.DecodeData(RecentBlockHash));
+            buffer.Write(Encoders.Base58.DecodeData(RecentBlockHash));
             buffer.Write(instructionsLength);
 
             foreach (CompiledInstruction compiledInstruction in compiledInstructions)
@@ -218,10 +238,7 @@ namespace Solnet.Rpc.Builders
                 keysList.RemoveAt(feePayerIndex);
             }
 
-            List<AccountMeta> newList = new List<AccountMeta>
-            {
-                AccountMeta.Writable(FeePayer.PublicKey, true)
-            };
+            List<AccountMeta> newList = new List<AccountMeta> {AccountMeta.Writable(FeePayer.PublicKey, true)};
             newList.AddRange(keysList);
 
             return newList;
@@ -236,7 +253,7 @@ namespace Solnet.Rpc.Builders
         /// <exception cref="Exception"></exception>
         private static int FindAccountIndex(IList<AccountMeta> accountMetas, byte[] publicKey)
         {
-            string encodedKey = Encoder.EncodeData(publicKey);
+            string encodedKey = Encoders.Base58.EncodeData(publicKey);
             for (int index = 0; index < accountMetas.Count; index++)
             {
                 if (accountMetas[index].PublicKey == encodedKey) return index;

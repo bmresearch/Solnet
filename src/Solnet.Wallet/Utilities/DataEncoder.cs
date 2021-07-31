@@ -1,4 +1,3 @@
-
 namespace Solnet.Wallet.Utilities
 {
     /// <summary>

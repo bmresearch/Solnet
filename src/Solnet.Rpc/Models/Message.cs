@@ -1,6 +1,12 @@
+using Solnet.Rpc.Builders;
+using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
+using Solnet.Wallet.Utilities;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace Solnet.Rpc.Models
 {
@@ -9,10 +15,35 @@ namespace Solnet.Rpc.Models
     /// </summary>
     public class MessageHeader
     {
+        #region Layout
+
         /// <summary>
-        /// The message header length.
+        /// Represents the layout of the <see cref="MessageHeader"/> encoded values.
         /// </summary>
-        internal const int HeaderLength = 3;
+        internal static class Layout
+        {
+            /// <summary>
+            /// The offset at which the byte that defines the number of required signatures begins.
+            /// </summary>
+            internal const int RequiredSignaturesOffset = 0;
+
+            /// <summary>
+            /// The offset at which the byte that defines the number of read-only signer accounts begins.
+            /// </summary>
+            internal const int ReadOnlySignedAccountsOffset = 1;
+
+            /// <summary>
+            /// The offset at which the byte that defines the number of read-only non-signer accounts begins.
+            /// </summary>
+            internal const int ReadOnlyUnsignedAccountsOffset = 2;
+
+            /// <summary>
+            /// The message header length.
+            /// </summary>
+            internal const int HeaderLength = 3;
+        }
+
+        #endregion Layout
 
         /// <summary>
         /// The number of required signatures.
@@ -35,7 +66,7 @@ namespace Solnet.Rpc.Models
         /// <returns>The byte array.</returns>
         internal byte[] ToBytes()
         {
-            return new[] { RequiredSignatures, ReadOnlySignedAccounts, ReadOnlyUnsignedAccounts };
+            return new[] {RequiredSignatures, ReadOnlySignedAccounts, ReadOnlyUnsignedAccounts};
         }
     }
 
@@ -47,22 +78,33 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// The header of the <see cref="Message"/>.
         /// </summary>
-        public MessageHeader Header { get; init; }
-        
+        public MessageHeader Header { get; set; }
+
         /// <summary>
         /// The list of account <see cref="PublicKey"/>s present in the transaction.
         /// </summary>
-        public IList<PublicKey> AccountKeys { get; set; }
-        
+        public List<PublicKey> AccountKeys { get; set; }
+
         /// <summary>
         /// The list of <see cref="TransactionInstruction"/>s present in the transaction.
         /// </summary>
-        public IList<TransactionInstruction> Instructions { get; set; }
-        
+        public List<CompiledInstruction> Instructions { get; set; }
+
         /// <summary>
         /// The recent block hash for the transaction.
         /// </summary>
         public string RecentBlockhash { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public bool IsAccountWritable(int index)
+        {
+            return index < Header.RequiredSignatures - Header.ReadOnlySignedAccounts ||
+                    (index >= Header.RequiredSignatures && index < AccountKeys.Count - Header.ReadOnlyUnsignedAccounts);
+        }
 
         /// <summary>
         /// Serialize the message into the wire format.
@@ -70,8 +112,37 @@ namespace Solnet.Rpc.Models
         /// <returns>A byte array corresponding to the serialized message.</returns>
         public byte[] Serialize()
         {
+            byte[] accountAddressesLength = ShortVectorEncoding.EncodeLength(AccountKeys.Count);
+            byte[] instructionsLength = ShortVectorEncoding.EncodeLength(Instructions.Count);
+            int accountKeysBufferSize = AccountKeys.Count * 32;
+            MemoryStream accountKeysBuffer = new (accountKeysBufferSize);
 
-            return new byte[] { };
+            foreach (PublicKey key in AccountKeys)
+            {
+                accountKeysBuffer.Write(key.KeyBytes);
+            }
+            
+            int messageBufferSize = MessageHeader.Layout.HeaderLength + PublicKey.PublicKeyLength +
+                                    accountAddressesLength.Length +
+                                    + instructionsLength.Length + Instructions.Count + accountKeysBufferSize;
+            MemoryStream buffer = new (messageBufferSize);
+            
+            buffer.Write(Header.ToBytes());
+            buffer.Write(accountAddressesLength);
+            buffer.Write(accountKeysBuffer.ToArray());
+            buffer.Write(Encoders.Base58.DecodeData(RecentBlockhash));
+            buffer.Write(instructionsLength);
+
+            foreach (CompiledInstruction compiledInstruction in Instructions)
+            {
+                buffer.WriteByte(compiledInstruction.ProgramIdIndex);
+                buffer.Write(compiledInstruction.KeyIndicesCount);
+                buffer.Write(compiledInstruction.KeyIndices);
+                buffer.Write(compiledInstruction.DataLength);
+                buffer.Write(compiledInstruction.Data);
+            }
+            
+            return buffer.ToArray();
         }
 
         /// <summary>
@@ -81,15 +152,124 @@ namespace Solnet.Rpc.Models
         /// <returns>The Message object instance.</returns>
         public static Message Deserialize(ReadOnlySpan<byte> data)
         {
-            return new ()
+            // Read message header
+            byte numRequiredSignatures = data[MessageHeader.Layout.RequiredSignaturesOffset];
+            byte numReadOnlySignedAccounts = data[MessageHeader.Layout.ReadOnlySignedAccountsOffset];
+            byte numReadOnlyUnsignedAccounts = data[MessageHeader.Layout.ReadOnlyUnsignedAccountsOffset];
+
+            // Read account keys
+            int accountAddressLength =
+                ShortVectorEncoding.DecodeLength(data.Slice(MessageHeader.Layout.HeaderLength,
+                    ShortVectorEncoding.SpanLength));
+            List<PublicKey> accountKeys = new(accountAddressLength);
+            for (int i = 0; i < accountAddressLength; i++)
             {
-                Header = new MessageHeader()
+                ReadOnlySpan<byte> keyBytes = data.Slice(
+                    MessageHeader.Layout.HeaderLength + ShortVectorEncoding.SpanLength + i * PublicKey.PublicKeyLength,
+                    PublicKey.PublicKeyLength);
+                accountKeys.Add(new PublicKey(keyBytes));
+            }
+
+            // Read block hash
+            string blockHash =
+                Encoders.Base58.EncodeData(data.Slice(
+                    3 + ShortVectorEncoding.SpanLength + accountAddressLength * PublicKey.PublicKeyLength,
+                    PublicKey.PublicKeyLength).ToArray());
+
+            // Read the number of instructions in the message
+            int instructionsLength =
+                ShortVectorEncoding.DecodeLength(
+                    data.Slice(
+                        MessageHeader.Layout.HeaderLength + ShortVectorEncoding.SpanLength +
+                        (accountAddressLength * PublicKey.PublicKeyLength) + PublicKey.PublicKeyLength,
+                        ShortVectorEncoding.SpanLength));
+
+            List<CompiledInstruction> instructions = new(instructionsLength);
+            int instructionsOffset =
+                MessageHeader.Layout.HeaderLength + ShortVectorEncoding.SpanLength +
+                (accountAddressLength * PublicKey.PublicKeyLength) + PublicKey.PublicKeyLength +
+                ShortVectorEncoding.SpanLength;
+            ReadOnlySpan<byte> instructionsData = data.Slice(instructionsOffset, data.Length - instructionsOffset);
+
+            // Read the instructions in the message
+            for (int i = 0; i < instructionsLength; i++)
+            {
+                int instructionLength = 0;
+                // Read the programId index
+                byte programIdIndex = instructionsData[CompiledInstruction.Layout.ProgramIdIndexOffset];
+                instructionLength += 1; // ProgramIdIndex is zero
+
+                // Read the number of keys for the instruction
+                ReadOnlySpan<byte> encodedKeyIndicesLength =
+                    instructionsData.Slice(instructionLength, ShortVectorEncoding.SpanLength);
+                int keyIndicesLength = ShortVectorEncoding.DecodeLength(encodedKeyIndicesLength);
+                instructionLength += ShortVectorEncoding.SpanLength;
+
+                // Read the key indices for the instruction accounts
+                byte[] keyIndices = new byte[keyIndicesLength];
+                for (int j = 0; j < keyIndicesLength; j++)
                 {
-                    
+                    keyIndices[i] = instructionsData[instructionLength];
+                    instructionLength++;
+                }
+
+                // Read the length of the instruction's data
+                ReadOnlySpan<byte> encodedDataLength =
+                    instructionsData.Slice(instructionLength, ShortVectorEncoding.SpanLength);
+                int dataLength = ShortVectorEncoding.DecodeLength(encodedDataLength);
+                instructionLength += ShortVectorEncoding.SpanLength;
+
+                // Read the instruction data
+                byte[] instructionEncodedData = instructionsData.Slice(instructionLength, dataLength).ToArray();
+
+                instructions.Add(new CompiledInstruction
+                {
+                    ProgramIdIndex = programIdIndex,
+                    KeyIndicesCount = encodedKeyIndicesLength.ToArray(),
+                    KeyIndices = keyIndices,
+                    DataLength = encodedDataLength.ToArray(),
+                    Data = instructionEncodedData
+                });
+                instructionsData = instructionsData[instructionLength..];
+            }
+
+            return new Message
+            {
+                Header = new MessageHeader
+                {
+                    RequiredSignatures = numRequiredSignatures,
+                    ReadOnlySignedAccounts = numReadOnlySignedAccounts,
+                    ReadOnlyUnsignedAccounts = numReadOnlyUnsignedAccounts
                 },
-                AccountKeys = new List<PublicKey>(),
-                Instructions = new List<TransactionInstruction>(),
+                RecentBlockhash = blockHash,
+                AccountKeys = accountKeys,
+                Instructions = instructions,
             };
+        }
+
+        /// <summary>
+        /// Deserialize a compiled message encoded as base-64 into a Message object.
+        /// </summary>
+        /// <param name="data">The data to deserialize into the Message object.</param>
+        /// <returns>The Transaction object.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the given string is null.</exception>
+        public static Message Deserialize(string data)
+        {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
+            byte[] decodedBytes;
+
+            try
+            {
+                decodedBytes = Convert.FromBase64String(data);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("could not decode message data from base64", ex);
+            }
+
+            return Deserialize(decodedBytes);
         }
     }
 }

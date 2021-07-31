@@ -57,6 +57,5 @@ namespace Solnet.Programs
             
             return decodedInstruction;
         }
-
     }
 }

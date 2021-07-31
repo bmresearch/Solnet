@@ -17,7 +17,7 @@ namespace Solnet.Rpc.Builders
         /// <summary>
         /// The length of a signature.
         /// </summary>
-        private const int SignatureLength = 64;
+        public const int SignatureLength = 64;
 
         /// <summary>
         /// The builder of the message contained within the transaction.
@@ -42,26 +42,6 @@ namespace Solnet.Rpc.Builders
             _messageBuilder = new MessageBuilder();
             _signatures = new List<string>();
         }
-
-        /*
-        /// <summary>
-        /// Gets the signers for the current transaction.
-        /// </summary>
-        /// <returns>An enumerable with the signers.</returns>
-        private IEnumerable<Account> GetSigners()
-        {
-            List<Account> signers = new ();
-            
-            foreach (TransactionInstruction instruction in _messageBuilder.Instructions)
-            {
-                signers.AddRange(from accountMeta in instruction.Keys where accountMeta.IsSigner && !signers.Contains(accountMeta.Account) select accountMeta.Account);
-            }
-
-            if (!signers.Contains(_messageBuilder.FeePayer)) signers.Add(_messageBuilder.FeePayer);
-
-            return signers;
-        }
-        */
         
         /// <summary>
         /// Serializes the message into a byte array.
@@ -145,6 +125,15 @@ namespace Solnet.Rpc.Builders
         {
             _messageBuilder.AddInstruction(instruction);
             return this;
+        }
+
+        /// <summary>
+        /// Compiles the transaction's message into wire format, ready to be signed.
+        /// </summary>
+        /// <returns>The serialized message.</returns>
+        public byte[] CompileMessage()
+        {
+            return _messageBuilder.Build();
         }
         
         /// <summary>
