@@ -9,10 +9,11 @@ using System.IO;
 namespace Solnet.Rpc.Builders
 {
     /// <summary>
-    /// The message builder.
+    /// A compiled instruction within the message.
     /// </summary>
-    internal class MessageBuilder
+    public class MessageBuilder
     {
+
         /// <summary>
         /// The length of the block hash.
         /// </summary>
@@ -37,7 +38,7 @@ namespace Solnet.Rpc.Builders
         /// The hash of a recent block.
         /// </summary>
         internal string RecentBlockHash { get; set; }
-        
+
         /// <summary>
         /// The nonce information to be used instead of the recent blockhash.
         /// </summary>

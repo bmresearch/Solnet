@@ -21,7 +21,6 @@ namespace Solnet.Examples
             "route clerk disease box emerge airport loud waste attitude film army tray " +
             "forward deal onion eight catalog surface unit card window walnut wealth medal";
 
-
         public void Run()
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
