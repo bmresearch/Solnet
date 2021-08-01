@@ -1,6 +1,7 @@
 ﻿using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,7 +18,11 @@ namespace Solnet.Programs
         /// <summary>
         /// The public key of the Memo Program.
         /// </summary>
-        private static readonly PublicKey ProgramIdKey = new("Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo");
+        public static readonly PublicKey ProgramIdKey = new("Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo");
+
+        private const string ProgramName = "Memo";
+
+        private const string InstructionName = "Memo";
 
         /// <summary>
         /// Initialize a new transaction instruction which interacts with the Memo Program.
@@ -39,6 +44,18 @@ namespace Solnet.Programs
                 Keys = keys,
                 Data = memoBytes
             };
+        }
+
+        public static DecodedInstruction Decode(ReadOnlySpan<byte> data)
+        {
+            DecodedInstruction decodedInstruction = new();
+            decodedInstruction.PublicKey = ProgramIdKey;
+            decodedInstruction.InstructionName = InstructionName;
+            decodedInstruction.ProgramName = ProgramName;
+            decodedInstruction.Values =
+                new Dictionary<string, object>() {{"memo", Encoding.UTF8.GetString(data)}};
+            
+            return decodedInstruction;
         }
 
     }
