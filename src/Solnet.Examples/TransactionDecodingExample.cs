@@ -15,6 +15,7 @@ namespace Solnet.Examples
 {
     public class TransactionDecodingExample : IExample
     {
+        
         private static readonly IRpcClient RpcClient = ClientFactory.GetClient(Cluster.TestNet);
 
         private const string MnemonicWords =
@@ -26,7 +27,6 @@ namespace Solnet.Examples
             var wallet = new Wallet.Wallet(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = RpcClient.GetRecentBlockHash();
-
             ulong minBalanceForExemptionAcc =
                 RpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
             ulong minBalanceForExemptionMint =
@@ -80,9 +80,8 @@ namespace Solnet.Examples
                 new List<byte[]> {ownerAccount.Sign(msgData), mintAccount.Sign(msgData), initialAccount.Sign(msgData)});
 
             byte[] txBytes = txx.Serialize();
-
             string txBytesBs64 = Convert.ToBase64String(txBytes);
-
+            
             string help = txBytes.Aggregate("[", (current, txByte) => current + $"{txByte}, ");
             help = help.TrimEnd()[..(help.Length - 2)] + "]";
             Console.WriteLine($"TxBytes: {help}");
@@ -119,7 +118,6 @@ namespace Solnet.Examples
             txDecHelp = txDecHelp.TrimEnd()[..(txDecHelp.Length - 2)] + "]";
             Console.WriteLine($"Recompiled Transaction Bytes: {txDecHelp}");
             Console.WriteLine($"Recompiled Transaction Base64: {txDecBytesBs64}");
-
             var txDecSim = RpcClient.SimulateTransaction(txDecBytes);
             string decLogs = Examples.PrettyPrintTransactionSimulationLogs(txDecSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txDecSim.Result.Value.Error}\n\tLogs: \n" + decLogs);
