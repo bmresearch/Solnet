@@ -80,12 +80,12 @@ namespace Solnet.Examples
             var minBalanceForExemptionMint =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
-
-            var mintAccount = wallet.GetAccount(37);
+            
+            var mintAccount = wallet.GetAccount(94206);
             Console.WriteLine($"MintAccount: {mintAccount.PublicKey.Key}");
             var ownerAccount = wallet.GetAccount(10);
             Console.WriteLine($"OwnerAccount: {ownerAccount.PublicKey.Key}");
-            var initialAccount = wallet.GetAccount(38);
+            var initialAccount = wallet.GetAccount(64209);
             Console.WriteLine($"InitialAccount: {initialAccount.PublicKey.Key}");
 
             var tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)

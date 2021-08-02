@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Solnet.Programs;
 using Solnet.Rpc.Builders;
+using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,21 @@ namespace Solnet.Rpc.Test
             "7hf3ho8eB05SFYGg2J2UN52qZbcXsgFHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgMCAAI0AAAA" +
             "APAdHwAAAAAApQAAAAAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQUEAgEABAEBBQMBAgA" +
             "JB6hhAAAAAAAABgECEkhlbGxvIGZyb20gU29sLk5ldA==";
+        
+        private const string Nonce = "2S1kjspXLPs6jpNVXQfNMqZzzSrKLbGdr9Fxap5h1DLN";
+
+        private static byte[] CompiledMessageBytes =
+        {
+            1, 0, 2, 5, 71, 105, 171, 151, 32, 75, 168, 63, 176, 202, 238, 23, 247, 134, 143, 30, 7, 78, 82, 21,
+            129, 160, 216, 157, 148, 55, 157, 170, 101, 183, 23, 178, 132, 220, 206, 171, 228, 52, 112, 149, 218,
+            174, 194, 90, 142, 185, 112, 195, 57, 102, 90, 129, 121, 155, 30, 112, 20, 223, 14, 67, 131, 142, 36,
+            162, 223, 244, 229, 56, 86, 243, 0, 74, 86, 58, 56, 142, 17, 130, 113, 147, 61, 1, 136, 126, 243, 22,
+            226, 173, 108, 74, 212, 104, 81, 199, 120, 180, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 167, 213, 23, 25, 44, 86, 142, 224, 138, 132, 95, 115, 210,
+            151, 136, 207, 3, 92, 49, 69, 178, 26, 179, 68, 216, 6, 46, 169, 64, 0, 0, 21, 68, 15, 82, 0, 49, 0,
+            146, 241, 176, 13, 84, 249, 55, 39, 9, 212, 80, 57, 8, 193, 89, 211, 49, 162, 144, 45, 140, 117, 21, 46,
+            83, 2, 3, 3, 2, 4, 0, 4, 4, 0, 0, 0, 3, 2, 0, 1, 12, 2, 0, 0, 0, 0, 202, 154, 59, 0, 0, 0, 0
+        };
 
         [TestMethod]
         public void TestTransactionBuilderBuild()
@@ -155,6 +171,37 @@ namespace Solnet.Rpc.Test
                 .Build(new List<Account> { ownerAccount, mintAccount, initialAccount});
 
             Assert.AreEqual(ExpectedTransactionHashCreateInitializeAndMintTo, Convert.ToBase64String(tx));
+        }
+        
+        [TestMethod]
+        public void CompileMessageTest()
+        {
+            Wallet.Wallet wallet = new (MnemonicWords);
+
+            Account ownerAccount = wallet.GetAccount(10);
+            Account nonceAccount = wallet.GetAccount(1119);
+            Account toAccount = wallet.GetAccount(1);
+            NonceInformation nonceInfo = new ()
+            {
+                Nonce = Nonce,
+                Instruction = SystemProgram.AdvanceNonceAccount(
+                    nonceAccount.PublicKey,
+                    ownerAccount
+                )
+            };
+            
+            byte[] txBytes = new TransactionBuilder()
+                .SetFeePayer(ownerAccount)
+                .SetNonceInformation(nonceInfo)
+                .AddInstruction(
+                    SystemProgram.Transfer(
+                        ownerAccount,
+                        toAccount,
+                        1_000_000_000)
+                )
+                .CompileMessage();
+            
+            CollectionAssert.AreEqual(CompiledMessageBytes, txBytes);
         }
     }
 }

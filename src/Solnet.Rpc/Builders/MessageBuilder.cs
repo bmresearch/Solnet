@@ -94,7 +94,7 @@ namespace Solnet.Rpc.Builders
         /// <summary>
         /// The transaction fee payer.
         /// </summary>
-        internal Account FeePayer { get; set; }
+        internal PublicKey FeePayer { get; set; }
 
         /// <summary>
         /// Initialize the message builder.
@@ -140,9 +140,6 @@ namespace Solnet.Rpc.Builders
                 newInstructions.AddRange(Instructions);
                 Instructions = newInstructions;
             }
-
-            if (RecentBlockHash == null)
-                throw new Exception("either recent block hash was not provided or nonce information is invalid");
 
             _messageHeader = new MessageHeader();
 
@@ -228,17 +225,17 @@ namespace Solnet.Rpc.Builders
         private List<AccountMeta> GetAccountKeys()
         {
             IList<AccountMeta> keysList = _accountKeysList.AccountList;
-            int feePayerIndex = FindAccountIndex(keysList, FeePayer.PublicKey.KeyBytes);
+            int feePayerIndex = FindAccountIndex(keysList, FeePayer.KeyBytes);
             if (feePayerIndex == -1)
             {
-                _accountKeysList.Add(AccountMeta.Writable(FeePayer.PublicKey, true));
+                keysList.Add(AccountMeta.Writable(FeePayer, true));
             }
             else
             {
                 keysList.RemoveAt(feePayerIndex);
             }
 
-            List<AccountMeta> newList = new List<AccountMeta> {AccountMeta.Writable(FeePayer.PublicKey, true)};
+            List<AccountMeta> newList = new List<AccountMeta> {AccountMeta.Writable(FeePayer, true)};
             newList.AddRange(keysList);
 
             return newList;

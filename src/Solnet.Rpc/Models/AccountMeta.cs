@@ -11,22 +11,22 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// The public key as a byte array.
         /// </summary>
-        internal byte[] PublicKeyBytes { get; }
+        public byte[] PublicKeyBytes { get; }
         
         /// <summary>
         /// Get the public key encoded as base58.
         /// </summary>
-        internal string PublicKey { get; }
+        public string PublicKey { get; }
         
         /// <summary>
         /// A boolean which defines if the account is a signer account.
         /// </summary>
-        internal bool IsSigner { get; }
+        public bool IsSigner { get; }
 
         /// <summary>
         /// A boolean which defines if the account is a writable account.
         /// </summary>
-        internal bool IsWritable { get; }
+        public bool IsWritable { get; }
 
         /// <summary>
         /// Initialize the account meta with the passed public key, being a non-signing account for the transaction.

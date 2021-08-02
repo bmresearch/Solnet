@@ -83,12 +83,12 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// The list of account <see cref="PublicKey"/>s present in the transaction.
         /// </summary>
-        public List<PublicKey> AccountKeys { get; set; }
+        public IList<PublicKey> AccountKeys { get; set; }
 
         /// <summary>
         /// The list of <see cref="TransactionInstruction"/>s present in the transaction.
         /// </summary>
-        public List<CompiledInstruction> Instructions { get; set; }
+        public IList<CompiledInstruction> Instructions { get; set; }
 
         /// <summary>
         /// The recent block hash for the transaction.
@@ -96,15 +96,13 @@ namespace Solnet.Rpc.Models
         public string RecentBlockhash { get; set; }
 
         /// <summary>
-        /// 
+        /// Check whether an account is writable.
         /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public bool IsAccountWritable(int index)
-        {
-            return index < Header.RequiredSignatures - Header.ReadOnlySignedAccounts ||
-                    (index >= Header.RequiredSignatures && index < AccountKeys.Count - Header.ReadOnlyUnsignedAccounts);
-        }
+        /// <param name="index">The index of the account in the account keys.</param>
+        /// <returns>true if the account is writable, false otherwise.</returns>
+        public bool IsAccountWritable(int index) => index < Header.RequiredSignatures - Header.ReadOnlySignedAccounts ||
+                                                    (index >= Header.RequiredSignatures &&
+                                                     index < AccountKeys.Count - Header.ReadOnlyUnsignedAccounts);
 
         /// <summary>
         /// Serialize the message into the wire format.
@@ -115,18 +113,18 @@ namespace Solnet.Rpc.Models
             byte[] accountAddressesLength = ShortVectorEncoding.EncodeLength(AccountKeys.Count);
             byte[] instructionsLength = ShortVectorEncoding.EncodeLength(Instructions.Count);
             int accountKeysBufferSize = AccountKeys.Count * 32;
-            MemoryStream accountKeysBuffer = new (accountKeysBufferSize);
+            MemoryStream accountKeysBuffer = new(accountKeysBufferSize);
 
             foreach (PublicKey key in AccountKeys)
             {
                 accountKeysBuffer.Write(key.KeyBytes);
             }
-            
+
             int messageBufferSize = MessageHeader.Layout.HeaderLength + PublicKey.PublicKeyLength +
                                     accountAddressesLength.Length +
-                                    + instructionsLength.Length + Instructions.Count + accountKeysBufferSize;
-            MemoryStream buffer = new (messageBufferSize);
-            
+                                    +instructionsLength.Length + Instructions.Count + accountKeysBufferSize;
+            MemoryStream buffer = new(messageBufferSize);
+
             buffer.Write(Header.ToBytes());
             buffer.Write(accountAddressesLength);
             buffer.Write(accountKeysBuffer.ToArray());
@@ -141,7 +139,7 @@ namespace Solnet.Rpc.Models
                 buffer.Write(compiledInstruction.DataLength);
                 buffer.Write(compiledInstruction.Data);
             }
-            
+
             return buffer.ToArray();
         }
 
@@ -158,14 +156,15 @@ namespace Solnet.Rpc.Models
             byte numReadOnlyUnsignedAccounts = data[MessageHeader.Layout.ReadOnlyUnsignedAccountsOffset];
 
             // Read account keys
-            int accountAddressLength =
+            (int accountAddressLength, int accountAddressLengthEncodedLength) =
                 ShortVectorEncoding.DecodeLength(data.Slice(MessageHeader.Layout.HeaderLength,
                     ShortVectorEncoding.SpanLength));
             List<PublicKey> accountKeys = new(accountAddressLength);
             for (int i = 0; i < accountAddressLength; i++)
             {
                 ReadOnlySpan<byte> keyBytes = data.Slice(
-                    MessageHeader.Layout.HeaderLength + ShortVectorEncoding.SpanLength + i * PublicKey.PublicKeyLength,
+                    MessageHeader.Layout.HeaderLength + accountAddressLengthEncodedLength +
+                    i * PublicKey.PublicKeyLength,
                     PublicKey.PublicKeyLength);
                 accountKeys.Add(new PublicKey(keyBytes));
             }
@@ -173,23 +172,24 @@ namespace Solnet.Rpc.Models
             // Read block hash
             string blockHash =
                 Encoders.Base58.EncodeData(data.Slice(
-                    3 + ShortVectorEncoding.SpanLength + accountAddressLength * PublicKey.PublicKeyLength,
+                    MessageHeader.Layout.HeaderLength + accountAddressLengthEncodedLength +
+                    accountAddressLength * PublicKey.PublicKeyLength,
                     PublicKey.PublicKeyLength).ToArray());
 
             // Read the number of instructions in the message
-            int instructionsLength =
+            (int instructionsLength, int instructionsLengthEncodedLength) =
                 ShortVectorEncoding.DecodeLength(
                     data.Slice(
-                        MessageHeader.Layout.HeaderLength + ShortVectorEncoding.SpanLength +
+                        MessageHeader.Layout.HeaderLength + accountAddressLengthEncodedLength +
                         (accountAddressLength * PublicKey.PublicKeyLength) + PublicKey.PublicKeyLength,
                         ShortVectorEncoding.SpanLength));
 
             List<CompiledInstruction> instructions = new(instructionsLength);
             int instructionsOffset =
-                MessageHeader.Layout.HeaderLength + ShortVectorEncoding.SpanLength +
+                MessageHeader.Layout.HeaderLength + accountAddressLengthEncodedLength +
                 (accountAddressLength * PublicKey.PublicKeyLength) + PublicKey.PublicKeyLength +
-                ShortVectorEncoding.SpanLength;
-            ReadOnlySpan<byte> instructionsData = data.Slice(instructionsOffset, data.Length - instructionsOffset);
+                instructionsLengthEncodedLength;
+            ReadOnlySpan<byte> instructionsData = data[instructionsOffset..];
 
             // Read the instructions in the message
             for (int i = 0; i < instructionsLength; i++)
@@ -202,32 +202,37 @@ namespace Solnet.Rpc.Models
                 // Read the number of keys for the instruction
                 ReadOnlySpan<byte> encodedKeyIndicesLength =
                     instructionsData.Slice(instructionLength, ShortVectorEncoding.SpanLength);
-                int keyIndicesLength = ShortVectorEncoding.DecodeLength(encodedKeyIndicesLength);
-                instructionLength += ShortVectorEncoding.SpanLength;
+                (int keyIndicesLength, int keyIndicesLengthEncodedLength) =
+                    ShortVectorEncoding.DecodeLength(encodedKeyIndicesLength);
+                instructionLength += keyIndicesLengthEncodedLength;
 
                 // Read the key indices for the instruction accounts
                 byte[] keyIndices = new byte[keyIndicesLength];
                 for (int j = 0; j < keyIndicesLength; j++)
                 {
-                    keyIndices[i] = instructionsData[instructionLength];
+                    keyIndices[j] = instructionsData[instructionLength];
                     instructionLength++;
                 }
 
                 // Read the length of the instruction's data
-                ReadOnlySpan<byte> encodedDataLength =
-                    instructionsData.Slice(instructionLength, ShortVectorEncoding.SpanLength);
-                int dataLength = ShortVectorEncoding.DecodeLength(encodedDataLength);
-                instructionLength += ShortVectorEncoding.SpanLength;
+                ReadOnlySpan<byte> encodedDataLength = 
+                    instructionsData.Length > instructionLength + ShortVectorEncoding.SpanLength ? 
+                        instructionsData.Slice(instructionLength, ShortVectorEncoding.SpanLength) 
+                        : instructionsData.Slice(instructionLength, instructionsData.Length - instructionLength) ;
+                
+                (int dataLength, int dataLengthEncodedLength) = ShortVectorEncoding.DecodeLength(encodedDataLength);
+                instructionLength += dataLengthEncodedLength;
 
                 // Read the instruction data
                 byte[] instructionEncodedData = instructionsData.Slice(instructionLength, dataLength).ToArray();
+                instructionLength += dataLength;
 
                 instructions.Add(new CompiledInstruction
                 {
                     ProgramIdIndex = programIdIndex,
-                    KeyIndicesCount = encodedKeyIndicesLength.ToArray(),
+                    KeyIndicesCount = encodedKeyIndicesLength[..keyIndicesLengthEncodedLength].ToArray(),
                     KeyIndices = keyIndices,
-                    DataLength = encodedDataLength.ToArray(),
+                    DataLength = encodedDataLength[..dataLengthEncodedLength].ToArray(),
                     Data = instructionEncodedData
                 });
                 instructionsData = instructionsData[instructionLength..];

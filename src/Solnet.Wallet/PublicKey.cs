@@ -1,5 +1,4 @@
-// unset
-
+using Chaos.NaCl;
 using Solnet.Wallet.Utilities;
 using System;
 using System.Diagnostics;
@@ -86,6 +85,17 @@ namespace Solnet.Wallet
                 throw new ArgumentException("invalid key length", nameof(key));
             KeyBytes = new byte[PublicKeyLength];
             key.CopyTo(KeyBytes.AsSpan());
+        }
+        
+        /// <summary>
+        /// Verify the signed message.
+        /// </summary>
+        /// <param name="message">The signed message.</param>
+        /// <param name="signature">The signature of the message.</param>
+        /// <returns></returns>
+        public bool Verify(byte[] message, byte[] signature)
+        {
+            return Ed25519.Verify(signature, message, KeyBytes);
         }
 
         /// <summary>
