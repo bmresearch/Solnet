@@ -1,5 +1,6 @@
 // unset
 
+using Chaos.NaCl;
 using Solnet.Wallet.Utilities;
 using System;
 using System.Diagnostics;
@@ -87,6 +88,18 @@ namespace Solnet.Wallet
             KeyBytes = new byte[PrivateKeyLength];
             key.CopyTo(KeyBytes.AsSpan());
         }
+        
+        /// <summary>
+        /// Sign the data.
+        /// </summary>
+        /// <param name="message">The data to sign.</param>
+        /// <returns>The signature of the data.</returns>
+        public byte[] Sign(byte[] message)
+        {
+            byte[] signature = new byte[64];
+            Ed25519.Sign(signature, message, KeyBytes);
+            return signature;
+        }
 
         /// <summary>
         /// Conversion between a <see cref="PrivateKey"/> object and the corresponding base-58 encoded private key.
@@ -115,5 +128,8 @@ namespace Solnet.Wallet
         /// <param name="keyBytes">The private key as a byte array.</param>
         /// <returns>The PrivateKey object.</returns>
         public static explicit operator PrivateKey(byte[] keyBytes) => new (keyBytes);
+
+        /// <inheritdoc cref="ToString"/>
+        public override string ToString() => Key;
     }
 }

@@ -1,5 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Solnet.Programs.Models;
 using Solnet.Wallet.Utilities;
+using System;
 
 namespace Solnet.Programs.Test
 {
@@ -107,6 +109,15 @@ namespace Solnet.Programs.Test
         };
 
         private const long BalanceForRentExemption = 2039280L;
+
+        private const string NonceAccountBase64Data =
+            "AAAAAAEAAABHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbc" +
+            "XsnM+zs3rCNyHGAjze1Gvfq4gRzzrz7ggv4rYXkMo8P2DiBMAAAAAAAA=";
+        
+        private const string NonceAccountInvalidBase64Data =
+            "77+977+977+977+9Ae+/ve+/ve+/vUdpwqvClyBLwqg/wrDDisOuF8O3wob" +
+            "Cjx4HTlJSFcKBIMOYwp3ClDfCncKqZcK3F8Kycz7DjsONw6sIw5zChxgIw7N" +
+            "7UcKvfsKuIEc8w6vDj8K4IMK/worDmF5DKMOww73Cg8KIE++/ve+/ve+/ve+/ve+/ve+/vQ==";
 
         [TestMethod]
         public void TestSystemProgramTransfer()
@@ -330,6 +341,25 @@ namespace Solnet.Programs.Test
             Assert.AreEqual(3, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TransferWithSeedInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
+        }
+        
+        [TestMethod]
+        public void TestNonceAccountDeserializationException()
+        {
+            var nonceAccount = NonceAccount.Deserialize(Convert.FromBase64String(NonceAccountInvalidBase64Data));
+            Assert.IsNull(nonceAccount);
+        }
+        
+        [TestMethod]
+        public void TestNonceAccountDeserialization()
+        {
+            var nonceAccount = NonceAccount.Deserialize(Convert.FromBase64String(NonceAccountBase64Data));
+            
+            Assert.AreEqual(0UL, nonceAccount.Version);
+            Assert.AreEqual(1UL, nonceAccount.State);
+            Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", nonceAccount.Authorized.Key);
+            Assert.AreEqual("8ksS6xXd7vzNrpZfBTf9gJ87Bma5AjnQ9baEcT7xH5QE", nonceAccount.Nonce.Key);
+            Assert.AreEqual(5000UL, nonceAccount.FeeCalculator.LamportsPerSignature);
         }
     }
 }

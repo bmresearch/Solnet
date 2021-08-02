@@ -94,7 +94,8 @@ namespace Solnet.Examples
                         minBalanceForExemptionNameReverseRegistry, 
                         96+18)
                 ).
-                AddInstruction(MemoProgram.NewMemo(payerAccount, "Hello from Sol.Net")).Build();
+                AddInstruction(MemoProgram.NewMemo(payerAccount, "Hello from Sol.Net")).
+                Build(ownerAccount);
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 

@@ -58,22 +58,14 @@ namespace Solnet.Wallet
         /// <param name="message">The signed message.</param>
         /// <param name="signature">The signature of the message.</param>
         /// <returns></returns>
-        public bool Verify(byte[] message, byte[] signature)
-        {
-            return Ed25519.Verify(signature, message, PublicKey.KeyBytes);
-        }
+        public bool Verify(byte[] message, byte[] signature) => PublicKey.Verify(message, signature);
 
         /// <summary>
         /// Sign the data.
         /// </summary>
         /// <param name="message">The data to sign.</param>
         /// <returns>The signature of the data.</returns>
-        public byte[] Sign(byte[] message)
-        {
-            byte[] signature = new byte[64];
-            Ed25519.Sign(signature, message, PrivateKey.KeyBytes);
-            return signature;
-        }
+        public byte[] Sign(byte[] message) => PrivateKey.Sign(message);
 
         /// <summary>
         /// Generates a random seed for the Ed25519 key pair.
@@ -99,5 +91,8 @@ namespace Solnet.Wallet
         /// <param name="account">The Account object.</param>
         /// <returns>The public key as a byte array.</returns>
         public static implicit operator PublicKey(Account account) => account.PublicKey;
+        
+        /// <inheritdoc cref="ToString"/>
+        public override string ToString() => PublicKey;
     }
 }

@@ -38,19 +38,19 @@ namespace Solnet.Programs
         /// <param name="name">The name to use.</param>
         /// <param name="payer">The account of the payer.</param>
         /// <param name="nameOwner">The public key of the name owner.</param>
-        /// <param name="nameClass">The account of the name class.</param>
+        /// <param name="nameClass">The public key of the account of the name class.</param>
         /// <param name="parentName">The public key of the parent name.</param>
-        /// <param name="parentNameOwner">The account of the parent name owner.</param>
+        /// <param name="parentNameOwner">The public key of the account of the parent name owner.</param>
         /// <param name="space">The space to assign to the account.</param>
         /// <param name="lamports">The amount of lamports the account needs to be rate exempt.</param>
         /// <returns>The transaction instruction.</returns>
         /// <exception cref="Exception">Thrown when it was not possible to derive a program address for the account.</exception>
         public static TransactionInstruction CreateNameRegistry(
-            PublicKey name, Account payer, PublicKey nameOwner, ulong lamports, uint space, Account nameClass = null, 
-            Account parentNameOwner = null, PublicKey parentName = null)
+            PublicKey name, PublicKey payer, PublicKey nameOwner, ulong lamports, uint space, PublicKey nameClass = null, 
+            PublicKey parentNameOwner = null, PublicKey parentName = null)
         {
             byte[] hashedName = ComputeHashedName(name.Key);
-            PublicKey nameAccountKey = DeriveNameAccountKey(hashedName, nameClass?.PublicKey, parentName);
+            PublicKey nameAccountKey = DeriveNameAccountKey(hashedName, nameClass, parentName);
             if (nameAccountKey == null) throw new Exception("could not derive an address for the name account");
             return CreateNameRegistryInstruction(
                 nameAccountKey, nameOwner, payer, hashedName, lamports, space, nameClass, parentNameOwner, parentName);
@@ -95,32 +95,32 @@ namespace Solnet.Programs
         /// </summary>
         /// <param name="nameKey">The public key of the name record.</param>
         /// <param name="nameOwner">The public key of the name owner.</param>
-        /// <param name="payer">The account of the payer.</param>
+        /// <param name="payer">The public key of the account of the payer.</param>
         /// <param name="hashedName">The hash of the name with the hash prefix.</param>
         /// <param name="space">The space to assign to the account.</param>
         /// <param name="lamports">The amount of lamports the account needs to be rate exempt.</param>
-        /// <param name="nameClass">The account of the name class.</param>
+        /// <param name="nameClass">The public key of the account of the name class.</param>
         /// <param name="parentName">The public key of the parent name.</param>
-        /// <param name="parentNameOwner">The account of the parent name owner.</param>
+        /// <param name="parentNameOwner">The public key of the account of the parent name owner.</param>
         /// <returns>The transaction instruction.</returns>
         private static TransactionInstruction CreateNameRegistryInstruction(
-            PublicKey nameKey, PublicKey nameOwner, Account payer, ReadOnlySpan<byte> hashedName, ulong lamports, uint space,
-            Account nameClass = null, Account parentNameOwner = null, PublicKey parentName = null)
+            PublicKey nameKey, PublicKey nameOwner, PublicKey payer, ReadOnlySpan<byte> hashedName, ulong lamports, uint space,
+            PublicKey nameClass = null, PublicKey parentNameOwner = null, PublicKey parentName = null)
         {
             List<AccountMeta> keys = new()
             {
-                new AccountMeta(SystemProgram.ProgramIdKey, false),
-                new AccountMeta(payer, true),
-                new AccountMeta(nameKey, true),
-                new AccountMeta(nameOwner, false),
+                AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
+                AccountMeta.Writable(payer, true),
+                AccountMeta.Writable(nameKey, true),
+                AccountMeta.ReadOnly(nameOwner, false),
                 nameClass != null
-                    ? new AccountMeta(nameClass, false)
-                    : new AccountMeta(new PublicKey(new byte[32]), false),
+                    ? AccountMeta.ReadOnly(nameClass, true)
+                    : AccountMeta.ReadOnly(new PublicKey(new byte[32]), true),
                 parentName != null
-                    ? new AccountMeta(parentName, false)
-                    : new AccountMeta(new PublicKey(new byte[32]), false)
+                    ? AccountMeta.ReadOnly(parentName, true)
+                    : AccountMeta.ReadOnly(new PublicKey(new byte[32]), true)
             };
-            if (parentNameOwner != null) keys.Add(new AccountMeta(parentNameOwner, false));
+            if (parentNameOwner != null) keys.Add(AccountMeta.ReadOnly(parentNameOwner, false));
             return new TransactionInstruction
             {
                 Keys = keys,
@@ -139,18 +139,18 @@ namespace Solnet.Programs
         /// <param name="offset">The offset at which to update the data.</param>
         /// <param name="data">The data to insert.</param>
         /// <param name="nameOwner">The public key of the name owner.</param>
-        /// <param name="nameClass">The account of the name class.</param>
+        /// <param name="nameClass">The public key of the account of the name class.</param>
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction UpdateNameRegistry(
-            PublicKey nameKey, uint offset, ReadOnlySpan<byte> data, Account nameOwner = null, Account nameClass = null)
+            PublicKey nameKey, uint offset, ReadOnlySpan<byte> data, PublicKey nameOwner = null, PublicKey nameClass = null)
         {
-            List<AccountMeta> keys = new() {new AccountMeta(nameKey, true)};
+            List<AccountMeta> keys = new() {AccountMeta.Writable(nameKey, false)};
             
             if (nameOwner != null)
-                keys.Add(new AccountMeta(nameOwner, false));
+                keys.Add(AccountMeta.ReadOnly(nameOwner, true));
             
             if (nameClass != null)
-                keys.Add(new AccountMeta(nameClass, false));
+                keys.Add(AccountMeta.ReadOnly(nameClass, true));
 
             return new TransactionInstruction
             {
@@ -169,19 +169,19 @@ namespace Solnet.Programs
         /// <param name="nameKey">The public key of the name record.</param>
         /// <param name="newOwner">The public key of the new name owner.</param>
         /// <param name="nameOwner">The public key of the name owner.</param>
-        /// <param name="nameClass">The account of the name class.</param>
+        /// <param name="nameClass">The public key of the account of the name class.</param>
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction TransferNameRegistry(
-            PublicKey nameKey, PublicKey newOwner, Account nameOwner, Account nameClass = null)
+            PublicKey nameKey, PublicKey newOwner, PublicKey nameOwner, PublicKey nameClass = null)
         {
             List<AccountMeta> keys = new()
             {
-                new AccountMeta(nameKey, true),
-                new AccountMeta(nameOwner, false),
+                AccountMeta.Writable(nameKey, false),
+                AccountMeta.ReadOnly(nameOwner, true),
             };
 
             if (nameClass != null)
-                keys.Add(new AccountMeta(nameClass, false));
+                keys.Add(AccountMeta.ReadOnly(nameClass, true));
 
             return new TransactionInstruction
             {
@@ -197,13 +197,13 @@ namespace Solnet.Programs
         /// <param name="refundPublicKey">The public key of the refund account.</param>
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction DeleteNameRegistry(
-            PublicKey nameKey, Account nameOwner, PublicKey refundPublicKey)
+            PublicKey nameKey, PublicKey nameOwner, PublicKey refundPublicKey)
         {
             List<AccountMeta> keys = new()
             {
-                new AccountMeta(nameKey, true),
-                new AccountMeta(nameOwner, false),
-                new AccountMeta(refundPublicKey, true)
+                AccountMeta.Writable(nameKey, false),
+                AccountMeta.ReadOnly(nameOwner, true),
+                AccountMeta.Writable(refundPublicKey, false)
             };
 
             return new TransactionInstruction

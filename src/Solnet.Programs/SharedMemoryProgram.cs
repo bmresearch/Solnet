@@ -26,7 +26,7 @@ namespace Solnet.Programs
         /// Creates an instruction used to interact with the Shared memory program.
         /// This instruction writes data to a given program starting at a specific offset.
         /// </summary>
-        /// <param name="dest">The account where the data is to be written.</param>
+        /// <param name="dest">The public key of the account where the data is to be written.</param>
         /// <param name="payload">The data to be written.</param>
         /// <param name="offset">The offset of the account data to write to.</param>
         /// <returns>The <see cref="TransactionInstruction"/> encoded that interacts with the shared memory program..</returns>
@@ -34,7 +34,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new ()
             {
-                new AccountMeta(dest, true)
+                AccountMeta.Writable(dest, false)
             };
 
             byte[] transactionData = new byte[payload.Length + 8];

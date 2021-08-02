@@ -144,7 +144,7 @@ namespace Solnet.Programs.Test
             var ownerAccount = wallet.GetAccount(10);
             var initialAccount = wallet.GetAccount(26);
             var newAccount = wallet.GetAccount(27);
-            var signers = new List<Account>();
+            var signers = new List<PublicKey>();
             
             for (int i = 0; i < 5; i++)
             {
@@ -275,7 +275,7 @@ namespace Solnet.Programs.Test
             var mintAccount = wallet.GetAccount(21);
             var ownerAccount = wallet.GetAccount(10);
             var initialAccount = wallet.GetAccount(22);
-            var signers = new List<Account>();
+            var signers = new List<PublicKey>();
 
             for (int i = 0; i < 5; i++)
             {
@@ -324,7 +324,7 @@ namespace Solnet.Programs.Test
             var mintAccount = wallet.GetAccount(21);
             var ownerAccount = wallet.GetAccount(10);
             var initialAccount = wallet.GetAccount(22);
-            var signers = new List<Account>();
+            var signers = new List<PublicKey>();
 
             for (int i = 0; i < 5; i++)
             {
@@ -373,7 +373,7 @@ namespace Solnet.Programs.Test
             var sourceAccount = wallet.GetAccount(69);
             var delegateAccount = wallet.GetAccount(420);
             var ownerAccount = wallet.GetAccount(1);
-            var signers = new List<Account>();
+            var signers = new List<PublicKey>();
             
             for (int i = 0; i < 5; i++)
             {
@@ -400,7 +400,7 @@ namespace Solnet.Programs.Test
             var sourceAccount = wallet.GetAccount(69);
             var delegateAccount = wallet.GetAccount(420);
             var ownerAccount = wallet.GetAccount(1);
-            var signers = new List<Account>();
+            var signers = new List<PublicKey>();
             
             for (int i = 0; i < 5; i++)
             {
@@ -431,7 +431,7 @@ namespace Solnet.Programs.Test
             var sourceAccount = wallet.GetAccount(69);
             var delegateAccount = wallet.GetAccount(420);
             var ownerAccount = wallet.GetAccount(1);
-            var signers = new List<Account>();
+            var signers = new List<PublicKey>();
             
             for (int i = 0; i < 5; i++)
             {
@@ -475,7 +475,7 @@ namespace Solnet.Programs.Test
 
             var delegateAccount = wallet.GetAccount(420);
             var ownerAccount = wallet.GetAccount(1);
-            var signers = new List<Account>();
+            var signers = new List<PublicKey>();
             
             for (int i = 0; i < 5; i++)
             {
@@ -497,7 +497,7 @@ namespace Solnet.Programs.Test
             var account = wallet.GetAccount(1000);
             var ownerAccount = wallet.GetAccount(1);
             var newOwnerAccount = wallet.GetAccount(2);
-            var signers = new List<Account>();
+            var signers = new List<PublicKey>();
             
             for (int i = 0; i < 5; i++)
             {
@@ -524,7 +524,7 @@ namespace Solnet.Programs.Test
             var account = wallet.GetAccount(1000);
             var ownerAccount = wallet.GetAccount(1);
             var newOwnerAccount = wallet.GetAccount(2);
-            var signers = new List<Account>();
+            var signers = new List<PublicKey>();
             
             for (int i = 0; i < 5; i++)
             {
@@ -635,7 +635,7 @@ namespace Solnet.Programs.Test
             var mintAccount = wallet.GetAccount(21);
             var ownerAccount = wallet.GetAccount(10);
             var initialAccount = wallet.GetAccount(22);
-            var signers = new List<Account>();
+            var signers = new List<PublicKey>();
 
             for (int i = 0; i < 5; i++)
             {
@@ -679,7 +679,7 @@ namespace Solnet.Programs.Test
 
             var ownerAccount = wallet.GetAccount(10);
             var initialAccount = wallet.GetAccount(22);
-            var signers = new List<Account>();
+            var signers = new List<PublicKey>();
 
             for (int i = 0; i < 5; i++)
             {
@@ -727,7 +727,7 @@ namespace Solnet.Programs.Test
             var mintAccount = wallet.GetAccount(21);
             var ownerAccount = wallet.GetAccount(10);
             var initialAccount = wallet.GetAccount(22);
-            var signers = new List<Account>();
+            var signers = new List<PublicKey>();
 
             for (int i = 0; i < 5; i++)
             {
@@ -774,7 +774,7 @@ namespace Solnet.Programs.Test
             var mintAccount = wallet.GetAccount(21);
             var ownerAccount = wallet.GetAccount(10);
             var initialAccount = wallet.GetAccount(22);
-            var signers = new List<Account>();
+            var signers = new List<PublicKey>();
 
             for (int i = 0; i < 5; i++)
             {

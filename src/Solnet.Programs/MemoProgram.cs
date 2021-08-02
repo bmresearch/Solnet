@@ -27,14 +27,14 @@ namespace Solnet.Programs
         /// <summary>
         /// Initialize a new transaction instruction which interacts with the Memo Program.
         /// </summary>
-        /// <param name="account">The account associated with the memo.</param>
+        /// <param name="account">The public key of the account associated with the memo.</param>
         /// <param name="memo">The memo to be included in the transaction.</param>
         /// <returns>The <see cref="TransactionInstruction"/> which includes the memo data.</returns>
-        public static TransactionInstruction NewMemo(Account account, string memo)
+        public static TransactionInstruction NewMemo(PublicKey account, string memo)
         {
             List<AccountMeta> keys = new ()
             {
-                new AccountMeta(account, false)
+                AccountMeta.ReadOnly(account, true)
             };
             byte[] memoBytes = Encoding.UTF8.GetBytes(memo);
 
@@ -57,6 +57,5 @@ namespace Solnet.Programs
             
             return decodedInstruction;
         }
-
     }
 }

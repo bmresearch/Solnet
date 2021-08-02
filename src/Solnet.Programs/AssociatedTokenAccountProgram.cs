@@ -24,11 +24,11 @@ namespace Solnet.Programs
         /// Initialize a new transaction which interacts with the Associated Token Account Program to create
         /// a new associated token account.
         /// </summary>
-        /// <param name="payer">The account used to fund the associated token account.</param>
+        /// <param name="payer">The public key of the account used to fund the associated token account.</param>
         /// <param name="owner">The public key of the owner account for the new associated token account.</param>
         /// <param name="mint">The public key of the mint for the new associated token account.</param>
         /// <returns>The transaction instruction, returns null whenever an associated token address could not be derived..</returns>
-        public static TransactionInstruction CreateAssociatedTokenAccount(Account payer, PublicKey owner, PublicKey mint)
+        public static TransactionInstruction CreateAssociatedTokenAccount(PublicKey payer, PublicKey owner, PublicKey mint)
         {
             PublicKey associatedTokenAddress = DeriveAssociatedTokenAccount(owner, mint);
 
@@ -36,13 +36,13 @@ namespace Solnet.Programs
             
             List<AccountMeta> keys = new()
             {
-                new AccountMeta(payer, true),
-                new AccountMeta(associatedTokenAddress, true),
-                new AccountMeta(owner, false),
-                new AccountMeta(mint, false),
-                new AccountMeta(SystemProgram.ProgramIdKey, false),
-                new AccountMeta(TokenProgram.ProgramIdKey, false),
-                new AccountMeta(SystemProgram.SysVarRentKey, false)
+                AccountMeta.Writable(payer, true),
+                AccountMeta.Writable(associatedTokenAddress, false),
+                AccountMeta.ReadOnly(owner, false),
+                AccountMeta.ReadOnly(mint, false),
+                AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
+                AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false),
+                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
             };
 
             return new TransactionInstruction
