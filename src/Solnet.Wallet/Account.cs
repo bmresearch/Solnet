@@ -91,5 +91,8 @@ namespace Solnet.Wallet
         /// <param name="account">The Account object.</param>
         /// <returns>The public key as a byte array.</returns>
         public static implicit operator PublicKey(Account account) => account.PublicKey;
+        
+        /// <inheritdoc cref="ToString"/>
+        public override string ToString() => PublicKey;
     }
 }

@@ -125,5 +125,8 @@ namespace Solnet.Wallet
         /// <param name="keyBytes">The public key as a byte array.</param>
         /// <returns>The PublicKey object.</returns>
         public static explicit operator PublicKey(byte[] keyBytes) => new(keyBytes);
+
+        /// <inheritdoc cref="ToString"/>
+        public override string ToString() => Key;
     }
 }

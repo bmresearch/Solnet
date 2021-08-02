@@ -45,9 +45,9 @@ namespace Solnet.Examples
             Account ownerAccount = wallet.GetAccount(10);
             Account mintAccount = wallet.GetAccount(1002);
             Account initialAccount = wallet.GetAccount(1102);
-            Console.WriteLine($"OwnerAccount: {ownerAccount.PublicKey.Key}");
-            Console.WriteLine($"MintAccount: {mintAccount.PublicKey.Key}");
-            Console.WriteLine($"InitialAccount: {initialAccount.PublicKey.Key}");
+            Console.WriteLine($"OwnerAccount: {ownerAccount}");
+            Console.WriteLine($"MintAccount: {mintAccount}");
+            Console.WriteLine($"InitialAccount: {initialAccount}");
             
             byte[] createAndInitializeMintToTx = new TransactionBuilder().
                 SetRecentBlockHash(blockHash.Result.Value.Blockhash).
@@ -99,8 +99,8 @@ namespace Solnet.Examples
             PublicKey associatedTokenAccountOwner = new ("65EoWs57dkMEWbK4TJkPDM76rnbumq7r3fiZJnxggj2G");
             PublicKey associatedTokenAccount =
                 AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(associatedTokenAccountOwner, mintAccount);
-            Console.WriteLine($"AssociatedTokenAccountOwner: {associatedTokenAccountOwner.Key}");
-            Console.WriteLine($"AssociatedTokenAccount: {associatedTokenAccount.Key}");
+            Console.WriteLine($"AssociatedTokenAccountOwner: {associatedTokenAccountOwner}");
+            Console.WriteLine($"AssociatedTokenAccount: {associatedTokenAccount}");
             
             byte[] createAssociatedTokenAccountTx = new TransactionBuilder().
                 SetRecentBlockHash(blockHash.Result.Value.Blockhash).

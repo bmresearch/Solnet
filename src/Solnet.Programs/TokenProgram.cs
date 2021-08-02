@@ -43,7 +43,9 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(source, false), AccountMeta.Writable(destination, false), AccountMeta.ReadOnly(owner, true)
+                AccountMeta.Writable(source, false),
+                AccountMeta.Writable(destination, false),
+                AccountMeta.ReadOnly(owner, true)
             };
             return new TransactionInstruction
             {
@@ -157,7 +159,8 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(mint, false), AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+                AccountMeta.Writable(mint, false),
+                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
             };
 
             int freezeAuthorityOpt = freezeAuthority != null ? 1 : 0;
@@ -205,7 +208,11 @@ namespace Solnet.Programs
         public static TransactionInstruction Approve(
             PublicKey source, PublicKey delegatePublicKey, PublicKey owner, ulong amount, IEnumerable<PublicKey> signers = null)
         {
-            List<AccountMeta> keys = new() { AccountMeta.Writable(source, false), AccountMeta.ReadOnly(delegatePublicKey, false) };
+            List<AccountMeta> keys = new()
+            {
+                AccountMeta.Writable(source, false),
+                AccountMeta.ReadOnly(delegatePublicKey, false)
+            };
 
             keys = AddSigners(keys, owner, signers);
 
@@ -222,7 +229,10 @@ namespace Solnet.Programs
         public static TransactionInstruction Revoke(PublicKey delegatePublicKey, PublicKey ownerAccount,
             IEnumerable<PublicKey> signers = null)
         {
-            List<AccountMeta> keys = new () { AccountMeta.ReadOnly(delegatePublicKey, false), };
+            List<AccountMeta> keys = new ()
+            {
+                AccountMeta.ReadOnly(delegatePublicKey, false),
+            };
             keys = AddSigners(keys, ownerAccount, signers);
 
             return new TransactionInstruction
@@ -247,7 +257,8 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(account, false), AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+                AccountMeta.Writable(account, false),
+                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
             };
             keys = AddSigners(keys, currentAuthority, signers);
 

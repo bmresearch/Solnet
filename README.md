@@ -38,6 +38,9 @@ Solnet is Solana's .NET SDK to integrate with the .NET ecosystem. Wherever you a
 - Full Streaming JSON RPC API coverage
 - Wallet and accounts (sollet and solana-keygen compatible)
 - Keystore (sollet and solana-keygen compatible)
+- Transaction decoding from base64 and wire format and encoding back into wire format
+- Message decoding from base64 and wire format and encoding back into wire format
+- Instruction decompilation
 - Programs
     - Native Programs
       - System Program

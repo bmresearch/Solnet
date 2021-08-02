@@ -9,54 +9,6 @@ using System.IO;
 namespace Solnet.Rpc.Builders
 {
     /// <summary>
-    /// A compiled instruction within the message.
-    /// </summary>
-    public class CompiledInstruction
-    {
-        #region Layout
-
-        /// <summary>
-        /// Represents the layout of the <see cref="CompiledInstruction"/> encoded values.
-        /// </summary>
-        internal static class Layout
-        {
-            /// <summary>
-            /// The offset at which the program's id index value begins.
-            /// </summary>
-            internal const int ProgramIdIndexOffset = 0;
-
-            /// <summary>
-            /// The offset at which the array containing the indices of the instruction's keys in the transaction's account keys begins.
-            /// </summary>
-            internal const int KeyIndicesCountOffset = 2;
-        }
-
-        #endregion
-
-        /// <summary>
-        /// The index of the program's key in the transaction's account keys.
-        /// </summary>
-        internal byte ProgramIdIndex { get; init; }
-
-        internal byte[] KeyIndicesCount { get; init; }
-
-        internal byte[] KeyIndices { get; init; }
-
-        internal byte[] DataLength { get; init; }
-
-        internal byte[] Data { get; init; }
-
-        /// <summary>
-        /// Get the length of the compiled instruction.
-        /// </summary>
-        /// <returns>The length.</returns>
-        internal int Length()
-        {
-            return 1 + KeyIndicesCount.Length + KeyIndices.Length + DataLength.Length + Data.Length;
-        }
-    }
-
-    /// <summary>
     /// The message builder.
     /// </summary>
     internal class MessageBuilder

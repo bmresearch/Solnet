@@ -194,47 +194,9 @@ namespace Solnet.Rpc.Models
             // Read the instructions in the message
             for (int i = 0; i < instructionsLength; i++)
             {
-                int instructionLength = 0;
-                // Read the programId index
-                byte programIdIndex = instructionsData[CompiledInstruction.Layout.ProgramIdIndexOffset];
-                instructionLength += 1; // ProgramIdIndex is zero
-
-                // Read the number of keys for the instruction
-                ReadOnlySpan<byte> encodedKeyIndicesLength =
-                    instructionsData.Slice(instructionLength, ShortVectorEncoding.SpanLength);
-                (int keyIndicesLength, int keyIndicesLengthEncodedLength) =
-                    ShortVectorEncoding.DecodeLength(encodedKeyIndicesLength);
-                instructionLength += keyIndicesLengthEncodedLength;
-
-                // Read the key indices for the instruction accounts
-                byte[] keyIndices = new byte[keyIndicesLength];
-                for (int j = 0; j < keyIndicesLength; j++)
-                {
-                    keyIndices[j] = instructionsData[instructionLength];
-                    instructionLength++;
-                }
-
-                // Read the length of the instruction's data
-                ReadOnlySpan<byte> encodedDataLength = 
-                    instructionsData.Length > instructionLength + ShortVectorEncoding.SpanLength ? 
-                        instructionsData.Slice(instructionLength, ShortVectorEncoding.SpanLength) 
-                        : instructionsData.Slice(instructionLength, instructionsData.Length - instructionLength) ;
-                
-                (int dataLength, int dataLengthEncodedLength) = ShortVectorEncoding.DecodeLength(encodedDataLength);
-                instructionLength += dataLengthEncodedLength;
-
-                // Read the instruction data
-                byte[] instructionEncodedData = instructionsData.Slice(instructionLength, dataLength).ToArray();
-                instructionLength += dataLength;
-
-                instructions.Add(new CompiledInstruction
-                {
-                    ProgramIdIndex = programIdIndex,
-                    KeyIndicesCount = encodedKeyIndicesLength[..keyIndicesLengthEncodedLength].ToArray(),
-                    KeyIndices = keyIndices,
-                    DataLength = encodedDataLength[..dataLengthEncodedLength].ToArray(),
-                    Data = instructionEncodedData
-                });
+                (CompiledInstruction compiledInstruction, int instructionLength) =
+                    CompiledInstruction.Deserialize(instructionsData);
+                instructions.Add(compiledInstruction);
                 instructionsData = instructionsData[instructionLength..];
             }
 

@@ -82,11 +82,11 @@ namespace Solnet.Examples
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
             
             var mintAccount = wallet.GetAccount(94206);
-            Console.WriteLine($"MintAccount: {mintAccount.PublicKey.Key}");
+            Console.WriteLine($"MintAccount: {mintAccount}");
             var ownerAccount = wallet.GetAccount(10);
-            Console.WriteLine($"OwnerAccount: {ownerAccount.PublicKey.Key}");
+            Console.WriteLine($"OwnerAccount: {ownerAccount}");
             var initialAccount = wallet.GetAccount(64209);
-            Console.WriteLine($"InitialAccount: {initialAccount.PublicKey.Key}");
+            Console.WriteLine($"InitialAccount: {initialAccount}");
 
             var tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
@@ -147,13 +147,13 @@ namespace Solnet.Examples
             Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
 
             var mintAccount = wallet.GetAccount(31);
-            Console.WriteLine($"MintAccount: {mintAccount.PublicKey.Key}");
+            Console.WriteLine($"MintAccount: {mintAccount}");
             var ownerAccount = wallet.GetAccount(10);
-            Console.WriteLine($"OwnerAccount: {ownerAccount.PublicKey.Key}");
+            Console.WriteLine($"OwnerAccount: {ownerAccount}");
             var initialAccount = wallet.GetAccount(32);
-            Console.WriteLine($"InitialAccount: {initialAccount.PublicKey.Key}");
+            Console.WriteLine($"InitialAccount: {initialAccount}");
             var newAccount = wallet.GetAccount(33);
-            Console.WriteLine($"NewAccount: {newAccount.PublicKey.Key}");
+            Console.WriteLine($"NewAccount: {newAccount}");
 
             var tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
@@ -204,13 +204,13 @@ namespace Solnet.Examples
             Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
 
             var mintAccount = wallet.GetAccount(21);
-            Console.WriteLine($"MintAccount: {mintAccount.PublicKey.Key}");
+            Console.WriteLine($"MintAccount: {mintAccount}");
             var ownerAccount = wallet.GetAccount(10);
-            Console.WriteLine($"OwnerAccount: {ownerAccount.PublicKey.Key}");
+            Console.WriteLine($"OwnerAccount: {ownerAccount}");
             var initialAccount = wallet.GetAccount(26);
-            Console.WriteLine($"InitialAccount: {initialAccount.PublicKey.Key}");
+            Console.WriteLine($"InitialAccount: {initialAccount}");
             var newAccount = wallet.GetAccount(27);
-            Console.WriteLine($"NewAccount: {newAccount.PublicKey.Key}");
+            Console.WriteLine($"NewAccount: {newAccount}");
 
             var tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
@@ -264,9 +264,9 @@ namespace Solnet.Examples
                 rpcClient.GetMinimumBalanceForRentExemption(NonceAccount.AccountDataSize).Result;
 
             var ownerAccount = wallet.GetAccount(10);
-            Console.WriteLine($"OwnerAccount: {ownerAccount.PublicKey.Key}");
+            Console.WriteLine($"OwnerAccount: {ownerAccount}");
             var nonceAccount = wallet.GetAccount(1119);
-            Console.WriteLine($"NonceAccount: {nonceAccount.PublicKey.Key}");
+            Console.WriteLine($"NonceAccount: {nonceAccount}");
 
             var tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
@@ -306,11 +306,11 @@ namespace Solnet.Examples
             var wallet = new Wallet.Wallet(MnemonicWords);
 
             var ownerAccount = wallet.GetAccount(10);
-            Console.WriteLine($"OwnerAccount: {ownerAccount.PublicKey.Key}");
+            Console.WriteLine($"OwnerAccount: {ownerAccount}");
             var nonceAccount = wallet.GetAccount(1119);
-            Console.WriteLine($"NonceAccount: {nonceAccount.PublicKey.Key}");
+            Console.WriteLine($"NonceAccount: {nonceAccount}");
             var toAccount = wallet.GetAccount(1);
-            Console.WriteLine($"ToAccount: {toAccount.PublicKey.Key}");
+            Console.WriteLine($"ToAccount: {toAccount}");
 
             // Get the Nonce Account to get the Nonce to use for the transaction
             RequestResult<ResponseValue<AccountInfo>> nonceAccountInfo = rpcClient.GetAccountInfo(nonceAccount.PublicKey);
