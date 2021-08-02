@@ -35,7 +35,6 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            var rpcClient = ClientFactory.GetClient(Cluster.TestNet);
             var wallet = new Wallet.Wallet(MnemonicWords);
 
             var fromAccount = wallet.GetAccount(10);

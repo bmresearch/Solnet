@@ -1,6 +1,8 @@
+using Solnet.Programs.Utilities;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,6 +21,11 @@ namespace Solnet.Programs
         /// </summary>
         public static readonly PublicKey ProgramIdKey = new("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 
+        /// <summary>
+        /// The program's name.
+        /// </summary>
+        private const string ProgramName = "Token Program";
+        
         /// <summary>
         /// Mint account account layout size.
         /// </summary>
@@ -485,6 +492,66 @@ namespace Solnet.Programs
                 keys.Add(AccountMeta.ReadOnly(owner, true));
             }
             return keys;
+        }
+        
+        /// <summary>
+        /// Decodes an instruction created by the System Program.
+        /// </summary>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        /// <returns>A decoded instruction.</returns>
+        public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            uint instruction = data.GetU8(TokenProgramData.MethodOffset);
+            string instructionName = Enum.GetName(typeof(TokenProgramInstructions), instruction);
+            
+            DecodedInstruction decodedInstruction = new()
+            {
+                PublicKey = ProgramIdKey,
+                InstructionName = instructionName,
+                ProgramName = ProgramName,
+                Values = new Dictionary<string, object>(),
+                InnerInstructions = new List<DecodedInstruction>()
+            };
+            
+            switch (Enum.Parse(typeof(TokenProgramInstructions), instruction.ToString()))
+            {
+                case TokenProgramInstructions.InitializeMint:
+                    break;
+                case TokenProgramInstructions.InitializeAccount:
+                    break;
+                case TokenProgramInstructions.InitializeMultiSignature:
+                    break;
+                case TokenProgramInstructions.Transfer:
+                    break;
+                case TokenProgramInstructions.Approve:
+                    break;
+                case TokenProgramInstructions.Revoke:
+                    break;
+                case TokenProgramInstructions.SetAuthority:
+                    break;
+                case TokenProgramInstructions.MintTo:
+                    break;
+                case TokenProgramInstructions.Burn:
+                    break;
+                case TokenProgramInstructions.CloseAccount:
+                    break;
+                case TokenProgramInstructions.FreezeAccount:
+                    break;
+                case TokenProgramInstructions.ThawAccount:
+                    break;
+                case TokenProgramInstructions.TransferChecked:
+                    break;
+                case TokenProgramInstructions.ApproveChecked:
+                    break;
+                case TokenProgramInstructions.MintToChecked:
+                    break;
+                case TokenProgramInstructions.BurnChecked:
+                    break;
+            }
+
+            return decodedInstruction;
         }
     }
 }

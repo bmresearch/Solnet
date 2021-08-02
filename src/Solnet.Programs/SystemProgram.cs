@@ -1,3 +1,5 @@
+using Solnet.Programs.Utilities;
+using Solnet.Rpc.Builders;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
@@ -26,7 +28,12 @@ namespace Solnet.Programs
         /// The public key of the Rent System Variable.
         /// </summary>
         public static readonly PublicKey SysVarRentKey = new ("SysvarRent111111111111111111111111111111111");
-
+        
+        /// <summary>
+        /// The program's name.
+        /// </summary>
+        private const string ProgramName = "System Program";
+        
         /// <summary>
         /// Initialize a new transaction instruction which interacts with the System Program to create a new account.
         /// </summary>
@@ -318,6 +325,65 @@ namespace Solnet.Programs
                 Keys = keys,
                 Data = SystemProgramData.EncodeTransferWithSeedData(fromOwner, seed, lamports)
             };
+        }
+        
+        /// <summary>
+        /// Decodes an instruction created by the System Program.
+        /// </summary>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        /// <returns>A decoded instruction.</returns>
+        public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            uint instruction = data.GetU32(SystemProgramData.MethodOffset);
+            string instructionName = Enum.GetName(typeof(SystemProgramInstructions), instruction);
+            
+            DecodedInstruction decodedInstruction = new()
+            {
+                PublicKey = ProgramIdKey,
+                InstructionName = instructionName,
+                ProgramName = ProgramName,
+                Values = new Dictionary<string, object>(),
+                InnerInstructions = new List<DecodedInstruction>()
+            };
+            
+            switch (Enum.Parse(typeof(SystemProgramInstructions), instruction.ToString()))
+            {
+                    case SystemProgramInstructions.CreateAccount:
+                        decodedInstruction.Values.Add("Owner Account", keys[keyIndices[0]]);
+                        decodedInstruction.Values.Add("New Account", keys[keyIndices[1]]);
+                        decodedInstruction.Values.Add("Amount", data.GetU64(4));
+                        decodedInstruction.Values.Add("Space", data.GetU64(12));
+                        break;
+                    case SystemProgramInstructions.Assign:
+                        break;
+                    case SystemProgramInstructions.Transfer:
+                        decodedInstruction.Values.Add("From Account", keys[keyIndices[0]]);
+                        decodedInstruction.Values.Add("To Account", keys[keyIndices[1]]);
+                        decodedInstruction.Values.Add("Amount", data.GetU64(4));
+                        break;
+                    case SystemProgramInstructions.CreateAccountWithSeed:
+                        break;
+                    case SystemProgramInstructions.AdvanceNonceAccount:
+                        break;
+                    case SystemProgramInstructions.WithdrawNonceAccount:
+                        break;
+                    case SystemProgramInstructions.InitializeNonceAccount:
+                        break;
+                    case SystemProgramInstructions.AuthorizeNonceAccount:
+                        break;
+                    case SystemProgramInstructions.Allocate:
+                        break;
+                    case SystemProgramInstructions.AllocateWithSeed:
+                        break;
+                    case SystemProgramInstructions.AssignWithSeed:
+                        break;
+                    case SystemProgramInstructions.TransferWithSeed:
+                        break;
+            }
+
+            return decodedInstruction;
         }
     }
 }

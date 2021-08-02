@@ -19,6 +19,16 @@ namespace Solnet.Programs
         /// The address of the Shared Memory Program.
         /// </summary>
         public static readonly PublicKey ProgramIdKey = new("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
+        
+        /// <summary>
+        /// The program's name.
+        /// </summary>
+        private const string ProgramName = "Associated Token Account";
+        
+        /// <summary>
+        /// The instruction's name.
+        /// </summary>
+        private const string InstructionName = "Create Associated Token Account";
 
         /// <summary>
         /// Initialize a new transaction which interacts with the Associated Token Account Program to create
@@ -65,6 +75,24 @@ namespace Solnet.Programs
                 new List<byte[]> { owner.KeyBytes, TokenProgram.ProgramIdKey.KeyBytes, mint.KeyBytes },
                 ProgramIdKey.KeyBytes, out byte[] derivedAssociatedTokenAddress, out _);
             return success ? new PublicKey(derivedAssociatedTokenAddress) : null;
+        }
+        
+        /// <summary>
+        /// Decodes an instruction created by the Memo Program.
+        /// </summary>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <returns>A decoded instruction.</returns>
+        public static DecodedInstruction Decode(ReadOnlySpan<byte> data)
+        {
+            DecodedInstruction decodedInstruction = new()
+            {
+                PublicKey = ProgramIdKey,
+                InstructionName = InstructionName,
+                ProgramName = ProgramName,
+                Values = new Dictionary<string, object> { }
+            };
+
+            return decodedInstruction;
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Numerics;
+using System.Text;
 
 namespace Solnet.Programs.Utilities
 {
@@ -20,7 +21,7 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static byte GetU8(this ReadOnlySpan<byte> data, int offset)
         {
-            if (offset > data.Length - 1)
+            if (offset > data.Length - sizeof(byte))
                 throw new ArgumentOutOfRangeException(nameof(offset));
             return data[offset];
         }
@@ -34,9 +35,9 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static ushort GetU16(this ReadOnlySpan<byte> data, int offset)
         {
-            if (offset + 2 > data.Length)
+            if (offset + sizeof(ushort) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            return BinaryPrimitives.ReadUInt16LittleEndian(data.Slice(offset, 2));
+            return BinaryPrimitives.ReadUInt16LittleEndian(data.Slice(offset, sizeof(ushort)));
         }
 
         /// <summary>
@@ -48,9 +49,9 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static uint GetU32(this ReadOnlySpan<byte> data, int offset)
         {
-            if (offset + 4 > data.Length)
+            if (offset + sizeof(uint) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            return BinaryPrimitives.ReadUInt32LittleEndian(data.Slice(offset, 4));
+            return BinaryPrimitives.ReadUInt32LittleEndian(data.Slice(offset, sizeof(uint)));
         }
 
         /// <summary>
@@ -62,9 +63,9 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static ulong GetU64(this ReadOnlySpan<byte> data, int offset)
         {
-            if (offset + 8 > data.Length)
+            if (offset + sizeof(ulong) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            return BinaryPrimitives.ReadUInt64LittleEndian(data.Slice(offset, 8));
+            return BinaryPrimitives.ReadUInt64LittleEndian(data.Slice(offset, sizeof(ulong)));
         }
 
         /// <summary>
@@ -76,7 +77,7 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static sbyte GetS8(this ReadOnlySpan<byte> data, int offset)
         {
-            if (offset > data.Length - 1)
+            if (offset > data.Length - sizeof(sbyte))
                 throw new ArgumentOutOfRangeException(nameof(offset));
             return (sbyte)data[offset];
         }
@@ -90,9 +91,9 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static short GetS16(this ReadOnlySpan<byte> data, int offset)
         {
-            if (offset + 2 > data.Length)
+            if (offset + sizeof(short) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            return BinaryPrimitives.ReadInt16LittleEndian(data.Slice(offset, 2));
+            return BinaryPrimitives.ReadInt16LittleEndian(data.Slice(offset, sizeof(short)));
         }
 
         /// <summary>
@@ -104,9 +105,9 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static int GetS32(this ReadOnlySpan<byte> data, int offset)
         {
-            if (offset + 4 > data.Length)
+            if (offset + sizeof(int) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            return BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset, 4));
+            return BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset, sizeof(int)));
         }
 
         /// <summary>
@@ -118,9 +119,9 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static long GetS64(this ReadOnlySpan<byte> data, int offset)
         {
-            if (offset + 8 > data.Length)
+            if (offset + sizeof(long) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            return BinaryPrimitives.ReadInt64LittleEndian(data.Slice(offset, 8));
+            return BinaryPrimitives.ReadInt64LittleEndian(data.Slice(offset, sizeof(long)));
         }
         
         /// <summary>
@@ -149,9 +150,9 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static PublicKey GetPubKey(this ReadOnlySpan<byte> data, int offset)
         {
-            if (offset + 32 > data.Length)
+            if (offset + PublicKey.PublicKeyLength > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            return new PublicKey(data.Slice(offset, 32).ToArray());
+            return new PublicKey(data.Slice(offset, PublicKey.PublicKeyLength).ToArray());
         }
 
         /// <summary>
@@ -182,10 +183,10 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static double GetDouble(this ReadOnlySpan<byte> data, int offset)
         {
-            if (offset + 8 > data.Length)
+            if (offset + sizeof(double) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
 
-            return BinaryPrimitives.ReadDoubleLittleEndian(data.Slice(offset, 8));
+            return BinaryPrimitives.ReadDoubleLittleEndian(data.Slice(offset, sizeof(double)));
         }
         
         /// <summary>
@@ -197,10 +198,28 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static float GetSingle(this ReadOnlySpan<byte> data, int offset)
         {
-            if (offset + 4 > data.Length)
+            if (offset + sizeof(float) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
 
-            return BinaryPrimitives.ReadSingleLittleEndian(data.Slice(offset, 4));
+            return BinaryPrimitives.ReadSingleLittleEndian(data.Slice(offset, sizeof(float)));
+        }
+        
+        /// <summary>
+        /// Decodes a string from a transaction instruction.
+        /// </summary>
+        /// <param name="data">The data to decode.</param>
+        /// <param name="offset">The offset at which the string begins.</param>
+        /// <returns>The decoded data.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
+        public static string DecodeRustString(this ReadOnlySpan<byte> data, int offset)
+        {
+            if (offset + sizeof(uint) > data.Length)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            
+            int stringLength = (int) data.GetU32(offset);
+            byte[] stringBytes = data.GetSpan(offset + sizeof(uint), stringLength).ToArray();
+            
+            return Encoding.ASCII.GetString(stringBytes);
         }
     }
 }

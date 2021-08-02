@@ -11,6 +11,11 @@ namespace Solnet.Programs
     internal static class SystemProgramData
     {
         /// <summary>
+        /// The offset at which the value which defines the program method begins. 
+        /// </summary>
+        internal const int MethodOffset = 0;
+        
+        /// <summary>
         /// Encode transaction instruction data for the <see cref="SystemProgramInstructions.CreateAccount"/> method.
         /// </summary>
         /// <param name="owner">The public key of the owner program account.</param>
@@ -21,7 +26,7 @@ namespace Solnet.Programs
         {
             byte[] data = new byte[52];
             
-            data.WriteU32((uint) SystemProgramInstructions.CreateAccount, 0);
+            data.WriteU32((uint) SystemProgramInstructions.CreateAccount, MethodOffset);
             data.WriteU64(lamports, 4);
             data.WriteU64(space, 12);
             data.WritePubKey(owner, 20);
@@ -38,7 +43,7 @@ namespace Solnet.Programs
         {
             byte[] data = new byte[36];
             
-            data.WriteU32((uint) SystemProgramInstructions.Assign, 0);
+            data.WriteU32((uint) SystemProgramInstructions.Assign, MethodOffset);
             data.WritePubKey(programId, 4);
             
             return data;
@@ -53,7 +58,7 @@ namespace Solnet.Programs
         {
             byte[] data = new byte[12];
             
-            data.WriteU32((uint) SystemProgramInstructions.Transfer, 0);
+            data.WriteU32((uint) SystemProgramInstructions.Transfer, MethodOffset);
             data.WriteU64(lamports, 4);
             
             return data;
@@ -71,10 +76,10 @@ namespace Solnet.Programs
         internal static byte[] EncodeCreateAccountWithSeedData(
             PublicKey baseAccount, PublicKey owner, ulong lamports, ulong space, string seed)
         {
-            byte[] encodedSeed = EncodeRustString(seed);
+            byte[] encodedSeed = Serialization.EncodeRustString(seed);
             byte[] data = new byte[84 + encodedSeed.Length];
             
-            data.WriteU32((uint) SystemProgramInstructions.CreateAccountWithSeed, 0);
+            data.WriteU32((uint) SystemProgramInstructions.CreateAccountWithSeed, MethodOffset);
             data.WritePubKey(baseAccount, 4);
             data.WriteSpan(encodedSeed, 36);
             data.WriteU64(lamports, 36 + encodedSeed.Length);
@@ -92,7 +97,7 @@ namespace Solnet.Programs
         {
             byte[] data = new byte[4];
             
-            data.WriteU32((uint) SystemProgramInstructions.AdvanceNonceAccount, 0);
+            data.WriteU32((uint) SystemProgramInstructions.AdvanceNonceAccount, MethodOffset);
             
             return data;
         }
@@ -106,7 +111,7 @@ namespace Solnet.Programs
         {
             byte[] data = new byte[12];
             
-            data.WriteU32((uint) SystemProgramInstructions.WithdrawNonceAccount, 0);
+            data.WriteU32((uint) SystemProgramInstructions.WithdrawNonceAccount, MethodOffset);
             data.WriteU64(lamports, 4);
             
             return data;
@@ -121,7 +126,7 @@ namespace Solnet.Programs
         {
             byte[] data = new byte[36];
             
-            data.WriteU32((uint) SystemProgramInstructions.InitializeNonceAccount, 0);
+            data.WriteU32((uint) SystemProgramInstructions.InitializeNonceAccount, MethodOffset);
             data.WritePubKey(authorized, 4);
             
             return data;
@@ -136,7 +141,7 @@ namespace Solnet.Programs
         {
             byte[] data = new byte[36];
             
-            data.WriteU32((uint) SystemProgramInstructions.AuthorizeNonceAccount, 0);
+            data.WriteU32((uint) SystemProgramInstructions.AuthorizeNonceAccount, MethodOffset);
             data.WritePubKey(authorized, 4);
             
             return data;
@@ -151,7 +156,7 @@ namespace Solnet.Programs
         {
             byte[] data = new byte[12];
             
-            data.WriteU32((uint) SystemProgramInstructions.Allocate, 0);
+            data.WriteU32((uint) SystemProgramInstructions.Allocate, MethodOffset);
             data.WriteU64(space, 4);
             
             return data;
@@ -168,10 +173,10 @@ namespace Solnet.Programs
         internal static byte[] EncodeAllocateWithSeedData(
             PublicKey baseAccount, PublicKey owner, ulong space, string seed)
         {
-            byte[] encodedSeed = EncodeRustString(seed);
+            byte[] encodedSeed = Serialization.EncodeRustString(seed);
             byte[] data = new byte[76 + encodedSeed.Length];
             
-            data.WriteU32((uint) SystemProgramInstructions.AllocateWithSeed, 0);
+            data.WriteU32((uint) SystemProgramInstructions.AllocateWithSeed, MethodOffset);
             data.WritePubKey(baseAccount, 4);
             data.WriteSpan(encodedSeed, 36);
             data.WriteU64(space, 36 + encodedSeed.Length);
@@ -190,10 +195,10 @@ namespace Solnet.Programs
         internal static byte[] EncodeAssignWithSeedData(
             PublicKey baseAccount, string seed, PublicKey owner)
         {
-            byte[] encodedSeed = EncodeRustString(seed);
+            byte[] encodedSeed = Serialization.EncodeRustString(seed);
             byte[] data = new byte[68 + encodedSeed.Length];
             
-            data.WriteU32((uint) SystemProgramInstructions.AssignWithSeed, 0);
+            data.WriteU32((uint) SystemProgramInstructions.AssignWithSeed, MethodOffset);
             data.WritePubKey(baseAccount, 4);
             data.WriteSpan(encodedSeed, 36);
             data.WritePubKey(owner, 36 + encodedSeed.Length);
@@ -210,33 +215,15 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction data.</returns>
         internal static byte[] EncodeTransferWithSeedData(PublicKey owner, string seed, ulong lamports)
         {
-            byte[] encodedSeed = EncodeRustString(seed);
+            byte[] encodedSeed = Serialization.EncodeRustString(seed);
             byte[] data = new byte[44 + encodedSeed.Length];
             
-            data.WriteU32((uint) SystemProgramInstructions.TransferWithSeed, 0);
+            data.WriteU32((uint) SystemProgramInstructions.TransferWithSeed, MethodOffset);
             data.WriteU64(lamports, 4);
             data.WriteSpan(encodedSeed, 12);
             data.WritePubKey(owner, 12 + encodedSeed.Length);
             
             return data;
-        }
-
-        /// <summary>
-        /// Encodes a string for transaction instruction.
-        /// <remarks>
-        /// Example taken from here: https://github.com/michaelhly/solana-py/blob/c595b7bedb9574dbf3da7243175de3ab72810226/solana/_layouts/shared.py
-        /// </remarks>
-        /// </summary>
-        /// <param name="data">The data to encode.</param>
-        /// <returns>The encoded data.</returns>
-        private static byte[] EncodeRustString(string data)
-        {
-            byte[] stringBytes = Encoding.ASCII.GetBytes(data);
-            byte[] encoded = new byte[stringBytes.Length + 4];
-            
-            encoded.WriteU32((uint) stringBytes.Length, 0);
-            encoded.WriteSpan(stringBytes, 4);
-            return encoded;
         }
     }
 }

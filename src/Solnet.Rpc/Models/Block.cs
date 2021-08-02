@@ -37,7 +37,7 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// The number of blocks beneath this block.
         /// </summary>
-        public long BlockHeight { get; set; }
+        public long? BlockHeight { get; set; }
 
         /// <summary>
         /// The rewards for this given block.

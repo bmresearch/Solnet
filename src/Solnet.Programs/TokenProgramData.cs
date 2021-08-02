@@ -12,6 +12,11 @@ namespace Solnet.Programs
     internal static class TokenProgramData
     {
         /// <summary>
+        /// The offset at which the value which defines the method begins.
+        /// </summary>
+        internal const int MethodOffset = 0;
+        
+        /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.Revoke"/> method.
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
@@ -45,7 +50,7 @@ namespace Solnet.Programs
         {
             byte[] methodBuffer = new byte[67];
 
-            methodBuffer.WriteU8((byte)TokenProgramInstructions.InitializeMint, 0);
+            methodBuffer.WriteU8((byte)TokenProgramInstructions.InitializeMint, MethodOffset);
             methodBuffer.WriteU8((byte)decimals, 1);
             methodBuffer.WritePubKey(mintAuthority, 2);
             methodBuffer.WriteU8((byte)freezeAuthorityOption, 34);
@@ -88,7 +93,7 @@ namespace Solnet.Programs
         {
             byte[] methodBuffer = new byte[2];
             
-            methodBuffer.WriteU8((byte)TokenProgramInstructions.InitializeMultiSignature, 0);
+            methodBuffer.WriteU8((byte)TokenProgramInstructions.InitializeMultiSignature, MethodOffset);
             methodBuffer.WriteU8((byte)m, 1);
 
             return methodBuffer;
@@ -102,7 +107,7 @@ namespace Solnet.Programs
         {
             byte[] methodBuffer = new byte[35];
 
-            methodBuffer.WriteU8((byte)TokenProgramInstructions.SetAuthority, 0);
+            methodBuffer.WriteU8((byte)TokenProgramInstructions.SetAuthority, MethodOffset);
             methodBuffer.WriteU8((byte)authorityType, 1);
             methodBuffer.WriteU8((byte)newAuthorityOption, 2);
             methodBuffer.WritePubKey(newAuthority, 3);
@@ -173,7 +178,7 @@ namespace Solnet.Programs
         {
             byte[] methodBuffer = new byte[9];
             
-            methodBuffer.WriteU8(method, 0);
+            methodBuffer.WriteU8(method, MethodOffset);
             methodBuffer.WriteU64(amount, 1);
             
             return methodBuffer;
@@ -190,7 +195,7 @@ namespace Solnet.Programs
         {
             byte[] methodBuffer = new byte[10];
             
-            methodBuffer.WriteU8(method, 0);
+            methodBuffer.WriteU8(method, MethodOffset);
             methodBuffer.WriteU64(amount, 1);
             methodBuffer.WriteU8(decimals, 9);
             
