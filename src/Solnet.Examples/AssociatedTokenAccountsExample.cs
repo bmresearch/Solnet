@@ -43,8 +43,8 @@ namespace Solnet.Examples
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
 
             Account ownerAccount = wallet.GetAccount(10);
-            Account mintAccount = wallet.GetAccount(1002);
-            Account initialAccount = wallet.GetAccount(1102);
+            Account mintAccount = wallet.GetAccount(1004);
+            Account initialAccount = wallet.GetAccount(1104);
             Console.WriteLine($"OwnerAccount: {ownerAccount}");
             Console.WriteLine($"MintAccount: {mintAccount}");
             Console.WriteLine($"InitialAccount: {initialAccount}");
@@ -81,9 +81,9 @@ namespace Solnet.Examples
                 AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net")).
                 Build(new List<Account> { ownerAccount, mintAccount, initialAccount});
             
-            string createAndInitializeMintToTxSignature = SubmitTxAndLog(createAndInitializeMintToTx);
+            string createAndInitializeMintToTxSignature = Examples.SubmitTxSendAndLog(createAndInitializeMintToTx);
 
-            PollConfirmedTx(createAndInitializeMintToTxSignature);
+            Examples.PollConfirmedTx(createAndInitializeMintToTxSignature);
             
             #endregion
             
@@ -117,44 +117,11 @@ namespace Solnet.Examples
                 AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net")).
                 Build(new List<Account> {ownerAccount});
             
-            string createAssociatedTokenAccountTxSignature = SubmitTxAndLog(createAssociatedTokenAccountTx);
-            
-            PollConfirmedTx(createAssociatedTokenAccountTxSignature);
+            string createAssociatedTokenAccountTxSignature = Examples.SubmitTxSendAndLog(createAssociatedTokenAccountTx);
+
+            Examples.PollConfirmedTx(createAssociatedTokenAccountTxSignature);
 
             #endregion
-        }
-
-        /// <summary>
-        /// Submits a transaction and logs the output from SimulateTransaction.
-        /// </summary>
-        /// <param name="tx">The transaction data ready to simulate or submit to the network.</param>
-        private static string SubmitTxAndLog(byte[] tx)
-        {
-            Console.WriteLine($"Tx Data: {Convert.ToBase64String(tx)}");
-
-            RequestResult<ResponseValue<SimulationLogs>> txSim = RpcClient.SimulateTransaction(tx);
-            string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
-            Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
-
-            RequestResult<string> txReq = RpcClient.SendTransaction(tx);
-            Console.WriteLine($"Tx Signature: {txReq.Result}");
-
-            return txReq.Result;
-        }
-
-        /// <summary>
-        /// Polls the rpc client until a transaction signature has been confirmed.
-        /// </summary>
-        /// <param name="signature">The first transaction signature.</param>
-        private static void PollConfirmedTx(string signature)
-        {
-            RequestResult<TransactionMetaSlotInfo> txMeta = RpcClient.GetTransaction(signature);
-            if (!txMeta.WasSuccessful)
-            {
-                Thread.Sleep(2500);
-                PollConfirmedTx(signature);
-            }
-            if (txMeta.Result != null) return;
         }
     }
 }

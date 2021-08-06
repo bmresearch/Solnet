@@ -20,8 +20,18 @@ namespace Solnet.Programs
         /// <summary>
         /// The address of the Shared Memory Program.
         /// </summary>
-        public static readonly PublicKey ProgramId = new("shmem4EWT2sPdVGvTZCzXXRAURL9G5vpPxNwSeKhHUL");
+        public static readonly PublicKey ProgramIdKey = new("shmem4EWT2sPdVGvTZCzXXRAURL9G5vpPxNwSeKhHUL");
 
+        /// <summary>
+        /// The program's name.
+        /// </summary>
+        private const string ProgramName = "Shared Memory Program";
+        
+        /// <summary>
+        /// The instruction's name.
+        /// </summary>
+        private const string InstructionName = "Write";
+        
         /// <summary>
         /// Creates an instruction used to interact with the Shared memory program.
         /// This instruction writes data to a given program starting at a specific offset.
@@ -44,11 +54,33 @@ namespace Solnet.Programs
 
             return new TransactionInstruction
             {
-                ProgramId = ProgramId.KeyBytes,
+                ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
                 Data = transactionData
             };
         }
-
+        
+        /// <summary>
+        /// Decodes an instruction created by the System Program.
+        /// </summary>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        /// <returns>A decoded instruction.</returns>
+        public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            return new DecodedInstruction()
+            {
+                PublicKey = ProgramIdKey,
+                InstructionName = InstructionName,
+                ProgramName = ProgramName,
+                Values = new Dictionary<string, object>()
+                {
+                    {"Offset", data.GetU64(0)},
+                    {"Data", data[8..].ToArray()}
+                },
+                InnerInstructions = new List<DecodedInstruction>()
+            };
+        }
     }
 }

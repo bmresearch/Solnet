@@ -11,7 +11,9 @@ namespace Solnet.Programs
     /// <summary>
     /// Implements the Token Program methods.
     /// <remarks>
-    /// For more information see: https://spl.solana.com/token
+    /// For more information see:
+    /// https://spl.solana.com/token
+    /// https://docs.rs/spl-token/3.2.0/spl_token/
     /// </remarks>
     /// </summary>
     public static class TokenProgram
@@ -25,16 +27,21 @@ namespace Solnet.Programs
         /// The program's name.
         /// </summary>
         private const string ProgramName = "Token Program";
-        
+
         /// <summary>
         /// Mint account account layout size.
         /// </summary>
         public const int MintAccountDataSize = 82;
-        
+
         /// <summary>
         /// Account layout size.
         /// </summary>
         public const int TokenAccountDataSize = 165;
+        
+        /// <summary>
+        /// Multisig account layout size for the given number of signers.
+        /// </summary>
+        public const int MultisigAccountDataSize = 355;
 
         /// <summary>
         /// Initializes an instruction to transfer tokens from one account to another either directly or via a delegate.
@@ -44,24 +51,23 @@ namespace Solnet.Programs
         /// <param name="destination">The public key of the account to account to transfer tokens to.</param>
         /// <param name="amount">The amount of tokens to transfer.</param>
         /// <param name="owner">The public key of the owner account.</param>
+        /// <param name="signers">Signing accounts if the `owner` is a multi signature.</param>
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Transfer(
-            PublicKey source, PublicKey destination, ulong amount, PublicKey owner)
+            PublicKey source, PublicKey destination, ulong amount, PublicKey owner, IEnumerable<PublicKey> signers = null)
         {
             List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(source, false),
                 AccountMeta.Writable(destination, false),
-                AccountMeta.ReadOnly(owner, true)
             };
+            keys = AddSigners(keys, owner, signers);
             return new TransactionInstruction
             {
-                ProgramId = ProgramIdKey.KeyBytes,
-                Keys = keys,
-                Data = TokenProgramData.EncodeTransferData(amount)
+                ProgramId = ProgramIdKey.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeTransferData(amount)
             };
         }
-        
+
         /// <summary>
         /// <para>
         /// Initializes an instruction to transfer tokens from one account to another either directly or via a delegate.
@@ -81,7 +87,8 @@ namespace Solnet.Programs
         /// <param name="signers">Signing accounts if the `owner` is a multi signature.</param>
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction TransferChecked(
-            PublicKey source, PublicKey destination, ulong amount, int decimals, PublicKey owner, PublicKey tokenMint, IEnumerable<PublicKey> signers = null)
+            PublicKey source, PublicKey destination, ulong amount, int decimals, PublicKey owner, PublicKey tokenMint,
+            IEnumerable<PublicKey> signers = null)
         {
             List<AccountMeta> keys = new()
             {
@@ -97,7 +104,7 @@ namespace Solnet.Programs
                 Data = TokenProgramData.EncodeTransferCheckedData(amount, decimals)
             };
         }
-        
+
         /// <summary>
         /// <para>Initializes an instruction to initialize a new account to hold tokens.
         /// If this account is associated with the native mint then the token balance of the initialized account will be equal to the amount of SOL in the account.
@@ -126,7 +133,7 @@ namespace Solnet.Programs
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
-                Keys = keys, 
+                Keys = keys,
                 Data = TokenProgramData.EncodeInitializeAccountData()
             };
         }
@@ -137,9 +144,10 @@ namespace Solnet.Programs
         /// <param name="multiSignature">Public key of the multi signature account.</param>
         /// <param name="signers">Addresses of multi signature signers.</param>
         /// <param name="m">The number of signatures required to validate this multi signature account.</param>
-        public static TransactionInstruction InitializeMultiSignature(PublicKey multiSignature, IEnumerable<PublicKey> signers, int m)
+        public static TransactionInstruction InitializeMultiSignature(PublicKey multiSignature,
+            IEnumerable<PublicKey> signers, int m)
         {
-            List<AccountMeta> keys = new ()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(multiSignature, false),
                 AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
@@ -147,8 +155,8 @@ namespace Solnet.Programs
             keys.AddRange(signers.Select(signer => AccountMeta.ReadOnly(signer, false)));
             return new TransactionInstruction
             {
-                ProgramId = ProgramIdKey.KeyBytes, 
-                Keys = keys, 
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = keys,
                 Data = TokenProgramData.EncodeInitializeMultiSignatureData(m)
             };
         }
@@ -190,17 +198,22 @@ namespace Solnet.Programs
         /// <param name="destination">The public key of the account to mint tokens to.</param>
         /// <param name="amount">The amount of tokens.</param>
         /// <param name="mintAuthority">The token mint authority account.</param>
+        /// <param name="signers">Signing accounts if the `owner` is a multi signature.</param>
         /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction MintTo(PublicKey mint, PublicKey destination, ulong amount, PublicKey mintAuthority)
+        public static TransactionInstruction MintTo(PublicKey mint, PublicKey destination, ulong amount,
+            PublicKey mintAuthority, IEnumerable<PublicKey> signers = null)
         {
             List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(mint, false),
                 AccountMeta.Writable(destination, false),
-                AccountMeta.ReadOnly(mintAuthority, true)
             };
+            keys = AddSigners(keys, mintAuthority, signers);
 
-            return new TransactionInstruction { ProgramId = ProgramIdKey.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeMintToData(amount) };
+            return new TransactionInstruction
+            {
+                ProgramId = ProgramIdKey.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeMintToData(amount)
+            };
         }
 
         /// <summary>
@@ -213,7 +226,8 @@ namespace Solnet.Programs
         /// <param name="signers">Signing accounts if the `owner` is a multi signature.</param>
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Approve(
-            PublicKey source, PublicKey delegatePublicKey, PublicKey owner, ulong amount, IEnumerable<PublicKey> signers = null)
+            PublicKey source, PublicKey delegatePublicKey, PublicKey owner, ulong amount,
+            IEnumerable<PublicKey> signers = null)
         {
             List<AccountMeta> keys = new()
             {
@@ -223,7 +237,10 @@ namespace Solnet.Programs
 
             keys = AddSigners(keys, owner, signers);
 
-            return new TransactionInstruction { ProgramId = ProgramIdKey.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeApproveData(amount) };
+            return new TransactionInstruction
+            {
+                ProgramId = ProgramIdKey.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeApproveData(amount)
+            };
         }
 
         /// <summary>
@@ -236,7 +253,7 @@ namespace Solnet.Programs
         public static TransactionInstruction Revoke(PublicKey delegatePublicKey, PublicKey ownerAccount,
             IEnumerable<PublicKey> signers = null)
         {
-            List<AccountMeta> keys = new ()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.ReadOnly(delegatePublicKey, false),
             };
@@ -244,9 +261,7 @@ namespace Solnet.Programs
 
             return new TransactionInstruction
             {
-                ProgramId = ProgramIdKey.KeyBytes,
-                Keys = keys,
-                Data = TokenProgramData.EncodeRevokeData()
+                ProgramId = ProgramIdKey.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeRevokeData()
             };
         }
 
@@ -260,7 +275,8 @@ namespace Solnet.Programs
         /// <param name="signers">Signing accounts if the <c>account</c> is a multi signature.</param>
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction SetAuthority(
-            PublicKey account, AuthorityType authority, PublicKey currentAuthority, PublicKey newAuthority = null, IEnumerable<PublicKey> signers = null)
+            PublicKey account, AuthorityType authority, PublicKey currentAuthority, PublicKey newAuthority = null,
+            IEnumerable<PublicKey> signers = null)
         {
             List<AccountMeta> keys = new()
             {
@@ -288,7 +304,8 @@ namespace Solnet.Programs
         /// <param name="owner">The public key of the owner account of the source account.</param>
         /// <param name="signers">Signing accounts if the <c>account</c> is a multi signature.</param>
         /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction Burn(PublicKey account, PublicKey mint, ulong amount, PublicKey owner, IEnumerable<PublicKey> signers = null)
+        public static TransactionInstruction Burn(PublicKey account, PublicKey mint, ulong amount, PublicKey owner,
+            IEnumerable<PublicKey> signers = null)
         {
             List<AccountMeta> keys = new()
             {
@@ -298,9 +315,7 @@ namespace Solnet.Programs
             keys = AddSigners(keys, owner, signers);
             return new TransactionInstruction()
             {
-                ProgramId = ProgramIdKey.KeyBytes,
-                Keys = keys,
-                Data = TokenProgramData.EncodeBurnData(amount)
+                ProgramId = ProgramIdKey.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeBurnData(amount)
             };
         }
 
@@ -313,7 +328,8 @@ namespace Solnet.Programs
         /// <param name="programId">The public key which represents the associated program id.</param>
         /// <param name="signers">Signing accounts if the <c>account</c> is a multi signature.</param>
         /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction CloseAccount(PublicKey account, PublicKey destination, PublicKey owner, PublicKey programId, IEnumerable<PublicKey> signers = null)
+        public static TransactionInstruction CloseAccount(PublicKey account, PublicKey destination, PublicKey owner,
+            PublicKey programId, IEnumerable<PublicKey> signers = null)
         {
             List<AccountMeta> keys = new()
             {
@@ -323,12 +339,10 @@ namespace Solnet.Programs
             keys = AddSigners(keys, owner, signers);
             return new TransactionInstruction()
             {
-                ProgramId = programId.KeyBytes,
-                Keys = keys,
-                Data = TokenProgramData.EncodeCloseAccountData()
+                ProgramId = programId.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeCloseAccountData()
             };
         }
-        
+
         /// <summary>
         /// Initialize an instruction to freeze a token account.
         /// </summary>
@@ -338,7 +352,8 @@ namespace Solnet.Programs
         /// <param name="programId">The public key which represents the associated program id.</param>
         /// <param name="signers">Signing accounts if the <c>account</c> is a multi signature.</param>
         /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction FreezeAccount(PublicKey account, PublicKey mint, PublicKey owner, PublicKey programId, IEnumerable<PublicKey> signers = null)
+        public static TransactionInstruction FreezeAccount(PublicKey account, PublicKey mint, PublicKey owner,
+            PublicKey programId, IEnumerable<PublicKey> signers = null)
         {
             List<AccountMeta> keys = new()
             {
@@ -348,12 +363,10 @@ namespace Solnet.Programs
             keys = AddSigners(keys, owner, signers);
             return new TransactionInstruction()
             {
-                ProgramId = programId.KeyBytes,
-                Keys = keys,
-                Data = TokenProgramData.EncodeFreezeAccountData()
+                ProgramId = programId.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeFreezeAccountData()
             };
         }
-        
+
         /// <summary>
         /// Initialize an instruction to thaw a token account.
         /// </summary>
@@ -363,7 +376,8 @@ namespace Solnet.Programs
         /// <param name="programId">The public key which represents the associated program id.</param>
         /// <param name="signers">Signing accounts if the <c>account</c> is a multi signature.</param>
         /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction ThawAccount(PublicKey account, PublicKey mint, PublicKey owner, PublicKey programId, IEnumerable<PublicKey> signers = null)
+        public static TransactionInstruction ThawAccount(PublicKey account, PublicKey mint, PublicKey owner,
+            PublicKey programId, IEnumerable<PublicKey> signers = null)
         {
             List<AccountMeta> keys = new()
             {
@@ -373,9 +387,7 @@ namespace Solnet.Programs
             keys = AddSigners(keys, owner, signers);
             return new TransactionInstruction()
             {
-                ProgramId = programId.KeyBytes,
-                Keys = keys,
-                Data = TokenProgramData.EncodeThawAccountData()
+                ProgramId = programId.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeThawAccountData()
             };
         }
 
@@ -395,7 +407,8 @@ namespace Solnet.Programs
         /// <param name="mint">The public key of the token mint.</param>
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction ApproveChecked(
-            PublicKey source, PublicKey delegatePublicKey, ulong amount, byte decimals, PublicKey owner, PublicKey mint, IEnumerable<PublicKey> signers = null)
+            PublicKey source, PublicKey delegatePublicKey, ulong amount, byte decimals, PublicKey owner, PublicKey mint,
+            IEnumerable<PublicKey> signers = null)
         {
             List<AccountMeta> keys = new()
             {
@@ -411,7 +424,7 @@ namespace Solnet.Programs
                 Data = TokenProgramData.EncodeApproveCheckedData(amount, decimals)
             };
         }
-        
+
         /// <summary>
         /// Initialize an instruction to approve a transaction.
         /// <para>
@@ -426,7 +439,8 @@ namespace Solnet.Programs
         /// <param name="decimals">The token decimals.</param>
         /// <param name="signers">Signing accounts if the <c>account</c> is a multi signature.</param>
         /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction MintToChecked(PublicKey mint, PublicKey destination, PublicKey mintAuthority, ulong amount, int decimals, IEnumerable<PublicKey> signers = null)
+        public static TransactionInstruction MintToChecked(PublicKey mint, PublicKey destination,
+            PublicKey mintAuthority, ulong amount, int decimals, IEnumerable<PublicKey> signers = null)
         {
             List<AccountMeta> keys = new()
             {
@@ -456,7 +470,8 @@ namespace Solnet.Programs
         /// <param name="decimals">The token decimals.</param>
         /// <param name="signers">Signing accounts if the <c>account</c> is a multi signature.</param>
         /// <returns>The transaction instruction.</returns>
-        public static TransactionInstruction BurnChecked(PublicKey mint, PublicKey account, PublicKey owner, ulong amount, int decimals, IEnumerable<PublicKey> signers = null)
+        public static TransactionInstruction BurnChecked(PublicKey mint, PublicKey account, PublicKey owner,
+            ulong amount, int decimals, IEnumerable<PublicKey> signers = null)
         {
             List<AccountMeta> keys = new()
             {
@@ -471,7 +486,7 @@ namespace Solnet.Programs
                 Data = TokenProgramData.EncodeBurnCheckedData(amount, decimals)
             };
         }
-        
+
         /// <summary>
         /// Adds the list of signers to the list of keys.
         /// </summary>
@@ -484,16 +499,17 @@ namespace Solnet.Programs
         {
             if (signers != null)
             {
-                keys.Add(AccountMeta.ReadOnly(owner,  true));
+                keys.Add(AccountMeta.ReadOnly(owner,  false));
                 keys.AddRange(signers.Select(signer => AccountMeta.ReadOnly(signer, true)));
             }
             else
             {
                 keys.Add(AccountMeta.ReadOnly(owner, true));
             }
+
             return keys;
         }
-        
+
         /// <summary>
         /// Decodes an instruction created by the System Program.
         /// </summary>
@@ -504,53 +520,68 @@ namespace Solnet.Programs
         public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
             uint instruction = data.GetU8(TokenProgramData.MethodOffset);
-            string instructionName = Enum.GetName(typeof(TokenProgramInstructions), instruction);
-            
             DecodedInstruction decodedInstruction = new()
             {
                 PublicKey = ProgramIdKey,
-                InstructionName = instructionName,
+                InstructionName = TokenProgramInstructions.Names[instruction],
                 ProgramName = ProgramName,
                 Values = new Dictionary<string, object>(),
                 InnerInstructions = new List<DecodedInstruction>()
             };
-            
-            switch (Enum.Parse(typeof(TokenProgramInstructions), instruction.ToString()))
+
+            object value = Enum.Parse(typeof(TokenProgramInstructions.Values), instruction.ToString());
+
+            switch (value)
             {
-                case TokenProgramInstructions.InitializeMint:
+                case TokenProgramInstructions.Values.InitializeMint:
+                    TokenProgramData.DecodeInitializeMintData(decodedInstruction, data, keys, keyIndices);
                     break;
-                case TokenProgramInstructions.InitializeAccount:
+                case TokenProgramInstructions.Values.InitializeAccount:
+                    TokenProgramData.DecodeInitializeAccountData(decodedInstruction, keys, keyIndices);
                     break;
-                case TokenProgramInstructions.InitializeMultiSignature:
+                case TokenProgramInstructions.Values.InitializeMultiSignature:
+                    TokenProgramData.DecodeInitializeMultiSignatureData(decodedInstruction, data, keys, keyIndices);
                     break;
-                case TokenProgramInstructions.Transfer:
+                case TokenProgramInstructions.Values.Transfer:
+                    TokenProgramData.DecodeTransferData(decodedInstruction, data, keys, keyIndices);
                     break;
-                case TokenProgramInstructions.Approve:
+                case TokenProgramInstructions.Values.Approve:
+                    TokenProgramData.DecodeApproveData(decodedInstruction, data, keys, keyIndices);
                     break;
-                case TokenProgramInstructions.Revoke:
+                case TokenProgramInstructions.Values.Revoke:
+                    TokenProgramData.DecodeRevokeData(decodedInstruction, keys, keyIndices);
                     break;
-                case TokenProgramInstructions.SetAuthority:
+                case TokenProgramInstructions.Values.SetAuthority:
+                    TokenProgramData.DecodeSetAuthorityData(decodedInstruction, data, keys, keyIndices);
                     break;
-                case TokenProgramInstructions.MintTo:
+                case TokenProgramInstructions.Values.MintTo:
+                    TokenProgramData.DecodeMintToData(decodedInstruction, data, keys, keyIndices);
                     break;
-                case TokenProgramInstructions.Burn:
+                case TokenProgramInstructions.Values.Burn:
+                    TokenProgramData.DecodeBurnData(decodedInstruction, data, keys, keyIndices);
                     break;
-                case TokenProgramInstructions.CloseAccount:
+                case TokenProgramInstructions.Values.CloseAccount:                    
+                    TokenProgramData.DecodeCloseAccountData(decodedInstruction, keys, keyIndices);
                     break;
-                case TokenProgramInstructions.FreezeAccount:
+                case TokenProgramInstructions.Values.FreezeAccount:
+                    TokenProgramData.DecodeFreezeAccountData(decodedInstruction,  keys, keyIndices);
                     break;
-                case TokenProgramInstructions.ThawAccount:
+                case TokenProgramInstructions.Values.ThawAccount:
+                    TokenProgramData.DecodeThawAccountData(decodedInstruction, keys, keyIndices);
                     break;
-                case TokenProgramInstructions.TransferChecked:
+                case TokenProgramInstructions.Values.TransferChecked:
+                    TokenProgramData.DecodeTransferCheckedData(decodedInstruction, data, keys, keyIndices);
                     break;
-                case TokenProgramInstructions.ApproveChecked:
+                case TokenProgramInstructions.Values.ApproveChecked:
+                    TokenProgramData.DecodeApproveCheckedData(decodedInstruction, data, keys, keyIndices);
                     break;
-                case TokenProgramInstructions.MintToChecked:
+                case TokenProgramInstructions.Values.MintToChecked:
+                    TokenProgramData.DecodeMintToCheckedData(decodedInstruction, data, keys, keyIndices);
                     break;
-                case TokenProgramInstructions.BurnChecked:
+                case TokenProgramInstructions.Values.BurnChecked:
+                    TokenProgramData.DecodeBurnCheckedData(decodedInstruction, data, keys, keyIndices);
                     break;
             }
-
             return decodedInstruction;
         }
     }

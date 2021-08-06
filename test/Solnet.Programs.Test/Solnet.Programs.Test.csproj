@@ -21,4 +21,10 @@
       <ProjectReference Include="..\..\src\Solnet.Programs\Solnet.Programs.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Resources\TestDecodeInstructionFromBlockTransactionMetaInfo.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

@@ -23,7 +23,7 @@ namespace Solnet.Programs
         /// <summary>
         /// The program's name.
         /// </summary>
-        private const string ProgramName = "Associated Token Account";
+        private const string ProgramName = "Associated Token Account Program";
         
         /// <summary>
         /// The instruction's name.
@@ -78,18 +78,27 @@ namespace Solnet.Programs
         }
         
         /// <summary>
-        /// Decodes an instruction created by the Memo Program.
+        /// Decodes an instruction created by the Associated Token Account Program.
         /// </summary>
         /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
         /// <returns>A decoded instruction.</returns>
-        public static DecodedInstruction Decode(ReadOnlySpan<byte> data)
+        public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
             DecodedInstruction decodedInstruction = new()
             {
                 PublicKey = ProgramIdKey,
                 InstructionName = InstructionName,
                 ProgramName = ProgramName,
-                Values = new Dictionary<string, object> { }
+                Values = new Dictionary<string, object>
+                {
+                    {"Payer", keys[keyIndices[0]]},
+                    {"Associated Token Account Address", keys[keyIndices[1]]},
+                    {"Owner", keys[keyIndices[2]]},
+                    {"Mint", keys[keyIndices[3]]},
+                },
+                InnerInstructions = new List<DecodedInstruction>(),
             };
 
             return decodedInstruction;

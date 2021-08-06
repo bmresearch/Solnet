@@ -48,13 +48,14 @@ namespace Solnet.Rpc.Models
             {
                 bool ok = _accounts.TryGetValue(accountMeta.PublicKey, out AccountMeta account);
                 if (!ok) throw new Exception("account meta already exists but could not overwrite");
-                if (!accountMeta.IsWritable || account.IsWritable)
+                if ((!accountMeta.IsWritable || account.IsWritable) && (!accountMeta.IsSigner || account.IsSigner))
                 {
                     return;
                 }
 
                 _accounts.Remove(account.PublicKey);
                 _accounts.Add(accountMeta.PublicKey, accountMeta);
+
             }
             else
             {

@@ -28,7 +28,7 @@ namespace Solnet.Programs
         /// <summary>
         /// The instruction's name.
         /// </summary>
-        private const string InstructionName = "NewMemo";
+        private const string InstructionName = "New Memo";
 
         /// <summary>
         /// Initialize a new transaction instruction which interacts with the Memo Program.
@@ -61,14 +61,14 @@ namespace Solnet.Programs
         /// <returns>A decoded instruction.</returns>
         public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
-            DecodedInstruction decodedInstruction = new()
+            DecodedInstruction decodedInstruction = new ()
             {
                 PublicKey = ProgramIdKey,
                 InstructionName = InstructionName,
                 ProgramName = ProgramName,
-                InnerInstructions = new List<DecodedInstruction>()
+                InnerInstructions = new List<DecodedInstruction>(),
+                Values = new Dictionary<string, object>()
             };
-            decodedInstruction.Values = new Dictionary<string, object>();
             if (keyIndices.Length > 0)
             {
                 decodedInstruction.Values.Add("Signer", keys[keyIndices[0]]);

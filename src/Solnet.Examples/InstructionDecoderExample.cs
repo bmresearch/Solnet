@@ -36,14 +36,10 @@ namespace Solnet.Examples
                 .CompileMessage();
             
             string msgBytesBs64 = Convert.ToBase64String(msgBytes);
-            string help = msgBytes.Aggregate("[", (current, txByte) => current + $"{txByte}, ");
-            help = help.TrimEnd()[..(help.Length - 2)] + "]";
-            Console.WriteLine($"Message Bytes: {help}\n");
             Console.WriteLine($"Message Base64: {msgBytesBs64}\n");
-            Message msg = Message.Deserialize(msgBytes);
-
-            Console.WriteLine("\t\t\t\tDECODING MESSAGE FROM WIRE FORMAT\n");
             
+            Console.WriteLine("\t\t\t\tDECODING MESSAGE FROM WIRE FORMAT\n");
+            Message msg = Message.Deserialize(msgBytes);
             var decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
             string aggregate = decodedInstructions.Aggregate(
@@ -62,45 +58,52 @@ namespace Solnet.Examples
     
     public class InstructionDecoderFromBlockExample : IExample
     {
-        private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.MainNet);
+        private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
         public void Run()
         {
-            var block = rpcClient.GetBlock(80591462);
-            //Console.WriteLine($"BlockHash >> {block.Result.Blockhash}");
-
-            File.WriteAllText("./response.json", block.RawRpcResponse);
-            
-            Console.WriteLine($"\n\t\t\tDECODING INSTRUCTIONS FROM TRANSACTIONS IN BLOCK {block.Result.Blockhash}\n");
-
-            foreach (TransactionMetaInfo txMeta in block.Result.Transactions)
+            var blockList = new ulong[] {87731252, 87731314};
+            foreach (var slot in blockList)
             {
-                Console.WriteLine($"\n\t\tDECODING INSTRUCTIONS FROM TRANSACTION {txMeta.Transaction.Signatures[0]}");
+                var block = rpcClient.GetBlock(slot);
+                File.WriteAllText($"./response{slot}.json", block.RawRpcResponse);
+                Console.WriteLine($"BlockHash >> {block.Result.Blockhash}");
 
-                Console.WriteLine($"Instructions: {txMeta.Transaction.Message.Instructions.Length}");
-                Console.WriteLine($"InnerInstructions: {txMeta.Meta.InnerInstructions.Length}");
-                var decodedInstructions = InstructionDecoder.DecodeInstructions(txMeta);
+                Console.WriteLine($"\n\t\t\tDECODING INSTRUCTIONS FROM TRANSACTIONS IN BLOCK {block.Result.Blockhash}\n");
 
-                string aggregate = decodedInstructions.Aggregate(
-                    $"\tInstructions",
-                    (s, instruction) =>
-                    {
-                        s += $"\n\tProgram: {instruction.ProgramName}\t\tInstruction: {instruction.InstructionName}\n";
-                        s = instruction.Values.Aggregate(
-                            s, (current, entry) => 
-                                current + $"\t\t\t{entry.Key} - {Convert.ChangeType(entry.Value, entry.Value.GetType())}\n");
-                        if (instruction.InnerInstructions.Count > 0) 
-                            return instruction.InnerInstructions.Aggregate(
-                             s += $"\t\tInnerInstructions",
-                            (inner, innerInstruction) =>
-                            {
-                                inner += $"\n\t\tCPI: {innerInstruction.ProgramName}\t\t\t\tInstruction: {innerInstruction.InstructionName}\n";
-                                return innerInstruction.Values.Aggregate(
-                                    inner, (current, entry) => 
-                                        current + $"\t\t\t\t{entry.Key} - {Convert.ChangeType(entry.Value, entry.Value.GetType())}\n");
-                            });
-                        return s;
-                    });
-                Console.WriteLine(aggregate);
+                foreach (TransactionMetaInfo txMeta in block.Result.Transactions)
+                {
+                    if (txMeta.Transaction.Message.Instructions.Length == 1 && "Vote111111111111111111111111111111111111111" == txMeta.Transaction.Message.AccountKeys[txMeta.Transaction.Message.Instructions[0].ProgramIdIndex]) continue;
+                    if (txMeta.Transaction.Message.Instructions.Length < 2) continue;
+                    Console.WriteLine($"\n\t\tDECODING INSTRUCTIONS FROM TRANSACTION {txMeta.Transaction.Signatures[0]}");
+                    
+                    Console.WriteLine($"Instructions: {txMeta.Transaction.Message.Instructions.Length}");
+                    Console.WriteLine($"InnerInstructions: {txMeta.Meta.InnerInstructions.Length}");
+                    var decodedInstructions = InstructionDecoder.DecodeInstructions(txMeta);
+
+                    string aggregate = decodedInstructions.Aggregate(
+                        $"\tInstructions",
+                        (s, instruction) =>
+                        {
+                            s += $"\n\tProgram: {instruction.ProgramName}\t Key: {instruction.PublicKey}\n\t\tInstruction: {instruction.InstructionName}\n";
+                            s = instruction.Values.Aggregate(
+                                s, (current, entry) => 
+                                    current + $"\t\t\t{entry.Key} - {Convert.ChangeType(entry.Value, entry.Value.GetType())}\n");
+                            if (instruction.InnerInstructions.Count > 0) 
+                                return instruction.InnerInstructions.Aggregate(
+                                 s += $"\t\tInnerInstructions",
+                                (inner, innerInstruction) =>
+                                {
+                                    inner += $"\n\t\tCPI: {innerInstruction.ProgramName}\t\t\t\tInstruction: {innerInstruction.InstructionName}\n";
+                                    return innerInstruction.Values.Aggregate(
+                                        inner, (current, entry) => 
+                                            current + $"\t\t\t\t{entry.Key} - {Convert.ChangeType(entry.Value, entry.Value.GetType())}\n");
+                                });
+                            return s;
+                        });
+                    File.WriteAllText($"./log{slot}.json", aggregate);
+                    Console.WriteLine(aggregate);
+                }
+                
             }
         }
     }

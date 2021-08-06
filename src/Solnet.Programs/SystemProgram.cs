@@ -10,6 +10,11 @@ namespace Solnet.Programs
 {
     /// <summary>
     /// Implements the System Program methods.
+    /// <remarks>
+    /// For more information see:
+    /// https://docs.solana.com/developing/runtime-facilities/programs#system-program
+    /// https://docs.rs/solana-sdk/1.7.0/solana_sdk/system_instruction/enum.SystemInstruction.html
+    /// </remarks>
     /// </summary>
     public static class SystemProgram
     {
@@ -337,49 +342,52 @@ namespace Solnet.Programs
         public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
             uint instruction = data.GetU32(SystemProgramData.MethodOffset);
-            string instructionName = Enum.GetName(typeof(SystemProgramInstructions), instruction);
-            
             DecodedInstruction decodedInstruction = new()
             {
                 PublicKey = ProgramIdKey,
-                InstructionName = instructionName,
+                InstructionName = SystemProgramInstructions.Names[instruction],
                 ProgramName = ProgramName,
                 Values = new Dictionary<string, object>(),
                 InnerInstructions = new List<DecodedInstruction>()
             };
             
-            switch (Enum.Parse(typeof(SystemProgramInstructions), instruction.ToString()))
+            switch (Enum.Parse(typeof(SystemProgramInstructions.Values), instruction.ToString()))
             {
-                    case SystemProgramInstructions.CreateAccount:
-                        decodedInstruction.Values.Add("Owner Account", keys[keyIndices[0]]);
-                        decodedInstruction.Values.Add("New Account", keys[keyIndices[1]]);
-                        decodedInstruction.Values.Add("Amount", data.GetU64(4));
-                        decodedInstruction.Values.Add("Space", data.GetU64(12));
+                    case SystemProgramInstructions.Values.CreateAccount:
+                        SystemProgramData.DecodeCreateAccountData(decodedInstruction, data, keys, keyIndices);
                         break;
-                    case SystemProgramInstructions.Assign:
+                    case SystemProgramInstructions.Values.Assign:
+                        SystemProgramData.DecodeAssignData(decodedInstruction, data, keys, keyIndices);
                         break;
-                    case SystemProgramInstructions.Transfer:
-                        decodedInstruction.Values.Add("From Account", keys[keyIndices[0]]);
-                        decodedInstruction.Values.Add("To Account", keys[keyIndices[1]]);
-                        decodedInstruction.Values.Add("Amount", data.GetU64(4));
+                    case SystemProgramInstructions.Values.Transfer:
+                        SystemProgramData.DecodeTransferData(decodedInstruction, data, keys, keyIndices);
                         break;
-                    case SystemProgramInstructions.CreateAccountWithSeed:
+                    case SystemProgramInstructions.Values.CreateAccountWithSeed:    
+                        SystemProgramData.DecodeCreateAccountWithSeedData(decodedInstruction, data, keys, keyIndices);                   
                         break;
-                    case SystemProgramInstructions.AdvanceNonceAccount:
+                    case SystemProgramInstructions.Values.AdvanceNonceAccount:
+                        SystemProgramData.DecodeAdvanceNonceAccountData(decodedInstruction, keys, keyIndices);
                         break;
-                    case SystemProgramInstructions.WithdrawNonceAccount:
+                    case SystemProgramInstructions.Values.WithdrawNonceAccount:
+                        SystemProgramData.DecodeWithdrawNonceAccountData(decodedInstruction, data, keys, keyIndices);
                         break;
-                    case SystemProgramInstructions.InitializeNonceAccount:
+                    case SystemProgramInstructions.Values.InitializeNonceAccount:
+                        SystemProgramData.DecodeInitializeNonceAccountData(decodedInstruction, data, keys, keyIndices);
                         break;
-                    case SystemProgramInstructions.AuthorizeNonceAccount:
+                    case SystemProgramInstructions.Values.AuthorizeNonceAccount:
+                        SystemProgramData.DecodeAuthorizeNonceAccountData(decodedInstruction, data, keys, keyIndices);
                         break;
-                    case SystemProgramInstructions.Allocate:
+                    case SystemProgramInstructions.Values.Allocate:
+                        SystemProgramData.DecodeAllocateData(decodedInstruction, data, keys, keyIndices);
                         break;
-                    case SystemProgramInstructions.AllocateWithSeed:
+                    case SystemProgramInstructions.Values.AllocateWithSeed:    
+                        SystemProgramData.DecodeAllocateWithSeedData(decodedInstruction, data, keys, keyIndices);
                         break;
-                    case SystemProgramInstructions.AssignWithSeed:
+                    case SystemProgramInstructions.Values.AssignWithSeed:
+                        SystemProgramData.DecodeAssignWithSeedData(decodedInstruction, data, keys, keyIndices);
                         break;
-                    case SystemProgramInstructions.TransferWithSeed:
+                    case SystemProgramInstructions.Values.TransferWithSeed:
+                        SystemProgramData.DecodeTransferWithSeedData(decodedInstruction, data, keys, keyIndices);
                         break;
             }
 

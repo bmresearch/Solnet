@@ -3,10 +3,11 @@ using Solnet.Rpc;
 using Solnet.Rpc.Builders;
 using Solnet.Wallet;
 using System;
+using System.Collections.Generic;
 
 namespace Solnet.Examples
 {
-    public class NameServiceProgramExamples : IExample
+    public class CreateNameRegistryProgramExamples : IExample
     {
         private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
 
@@ -75,29 +76,24 @@ namespace Solnet.Examples
             var reverseRegistry = GetReverseRegistryKey(ownerAccount.PublicKey.Key);
             Console.WriteLine($"ReverseRegistryKey: {reverseRegistry.Key}");
 
-            var tx = new TransactionBuilder().
-                SetRecentBlockHash(blockHash.Result.Value.Blockhash).
-                SetFeePayer(payerAccount).
-                AddInstruction(
+            var tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
+                .SetFeePayer(payerAccount).AddInstruction(
                     NameServiceProgram.CreateNameRegistry(
-                        twitterHandleRegistry, 
+                        twitterHandleRegistry,
                         payerAccount,
                         ownerAccount.PublicKey,
-                        minBalanceForExemptionNameReverseRegistry, 
+                        minBalanceForExemptionNameReverseRegistry,
                         NameServiceProgram.NameAccountSize + 96)
-                ).
-                AddInstruction(
-                    NameServiceProgram.CreateNameRegistry(
-                        reverseRegistry, 
-                        payerAccount,
-                        ownerAccount.PublicKey, 
-                        minBalanceForExemptionNameReverseRegistry, 
-                        96+18)
-                ).
-                AddInstruction(MemoProgram.NewMemo(payerAccount, "Hello from Sol.Net")).
-                Build(ownerAccount);
+                ).AddInstruction(
+                    NameServiceProgram.UpdateNameRegistry(
+                        reverseRegistry,
+                        125,
+                        new byte[] {0, 0, 1, 1},
+                        ownerAccount.PublicKey,
+                        (PublicKey) "8ZhEweTBhjTVzuRyoJteCqNU7AiHdpYTfreD1y9FvoFu")
+                ).AddInstruction(MemoProgram.NewMemo(payerAccount, "Hello from Sol.Net")).CompileMessage();
 
-            Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
+                Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
             var txSim = rpcClient.SimulateTransaction(tx);
             var logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);

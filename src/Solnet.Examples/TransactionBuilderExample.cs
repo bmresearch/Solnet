@@ -6,25 +6,14 @@ using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
+using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 
 namespace Solnet.Examples
 {
-    public class Examples
-    {
-        public static string PrettyPrintTransactionSimulationLogs(string[] logMessages)
-        {
-            var logString = "";
-            foreach (var log in logMessages)
-            {
-                logString += $"\t\t{log}\n";
-            }
-
-            return logString;
-        }
-    }
-
     public class TransactionBuilderExample : IExample
     {
         private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
@@ -35,15 +24,15 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            var wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
-            var fromAccount = wallet.GetAccount(10);
-            var toAccount = wallet.GetAccount(8);
+            Account fromAccount = wallet.GetAccount(10);
+            Account toAccount = wallet.GetAccount(8);
 
-            var blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
 
-            var tx = new TransactionBuilder()
+            byte[] tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(fromAccount)
                 .AddInstruction(SystemProgram.Transfer(fromAccount.PublicKey, toAccount.PublicKey, 10000000))
@@ -51,10 +40,10 @@ namespace Solnet.Examples
                 .Build(fromAccount);
 
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
-            var txSim = rpcClient.SimulateTransaction(tx);
-            var logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
+            RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
+            string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
-            var firstSig = rpcClient.SendTransaction(tx);
+            RequestResult<string> firstSig = rpcClient.SendTransaction(tx);
             Console.WriteLine($"First Tx Signature: {firstSig.Result}");
         }
     }
@@ -69,25 +58,25 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            var wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
-            var blockHash = rpcClient.GetRecentBlockHash();
-            var minBalanceForExemptionAcc =
+            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            ulong minBalanceForExemptionAcc =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
 
-            var minBalanceForExemptionMint =
+            ulong minBalanceForExemptionMint =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
             
-            var mintAccount = wallet.GetAccount(94206);
+            Account mintAccount = wallet.GetAccount(94207);
             Console.WriteLine($"MintAccount: {mintAccount}");
-            var ownerAccount = wallet.GetAccount(10);
+            Account ownerAccount = wallet.GetAccount(10);
             Console.WriteLine($"OwnerAccount: {ownerAccount}");
-            var initialAccount = wallet.GetAccount(64209);
+            Account initialAccount = wallet.GetAccount(74209);
             Console.WriteLine($"InitialAccount: {initialAccount}");
 
-            var tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
+            byte[] tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
                 .AddInstruction(SystemProgram.CreateAccount(
                     ownerAccount.PublicKey,
@@ -120,11 +109,11 @@ namespace Solnet.Examples
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
-            var txSim = rpcClient.SimulateTransaction(tx);
-            var logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
+            RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
+            string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
 
-            var txReq = rpcClient.SendTransaction(tx);
+            RequestResult<string> txReq = rpcClient.SendTransaction(tx);
             Console.WriteLine($"Tx Signature: {txReq.Result}");
         }
     }
@@ -139,22 +128,22 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            var wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
-            var blockHash = rpcClient.GetRecentBlockHash();
-            var minBalanceForExemptionAcc = rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
+            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            ulong minBalanceForExemptionAcc = rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
 
-            var mintAccount = wallet.GetAccount(31);
+            Account mintAccount = wallet.GetAccount(31);
             Console.WriteLine($"MintAccount: {mintAccount}");
-            var ownerAccount = wallet.GetAccount(10);
+            Account ownerAccount = wallet.GetAccount(10);
             Console.WriteLine($"OwnerAccount: {ownerAccount}");
-            var initialAccount = wallet.GetAccount(32);
+            Account initialAccount = wallet.GetAccount(32);
             Console.WriteLine($"InitialAccount: {initialAccount}");
-            var newAccount = wallet.GetAccount(33);
+            Account newAccount = wallet.GetAccount(33);
             Console.WriteLine($"NewAccount: {newAccount}");
 
-            var tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
+            byte[] tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
                 .AddInstruction(SystemProgram.CreateAccount(
                     ownerAccount.PublicKey,
@@ -176,11 +165,11 @@ namespace Solnet.Examples
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
-            var txSim = rpcClient.SimulateTransaction(tx);
-            var logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
+            RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
+            string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
 
-            var txReq = rpcClient.SendTransaction(tx);
+            RequestResult<string> txReq = rpcClient.SendTransaction(tx);
             Console.WriteLine($"Tx Signature: {txReq.Result}");
         }
     }
@@ -195,23 +184,23 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            var wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
-            var blockHash = rpcClient.GetRecentBlockHash();
-            var minBalanceForExemptionAcc =
+            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            ulong minBalanceForExemptionAcc =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
 
-            var mintAccount = wallet.GetAccount(21);
+            Account mintAccount = wallet.GetAccount(21);
             Console.WriteLine($"MintAccount: {mintAccount}");
-            var ownerAccount = wallet.GetAccount(10);
+            Account ownerAccount = wallet.GetAccount(10);
             Console.WriteLine($"OwnerAccount: {ownerAccount}");
-            var initialAccount = wallet.GetAccount(26);
+            Account initialAccount = wallet.GetAccount(26);
             Console.WriteLine($"InitialAccount: {initialAccount}");
-            var newAccount = wallet.GetAccount(27);
+            Account newAccount = wallet.GetAccount(27);
             Console.WriteLine($"NewAccount: {newAccount}");
 
-            var tx = new TransactionBuilder()
+            byte[] tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
                 .AddInstruction(SystemProgram.CreateAccount(
@@ -238,11 +227,11 @@ namespace Solnet.Examples
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
-            var txSim = rpcClient.SimulateTransaction(tx);
-            var logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
+            RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
+            string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
 
-            var txReq = rpcClient.SendTransaction(tx);
+            RequestResult<string> txReq = rpcClient.SendTransaction(tx);
             Console.WriteLine($"Tx Signature: {txReq.Result}");
         }
     }
@@ -256,18 +245,18 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            var wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
-            var blockHash = rpcClient.GetRecentBlockHash();
-            var minBalanceForExemptionAcc =
+            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            ulong minBalanceForExemptionAcc =
                 rpcClient.GetMinimumBalanceForRentExemption(NonceAccount.AccountDataSize).Result;
 
-            var ownerAccount = wallet.GetAccount(10);
+            Account ownerAccount = wallet.GetAccount(10);
             Console.WriteLine($"OwnerAccount: {ownerAccount}");
-            var nonceAccount = wallet.GetAccount(1119);
+            Account nonceAccount = wallet.GetAccount(1119);
             Console.WriteLine($"NonceAccount: {nonceAccount}");
 
-            var tx = new TransactionBuilder()
+            byte[] tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
                 .AddInstruction(SystemProgram.CreateAccount(
@@ -284,11 +273,11 @@ namespace Solnet.Examples
 
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
-            var txSim = rpcClient.SimulateTransaction(tx);
-            var logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
+            RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
+            string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
 
-            var txReq = rpcClient.SendTransaction(tx);
+            RequestResult<string> txReq = rpcClient.SendTransaction(tx);
             Console.WriteLine($"Tx Signature: {txReq.Result}");
         }
     }
@@ -302,13 +291,13 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            var wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
-            var ownerAccount = wallet.GetAccount(10);
+            Account ownerAccount = wallet.GetAccount(10);
             Console.WriteLine($"OwnerAccount: {ownerAccount}");
-            var nonceAccount = wallet.GetAccount(1119);
+            Account nonceAccount = wallet.GetAccount(1119);
             Console.WriteLine($"NonceAccount: {nonceAccount}");
-            var toAccount = wallet.GetAccount(1);
+            Account toAccount = wallet.GetAccount(1);
             Console.WriteLine($"ToAccount: {toAccount}");
 
             // Get the Nonce Account to get the Nonce to use for the transaction
@@ -328,7 +317,7 @@ namespace Solnet.Examples
                 )
             };
 
-            var tx = new TransactionBuilder()
+            byte[] tx = new TransactionBuilder()
                 .SetFeePayer(ownerAccount)
                 .SetNonceInformation(nonceInfo)
                 .AddInstruction(
@@ -340,12 +329,13 @@ namespace Solnet.Examples
                 .Build(ownerAccount);
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
-            var txSim = rpcClient.SimulateTransaction(tx);
-            var logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
+            RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
+            string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
             
-            var txReq = rpcClient.SendTransaction(tx);
+            RequestResult<string> txReq = rpcClient.SendTransaction(tx);
             Console.WriteLine($"Tx Signature: {txReq.Result}");
         }
     }
+    
 }

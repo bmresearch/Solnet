@@ -31,6 +31,9 @@ namespace Solnet.Programs
             InstructionDictionary.Add(MemoProgram.ProgramIdKey, MemoProgram.Decode);
             InstructionDictionary.Add(SystemProgram.ProgramIdKey, SystemProgram.Decode);
             InstructionDictionary.Add(TokenProgram.ProgramIdKey, TokenProgram.Decode);
+            InstructionDictionary.Add(AssociatedTokenAccountProgram.ProgramIdKey, AssociatedTokenAccountProgram.Decode);
+            InstructionDictionary.Add(NameServiceProgram.ProgramIdKey, NameServiceProgram.Decode);
+            InstructionDictionary.Add(SharedMemoryProgram.ProgramIdKey, SharedMemoryProgram.Decode);
         }
         
         /// <summary>
@@ -53,8 +56,8 @@ namespace Solnet.Programs
         /// <returns>The decoded instruction data.</returns>
         public static DecodedInstruction Decode(PublicKey programKey, ReadOnlySpan<byte> data, List<PublicKey> keys, byte[] keyIndices)
         {
-            DecodeMethodType method = InstructionDictionary[programKey];
-            return method?.Invoke(data, keys, keyIndices);
+            bool exists = InstructionDictionary.TryGetValue(programKey, out DecodeMethodType method);
+            return !exists ? null : method?.Invoke(data, keys, keyIndices);
         }
 
         /// <summary>
@@ -84,6 +87,7 @@ namespace Solnet.Programs
                         InnerInstructions = new List<DecodedInstruction>(),
                         InstructionName = "Unknown",
                         ProgramName = "Unknown",
+                        PublicKey = new PublicKey(programKey)
                     };
                 } else {
                     decodedInstruction = method.Invoke(
@@ -113,6 +117,7 @@ namespace Solnet.Programs
                                 InnerInstructions = new List<DecodedInstruction>(),
                                 InstructionName = "Unknown",
                                 ProgramName = "Unknown",
+                                PublicKey = new PublicKey(programKey)
                             };
                         } else {
                             innerDecodedInstruction = method.Invoke(

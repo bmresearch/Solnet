@@ -32,6 +32,13 @@ namespace Solnet.Programs.Test.Utilities
             71, 52, 172, 63,
         };
         
+        private static readonly byte[] EncodedStringBytes =
+        {
+            21, 0, 0, 0, 116, 104, 105, 115, 32, 105, 115,
+            32, 97, 32, 116, 101, 115, 116, 32, 115, 116, 114,
+            105, 110, 103
+        };
+        
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadU8Exception()
@@ -230,10 +237,10 @@ namespace Solnet.Programs.Test.Utilities
         [TestMethod]
         public void TestReadDouble()
         {
-            const double actual = 1.34534534564565;
+            const double expected = 1.34534534564565;
             ReadOnlySpan<byte> span = DoubleBytes.AsSpan();
             double bi = span.GetDouble(0);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(expected, bi);
         }
         
         [TestMethod]
@@ -247,10 +254,29 @@ namespace Solnet.Programs.Test.Utilities
         [TestMethod]
         public void TestReadSingle()
         {
-            const float actual = 1.34534534f;
+            const float expected = 1.34534534f;
             ReadOnlySpan<byte> span = SingleBytes.AsSpan();
             float bi = span.GetSingle(0);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(expected, bi);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void TestReadRustStringException()
+        {
+            Deserialization.DecodeRustString(EncodedStringBytes, 22);
+        }
+
+        [TestMethod]
+        public void TestReadRustString()
+        {
+            const string expected = "this is a test string"; // 21 chars
+            const int expectedLength = 25; // 21 chars + sizeof(uint) which is the encoding length padding
+
+            (string actual, int length) = Deserialization.DecodeRustString(EncodedStringBytes, 0);
+
+            Assert.AreEqual(expected, actual);
+            Assert.AreEqual(expectedLength, length);
         }
     }
 }

@@ -23,10 +23,20 @@ namespace Solnet.Programs
         private static readonly string HashPrefix = "SPL Name Service";
         
         /// <summary>
+        /// The program's name.
+        /// </summary>
+        private const string ProgramName = "Name Service Program";
+        
+        /// <summary>
+        /// The offset at which the value which defines the instruction method begins.
+        /// </summary>
+        private const int MethodOffset = 0;
+        
+        /// <summary>
         /// The public key of the Name Service Program.
         /// </summary>
         public static readonly PublicKey ProgramIdKey = new("namesLPneVptA9Z5rqUDD9tMTWEJwofgaYwp8cawRkX");
-        
+
         /// <summary>
         /// The space to be used when creating the name record.
         /// </summary>
@@ -111,14 +121,14 @@ namespace Solnet.Programs
             {
                 AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
                 AccountMeta.Writable(payer, true),
-                AccountMeta.Writable(nameKey, true),
+                AccountMeta.Writable(nameKey, false),
                 AccountMeta.ReadOnly(nameOwner, false),
                 nameClass != null
                     ? AccountMeta.ReadOnly(nameClass, true)
-                    : AccountMeta.ReadOnly(new PublicKey(new byte[32]), true),
+                    : AccountMeta.ReadOnly(new PublicKey(new byte[32]), false),
                 parentName != null
-                    ? AccountMeta.ReadOnly(parentName, true)
-                    : AccountMeta.ReadOnly(new PublicKey(new byte[32]), true)
+                    ? AccountMeta.ReadOnly(parentName, false)
+                    : AccountMeta.ReadOnly(new PublicKey(new byte[32]), false)
             };
             if (parentNameOwner != null) keys.Add(AccountMeta.ReadOnly(parentNameOwner, false));
             return new TransactionInstruction
@@ -213,7 +223,7 @@ namespace Solnet.Programs
         }
 
         /// <summary>
-        /// Encode the instruction data to be used with the <see cref="NameServiceInstructions.Create"/> instruction.
+        /// Encode the instruction data to be used with the <see cref="NameServiceInstructions.Values.Create"/> instruction.
         /// </summary>
         /// <param name="hashedName">The hashed name for the record.</param>
         /// <param name="lamports">The number of lamports for rent exemption.</param>
@@ -221,19 +231,19 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction data.</returns>
         private static byte[] EncodeCreateNameRegistryData(ReadOnlySpan<byte> hashedName, ulong lamports, uint space)
         {
-            byte[] methodBuffer = new byte[49];
+            byte[] methodBuffer = new byte[17 + hashedName.Length];
 
-            methodBuffer.WriteU8((byte)NameServiceInstructions.Create, 0);
+            methodBuffer.WriteU8((byte)NameServiceInstructions.Values.Create, MethodOffset);
             methodBuffer.WriteU32((uint) hashedName.Length, 1);
             methodBuffer.WriteSpan(hashedName, 5);
-            methodBuffer.WriteU64(lamports, 37);
-            methodBuffer.WriteU32(space, 45);
+            methodBuffer.WriteU64(lamports, 5 + hashedName.Length);
+            methodBuffer.WriteU32(space, 13 + hashedName.Length);
 
             return methodBuffer;
         }
         
         /// <summary>
-        /// Encode the instruction data to be used with the <see cref="NameServiceInstructions.Update"/> instruction.
+        /// Encode the instruction data to be used with the <see cref="NameServiceInstructions.Values.Update"/> instruction.
         /// </summary>
         /// <param name="offset">The offset at which to update the data.</param>
         /// <param name="data">The data to insert.</param>
@@ -242,7 +252,7 @@ namespace Solnet.Programs
         {
             byte[] methodBuffer = new byte[data.Length + 5];
             
-            methodBuffer.WriteU8((byte)NameServiceInstructions.Update, 0);
+            methodBuffer.WriteU8((byte)NameServiceInstructions.Values.Update, MethodOffset);
             methodBuffer.WriteU32(offset, 1);
             methodBuffer.WriteSpan(data, 5);
 
@@ -250,7 +260,7 @@ namespace Solnet.Programs
         }
         
         /// <summary>
-        /// Encode the instruction data to be used with the <see cref="NameServiceInstructions.Transfer"/> instruction.
+        /// Encode the instruction data to be used with the <see cref="NameServiceInstructions.Values.Transfer"/> instruction.
         /// </summary>
         /// <param name="newOwner">The public key of the account to transfer ownership to.</param>
         /// <returns>The transaction instruction data.</returns>
@@ -258,23 +268,146 @@ namespace Solnet.Programs
         {
             byte[] methodBuffer = new byte[33];
             
-            methodBuffer.WriteU8((byte)NameServiceInstructions.Transfer, 0);
+            methodBuffer.WriteU8((byte)NameServiceInstructions.Values.Transfer, MethodOffset);
             methodBuffer.WritePubKey(newOwner, 1);
             
             return methodBuffer;
         }        
         
         /// <summary>
-        /// Encode the instruction data to be used with the <see cref="NameServiceInstructions.Delete"/> instruction.
+        /// Encode the instruction data to be used with the <see cref="NameServiceInstructions.Values.Delete"/> instruction.
         /// </summary>
         /// <returns>The transaction instruction data.</returns>
         private static byte[] EncodeDeleteNameRegistryData()
         {
             byte[] methodBuffer = new byte[1];
             
-            methodBuffer.WriteU8((byte)NameServiceInstructions.Delete, 0);
+            methodBuffer.WriteU8((byte)NameServiceInstructions.Values.Delete, MethodOffset);
             
             return methodBuffer;
+        }
+        
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="NameServiceInstructions.Values.Create"/> method
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        private static void DecodeCreateNameRegistry(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Payer", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Name Account", keys[keyIndices[2]]);
+            decodedInstruction.Values.Add("Name Owner", keys[keyIndices[3]]);
+            
+            if (keyIndices.Length >= 5)
+                decodedInstruction.Values.Add("Name Class", keys[keyIndices[4]]);
+            
+            if (keyIndices.Length >= 6)
+                decodedInstruction.Values.Add("Parent Name", keys[keyIndices[5]]);
+            
+            if (keyIndices.Length >= 7)
+                decodedInstruction.Values.Add("Parent Name Owner", keys[keyIndices[6]]);
+
+            uint nameLength = data.GetU32(1);
+            decodedInstruction.Values.Add("Hashed Name Length", nameLength);
+            decodedInstruction.Values.Add("Hashed Name", data.GetSpan(5, (int) nameLength).ToArray());
+            decodedInstruction.Values.Add("Lamports", data.GetU64(5 + (int) nameLength));
+            decodedInstruction.Values.Add("Space", data.GetU32(13 + (int) nameLength));
+        }
+        
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="NameServiceInstructions.Values.Update"/> method
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        private static void DecodeUpdateNameRegistry(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Name Account", keys[keyIndices[0]]);
+            
+            if (keyIndices.Length == 2)
+                decodedInstruction.Values.Add("Name Owner", keys[keyIndices[1]]);
+            
+            if (keyIndices.Length == 3)
+                decodedInstruction.Values.Add("Name Class", keys[keyIndices[2]]);
+            
+            decodedInstruction.Values.Add("Offset", data.GetU32(1));
+            decodedInstruction.Values.Add("Data", data[5..].ToArray());
+        }
+        
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="NameServiceInstructions.Values.Transfer"/> method
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        private static void DecodeTransferNameRegistry(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Name Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Name Owner", keys[keyIndices[1]]);
+            
+            if (keyIndices.Length == 3)
+                decodedInstruction.Values.Add("Name Class", keys[keyIndices[2]]);
+            
+            decodedInstruction.Values.Add("New Owner", data.GetPubKey(1));
+        }
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="NameServiceInstructions.Values.Delete"/> method
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        private static void DecodeDeleteNameRegistry(DecodedInstruction decodedInstruction, IList<PublicKey> keys,
+            byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Name Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Name Owner", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Refund Account", keys[keyIndices[2]]);
+        }
+
+        /// <summary>
+        /// Decodes an instruction created by the System Program.
+        /// </summary>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        /// <returns>A decoded instruction.</returns>
+        public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            byte instruction = data.GetU8(MethodOffset);
+            DecodedInstruction decodedInstruction = new()
+            {
+                PublicKey = ProgramIdKey,
+                InstructionName = NameServiceInstructions.Names[instruction],
+                ProgramName = ProgramName,
+                Values = new Dictionary<string, object>(),
+                InnerInstructions = new List<DecodedInstruction>()
+            };
+
+            switch (Enum.Parse(typeof(NameServiceInstructions.Values), instruction.ToString()))
+            {
+                case NameServiceInstructions.Values.Create:
+                    DecodeCreateNameRegistry(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case NameServiceInstructions.Values.Update:
+                    DecodeUpdateNameRegistry(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case NameServiceInstructions.Values.Transfer:
+                    DecodeTransferNameRegistry(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case NameServiceInstructions.Values.Delete:
+                    DecodeDeleteNameRegistry(decodedInstruction, keys, keyIndices);
+                    break;
+            }
+
+            return decodedInstruction;
         }
     }
 }
