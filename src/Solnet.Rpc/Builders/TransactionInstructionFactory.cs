@@ -12,8 +12,8 @@ namespace Solnet.Rpc.Builders
     {
 
         /// <summary>
-        /// Helper method to make TransactionInstruction objects available to languages
-        /// that do not currently support immutable init-only setters like VB.Net
+        /// Helper method to make TransactionInstruction objects available to outside Program implementations in 
+        /// languages that do not currently support immutable init-only setters like VB.Net
         /// </summary>
         /// <param name="programId"></param>
         /// <param name="keys"></param>
