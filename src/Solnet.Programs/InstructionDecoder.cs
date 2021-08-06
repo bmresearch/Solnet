@@ -89,6 +89,13 @@ namespace Solnet.Programs
                         ProgramName = "Unknown",
                         PublicKey = new PublicKey(programKey)
                     };
+                    for (int j = 0; j < txMetaInfo.Transaction.Message.Instructions[i].Accounts.Length; j++)
+                    {
+                        decodedInstruction.Values.Add(
+                            $"Account {j + 1}",
+                            txMetaInfo.Transaction.Message.AccountKeys[
+                                txMetaInfo.Transaction.Message.Instructions[i].Accounts[j]]);
+                    }
                 } else {
                     decodedInstruction = method.Invoke(
                                         Encoders.Base58.DecodeData(instructionInfo.Data),
@@ -112,13 +119,20 @@ namespace Solnet.Programs
                             {
                                 Values = new Dictionary<string, object>()
                                 {
-                                    {"Data", instructionInfo.Data}
+                                    {"Data", innerInstructionInfo.Data}
                                 },
                                 InnerInstructions = new List<DecodedInstruction>(),
                                 InstructionName = "Unknown",
                                 ProgramName = "Unknown",
                                 PublicKey = new PublicKey(programKey)
                             };
+                            for (int j = 0; j < txMetaInfo.Transaction.Message.Instructions[i].Accounts.Length; j++)
+                            {
+                                innerDecodedInstruction.Values.Add(
+                                    $"Account {j + 1}",
+                                    txMetaInfo.Transaction.Message.AccountKeys[
+                                        txMetaInfo.Transaction.Message.Instructions[i].Accounts[j]]);
+                            }
                         } else {
                             innerDecodedInstruction = method.Invoke(
                                 Encoders.Base58.DecodeData(innerInstructionInfo.Data),
@@ -155,15 +169,22 @@ namespace Solnet.Programs
                 
                 if (!registered)
                 {
-                    decodedInstructions.Add(new DecodedInstruction
+                    DecodedInstruction decodedInstruction = new DecodedInstruction
                     {
                         InstructionName = "Unknown",
                         ProgramName = "Unknown",
                         Values = new Dictionary<string, object>
                         {
-                            {"Data", Encoders.Base58.EncodeData(compiledInstruction.Data)}
-                        }
-                    });
+                            { "Data", Encoders.Base58.EncodeData(compiledInstruction.Data) }
+                        },
+                        InnerInstructions = new List<DecodedInstruction>(),
+                        PublicKey = message.AccountKeys[compiledInstruction.ProgramIdIndex]
+                    };
+                    for (int i = 0; i < compiledInstruction.KeyIndices.Length; i++)
+                    {
+                        decodedInstruction.Values.Add($"Account {i + 1}", message.AccountKeys[i]);
+                    }
+                    decodedInstructions.Add(decodedInstruction);
                     continue;
                 }
 

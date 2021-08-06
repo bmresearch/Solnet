@@ -25,6 +25,12 @@
       <None Update="Resources\TestDecodeInstructionFromBlockTransactionMetaInfo.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="Resources\TestDecodeFromTransactionUnknownInstruction.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Resources\TestDecodeFromTransactionUnknownInnerInstruction.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

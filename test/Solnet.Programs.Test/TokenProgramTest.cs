@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System.Collections.Generic;
 
@@ -90,6 +91,29 @@ namespace Solnet.Programs.Test
         private static readonly byte[] ExpectedCloseAccountData = {9};
         private static readonly byte[] ExpectedFreezeAccountData = {10};
         private static readonly byte[] ExpectedThawAccountData = {11};
+        
+        private const string InitializeMultisigMessage =
+            "AwAJDEdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyeLALNX+Hq5QvYpjBUrxcE6c1OPFtuOsWTs" +
+            "RwZ22JTNv0sF4mdbv4FGc/JcD4qM+DJXE0k+DhmNmPu8MItrFyfgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+            "AAAAAAAAAAAABqfVFxksXFEhjMlMPUrxf1ja7gibof1E49vZigAAAAC9PD4jUE81HRWVKjhuaeGhBDrUiRU" +
+            "sQ8PRa6Gkh7BcAzbV0glem2ocQYDPKtsvb2P6eY+diK2RlCQbryCDiW9ENqhqvd4wlbvt2WLwsRs1GuOPhm" +
+            "Rt728O9WHpObgVQ60+Im+a09G04MQPhepwoQn2VGuSmOoDsZvfRJ8im8hThYp3QXZN2eL1ihOJMfLOtOE0d" +
+            "btnaKq58W0jnl+pjmXBBt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/AKkFSlNQ+F3IgtYUpVZyeIop" +
+            "bd8eq6vQpgZ4iEky9O72oNRsOMzYJJil8tqxLyZCv3xaGw9O1hPoqUsFwShXE+aABQMCAAE0AAAAAJBLMwA" +
+            "AAAAAYwEAAAAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQoHAQQFBgcICQICAwMCAAI0AA" +
+            "AAAGBNFgAAAAAAUgAAAAAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQoCAgRDAAp4sAs1f" +
+            "4erlC9imMFSvFwTpzU48W246xZOxHBnbYlM2wBT7yGUtArURga4Avg+yhMwOEM69UaXYBPa+5CFN2YhDQsB" +
+            "ABJIZWxsbyBmcm9tIFNvbC5OZXQ=";
+
+        private const string MintToMultisigMessage =
+            "BQMFC0dpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyDpwtYu322rjxMK+ED8DutHhxOkdgN0Rl6/B7o" +
+            "VsMMG69PD4jUE81HRWVKjhuaeGhBDrUiRUsQ8PRa6Gkh7BcAzbV0glem2ocQYDPKtsvb2P6eY+diK2RlCQbry" +
+            "CDiW9EPiJvmtPRtODED4XqcKEJ9lRrkpjqA7Gb30SfIpvIU4X0sF4mdbv4FGc/JcD4qM+DJXE0k+DhmNmPu8" +
+            "MItrFyfgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABqfVFxksXFEhjMlMPUrxf1ja7gibof1E49" +
+            "vZigAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqXiwCzV/h6uUL2KYwVK8XBOnNTjxbbjrFk" +
+            "7EcGdtiUzbBUpTUPhdyILWFKVWcniKKW3fHqur0KYGeIhJMvTu9qD2GZ+Dnx/yuoM4nlAAN0csYxYXMvDV/e" +
+            "u6teeG3c6leQQGAgABNAAAAADwHR8AAAAAAKUAAAAAAAAABt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX" +
+            "7/AKkIBAEFAAcBAQgGBQEJAgMECQeoYQAAAAAAAAoBABJIZWxsbyBmcm9tIFNvbC5OZXQ=";
 
         [TestMethod]
         public void TestTransfer()
@@ -791,6 +815,121 @@ namespace Solnet.Programs.Test
             Assert.AreEqual(8, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedThawAccountData, txInstruction.Data);
+        }
+        
+        [TestMethod]
+        public void InitializeMultisigDecodeTest()
+        {
+            Message msg = Message.Deserialize(InitializeMultisigMessage);
+            List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
+
+            Assert.AreEqual(5, decodedInstructions.Count);
+
+            // Create Account instruction
+            Assert.AreEqual("Create Account", decodedInstructions[0].InstructionName);
+            Assert.AreEqual("System Program", decodedInstructions[0].ProgramName);
+            Assert.AreEqual("11111111111111111111111111111111", decodedInstructions[0].PublicKey);
+            Assert.AreEqual(0, decodedInstructions[0].InnerInstructions.Count);
+            Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Owner Account", out object owner));
+            Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("New Account", out object newAccount));
+            Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Amount", out object amount));
+            Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Space", out object space));
+            Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", (PublicKey)owner);
+            Assert.AreEqual("987cq6uofpTKzTyQywsyqNNyAKHAkJkBvY6ggqPnS8gJ", (PublicKey)newAccount);
+            Assert.AreEqual(3361680UL, (ulong)amount);
+            Assert.AreEqual(355UL, (ulong)space);
+
+            // initialize multisig instruction
+            Assert.AreEqual("Initialize Multisig", decodedInstructions[1].InstructionName);
+            Assert.AreEqual("Token Program", decodedInstructions[1].ProgramName);
+            Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", decodedInstructions[1].PublicKey);
+            Assert.AreEqual(0, decodedInstructions[1].InnerInstructions.Count);
+            Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Account", out object account));
+            Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Required Signers", out object numReqSigners));
+            Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Signer 1", out object signer1));
+            Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Signer 2", out object signer2));
+            Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Signer 3", out object signer3));
+            Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Signer 4", out object signer4));
+            Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Signer 5", out object signer5));
+            Assert.AreEqual("987cq6uofpTKzTyQywsyqNNyAKHAkJkBvY6ggqPnS8gJ", (PublicKey)account);
+            Assert.AreEqual(3, (byte)numReqSigners);
+            Assert.AreEqual("DjhLN52wpL6aw9k65MHb3jwxQ7fZ7gfMUGK3gHMBQPWa", (PublicKey)signer1);
+            Assert.AreEqual("4h47wFJ7dheVfJJrEcQfx5HvsP3PsfxEqaN38E6pSfhd", (PublicKey)signer2);
+            Assert.AreEqual("4gMxwYxoxbSekFNEUtUFfWECF5cp2FRGughfMx22ivwe", (PublicKey)signer3);
+            Assert.AreEqual("5BYjVTAYDrRQpMCP4zML3X2v6Jde1sHx3a1bd6DRskVJ", (PublicKey)signer4);
+            Assert.AreEqual("AKWjVdBUvekPc2bGf6gKAbQNRSfiXVZ3qFVnP6W8p1W8", (PublicKey)signer5);
+
+            // initialize mint instruction
+            Assert.AreEqual("Initialize Mint", decodedInstructions[3].InstructionName);
+            Assert.AreEqual("Token Program", decodedInstructions[3].ProgramName);
+            Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", decodedInstructions[3].PublicKey);
+            Assert.AreEqual(0, decodedInstructions[3].InnerInstructions.Count);
+            Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Account", out account));
+            Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Decimals", out object decimals));
+            Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Mint Authority", out object mintAuthority));
+            Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Freeze Authority", out object freezeAuthority));
+            Assert.IsTrue(decodedInstructions[3].Values
+                .TryGetValue("Freeze Authority Option", out object freezeAuthorityOpt));
+            Assert.AreEqual("HUATcRqk8qaNHTfRjBePt9mUZ16dDN1cbpWQDk7QFUGm", (PublicKey)account);
+            Assert.AreEqual(10, (byte)decimals);
+            Assert.AreEqual("987cq6uofpTKzTyQywsyqNNyAKHAkJkBvY6ggqPnS8gJ", (PublicKey)mintAuthority);
+            Assert.AreEqual(0, (byte)freezeAuthorityOpt);
+            Assert.AreEqual("6eeL1Wb4ufcnxjTtvEStVGHPHeAWexLAFcJ6Kq9pUsXJ", (PublicKey)freezeAuthority);
+        }
+
+        [TestMethod]
+        public void MintToMultisigDecodeTest()
+        {
+            Message msg = Message.Deserialize(MintToMultisigMessage);
+            List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
+
+            Assert.AreEqual(4, decodedInstructions.Count);
+            
+            // Create Account instruction
+            Assert.AreEqual("Create Account", decodedInstructions[0].InstructionName);
+            Assert.AreEqual("System Program", decodedInstructions[0].ProgramName);
+            Assert.AreEqual("11111111111111111111111111111111", decodedInstructions[0].PublicKey);
+            Assert.AreEqual(0, decodedInstructions[0].InnerInstructions.Count);
+            Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Owner Account", out object owner));
+            Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("New Account", out object newAccount));
+            Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Amount", out object amount));
+            Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Space", out object space));
+            Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", (PublicKey)owner);
+            Assert.AreEqual("z2qF2eWM89sQrXP2ygrLkYkhc58182KqPVRETjv8Dch", (PublicKey)newAccount);
+            Assert.AreEqual(2039280UL, (ulong)amount);
+            Assert.AreEqual(165UL, (ulong)space);
+            
+            // initialize account instruction
+            Assert.AreEqual("Initialize Account", decodedInstructions[1].InstructionName);
+            Assert.AreEqual("Token Program", decodedInstructions[1].ProgramName);
+            Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", decodedInstructions[1].PublicKey);
+            Assert.AreEqual(0, decodedInstructions[1].InnerInstructions.Count);
+            Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Account", out object account));
+            Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Owner", out owner));
+            Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Mint", out object mint));
+            Assert.AreEqual("z2qF2eWM89sQrXP2ygrLkYkhc58182KqPVRETjv8Dch", (PublicKey)account);
+            Assert.AreEqual("HUATcRqk8qaNHTfRjBePt9mUZ16dDN1cbpWQDk7QFUGm", (PublicKey)mint);
+            Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", (PublicKey)owner);
+            
+            // mint to multisig instruction
+            Assert.AreEqual("Mint To", decodedInstructions[2].InstructionName);
+            Assert.AreEqual("Token Program", decodedInstructions[2].ProgramName);
+            Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", decodedInstructions[2].PublicKey);
+            Assert.AreEqual(0, decodedInstructions[2].InnerInstructions.Count);
+            Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Mint Authority", out object mintAuthority));
+            Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Destination", out object destination));
+            Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Amount", out amount));
+            Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Mint", out mint));
+            Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Signer 1", out object signer1));
+            Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Signer 2", out object signer2));
+            Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Signer 3", out object signer3));
+            Assert.AreEqual(25000UL, (ulong)amount);
+            Assert.AreEqual("DjhLN52wpL6aw9k65MHb3jwxQ7fZ7gfMUGK3gHMBQPWa", (PublicKey)signer1);
+            Assert.AreEqual("4h47wFJ7dheVfJJrEcQfx5HvsP3PsfxEqaN38E6pSfhd", (PublicKey)signer2);
+            Assert.AreEqual("5BYjVTAYDrRQpMCP4zML3X2v6Jde1sHx3a1bd6DRskVJ", (PublicKey)signer3);
+            Assert.AreEqual("z2qF2eWM89sQrXP2ygrLkYkhc58182KqPVRETjv8Dch", (PublicKey)destination);
+            Assert.AreEqual("HUATcRqk8qaNHTfRjBePt9mUZ16dDN1cbpWQDk7QFUGm", (PublicKey)mint);
+            Assert.AreEqual("987cq6uofpTKzTyQywsyqNNyAKHAkJkBvY6ggqPnS8gJ", (PublicKey)mintAuthority);
         }
     }
 }

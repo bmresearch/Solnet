@@ -79,28 +79,27 @@ namespace Solnet.Examples
                     Console.WriteLine($"Instructions: {txMeta.Transaction.Message.Instructions.Length}");
                     Console.WriteLine($"InnerInstructions: {txMeta.Meta.InnerInstructions.Length}");
                     var decodedInstructions = InstructionDecoder.DecodeInstructions(txMeta);
-
+                    
                     string aggregate = decodedInstructions.Aggregate(
                         $"\tInstructions",
                         (s, instruction) =>
                         {
-                            s += $"\n\tProgram: {instruction.ProgramName}\t Key: {instruction.PublicKey}\n\t\tInstruction: {instruction.InstructionName}\n";
+                            s += $"\n\tProgram: {instruction.ProgramName}\tKey: {instruction.PublicKey}\n\t\tInstruction: {instruction.InstructionName}\n";
                             s = instruction.Values.Aggregate(
                                 s, (current, entry) => 
                                     current + $"\t\t\t{entry.Key} - {Convert.ChangeType(entry.Value, entry.Value.GetType())}\n");
                             if (instruction.InnerInstructions.Count > 0) 
                                 return instruction.InnerInstructions.Aggregate(
-                                 s += $"\t\tInnerInstructions",
-                                (inner, innerInstruction) =>
-                                {
-                                    inner += $"\n\t\tCPI: {innerInstruction.ProgramName}\t\t\t\tInstruction: {innerInstruction.InstructionName}\n";
-                                    return innerInstruction.Values.Aggregate(
-                                        inner, (current, entry) => 
-                                            current + $"\t\t\t\t{entry.Key} - {Convert.ChangeType(entry.Value, entry.Value.GetType())}\n");
-                                });
+                                    s += $"\t\tInnerInstructions",
+                                    (inner, innerInstruction) =>
+                                    {
+                                        inner += $"\n\t\tCPI: {innerInstruction.ProgramName}\tKey: {innerInstruction.PublicKey}\n\t\t\tInstruction: {innerInstruction.InstructionName}\n";
+                                        return innerInstruction.Values.Aggregate(
+                                            inner, (current, entry) => 
+                                                current + $"\t\t\t\t{entry.Key} - {Convert.ChangeType(entry.Value, entry.Value.GetType())}\n");
+                                    });
                             return s;
                         });
-                    File.WriteAllText($"./log{slot}.json", aggregate);
                     Console.WriteLine(aggregate);
                 }
                 
