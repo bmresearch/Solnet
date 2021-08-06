@@ -256,21 +256,16 @@ namespace Solnet.Examples
             Console.WriteLine($"OwnerAccount: {ownerAccount}");
             Account nonceAccount = wallet.GetAccount(1119);
             Console.WriteLine($"NonceAccount: {nonceAccount}");
+            Account newAuthority = wallet.GetAccount(1129);
+            Console.WriteLine($"NewAuthority: {newAuthority}");
 
             byte[] tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
-                .AddInstruction(SystemProgram.CreateAccount(
-                    ownerAccount.PublicKey,
-                    nonceAccount.PublicKey,
-                    minBalanceForExemptionAcc,
-                    NonceAccount.AccountDataSize,
-                    SystemProgram.ProgramIdKey
-                ))
-                .AddInstruction(SystemProgram.InitializeNonceAccount(
+                .AddInstruction(SystemProgram.AuthorizeNonceAccount(
                     nonceAccount,
-                    ownerAccount))
-                .Build(new List<Account> {ownerAccount, nonceAccount});
+                    ownerAccount, newAuthority))
+                .CompileMessage();
 
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
