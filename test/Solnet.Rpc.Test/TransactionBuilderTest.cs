@@ -203,5 +203,21 @@ namespace Solnet.Rpc.Test
             
             CollectionAssert.AreEqual(CompiledMessageBytes, txBytes);
         }
+
+
+        [TestMethod]
+        public void TestTransactionInstructionTest()
+        {
+            Wallet.Wallet wallet = new(MnemonicWords);
+
+            Account ownerAccount = wallet.GetAccount(10);
+            var memo = MemoProgram.NewMemo(ownerAccount, "Hello");
+            var created = TransactionInstructionFactory.Create(new PublicKey(memo.ProgramId), memo.Keys, memo.Data);
+
+            Assert.AreEqual(Convert.ToBase64String(memo.ProgramId), Convert.ToBase64String(created.ProgramId));
+            Assert.AreSame(memo.Keys, created.Keys);
+            Assert.AreEqual(Convert.ToBase64String(memo.Data), Convert.ToBase64String(created.Data));
+
+        }
     }
 }
