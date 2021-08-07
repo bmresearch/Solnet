@@ -15,9 +15,9 @@ namespace Solnet.Rpc.Builders
         /// Helper method to make TransactionInstruction objects available to outside Program implementations in 
         /// languages that do not currently support immutable init-only setters like VB.Net
         /// </summary>
-        /// <param name="programId"></param>
-        /// <param name="keys"></param>
-        /// <param name="data"></param>
+        /// <param name="programId">The program ID associated with the instruction.</param>
+        /// <param name="keys">The keys associated with the instruction.</param>
+        /// <param name="data">The instruction-specific data.</param>
         /// <returns></returns>
         public static TransactionInstruction Create(PublicKey programId, 
                                                     IList<AccountMeta> keys, 
