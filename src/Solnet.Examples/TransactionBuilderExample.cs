@@ -6,12 +6,8 @@ using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
-using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
 
 namespace Solnet.Examples
 {
@@ -69,7 +65,7 @@ namespace Solnet.Examples
             ulong minBalanceForExemptionMint =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
-            
+
             Account mintAccount = wallet.GetAccount(94207);
             Console.WriteLine($"MintAccount: {mintAccount}");
             Account ownerAccount = wallet.GetAccount(10);
@@ -106,7 +102,56 @@ namespace Solnet.Examples
                     25000,
                     ownerAccount.PublicKey))
                 .AddInstruction(MemoProgram.NewMemo(initialAccount.PublicKey, "Hello from Sol.Net"))
-                .Build(new List<Account> {ownerAccount, mintAccount, initialAccount});
+                .Build(new List<Account> { ownerAccount, mintAccount, initialAccount });
+
+            Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
+
+            RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
+            string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
+            Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
+
+            RequestResult<string> txReq = rpcClient.SendTransaction(tx);
+            Console.WriteLine($"Tx Signature: {txReq.Result}");
+        }
+    }
+
+    public class SimpleMintToExample : IExample
+    {
+        private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
+
+        private const string MnemonicWords =
+            "route clerk disease box emerge airport loud waste attitude film army tray " +
+            "forward deal onion eight catalog surface unit card window walnut wealth medal";
+
+        public void Run()
+        {
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
+
+            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            ulong minBalanceForExemptionAcc =
+                rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
+            Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
+
+            ulong minBalanceForExemptionMint =
+                rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
+            Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
+            
+            Account mintAccount = wallet.GetAccount(21);
+            Console.WriteLine($"MintAccount: {mintAccount}");
+            Account ownerAccount = wallet.GetAccount(10);
+            Console.WriteLine($"OwnerAccount: {ownerAccount}");
+            Account initialAccount = wallet.GetAccount(26);
+            Console.WriteLine($"InitialAccount: {initialAccount}");
+
+            byte[] tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
+                .SetFeePayer(ownerAccount)
+                .AddInstruction(TokenProgram.MintTo(
+                    mintAccount.PublicKey,
+                    initialAccount.PublicKey,
+                    25000000,
+                    ownerAccount.PublicKey))
+                .AddInstruction(MemoProgram.NewMemo(initialAccount.PublicKey, "Hello from Sol.Net"))
+                .Build(new List<Account> {ownerAccount});
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
@@ -262,10 +307,17 @@ namespace Solnet.Examples
             byte[] tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
-                .AddInstruction(SystemProgram.AuthorizeNonceAccount(
+                .AddInstruction(SystemProgram.CreateAccount(
+                    ownerAccount.PublicKey,
+                    nonceAccount.PublicKey,
+                    minBalanceForExemptionAcc,
+                    NonceAccount.AccountDataSize,
+                    SystemProgram.ProgramIdKey
+                ))
+                .AddInstruction(SystemProgram.InitializeNonceAccount(
                     nonceAccount,
-                    ownerAccount, newAuthority))
-                .CompileMessage();
+                    ownerAccount))
+                .Build(new List<Account> {ownerAccount, nonceAccount});
 
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
@@ -331,6 +383,57 @@ namespace Solnet.Examples
             
             RequestResult<string> txReq = rpcClient.SendTransaction(tx);
             Console.WriteLine($"Tx Signature: {txReq.Result}");
+        }
+    }
+    
+    public class BurnExample : IExample
+    {
+        private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
+
+        private const string MnemonicWords =
+            "route clerk disease box emerge airport loud waste attitude film army tray " +
+            "forward deal onion eight catalog surface unit card window walnut wealth medal";
+
+        public void Run()
+        {
+            Wallet.Wallet wallet = new (MnemonicWords);
+
+            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            
+            ulong minBalanceForExemptionMultiSig =
+                rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
+            Console.WriteLine($"MinBalanceForRentExemption MultiSig >> {minBalanceForExemptionMultiSig}");
+            ulong minBalanceForExemptionAcc =
+                rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
+            Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
+            ulong minBalanceForExemptionMint =
+                rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
+            Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
+            
+            Account ownerAccount = wallet.GetAccount(10);
+            Account mintAccount = wallet.GetAccount(21);
+            Account initialAccount = wallet.GetAccount(26);
+
+            byte[] msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
+                .SetFeePayer(ownerAccount)
+                .AddInstruction(TokenProgram.Burn(
+                    initialAccount.PublicKey,
+                    mintAccount.PublicKey,
+                    200,
+                    ownerAccount))
+                .AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net"))
+                .CompileMessage();
+
+            Message msg = Examples.DecodeMessageFromWire(msgData);
+            
+            Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
+            Transaction tx = Transaction.Populate(msg,
+                new List<byte[]> { ownerAccount.Sign(msgData) });
+
+            byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
+            
+            string mintToSignature = Examples.SubmitTxSendAndLog(txBytes);
+            Examples.PollConfirmedTx(mintToSignature);
         }
     }
     

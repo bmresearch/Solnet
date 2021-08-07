@@ -4,7 +4,6 @@ using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -171,7 +170,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", decodedInstructions[1].PublicKey);
             Assert.AreEqual(0, decodedInstructions[1].InnerInstructions.Count);
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Account", out object account));
-            Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Owner", out owner));
+            Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Authority", out owner));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Mint", out object mint));
             Assert.AreEqual("FWUPMzrLbAEuH83cf1QphoFdyUdhenDF5oHftwd9Vjyr", (PublicKey)account);
             Assert.AreEqual("AN5M7KvEFiZFxgEUWFdZUdR5i4b96HjXawADpqjxjXCL", (PublicKey)mint);
@@ -215,7 +214,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual(0, decodedInstructions[1].InnerInstructions.Count);
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Source", out object source));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Destination", out object destination));
-            Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Owner", out owner));
+            Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Authority", out owner));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Amount", out object amount));
             Assert.AreEqual("DEy4VaFFqTn6MweESovsbA5mUDMD2a99qnT8YMKSrCF3", (PublicKey)source);
             Assert.AreEqual("BrvPSQpe6rYdvsS4idWPSKdUzyF8v3ZySVYYTuyCJnH5", (PublicKey)destination);
@@ -505,15 +504,15 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("Token Program", decodedInstructions[2].ProgramName);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", decodedInstructions[2].PublicKey);
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Source", out object source));
+            Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Mint", out object mint));
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Destination", out object destination));
-            Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Owner", out ownerAccount));
-            Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Signer 1", out object signer1));
+            Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Authority", out ownerAccount));
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Amount", out amount));
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Decimals", out object decimals));
             Assert.AreEqual("Gg12mmahG97PDACxKiBta7ch2kkqDkXUzjn5oAcbPZct", (PublicKey)source);
-            Assert.AreEqual("J6WZY5nuYGJmfFtBGZaXgwZSRVuLWxNR6gd4d3XTHqTk", (PublicKey)destination);
-            Assert.AreEqual("EME9GxLahsC1mjopepKMJg9RtbUu37aeLaQyHVdEd7vZ", (PublicKey)ownerAccount);
-            Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", (PublicKey)signer1);
+            Assert.AreEqual("J6WZY5nuYGJmfFtBGZaXgwZSRVuLWxNR6gd4d3XTHqTk", (PublicKey)mint);
+            Assert.AreEqual("EME9GxLahsC1mjopepKMJg9RtbUu37aeLaQyHVdEd7vZ", (PublicKey)destination);
+            Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", (PublicKey)ownerAccount);
             Assert.AreEqual(25000UL, (ulong)amount);
             Assert.AreEqual(2, (byte)decimals);
         }
@@ -627,40 +626,6 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("G5EWCBwDM5GzVNwrG9LbgpTdQBD9PEAaey82ttuJJ7Qo", (PublicKey)nonceAccount);
             Assert.AreEqual("3rw6fodqaBQHQZgMuFzbkfz7KNd1H999PphPMJwbqV53", (PublicKey)newAuthority);
             Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", (PublicKey)currentAuthority);
-        }
-        
-                
-        [TestMethod]
-        public void DecodeTest()
-        {
-            Message msg = Message.Deserialize(AuthorizeNonceAccountMessage);
-            List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
-
-            string aggregate = decodedInstructions.Aggregate(
-                $"\tInstructions",
-                (s, instruction) =>
-                {
-                    s +=
-                        $"\n\tProgram: {instruction.ProgramName}\tKey: {instruction.PublicKey}\n\t\tInstruction: {instruction.InstructionName}\n";
-                    s = instruction.Values.Aggregate(
-                        s, (current, entry) =>
-                            current +
-                            $"\t\t\t{entry.Key} - {Convert.ChangeType(entry.Value, entry.Value.GetType())}\n");
-                    if (instruction.InnerInstructions.Count > 0)
-                        return instruction.InnerInstructions.Aggregate(
-                            s += $"\t\tInnerInstructions",
-                            (inner, innerInstruction) =>
-                            {
-                                inner +=
-                                    $"\n\t\tCPI: {innerInstruction.ProgramName}\tKey: {innerInstruction.PublicKey}\n\t\t\tInstruction: {innerInstruction.InstructionName}\n";
-                                return innerInstruction.Values.Aggregate(
-                                    inner, (current, entry) =>
-                                        current +
-                                        $"\t\t\t\t{entry.Key} - {Convert.ChangeType(entry.Value, entry.Value.GetType())}\n");
-                            });
-                    return s;
-                });
-            Console.WriteLine(aggregate);
         }
     }
 }

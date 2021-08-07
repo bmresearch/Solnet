@@ -49,7 +49,7 @@ namespace Solnet.Examples
             RequestResult<TransactionMetaSlotInfo> txMeta = RpcClient.GetTransaction(signature);
             if (!txMeta.WasSuccessful)
             {
-                Thread.Sleep(2500);
+                Thread.Sleep(5000);
                 PollConfirmedTx(signature);
             }
         }

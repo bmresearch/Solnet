@@ -5,6 +5,7 @@ using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Solnet.Rpc.Builders
 {
@@ -177,18 +178,20 @@ namespace Solnet.Rpc.Builders
         /// <returns></returns>
         private List<AccountMeta> GetAccountKeys()
         {
+            List<AccountMeta> newList = new ();
             IList<AccountMeta> keysList = _accountKeysList.AccountList;
             int feePayerIndex = FindAccountIndex(keysList, FeePayer.KeyBytes);
+            
             if (feePayerIndex == -1)
             {
-                keysList.Add(AccountMeta.Writable(FeePayer, true));
+                newList.Add(AccountMeta.Writable(FeePayer, true));
             }
             else
             {
                 keysList.RemoveAt(feePayerIndex);
+                newList.Add(AccountMeta.Writable(FeePayer, true));
             }
-
-            List<AccountMeta> newList = new List<AccountMeta> {AccountMeta.Writable(FeePayer, true)};
+            
             newList.AddRange(keysList);
 
             return newList;

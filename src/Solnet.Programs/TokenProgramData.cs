@@ -198,7 +198,7 @@ namespace Solnet.Programs
         {
             decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Mint", keys[keyIndices[1]]);
-            decodedInstruction.Values.Add("Owner", keys[keyIndices[2]]);
+            decodedInstruction.Values.Add("Authority", keys[keyIndices[2]]);
         }
 
         /// <summary>
@@ -232,7 +232,7 @@ namespace Solnet.Programs
         {
             decodedInstruction.Values.Add("Source", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Destination", keys[keyIndices[1]]);
-            decodedInstruction.Values.Add("Owner", keys[keyIndices[2]]);
+            decodedInstruction.Values.Add("Authority", keys[keyIndices[2]]);
             decodedInstruction.Values.Add("Amount", data.GetU64(1));
             for (int i = 3; i < keyIndices.Length; i++)
             {
@@ -252,10 +252,11 @@ namespace Solnet.Programs
         {
             decodedInstruction.Values.Add("Source", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Delegate", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Authority", keys[keyIndices[2]]);
             decodedInstruction.Values.Add("Amount", data.GetU64(1));
-            for (int i = 2; i < keyIndices.Length; i++)
+            for (int i = 3; i < keyIndices.Length; i++)
             {
-                decodedInstruction.Values.Add($"Signer {i - 1}", keys[keyIndices[i]]);
+                decodedInstruction.Values.Add($"Signer {i - 2}", keys[keyIndices[i]]);
             }
         }
 
@@ -268,7 +269,8 @@ namespace Solnet.Programs
         internal static void DecodeRevokeData(DecodedInstruction decodedInstruction, IList<PublicKey> keys,
             byte[] keyIndices)
         {
-            decodedInstruction.Values.Add("Delegate", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Source", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Authority", keys[keyIndices[1]]);
             for (int i = 2; i < keyIndices.Length; i++)
             {
                 decodedInstruction.Values.Add($"Signer {i - 1}", keys[keyIndices[i]]);
@@ -285,13 +287,14 @@ namespace Solnet.Programs
         internal static void DecodeSetAuthorityData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
             IList<PublicKey> keys, byte[] keyIndices)
         {
-            decodedInstruction.Values.Add(
-                "Authority Type", Enum.Parse(typeof(TokenProgramInstructions), data.GetU8(1).ToString()));
+            decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Current Authority", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Authority Type", Enum.Parse(typeof(AuthorityType), data.GetU8(1).ToString()));
             decodedInstruction.Values.Add("New Authority Option", data.GetU8(2));
-            decodedInstruction.Values.Add("New Authority", data.GetPubKey(34));
-            for (int i = 3; i < keyIndices.Length; i++)
+            decodedInstruction.Values.Add("New Authority", data.GetPubKey(3));
+            for (int i = 2; i < keyIndices.Length; i++)
             {
-                decodedInstruction.Values.Add($"Signer {i - 2}", keys[keyIndices[i]]);
+                decodedInstruction.Values.Add($"Signer {i - 1}", keys[keyIndices[i]]);
             }
         }
 
@@ -327,10 +330,11 @@ namespace Solnet.Programs
         {
             decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Mint", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Authority", keys[keyIndices[2]]);
             decodedInstruction.Values.Add("Amount", data.GetU64(1));
-            for (int i = 2; i < keyIndices.Length; i++)
+            for (int i = 3; i < keyIndices.Length; i++)
             {
-                decodedInstruction.Values.Add($"Signer {i - 1}", keys[keyIndices[i]]);
+                decodedInstruction.Values.Add($"Signer {i - 2}", keys[keyIndices[i]]);
             }
         }
 
@@ -345,9 +349,10 @@ namespace Solnet.Programs
         {
             decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Destination", keys[keyIndices[1]]);
-            for (int i = 2; i < keyIndices.Length; i++)
+            decodedInstruction.Values.Add("Authority", keys[keyIndices[2]]);
+            for (int i = 3; i < keyIndices.Length; i++)
             {
-                decodedInstruction.Values.Add($"Signer {i - 1}", keys[keyIndices[i]]);
+                decodedInstruction.Values.Add($"Signer {i - 2}", keys[keyIndices[i]]);
             }
         }
 
@@ -362,9 +367,10 @@ namespace Solnet.Programs
         {
             decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Mint", keys[keyIndices[1]]);
-            for (int i = 2; i < keyIndices.Length; i++)
+            decodedInstruction.Values.Add("Freeze Authority", keys[keyIndices[2]]);
+            for (int i = 3; i < keyIndices.Length; i++)
             {
-                decodedInstruction.Values.Add($"Signer {i - 1}", keys[keyIndices[i]]);
+                decodedInstruction.Values.Add($"Signer {i - 2}", keys[keyIndices[i]]);
             }
         }
 
@@ -379,9 +385,10 @@ namespace Solnet.Programs
         {
             decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Mint", keys[keyIndices[1]]);
-            for (int i = 2; i < keyIndices.Length; i++)
+            decodedInstruction.Values.Add("Freeze Authority", keys[keyIndices[2]]);
+            for (int i = 3; i < keyIndices.Length; i++)
             {
-                decodedInstruction.Values.Add($"Signer {i - 1}", keys[keyIndices[i]]);
+                decodedInstruction.Values.Add($"Signer {i - 2}", keys[keyIndices[i]]);
             }
         }
 
@@ -396,13 +403,14 @@ namespace Solnet.Programs
             IList<PublicKey> keys, byte[] keyIndices)
         {
             decodedInstruction.Values.Add("Source", keys[keyIndices[0]]);
-            decodedInstruction.Values.Add("Destination", keys[keyIndices[1]]);
-            decodedInstruction.Values.Add("Owner", keys[keyIndices[2]]);
+            decodedInstruction.Values.Add("Mint", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Destination", keys[keyIndices[2]]);
+            decodedInstruction.Values.Add("Authority", keys[keyIndices[3]]);
             decodedInstruction.Values.Add("Amount", data.GetU64(1));
             decodedInstruction.Values.Add("Decimals", data.GetU8(9));
-            for (int i = 3; i < keyIndices.Length; i++)
+            for (int i = 4; i < keyIndices.Length; i++)
             {
-                decodedInstruction.Values.Add($"Signer {i - 2}", keys[keyIndices[i]]);
+                decodedInstruction.Values.Add($"Signer {i - 3}", keys[keyIndices[i]]);
             }
         }
 
@@ -419,11 +427,12 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Source", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Mint", keys[keyIndices[1]]);
             decodedInstruction.Values.Add("Delegate", keys[keyIndices[2]]);
+            decodedInstruction.Values.Add("Authority", keys[keyIndices[3]]);
             decodedInstruction.Values.Add("Amount", data.GetU64(1));
             decodedInstruction.Values.Add("Decimals", data.GetU8(9));
-            for (int i = 3; i < keyIndices.Length; i++)
+            for (int i = 4; i < keyIndices.Length; i++)
             {
-                decodedInstruction.Values.Add($"Signer {i - 2}", keys[keyIndices[i]]);
+                decodedInstruction.Values.Add($"Signer {i - 3}", keys[keyIndices[i]]);
             }
         }
 
@@ -439,11 +448,12 @@ namespace Solnet.Programs
         {
             decodedInstruction.Values.Add("Mint", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Destination", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Mint Authority", keys[keyIndices[2]]);
             decodedInstruction.Values.Add("Amount", data.GetU64(1));
             decodedInstruction.Values.Add("Decimals", data.GetU8(9));
-            for (int i = 2; i < keyIndices.Length; i++)
+            for (int i = 3; i < keyIndices.Length; i++)
             {
-                decodedInstruction.Values.Add($"Signer {i - 1}", keys[keyIndices[i]]);
+                decodedInstruction.Values.Add($"Signer {i - 2}", keys[keyIndices[i]]);
             }
         }
 
@@ -459,11 +469,12 @@ namespace Solnet.Programs
         {
             decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Mint", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Authority", keys[keyIndices[2]]);
             decodedInstruction.Values.Add("Amount", data.GetU64(1));
             decodedInstruction.Values.Add("Decimals", data.GetU8(9));
-            for (int i = 2; i < keyIndices.Length; i++)
+            for (int i = 3; i < keyIndices.Length; i++)
             {
-                decodedInstruction.Values.Add($"Signer {i - 1}", keys[keyIndices[i]]);
+                decodedInstruction.Values.Add($"Signer {i - 2}", keys[keyIndices[i]]);
             }
         }
 
