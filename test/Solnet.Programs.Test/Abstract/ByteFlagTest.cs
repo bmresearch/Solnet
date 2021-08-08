@@ -17,7 +17,7 @@ namespace Solnet.Programs.Test.Abstract
 
             foreach (PropertyInfo prop in props)
             {
-                object getMethod = prop.GetGetMethod();
+                MethodInfo getMethod = prop.GetGetMethod();
                 Assert.IsNotNull(getMethod);
                 
                 string methodName = getMethod.ToString();
@@ -25,9 +25,8 @@ namespace Solnet.Programs.Test.Abstract
                 
                 if (!methodName.Contains("Bit"))
                     continue;
-
-                MethodInfo methodInfo = (MethodInfo)getMethod;
-                object isBitSet = methodInfo.Invoke(sut, null);
+                
+                object isBitSet = getMethod.Invoke(sut, null);
                 Assert.IsNotNull(isBitSet);
                 Assert.IsTrue((bool) isBitSet);
             }
@@ -42,7 +41,7 @@ namespace Solnet.Programs.Test.Abstract
 
             foreach (PropertyInfo prop in props)
             {
-                object getMethod = prop.GetGetMethod();
+                MethodInfo getMethod = prop.GetGetMethod();
                 Assert.IsNotNull(getMethod);
                 
                 string methodName = getMethod.ToString();
@@ -50,9 +49,8 @@ namespace Solnet.Programs.Test.Abstract
                 
                 if (!methodName.Contains("Bit"))
                     continue;
-
-                MethodInfo methodInfo = (MethodInfo)getMethod;
-                object isBitSet = methodInfo.Invoke(sut, null);
+                
+                object isBitSet = getMethod.Invoke(sut, null);
                 Assert.IsNotNull(isBitSet);
                 Assert.IsFalse((bool) isBitSet);
             }
@@ -65,12 +63,12 @@ namespace Solnet.Programs.Test.Abstract
 
             foreach (PropertyInfo prop in props)
             {
-                object getMethod = prop.GetGetMethod();
+                MethodInfo getMethod = prop.GetGetMethod();
                 Assert.IsNotNull(getMethod);
-
+                
                 string methodName = getMethod.ToString();
                 Assert.IsNotNull(methodName);
-
+                
                 if (!methodName.Contains("Bit"))
                     continue;
 
@@ -79,8 +77,7 @@ namespace Solnet.Programs.Test.Abstract
                 
                 ByteFlag sut = new ((byte) bitMaskValue);
 
-                MethodInfo methodInfo = (MethodInfo)getMethod;
-                object isBitSet = methodInfo.Invoke(sut, null);
+                object isBitSet = getMethod.Invoke(sut, null);
                 Assert.IsNotNull(isBitSet);
                 Assert.IsTrue((bool) isBitSet);
             }
