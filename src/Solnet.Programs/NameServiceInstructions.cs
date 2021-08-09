@@ -1,5 +1,7 @@
 // unset
 
+using System.Collections.Generic;
+
 namespace Solnet.Programs
 {
     /// <summary>
@@ -14,14 +16,14 @@ namespace Solnet.Programs
         /// <summary>
         /// Represents the user-friendly names for the instruction types for the <see cref="NameServiceProgram"/>.
         /// </summary>
-        internal static string[] Names = new[]
+        internal static readonly Dictionary<Values, string> Names = new()
         {
-            "Create Name Record",
-            "Update Name Record",
-            "Transfer Name Record",
-            "Delete Name Record"
+            { Values.Create, "Create Name Record" },
+            { Values.Update, "Update Name Record" },
+            { Values.Transfer, "Transfer Name Record" },
+            { Values.Delete, "Delete Name Record" }
         };
-        
+
         /// <summary>
         /// Represents the instruction types for the <see cref="NameServiceProgram"/>.
         /// </summary>

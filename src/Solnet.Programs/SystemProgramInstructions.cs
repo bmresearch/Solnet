@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Solnet.Programs
 {
     /// <summary>
@@ -13,20 +15,20 @@ namespace Solnet.Programs
         /// <summary>
         /// Represents the user-friendly names for the instruction types for the <see cref="SystemProgram"/>.
         /// </summary>
-        internal static string[] Names = new[]
+        internal static readonly Dictionary<Values, string> Names = new()
         {
-            "Create Account",
-            "Assign",
-            "Transfer",
-            "Create Account With Seed",
-            "Advance Nonce Account",
-            "Withdraw Nonce Account",
-            "Initialize Nonce Account",
-            "Authorize Nonce Account",
-            "Allocate",
-            "Allocate With Seed",
-            "Assign With Seed",
-            "Transfer With Seed"
+            { Values.CreateAccount, "Create Account"},
+            { Values.Assign, "Assign"},
+            { Values.Transfer, "Transfer"},
+            { Values.CreateAccountWithSeed, "Create Account With Seed"},
+            { Values.AdvanceNonceAccount, "Advance Nonce Account"},
+            { Values.WithdrawNonceAccount, "Withdraw Nonce Account"},
+            { Values.InitializeNonceAccount, "Initialize Nonce Account"},
+            { Values.AuthorizeNonceAccount, "Authorize Nonce Account"},
+            { Values.Allocate, "Allocate"},
+            { Values.AllocateWithSeed, "Allocate With Seed"},
+            { Values.AssignWithSeed, "Assign With Seed"},
+            { Values.TransferWithSeed, "Transfer With Seed"},
         };
         
         /// <summary>

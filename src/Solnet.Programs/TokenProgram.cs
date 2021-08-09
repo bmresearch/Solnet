@@ -519,18 +519,19 @@ namespace Solnet.Programs
         public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
             uint instruction = data.GetU8(TokenProgramData.MethodOffset);
+            TokenProgramInstructions.Values instructionValue =
+                (TokenProgramInstructions.Values) Enum.Parse(typeof(TokenProgramInstructions.Values), instruction.ToString());
+            
             DecodedInstruction decodedInstruction = new()
             {
                 PublicKey = ProgramIdKey,
-                InstructionName = TokenProgramInstructions.Names[instruction],
+                InstructionName = TokenProgramInstructions.Names[instructionValue],
                 ProgramName = ProgramName,
                 Values = new Dictionary<string, object>(),
                 InnerInstructions = new List<DecodedInstruction>()
             };
 
-            object value = Enum.Parse(typeof(TokenProgramInstructions.Values), instruction.ToString());
-
-            switch (value)
+            switch (instructionValue)
             {
                 case TokenProgramInstructions.Values.InitializeMint:
                     TokenProgramData.DecodeInitializeMintData(decodedInstruction, data, keys, keyIndices);

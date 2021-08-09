@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Solnet.Programs
 {
     /// <summary>
@@ -13,24 +15,24 @@ namespace Solnet.Programs
         /// <summary>
         /// Represents the user-friendly names for the instruction types for the <see cref="TokenProgram"/>.
         /// </summary>
-        internal static string[] Names = new[]
+        internal static readonly Dictionary<Values, string> Names = new()
         {
-            "Initialize Mint",
-            "Initialize Account",
-            "Initialize Multisig",
-            "Transfer",
-            "Approve",
-            "Revoke",
-            "Set Authority",
-            "Mint To",
-            "Burn",
-            "Close Account",
-            "Freeze Account",
-            "Thaw Account",
-            "Transfer Checked",
-            "Approve Checked",
-            "Mint To Checked",
-            "Burn Checked",
+            { Values.InitializeMint, "Initialize Mint" },
+            { Values.InitializeAccount, "Initialize Account" },
+            { Values.InitializeMultiSignature, "Initialize Multisig" },
+            { Values.Transfer, "Transfer" },
+            { Values.Approve, "Approve" },
+            { Values.Revoke, "Revoke" },
+            { Values.SetAuthority, "Set Authority" },
+            { Values.MintTo, "Mint To" },
+            { Values.Burn, "Burn" },
+            { Values.CloseAccount, "Close Account" },
+            { Values.FreezeAccount, "Freeze Account" },
+            { Values.ThawAccount, "Thaw Account" },
+            { Values.TransferChecked, "Transfer Checked" },
+            { Values.ApproveChecked, "Approve Checked" },
+            { Values.MintToChecked, "Mint To Checked" },
+            { Values.BurnChecked, "Burn Checked" },
         };
 
         /// <summary>
