@@ -36,14 +36,14 @@ namespace Solnet.Examples
             Console.WriteLine("Individual Accounts...");
             foreach (var account in tokenWallet.TokenAccounts())
             {
-                Console.WriteLine($"{account.Symbol.PadRight(maxsym)} {account.Balance,14} {account.TokenName.PadRight(maxname)} {account.Address} {(account.IsAssociatedTokenAccount ? "[ATA]" : "")}");
+                Console.WriteLine($"{account.Symbol.PadRight(maxsym)} {account.BalanceDecimal,14} {account.TokenName.PadRight(maxname)} {account.Address} {(account.IsAssociatedTokenAccount ? "[ATA]" : "")}");
             }
             Console.WriteLine();
 
             // show consolidated balances
             Console.WriteLine("Consolidated Balances...");
             foreach (var balance in tokenWallet.Balances()) {
-                Console.WriteLine($"{balance.Symbol.PadRight(maxsym)} {balance.Balance,14} {balance.TokenName.PadRight(maxname)} in {balance.AccountCount} {(balance.AccountCount==1?"account":"accounts")}");
+                Console.WriteLine($"{balance.Symbol.PadRight(maxsym)} {balance.BalanceDecimal,14} {balance.TokenName.PadRight(maxname)} in {balance.AccountCount} {(balance.AccountCount==1?"account":"accounts")}");
             }
             Console.WriteLine();
 

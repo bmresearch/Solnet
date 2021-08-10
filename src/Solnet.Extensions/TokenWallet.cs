@@ -130,15 +130,16 @@ namespace Solnet.Extensions
             foreach (var token in this._tokenAccounts)
             {
                 var mint = token.Account.Data.Parsed.Info.Mint;
-                var balance = token.Account.Data.Parsed.Info.TokenAmount.AmountDecimal;
+                var balancRaw = token.Account.Data.Parsed.Info.TokenAmount.AmountUlong;
+                var balancDecimal = token.Account.Data.Parsed.Info.TokenAmount.AmountDecimal;
                 if (!mintBalances.ContainsKey(mint))
                 {
                     var meta = MintResolver.Resolve(mint);
                     var decimals = token.Account.Data.Parsed.Info.TokenAmount.Decimals;
-                    mintBalances[mint] = new TokenWalletBalance(mint, meta.Symbol, meta.TokenName, decimals, balance, 1);
+                    mintBalances[mint] = new TokenWalletBalance(mint, meta.Symbol, meta.TokenName, decimals, balancDecimal, balancRaw, 1);
                 }
                 else
-                    mintBalances[mint] = mintBalances[mint].AddAccount(balance, 1);
+                    mintBalances[mint] = mintBalances[mint].AddAccount(balancDecimal, balancRaw, 1);
             }
 
             // transfer to output array
@@ -157,8 +158,9 @@ namespace Solnet.Extensions
                 var meta = MintResolver.Resolve(mint);
                 var owner = account.Account.Data.Parsed.Info.Owner ?? Owner;
                 var decimals = account.Account.Data.Parsed.Info.TokenAmount.Decimals;
-                var balance = account.Account.Data.Parsed.Info.TokenAmount.AmountDecimal;
-                list.Add(new TokenWalletAccount(mint, meta.Symbol, meta.TokenName, decimals, balance, account.PublicKey, owner, isAta));
+                var balanceRaw = account.Account.Data.Parsed.Info.TokenAmount.AmountUlong;
+                var balanceDecimal = account.Account.Data.Parsed.Info.TokenAmount.AmountDecimal;
+                list.Add(new TokenWalletAccount(mint, meta.Symbol, meta.TokenName, decimals, balanceDecimal, balanceRaw, account.PublicKey, owner, isAta));
             }
             return list.OrderBy(x => x.TokenName).ToArray();
         }

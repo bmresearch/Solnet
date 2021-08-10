@@ -13,14 +13,16 @@ namespace Solnet.Extensions
                                   string symbol, 
                                   string name, 
                                   int decimalPlaces, 
-                                  decimal balance,
+                                  decimal balanceDecimal,
+                                  ulong balanceRaw,
                                   int accountCount)
         {
             TokenMint = mint;
             Symbol = symbol;
             TokenName = name;
             DecimalPlaces = decimalPlaces;
-            Balance = balance;
+            BalanceDecimal = balanceDecimal;
+            BalanceRaw = balanceRaw;
             AccountCount = accountCount;
         }
 
@@ -32,20 +34,23 @@ namespace Solnet.Extensions
 
         public int DecimalPlaces { get; init; }
 
-        public decimal Balance { get; init; }
+        public decimal BalanceDecimal { get; init; }
+
+        public ulong BalanceRaw { get; init; }
 
         public int AccountCount { get; init; }
 
         public override string ToString()
         {
             if (Symbol == TokenName)
-                return $"{Balance} {Symbol}";
+                return $"{BalanceDecimal} {Symbol}";
             else
-                return $"{Balance} {Symbol} ({TokenName})";
+                return $"{BalanceDecimal} {Symbol} ({TokenName})";
         }
 
-        internal TokenWalletBalance AddAccount(decimal value, int accountCount) {
-            return new TokenWalletBalance(TokenMint, Symbol, TokenName, DecimalPlaces, Balance + value, AccountCount + accountCount);
+        internal TokenWalletBalance AddAccount(decimal valueDecimal, ulong valueRaw, int accountCount) {
+            return new TokenWalletBalance(TokenMint, Symbol, TokenName, DecimalPlaces,
+                BalanceDecimal + valueDecimal, BalanceRaw + valueRaw, AccountCount + accountCount);
         }
 
     }

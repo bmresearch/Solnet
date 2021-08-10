@@ -19,10 +19,11 @@ namespace Solnet.Extensions
                                     string tokenSymbol, 
                                     string tokenName, 
                                     int decimalPlaces, 
-                                    decimal balance, 
+                                    decimal balanceDecimal, 
+                                    ulong balanceRaw, 
                                     string address, 
                                     string owner,
-                                    bool isAta) : base(tokenMint, tokenSymbol, tokenName, decimalPlaces, balance, 1)
+                                    bool isAta) : base(tokenMint, tokenSymbol, tokenName, decimalPlaces, balanceDecimal, balanceRaw, 1)
         {
             Address = address ?? throw new ArgumentNullException(nameof(address));
             Owner = owner ?? throw new ArgumentNullException(nameof(owner));
