@@ -28,6 +28,9 @@ namespace Solnet.Examples
 
             // load snapshot of wallet and sub-accounts
             TokenWallet tokenWallet = TokenWallet.Load(RpcClient, MintResolver, ownerAccount);
+            var balances = tokenWallet.Balances();
+            var maxsym = balances.Max(x => x.Symbol.Length);
+            var maxname = balances.Max(x => x.TokenName.Length);
 
             // show individual token accounts
             Console.WriteLine("Individual Accounts...");
@@ -39,9 +42,6 @@ namespace Solnet.Examples
 
             // show consolidated balances
             Console.WriteLine("Consolidated Balances...");
-            var balances = tokenWallet.Balances();
-            var maxsym = balances.Max(x => x.Symbol.Length);
-            var maxname = balances.Max(x => x.TokenName.Length);
             foreach (var balance in tokenWallet.Balances()) {
                 Console.WriteLine($"{balance.Symbol.PadRight(maxsym)} {balance.Balance,14} {balance.TokenName.PadRight(maxname)} in {balance.AccountCount} {(balance.AccountCount==1?"account":"accounts")}");
             }
