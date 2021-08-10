@@ -12,11 +12,7 @@ namespace Solnet.Extensions
 {
     public class TokenWallet
     {
-        /// <summary>
-        /// Program ID for Solana SPL Token program
-        /// </summary>
-        private const string SPL_PROGRAM_ID = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
-
+      
         /// <summary>
         /// RPC client instance
         /// </summary>
@@ -88,7 +84,7 @@ namespace Solnet.Extensions
                 throw new ApplicationException($"Could not load balance for {Owner}");
 
             // list token accounts
-            var tokenAccounts = RpcClient.GetTokenAccountsByOwner(Owner.ToString(), null, SPL_PROGRAM_ID, commitment);
+            var tokenAccounts = RpcClient.GetTokenAccountsByOwner(Owner.ToString(), null, TokenProgram.ProgramIdKey, commitment);
             if (tokenAccounts.WasSuccessful)
                 _tokenAccounts = tokenAccounts.Result.Value;
             else
