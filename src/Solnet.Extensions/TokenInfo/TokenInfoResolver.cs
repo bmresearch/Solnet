@@ -25,14 +25,25 @@ namespace Solnet.Extensions.TokenInfo
 
         public static TokenInfoResolver Load()
         {
-            return Load(TOKENLIST_GITHUB_URL);
+            return LoadAsync().Result;
         }
 
         public static TokenInfoResolver Load(string url)
         {
+            return LoadAsync(url).Result;
+        }
+
+        public static async Task<TokenInfoResolver> LoadAsync()
+        {
+            return await LoadAsync(TOKENLIST_GITHUB_URL);
+        }
+
+        public static async Task<TokenInfoResolver> LoadAsync(string url)
+        {
             using (var wc = new WebClient())
             {
-                return ParseTokenList(wc.DownloadString(url));
+                var json = await wc.DownloadStringTaskAsync(url);
+                return ParseTokenList(json);
             }
         }
 

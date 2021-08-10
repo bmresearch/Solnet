@@ -7,12 +7,13 @@ using System.Linq;
 using System.Collections.Generic;
 using Solnet.Programs;
 using Solnet.Extensions.TokenInfo;
+using System.Threading.Tasks;
 
 namespace Solnet.Extensions
 {
     public class TokenWallet
     {
-      
+
         /// <summary>
         /// RPC client instance
         /// </summary>
@@ -61,12 +62,27 @@ namespace Solnet.Extensions
         /// Get a TokenWallet instance for a given public key
         /// </summary>
         /// <param name="client"></param>
+        /// <param name="mintResolver"></param>
         /// <param name="publicKey"></param>
+        /// <param name="commitment"></param>
         /// <returns></returns>
-        public static TokenWallet Load(IRpcClient client, ITokenInfoResolver mintResolver, PublicKey publicKey)
+        public static TokenWallet Load(IRpcClient client, 
+                                       ITokenInfoResolver mintResolver, 
+                                       PublicKey publicKey, 
+                                       Commitment commitment = Commitment.Finalized)
         {
+            var output = LoadAsync(client, mintResolver, publicKey, commitment);
+            return output.Result;
+        }
+
+        public async static Task<TokenWallet> LoadAsync(IRpcClient client, 
+                                                        ITokenInfoResolver mintResolver, 
+                                                        PublicKey publicKey, 
+                                                        Commitment commitment = Commitment.Finalized)
+        {
+
             var output = new TokenWallet(client, mintResolver, publicKey);
-            output.Refresh();
+            var unused = await output.RefreshAsync(commitment);
             return output;
         }
 
@@ -75,20 +91,32 @@ namespace Solnet.Extensions
         /// </summary>
         public void Refresh(Commitment commitment = Commitment.Finalized)
         {
+            var unused = RefreshAsync(commitment).Result;
+        }
 
-            // get sol balance
-            var balance = RpcClient.GetBalance(Owner, commitment);
+        /// <summary>
+        /// Refresh balances and token acconuts
+        /// </summary>
+        public async Task<bool> RefreshAsync(Commitment commitment = Commitment.Finalized)
+        {
+
+            // get sol balance and token accounts
+            var balance = await RpcClient.GetBalanceAsync(Owner, commitment);
+            var tokenAccounts = await RpcClient.GetTokenAccountsByOwnerAsync(Owner.ToString(), null, TokenProgram.ProgramIdKey, commitment);
+
+            // handle balance response
             if (balance.WasSuccessful)
                 _balance = balance.Result.Value;
             else
                 throw new ApplicationException($"Could not load balance for {Owner}");
 
-            // list token accounts
-            var tokenAccounts = RpcClient.GetTokenAccountsByOwner(Owner.ToString(), null, TokenProgram.ProgramIdKey, commitment);
+            // handle token accounts response
             if (tokenAccounts.WasSuccessful)
                 _tokenAccounts = tokenAccounts.Result.Value;
             else
                 throw new ApplicationException($"Could not load tokenAccounts for {Owner}");
+
+            return true;
 
         }
 
@@ -114,7 +142,7 @@ namespace Solnet.Extensions
             }
 
             // transfer to output array
-            return mintBalances.Values.OrderBy(x => x.TokenName).ToArray(); 
+            return mintBalances.Values.OrderBy(x => x.TokenName).ToArray();
         }
 
 
@@ -137,11 +165,12 @@ namespace Solnet.Extensions
 
 
 
-        private PublicKey GetAssociatedTokenAddressForMint(string mint) {
+        private PublicKey GetAssociatedTokenAddressForMint(string mint)
+        {
 
             if (_ataCache.ContainsKey(mint))
                 return _ataCache[mint];
-            else 
+            else
             {
                 // derive deterministic associate token account
                 // see https://spl.solana.com/associated-token-account for more info
