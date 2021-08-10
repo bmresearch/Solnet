@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using Solnet.Programs;
 using Solnet.Extensions.TokenInfo;
 using System.Threading.Tasks;
+using Solnet.Extensions.Models;
+using Solnet.Rpc.Core.Http;
+using Solnet.Rpc.Builders;
 
 namespace Solnet.Extensions
 {
@@ -66,18 +69,18 @@ namespace Solnet.Extensions
         /// <param name="publicKey"></param>
         /// <param name="commitment"></param>
         /// <returns></returns>
-        public static TokenWallet Load(IRpcClient client, 
-                                       ITokenInfoResolver mintResolver, 
-                                       PublicKey publicKey, 
+        public static TokenWallet Load(IRpcClient client,
+                                       ITokenInfoResolver mintResolver,
+                                       PublicKey publicKey,
                                        Commitment commitment = Commitment.Finalized)
         {
             var output = LoadAsync(client, mintResolver, publicKey, commitment);
             return output.Result;
         }
 
-        public async static Task<TokenWallet> LoadAsync(IRpcClient client, 
-                                                        ITokenInfoResolver mintResolver, 
-                                                        PublicKey publicKey, 
+        public async static Task<TokenWallet> LoadAsync(IRpcClient client,
+                                                        ITokenInfoResolver mintResolver,
+                                                        PublicKey publicKey,
                                                         Commitment commitment = Commitment.Finalized)
         {
 
@@ -147,7 +150,7 @@ namespace Solnet.Extensions
         }
 
 
-        public TokenWalletAccount[] TokenAccounts()
+        public TokenWalletFilterList TokenAccounts()
         {
             var list = new List<TokenWalletAccount>();
             foreach (var account in this._tokenAccounts)
@@ -162,8 +165,99 @@ namespace Solnet.Extensions
                 var balanceDecimal = account.Account.Data.Parsed.Info.TokenAmount.AmountDecimal;
                 list.Add(new TokenWalletAccount(mint, meta.Symbol, meta.TokenName, decimals, balanceDecimal, balanceRaw, account.PublicKey, owner, isAta));
             }
-            return list.OrderBy(x => x.TokenName).ToArray();
+            return new TokenWalletFilterList(list.OrderBy(x => x.TokenName));
         }
+
+
+        public RequestResult<string> Send(TokenWalletAccount source, decimal amount, PublicKey destination, Account feePayer)
+        {
+            return SendAsync(source, amount, destination, feePayer).Result;
+        }
+
+        public RequestResult<string> Send(TokenWalletAccount source, decimal amount, string destination, Account feePayer)
+        {
+            return SendAsync(source, amount, new PublicKey(destination), feePayer).Result;
+        }
+
+        public async Task<RequestResult<string>> SendAsync(TokenWalletAccount source, decimal amount, string destination, Account feePayer)
+        {
+            return await SendAsync(source, amount, new PublicKey(destination), feePayer);
+        }
+
+        public async Task<RequestResult<string>> SendAsync(TokenWalletAccount source, decimal amount, PublicKey destination, Account feePayer)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (destination == null) throw new ArgumentNullException(nameof(destination));
+            if (feePayer == null) throw new ArgumentNullException(nameof(feePayer));
+
+            // load destination wallet
+            TokenWallet destWallet = await TokenWallet.LoadAsync(RpcClient, MintResolver, destination);
+
+            // get recent block hash
+            var blockHash = await RpcClient.GetRecentBlockHashAsync();
+
+            // prepare transaction
+            var builder = new TransactionBuilder();
+            builder.SetRecentBlockHash(blockHash.Result.Value.Blockhash);
+            builder.SetFeePayer(feePayer);
+
+            // create or reuse target ata for token
+            var targetAta = destWallet.JitCreateAccountForMint(builder, source.TokenMint, feePayer);
+
+            // compute raw amount
+            Decimal impliedAmount = amount;
+            for (int ix=0; ix<source.DecimalPlaces; ix++) impliedAmount = Decimal.Multiply(impliedAmount, 10);
+            ulong rawAmount = Convert.ToUInt64(Decimal.Floor(impliedAmount));
+
+            // build transfer instruction
+            builder.AddInstruction(
+                Programs.TokenProgram.Transfer(new PublicKey(source.Address), 
+                    targetAta, rawAmount, new PublicKey(Owner)));
+
+            // execute
+            var tx = builder.Build(feePayer);
+            return await RpcClient.SendTransactionAsync(tx);
+
+        }
+
+
+        /// <summary>
+        /// Checks for a target ATA for the given mint and prepares one if none are found
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="mint"></param>
+        /// <param name="feePayer"></param>
+        /// <returns></returns>
+        public PublicKey JitCreateAccountForMint(TransactionBuilder builder, string mint, Account feePayer)
+        {
+
+            // find ata for this mint
+            var targets = TokenAccounts().WithMint(mint).WhichAreAssociatedTokenAccounts();
+            if (targets.Count() == 0)
+            {
+                // derive ata address
+                var pubkey = GetAssociatedTokenAddressForMint(mint);
+
+                // add instruction to create it on chain
+                builder.AddInstruction(
+                    AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(
+                        feePayer.PublicKey, new PublicKey(Owner), new PublicKey(mint)));
+
+                // pass back for subsequent use (transfer to etc.)
+                return pubkey;
+
+            }
+            else
+            {
+
+                // use the match address
+                return new PublicKey(targets.First().Address);
+
+            }
+
+        }
+
+
 
 
 
