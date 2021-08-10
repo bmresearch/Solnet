@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Solnet.Extensions\Solnet.Extensions.csproj" />
     <ProjectReference Include="..\Solnet.KeyStore\Solnet.KeyStore.csproj" />
     <ProjectReference Include="..\Solnet.Programs\Solnet.Programs.csproj" />
     <ProjectReference Include="..\Solnet.Rpc\Solnet.Rpc.csproj" />
