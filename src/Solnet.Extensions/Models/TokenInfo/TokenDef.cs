@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Solnet.Extensions.TokenInfo
 {
-    public class TokenInfo
+    public class TokenDef
     {
     
-        public TokenInfo(string mint, string name, string symbol) {
+        public TokenDef(string mint, string name, string symbol) {
             TokenMint = mint ?? throw new ArgumentNullException(nameof(mint));
             TokenName = name ?? throw new ArgumentNullException(nameof(name));
             Symbol = symbol ?? throw new ArgumentNullException(nameof(symbol));
@@ -22,4 +22,19 @@ namespace Solnet.Extensions.TokenInfo
         public string Symbol { get; init; }
 
     }
+
+    internal class TokenListDoc
+    {
+        public IList<TokenListItem> tokens { get; set; }
+    }
+
+    internal class TokenListItem
+    {
+        public string Address { get; set; }
+        public string Symbol { get; set; }
+        public string Name { get; set; }
+        public int Decimals { get; set; }
+        public Dictionary<string, object> Extensions { get; set; }
+    }
+
 }

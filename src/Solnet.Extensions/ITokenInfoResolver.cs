@@ -8,6 +8,6 @@ namespace Solnet.Extensions.TokenInfo
 {
     public interface ITokenInfoResolver
     {
-        TokenInfo Resolve(string mint);
+        TokenDef Resolve(string mint);
     }
 }
