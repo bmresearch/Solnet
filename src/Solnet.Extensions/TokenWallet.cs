@@ -71,8 +71,27 @@ namespace Solnet.Extensions
         /// <returns></returns>
         public static TokenWallet Load(IRpcClient client,
                                        ITokenInfoResolver mintResolver,
-                                       PublicKey publicKey,
+                                       string publicKey,
                                        Commitment commitment = Commitment.Finalized)
+        {
+            var output = LoadAsync(client, mintResolver, new PublicKey(publicKey), commitment);
+            return output.Result;
+        }
+
+        public static TokenWallet Load(IRpcClient client,
+                                       ITokenInfoResolver mintResolver,
+                                       Account owner,
+                                       Commitment commitment = Commitment.Finalized)
+        {
+            if (owner == null) throw new ArgumentNullException(nameof(owner));
+            var output = LoadAsync(client, mintResolver, owner.PublicKey, commitment);
+            return output.Result;
+        }
+        
+        public static TokenWallet Load(IRpcClient client,
+                                               ITokenInfoResolver mintResolver,
+                                               PublicKey publicKey,
+                                               Commitment commitment = Commitment.Finalized)
         {
             var output = LoadAsync(client, mintResolver, publicKey, commitment);
             return output.Result;
@@ -202,7 +221,7 @@ namespace Solnet.Extensions
             builder.SetFeePayer(feePayer);
 
             // create or reuse target ata for token
-            var targetAta = destWallet.JitCreateAccountForMint(builder, source.TokenMint, feePayer);
+            var targetAta = destWallet.JitCreateAssociatedTokenAccount(builder, source.TokenMint, feePayer);
 
             // compute raw amount
             Decimal impliedAmount = amount;
@@ -228,7 +247,7 @@ namespace Solnet.Extensions
         /// <param name="mint"></param>
         /// <param name="feePayer"></param>
         /// <returns></returns>
-        public PublicKey JitCreateAccountForMint(TransactionBuilder builder, string mint, Account feePayer)
+        public PublicKey JitCreateAssociatedTokenAccount(TransactionBuilder builder, string mint, Account feePayer)
         {
 
             // find ata for this mint
