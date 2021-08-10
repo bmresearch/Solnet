@@ -57,19 +57,19 @@ namespace Solnet.Extensions.TokenInfo
             }
         }
     }
-}
 
-internal class SolanaMintList
-{
-    public IList<SolanaMintToken> tokens { get; set; }
-}
+    internal class SolanaMintList
+    {
+        public IList<SolanaMintToken> tokens { get; set; }
+    }
 
-internal class SolanaMintToken
-{
-    public string Address { get; set; }
-    public string Symbol { get; set; }
-    public string Name { get; set; }
-    public int Decimals { get; set; }
-    public Dictionary<string,object> Extensions { get; set; }
-}
+    internal class SolanaMintToken
+    {
+        public string Address { get; set; }
+        public string Symbol { get; set; }
+        public string Name { get; set; }
+        public int Decimals { get; set; }
+        public Dictionary<string,object> Extensions { get; set; }
+    }
 
+}

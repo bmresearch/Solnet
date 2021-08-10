@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Solnet.Extensions.TokenInfo
 {
-    public interface IMintResolver
+    public interface ITokenInfoResolver
     {
-        MintInfo Resolve(string mint);
+        TokenInfo Resolve(string mint);
     }
 }
