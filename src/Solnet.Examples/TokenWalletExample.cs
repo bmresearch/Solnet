@@ -14,8 +14,6 @@ namespace Solnet.Examples
 
         private static readonly IRpcClient RpcClient = ClientFactory.GetClient(Cluster.TestNet);
 
-        private static readonly ITokenInfoResolver MintResolver = TokenInfoResolver.Load();
-
         private const string MnemonicWords =
             "route clerk disease box emerge airport loud waste attitude film army tray " +
             "forward deal onion eight catalog surface unit card window walnut wealth medal";
@@ -26,8 +24,12 @@ namespace Solnet.Examples
             Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
             Wallet.Account ownerAccount = wallet.GetAccount(10);
 
+            // add TokenDef for a TestNet minted token created by Solnet examples
+            var tokens = new TokenInfoResolver();
+            tokens.Add(new TokenDef("AHRNasvVB8UDkU9knqPcn4aVfRbnbVC9HJgSTBwbx8re", "SolNet Test Token", "STT", 2));
+
             // load snapshot of wallet and sub-accounts
-            TokenWallet tokenWallet = TokenWallet.Load(RpcClient, MintResolver, ownerAccount);
+            TokenWallet tokenWallet = TokenWallet.Load(RpcClient, tokens, ownerAccount);
             var balances = tokenWallet.Balances();
             var maxsym = balances.Max(x => x.Symbol.Length);
             var maxname = balances.Max(x => x.TokenName.Length);
@@ -40,10 +42,20 @@ namespace Solnet.Examples
             }
             Console.WriteLine();
 
+            // show filtered accounts
+            Console.WriteLine("Individual Accounts...");
+            var sublist = tokenWallet.TokenAccounts().WithSymbol("STT").WithMint("AHRNasvVB8UDkU9knqPcn4aVfRbnbVC9HJgSTBwbx8re");
+            foreach (var account in sublist)
+            {
+                Console.WriteLine($"{account.Symbol.PadRight(maxsym)} {account.BalanceDecimal,14} {account.TokenName.PadRight(maxname)} {account.Address} {(account.IsAssociatedTokenAccount ? "[ATA]" : "")}");
+            }
+            Console.WriteLine();
+
             // show consolidated balances
             Console.WriteLine("Consolidated Balances...");
-            foreach (var balance in tokenWallet.Balances()) {
-                Console.WriteLine($"{balance.Symbol.PadRight(maxsym)} {balance.BalanceDecimal,14} {balance.TokenName.PadRight(maxname)} in {balance.AccountCount} {(balance.AccountCount==1?"account":"accounts")}");
+            foreach (var balance in tokenWallet.Balances())
+            {
+                Console.WriteLine($"{balance.Symbol.PadRight(maxsym)} {balance.BalanceDecimal,14} {balance.TokenName.PadRight(maxname)} in {balance.AccountCount} {(balance.AccountCount == 1 ? "account" : "accounts")}");
             }
             Console.WriteLine();
 

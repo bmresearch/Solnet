@@ -13,14 +13,18 @@ namespace Solnet.Extensions
     {
         private const string TOKENLIST_GITHUB_URL = "https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json";
 
-        private Dictionary<string, TokenListItem> _tokens;
+        private Dictionary<string, TokenDef> _tokens;
 
-        internal TokenInfoResolver(TokenListDoc tokenList)
-        {
-            _tokens = new Dictionary<string, TokenListItem>();
+        public TokenInfoResolver()
+        { 
+            _tokens = new Dictionary<string, TokenDef>();
+        }
+
+        internal TokenInfoResolver(TokenListDoc tokenList) : this()
+        { 
             foreach (var token in tokenList.tokens)
             {
-                _tokens[token.Address] = token;
+                Add(new TokenDef(token.Address, token.Name, token.Symbol, token.Decimals)); 
             }
         }
 
@@ -60,14 +64,22 @@ namespace Solnet.Extensions
         {
             if (_tokens.ContainsKey(mint))
             {
-                var token = _tokens[mint];
-                return new TokenDef(token.Address, token.Name, token.Symbol, token.Decimals);
+                return _tokens[mint];
             }
             else
             {
-                return new TokenDef(mint, $"Unknown {mint}", string.Empty, -1);
+                var unknown = new TokenDef(mint, $"Unknown {mint}", string.Empty, -1);
+                _tokens[mint] = unknown;
+                return unknown;
             }
         }
+
+        public void Add(TokenDef token)
+        {
+            if (token is null) throw new ArgumentNullException(nameof(token));
+            _tokens[token.TokenMint] = token;
+        }
+
     }
 
 }
