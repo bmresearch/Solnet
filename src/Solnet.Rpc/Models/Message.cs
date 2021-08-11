@@ -1,12 +1,9 @@
-using Solnet.Rpc.Builders;
 using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
 using System;
-using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Solnet.Rpc.Models
 {
@@ -113,6 +110,7 @@ namespace Solnet.Rpc.Models
             byte[] accountAddressesLength = ShortVectorEncoding.EncodeLength(AccountKeys.Count);
             byte[] instructionsLength = ShortVectorEncoding.EncodeLength(Instructions.Count);
             int accountKeysBufferSize = AccountKeys.Count * 32;
+
             MemoryStream accountKeysBuffer = new(accountKeysBufferSize);
 
             foreach (PublicKey key in AccountKeys)
@@ -124,7 +122,6 @@ namespace Solnet.Rpc.Models
                                     accountAddressesLength.Length +
                                     +instructionsLength.Length + Instructions.Count + accountKeysBufferSize;
             MemoryStream buffer = new(messageBufferSize);
-
             buffer.Write(Header.ToBytes());
             buffer.Write(accountAddressesLength);
             buffer.Write(accountKeysBuffer.ToArray());
@@ -139,7 +136,6 @@ namespace Solnet.Rpc.Models
                 buffer.Write(compiledInstruction.DataLength);
                 buffer.Write(compiledInstruction.Data);
             }
-
             return buffer.ToArray();
         }
 

@@ -20,9 +20,15 @@ namespace Solnet.Programs
         /// </summary>
         public static readonly PublicKey ProgramIdKey = new("Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo");
 
-        private const string ProgramName = "Memo";
-
-        private const string InstructionName = "Memo";
+        /// <summary>
+        /// The program's name.
+        /// </summary>
+        private const string ProgramName = "Memo Program";
+        
+        /// <summary>
+        /// The instruction's name.
+        /// </summary>
+        private const string InstructionName = "New Memo";
 
         /// <summary>
         /// Initialize a new transaction instruction which interacts with the Memo Program.
@@ -46,15 +52,33 @@ namespace Solnet.Programs
             };
         }
 
-        public static DecodedInstruction Decode(ReadOnlySpan<byte> data)
+        /// <summary>
+        /// Decodes an instruction created by the Memo Program.
+        /// </summary>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        /// <returns>A decoded instruction.</returns>
+        public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
-            DecodedInstruction decodedInstruction = new();
-            decodedInstruction.PublicKey = ProgramIdKey;
-            decodedInstruction.InstructionName = InstructionName;
-            decodedInstruction.ProgramName = ProgramName;
-            decodedInstruction.Values =
-                new Dictionary<string, object>() {{"memo", Encoding.UTF8.GetString(data)}};
-            
+            DecodedInstruction decodedInstruction = new ()
+            {
+                PublicKey = ProgramIdKey,
+                InstructionName = InstructionName,
+                ProgramName = ProgramName,
+                InnerInstructions = new List<DecodedInstruction>(),
+                Values = new Dictionary<string, object>()
+            };
+            if (keyIndices.Length > 0)
+            {
+                decodedInstruction.Values.Add("Signer", keys[keyIndices[0]]);
+                decodedInstruction.Values.Add("Memo", Encoding.UTF8.GetString(data));
+            }
+            else
+            {
+                decodedInstruction.Values.Add("Memo", Encoding.UTF8.GetString(data));
+            }
+
             return decodedInstruction;
         }
     }

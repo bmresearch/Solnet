@@ -980,6 +980,7 @@ namespace Solnet.Rpc
         /// </remarks>
         /// </summary>
         /// <param name="signature">Transaction signature as base-58 encoded string.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         [Obsolete("Please use GetTransactionAsync whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
         Task<RequestResult<TransactionMetaSlotInfo>> GetConfirmedTransactionAsync(string signature, Commitment commitment = Commitment.Finalized);
@@ -1008,6 +1009,7 @@ namespace Solnet.Rpc
         /// </remarks>
         /// </summary>
         /// <param name="signature">Transaction signature as base-58 encoded string.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         [Obsolete("Please use GetTransaction whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
         RequestResult<TransactionMetaSlotInfo> GetConfirmedTransaction(string signature, Commitment commitment = Commitment.Finalized);

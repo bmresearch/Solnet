@@ -1,3 +1,5 @@
+using Solnet.Programs.Utilities;
+using Solnet.Rpc.Builders;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
@@ -8,6 +10,11 @@ namespace Solnet.Programs
 {
     /// <summary>
     /// Implements the System Program methods.
+    /// <remarks>
+    /// For more information see:
+    /// https://docs.solana.com/developing/runtime-facilities/programs#system-program
+    /// https://docs.rs/solana-sdk/1.7.0/solana_sdk/system_instruction/enum.SystemInstruction.html
+    /// </remarks>
     /// </summary>
     public static class SystemProgram
     {
@@ -26,7 +33,12 @@ namespace Solnet.Programs
         /// The public key of the Rent System Variable.
         /// </summary>
         public static readonly PublicKey SysVarRentKey = new ("SysvarRent111111111111111111111111111111111");
-
+        
+        /// <summary>
+        /// The program's name.
+        /// </summary>
+        private const string ProgramName = "System Program";
+        
         /// <summary>
         /// Initialize a new transaction instruction which interacts with the System Program to create a new account.
         /// </summary>
@@ -318,6 +330,71 @@ namespace Solnet.Programs
                 Keys = keys,
                 Data = SystemProgramData.EncodeTransferWithSeedData(fromOwner, seed, lamports)
             };
+        }
+        
+        /// <summary>
+        /// Decodes an instruction created by the System Program.
+        /// </summary>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        /// <returns>A decoded instruction.</returns>
+        public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            uint instruction = data.GetU32(SystemProgramData.MethodOffset);
+            SystemProgramInstructions.Values instructionValue =
+                (SystemProgramInstructions.Values) Enum.Parse(typeof(SystemProgramInstructions.Values), instruction.ToString());
+            
+            DecodedInstruction decodedInstruction = new()
+            {
+                PublicKey = ProgramIdKey,
+                InstructionName = SystemProgramInstructions.Names[instructionValue],
+                ProgramName = ProgramName,
+                Values = new Dictionary<string, object>(),
+                InnerInstructions = new List<DecodedInstruction>()
+            };
+
+            switch (instructionValue)
+            {
+                    case SystemProgramInstructions.Values.CreateAccount:
+                        SystemProgramData.DecodeCreateAccountData(decodedInstruction, data, keys, keyIndices);
+                        break;
+                    case SystemProgramInstructions.Values.Assign:
+                        SystemProgramData.DecodeAssignData(decodedInstruction, data, keys, keyIndices);
+                        break;
+                    case SystemProgramInstructions.Values.Transfer:
+                        SystemProgramData.DecodeTransferData(decodedInstruction, data, keys, keyIndices);
+                        break;
+                    case SystemProgramInstructions.Values.CreateAccountWithSeed:    
+                        SystemProgramData.DecodeCreateAccountWithSeedData(decodedInstruction, data, keys, keyIndices);                   
+                        break;
+                    case SystemProgramInstructions.Values.AdvanceNonceAccount:
+                        SystemProgramData.DecodeAdvanceNonceAccountData(decodedInstruction, keys, keyIndices);
+                        break;
+                    case SystemProgramInstructions.Values.WithdrawNonceAccount:
+                        SystemProgramData.DecodeWithdrawNonceAccountData(decodedInstruction, data, keys, keyIndices);
+                        break;
+                    case SystemProgramInstructions.Values.InitializeNonceAccount:
+                        SystemProgramData.DecodeInitializeNonceAccountData(decodedInstruction, data, keys, keyIndices);
+                        break;
+                    case SystemProgramInstructions.Values.AuthorizeNonceAccount:
+                        SystemProgramData.DecodeAuthorizeNonceAccountData(decodedInstruction, data, keys, keyIndices);
+                        break;
+                    case SystemProgramInstructions.Values.Allocate:
+                        SystemProgramData.DecodeAllocateData(decodedInstruction, data, keys, keyIndices);
+                        break;
+                    case SystemProgramInstructions.Values.AllocateWithSeed:    
+                        SystemProgramData.DecodeAllocateWithSeedData(decodedInstruction, data, keys, keyIndices);
+                        break;
+                    case SystemProgramInstructions.Values.AssignWithSeed:
+                        SystemProgramData.DecodeAssignWithSeedData(decodedInstruction, data, keys, keyIndices);
+                        break;
+                    case SystemProgramInstructions.Values.TransferWithSeed:
+                        SystemProgramData.DecodeTransferWithSeedData(decodedInstruction, data, keys, keyIndices);
+                        break;
+            }
+
+            return decodedInstruction;
         }
     }
 }

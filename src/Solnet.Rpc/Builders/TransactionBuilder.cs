@@ -41,7 +41,7 @@ namespace Solnet.Rpc.Builders
             _messageBuilder = new MessageBuilder();
             _signatures = new List<string>();
         }
-        
+
         /// <summary>
         /// Serializes the message into a byte array.
         /// </summary>

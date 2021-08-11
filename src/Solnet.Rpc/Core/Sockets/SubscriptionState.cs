@@ -55,7 +55,7 @@ namespace Solnet.Rpc.Core.Sockets
         /// </summary>
         /// <param name="rpcClient">The streaming rpc client reference.</param>
         /// <param name="chan">The channel of this subscription.</param>
-        /// <param name="aditionalParameters">Additional parameters for this given subscription.</param>
+        /// <param name="additionalParameters">Additional parameters for this given subscription.</param>
         protected SubscriptionState(IStreamingRpcClient rpcClient, SubscriptionChannel chan, IList<object> additionalParameters = default)
         {
             _rpcClient = rpcClient;
