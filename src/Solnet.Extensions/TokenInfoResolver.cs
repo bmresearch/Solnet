@@ -61,11 +61,11 @@ namespace Solnet.Extensions
             if (_tokens.ContainsKey(mint))
             {
                 var token = _tokens[mint];
-                return new TokenDef(token.Address, token.Name, token.Symbol);
+                return new TokenDef(token.Address, token.Name, token.Symbol, token.Decimals);
             }
             else
             {
-                return new TokenDef(mint, $"Unknown {mint}", string.Empty);
+                return new TokenDef(mint, $"Unknown {mint}", string.Empty, -1);
             }
         }
     }

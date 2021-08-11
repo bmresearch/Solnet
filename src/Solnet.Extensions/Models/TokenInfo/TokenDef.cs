@@ -9,10 +9,11 @@ namespace Solnet.Extensions.TokenInfo
     public class TokenDef
     {
     
-        public TokenDef(string mint, string name, string symbol) {
+        public TokenDef(string mint, string name, string symbol, int decimalPlaces) {
             TokenMint = mint ?? throw new ArgumentNullException(nameof(mint));
             TokenName = name ?? throw new ArgumentNullException(nameof(name));
             Symbol = symbol ?? throw new ArgumentNullException(nameof(symbol));
+            DecimalPlaces = decimalPlaces;
         }
 
         public string TokenMint { get; init; }
@@ -20,6 +21,8 @@ namespace Solnet.Extensions.TokenInfo
         public string TokenName { get; init; }
 
         public string Symbol { get; init; }
+
+        public int DecimalPlaces { get; init; }
 
     }
 

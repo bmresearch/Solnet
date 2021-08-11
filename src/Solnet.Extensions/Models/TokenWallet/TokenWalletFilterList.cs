@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Solnet.Extensions.TokenInfo;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,12 @@ namespace Solnet.Extensions.Models
         IEnumerator IEnumerable.GetEnumerator()
         {
             return _list.GetEnumerator();
+        }
+
+        public TokenWalletFilterList ForToken(TokenDef token)
+        {
+            if (token == null) throw new ArgumentNullException(nameof(token));
+            return new TokenWalletFilterList(_list.Where(x => x.TokenMint == token.TokenMint));
         }
 
         public TokenWalletFilterList WithSymbol(string symbol)
