@@ -223,15 +223,10 @@ namespace Solnet.Extensions
             // create or reuse target ata for token
             var targetAta = destWallet.JitCreateAssociatedTokenAccount(builder, source.TokenMint, feePayer);
 
-            // compute raw amount
-            Decimal impliedAmount = amount;
-            for (int ix=0; ix<source.DecimalPlaces; ix++) impliedAmount = Decimal.Multiply(impliedAmount, 10);
-            ulong rawAmount = Convert.ToUInt64(Decimal.Floor(impliedAmount));
-
             // build transfer instruction
             builder.AddInstruction(
                 Programs.TokenProgram.Transfer(new PublicKey(source.Address), 
-                    targetAta, rawAmount, new PublicKey(Owner)));
+                    targetAta, source.ConvertDecimalToUlong(amount), new PublicKey(Owner)));
 
             // execute
             var tx = builder.Build(feePayer);
