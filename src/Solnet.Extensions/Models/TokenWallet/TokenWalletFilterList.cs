@@ -59,5 +59,20 @@ namespace Solnet.Extensions.Models
             return new TokenWalletFilterList(_list.Where(x => x.IsAssociatedTokenAccount));
         }
 
+        /// <summary>
+        /// Return the first associated account in the list if there is one or nulll
+        /// </summary>
+        /// <returns></returns>
+        public TokenWalletAccount AssociatedTokenAccount()
+        {
+            var list = new TokenWalletFilterList(_list.Where(x => x.IsAssociatedTokenAccount));
+            if (list.Count() == 1)
+                return list.First();
+            else
+                return null;
+        }
+
+
+
     }
 }

@@ -26,7 +26,7 @@ namespace Solnet.Examples
 
             // add TokenDef for a TestNet minted token created by Solnet examples
             var tokens = new TokenInfoResolver();
-            tokens.Add(new TokenDef("AHRNasvVB8UDkU9knqPcn4aVfRbnbVC9HJgSTBwbx8re", "SolNet Test Token", "STT", 2));
+            tokens.Add(new TokenDef("AHRNasvVB8UDkU9knqPcn4aVfRbnbVC9HJgSTBwbx8re", "Solnet Test Token", "STT", 2));
 
             // load snapshot of wallet and sub-accounts
             TokenWallet tokenWallet = TokenWallet.Load(RpcClient, tokens, ownerAccount);
