@@ -368,16 +368,14 @@ var msg = Message.Deserialize(msgBase64);
 var decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 ```
 
-
-
 ## Contribution
 
 We encourage everyone to contribute, submit issues, PRs, discuss. Every kind of help is welcome.
 
-## Contributors
+## Maintainers
 
-* **Hugo** - *Maintainer* - [murlokito](https://github.com/murlokito)
-* **Tiago** - *Maintainer* - [tiago](https://github.com/tiago18c)
+* **Hugo** - [murlokito](https://github.com/murlokito)
+* **Tiago** - [tiago](https://github.com/tiago18c)
 
 See also the list of [contributors](https://github.com/bmresearch/Solnet/contributors) who participated in this project.
 
