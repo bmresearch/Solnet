@@ -30,7 +30,7 @@ namespace Solnet.Extensions
         /// <summary>
         /// PublicKey for the wallet
         /// </summary>
-        public string Owner { get; init; }
+        public string PublicKey { get; init; }
 
         /// <summary>
         /// Cache of computed ATAs for mints
@@ -57,7 +57,7 @@ namespace Solnet.Extensions
             if (publicKey is null) throw new ArgumentNullException(nameof(publicKey));
             RpcClient = client;
             MintResolver = mintResolver;
-            Owner = publicKey;
+            PublicKey = publicKey;
             _ataCache = new Dictionary<string, PublicKey>();
         }
 
@@ -166,20 +166,20 @@ namespace Solnet.Extensions
         {
 
             // get sol balance and token accounts
-            var balance = await RpcClient.GetBalanceAsync(Owner, commitment);
-            var tokenAccounts = await RpcClient.GetTokenAccountsByOwnerAsync(Owner.ToString(), null, TokenProgram.ProgramIdKey, commitment);
+            var balance = await RpcClient.GetBalanceAsync(PublicKey, commitment);
+            var tokenAccounts = await RpcClient.GetTokenAccountsByOwnerAsync(PublicKey.ToString(), null, TokenProgram.ProgramIdKey, commitment);
 
             // handle balance response
             if (balance.WasSuccessful)
                 Lamports = balance.Result.Value;
             else
-                throw new ApplicationException($"Could not load balance for {Owner}");
+                throw new ApplicationException($"Could not load balance for {PublicKey}");
 
             // handle token accounts response
             if (tokenAccounts.WasSuccessful)
                 _tokenAccounts = tokenAccounts.Result.Value;
             else
-                throw new ApplicationException($"Could not load tokenAccounts for {Owner}");
+                throw new ApplicationException($"Could not load tokenAccounts for {PublicKey}");
 
             return true;
 
@@ -223,7 +223,7 @@ namespace Solnet.Extensions
                 var isAta = ata.ToString() == account.PublicKey;
                 var meta = MintResolver.Resolve(mint);
                 var lamportsRaw = account.Account.Lamports;
-                var owner = account.Account.Data.Parsed.Info.Owner ?? Owner;
+                var owner = account.Account.Data.Parsed.Info.Owner ?? PublicKey;
                 var decimals = account.Account.Data.Parsed.Info.TokenAmount.Decimals;
                 var balanceRaw = account.Account.Data.Parsed.Info.TokenAmount.AmountUlong;
                 var balanceDecimal = account.Account.Data.Parsed.Info.TokenAmount.AmountDecimal;
@@ -271,7 +271,7 @@ namespace Solnet.Extensions
             // build transfer instruction
             builder.AddInstruction(
                 Programs.TokenProgram.Transfer(new PublicKey(source.PublicKey),
-                    targetAta, source.ConvertDecimalToUlong(amount), new PublicKey(Owner)));
+                    targetAta, source.ConvertDecimalToUlong(amount), new PublicKey(PublicKey)));
 
             // execute
             var tx = builder.Build(feePayer);
@@ -300,7 +300,7 @@ namespace Solnet.Extensions
                 // add instruction to create it on chain
                 builder.AddInstruction(
                     AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(
-                        feePayer, new PublicKey(Owner), new PublicKey(mint)));
+                        feePayer, new PublicKey(PublicKey), new PublicKey(mint)));
 
                 // pass back for subsequent use (transfer to etc.)
                 return pubkey;
@@ -329,7 +329,7 @@ namespace Solnet.Extensions
             {
                 // derive deterministic associate token account
                 // see https://spl.solana.com/associated-token-account for more info
-                var address = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(new PublicKey(Owner), new PublicKey(mint));
+                var address = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(new PublicKey(PublicKey), new PublicKey(mint));
                 _ataCache[mint] = address;
                 return address;
             }

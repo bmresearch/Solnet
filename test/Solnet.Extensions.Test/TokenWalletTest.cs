@@ -60,10 +60,12 @@ namespace Solnet.Extensions.Test
             tokens.Add(testToken);
 
             // load account
-            var wallet = TokenWallet.Load(client, tokens, "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
+            var publicKey = "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5";
+            var wallet = TokenWallet.Load(client, tokens, publicKey);
 
             // check wallet 
             Assert.IsNotNull(wallet);
+            Assert.AreEqual(publicKey, wallet.PublicKey);
             Assert.AreEqual((ulong)168855000000, wallet.Lamports);
 
             // check accounts
