@@ -36,6 +36,7 @@ namespace Solnet.Extensions.Models
 
         public TokenWalletFilterList WithSymbol(string symbol)
         {
+            if (string.IsNullOrWhiteSpace(symbol)) throw new ArgumentException(nameof(symbol));
             return new TokenWalletFilterList(_list.Where(x => x.Symbol == symbol));
         }
 
