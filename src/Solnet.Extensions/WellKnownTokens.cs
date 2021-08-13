@@ -14,6 +14,11 @@ namespace Solnet.Extensions
     {
 
         /// <summary>
+        /// Wrapped SOL
+        /// </summary>
+        public static TokenDef WrappedSOL = new TokenDef("So11111111111111111111111111111111111111112", "Wrapped SOL", "SOL", 9);
+
+        /// <summary>
         /// USDC
         /// </summary>
         public static TokenDef USDC = new TokenDef("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", "USD Coin", "USDC", 6);
