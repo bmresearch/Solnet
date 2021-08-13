@@ -64,6 +64,7 @@ namespace Solnet.Extensions.Test
 
             // check wallet 
             Assert.IsNotNull(wallet);
+            Assert.AreEqual((ulong)168855000000, wallet.Lamports);
 
             // check accounts
             var accounts = wallet.TokenAccounts();
@@ -72,6 +73,7 @@ namespace Solnet.Extensions.Test
             // locate known test mint account
             var testAccounts = wallet.TokenAccounts().WithMint("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819");
             Assert.AreEqual(1, testAccounts.Count());
+            Assert.AreEqual((ulong)2039280, testAccounts.First().Lamports);
             Assert.AreEqual(0, testAccounts.WhichAreAssociatedTokenAccounts().Count());
             Assert.AreEqual(2, wallet.TokenAccounts().WithSymbol("TEST").First().DecimalPlaces);
             Assert.AreEqual(testToken.TokenMint, wallet.TokenAccounts().WithSymbol("TEST").First().TokenMint);

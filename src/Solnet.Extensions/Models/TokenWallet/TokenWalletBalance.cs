@@ -15,6 +15,7 @@ namespace Solnet.Extensions
                                   int decimalPlaces, 
                                   decimal balanceDecimal,
                                   ulong balanceRaw,
+                                  ulong lamportsRaw,
                                   int accountCount)
         {
             TokenMint = mint;
@@ -23,6 +24,7 @@ namespace Solnet.Extensions
             DecimalPlaces = decimalPlaces;
             BalanceDecimal = balanceDecimal;
             BalanceRaw = balanceRaw;
+            Lamports = lamportsRaw;
             AccountCount = accountCount;
         }
 
@@ -38,6 +40,8 @@ namespace Solnet.Extensions
 
         public ulong BalanceRaw { get; init; }
 
+        public ulong Lamports { get; init; }
+
         public int AccountCount { get; init; }
 
         public override string ToString()
@@ -48,10 +52,18 @@ namespace Solnet.Extensions
                 return $"{BalanceDecimal} {Symbol} ({TokenName})";
         }
 
-        internal TokenWalletBalance AddAccount(decimal valueDecimal, ulong valueRaw, int accountCount) {
-            return new TokenWalletBalance(TokenMint, Symbol, TokenName, DecimalPlaces,
-                BalanceDecimal + valueDecimal, BalanceRaw + valueRaw, AccountCount + accountCount);
+        internal TokenWalletBalance AddAccount(decimal valueDecimal, 
+                                               ulong valueRaw,
+                                               ulong lamportsRaw, 
+                                               int accountCount) {
+
+            return new TokenWalletBalance(TokenMint, Symbol, TokenName, 
+                DecimalPlaces, BalanceDecimal + valueDecimal, 
+                BalanceRaw + valueRaw, Lamports + lamportsRaw, 
+                AccountCount + accountCount);
+
         }
 
     }
+
 }

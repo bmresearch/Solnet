@@ -40,7 +40,7 @@ namespace Solnet.Extensions
         /// <summary>
         /// Native SOL balance in lamports
         /// </summary>
-        private ulong _balance;
+        public ulong Lamports { get; protected set; }
 
         /// <summary>
         /// List of TokenAccounts
@@ -171,7 +171,7 @@ namespace Solnet.Extensions
 
             // handle balance response
             if (balance.WasSuccessful)
-                _balance = balance.Result.Value;
+                Lamports = balance.Result.Value;
             else
                 throw new ApplicationException($"Could not load balance for {Owner}");
 
@@ -195,16 +195,17 @@ namespace Solnet.Extensions
             foreach (var token in this._tokenAccounts)
             {
                 var mint = token.Account.Data.Parsed.Info.Mint;
+                var lamportsRaw = token.Account.Lamports;
                 var balancRaw = token.Account.Data.Parsed.Info.TokenAmount.AmountUlong;
                 var balancDecimal = token.Account.Data.Parsed.Info.TokenAmount.AmountDecimal;
                 if (!mintBalances.ContainsKey(mint))
                 {
                     var meta = MintResolver.Resolve(mint);
                     var decimals = token.Account.Data.Parsed.Info.TokenAmount.Decimals;
-                    mintBalances[mint] = new TokenWalletBalance(mint, meta.Symbol, meta.TokenName, decimals, balancDecimal, balancRaw, 1);
+                    mintBalances[mint] = new TokenWalletBalance(mint, meta.Symbol, meta.TokenName, decimals, balancDecimal, balancRaw, lamportsRaw, 1);
                 }
                 else
-                    mintBalances[mint] = mintBalances[mint].AddAccount(balancDecimal, balancRaw, 1);
+                    mintBalances[mint] = mintBalances[mint].AddAccount(balancDecimal, balancRaw, lamportsRaw, 1);
             }
 
             // transfer to output array
@@ -221,11 +222,12 @@ namespace Solnet.Extensions
                 var ata = GetAssociatedTokenAddressForMint(mint);
                 var isAta = ata.ToString() == account.PublicKey;
                 var meta = MintResolver.Resolve(mint);
+                var lamportsRaw = account.Account.Lamports;
                 var owner = account.Account.Data.Parsed.Info.Owner ?? Owner;
                 var decimals = account.Account.Data.Parsed.Info.TokenAmount.Decimals;
                 var balanceRaw = account.Account.Data.Parsed.Info.TokenAmount.AmountUlong;
                 var balanceDecimal = account.Account.Data.Parsed.Info.TokenAmount.AmountDecimal;
-                list.Add(new TokenWalletAccount(mint, meta.Symbol, meta.TokenName, decimals, balanceDecimal, balanceRaw, account.PublicKey, owner, isAta));
+                list.Add(new TokenWalletAccount(mint, meta.Symbol, meta.TokenName, decimals, balanceDecimal, balanceRaw, lamportsRaw, account.PublicKey, owner, isAta));
             }
             return new TokenWalletFilterList(list.OrderBy(x => x.TokenName));
         }

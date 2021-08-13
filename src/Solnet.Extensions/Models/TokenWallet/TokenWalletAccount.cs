@@ -21,10 +21,11 @@ namespace Solnet.Extensions
                                     string tokenName, 
                                     int decimalPlaces, 
                                     decimal balanceDecimal, 
-                                    ulong balanceRaw, 
+                                    ulong balanceRaw,
+                                    ulong lamportsRaw, 
                                     string address, 
                                     string owner,
-                                    bool isAta) : base(tokenMint, tokenSymbol, tokenName, decimalPlaces, balanceDecimal, balanceRaw, 1)
+                                    bool isAta) : base(tokenMint, tokenSymbol, tokenName, decimalPlaces, balanceDecimal, balanceRaw, lamportsRaw, 1)
         {
             PublicKey = address ?? throw new ArgumentNullException(nameof(address));
             Owner = owner ?? throw new ArgumentNullException(nameof(owner));
