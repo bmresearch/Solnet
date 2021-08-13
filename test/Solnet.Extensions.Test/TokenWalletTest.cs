@@ -78,7 +78,7 @@ namespace Solnet.Extensions.Test
             Assert.AreEqual(testToken.Symbol, wallet.TokenAccounts().WithMint("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819").First().Symbol);
             Assert.AreEqual(10M, wallet.TokenAccounts().WithSymbol("TEST").First().BalanceDecimal);
             Assert.AreEqual((ulong)125, wallet.TokenAccounts().WithSymbol("TEST").First().ConvertDecimalToUlong(1.25M));
-            Assert.AreEqual("G5SA5eMmbqSFnNZNB2fQV9ipHbh9y9KS65aZkAh9t8zv", wallet.TokenAccounts().WithSymbol("TEST").First().Address);
+            Assert.AreEqual("G5SA5eMmbqSFnNZNB2fQV9ipHbh9y9KS65aZkAh9t8zv", wallet.TokenAccounts().WithSymbol("TEST").First().PublicKey);
             Assert.AreEqual("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", wallet.TokenAccounts().WithSymbol("TEST").First().Owner);
 
         }
@@ -114,7 +114,7 @@ namespace Solnet.Extensions.Test
             Assert.AreEqual(0, unknownAccounts.WhichAreAssociatedTokenAccounts().Count());
             Assert.AreEqual(2, wallet.TokenAccounts().WithMint("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex").First().DecimalPlaces);
             Assert.AreEqual(10M, wallet.TokenAccounts().WithMint("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex").First().BalanceDecimal);
-            Assert.AreEqual("4NSREK36nAr32vooa3L9z8tu6JWj5rY3k4KnsqTgynvm", wallet.TokenAccounts().WithMint("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex").First().Address);
+            Assert.AreEqual("4NSREK36nAr32vooa3L9z8tu6JWj5rY3k4KnsqTgynvm", wallet.TokenAccounts().WithMint("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex").First().PublicKey);
             Assert.AreEqual("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", wallet.TokenAccounts().WithMint("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex").First().Owner);
 
         }

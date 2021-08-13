@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Solnet.Wallet;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace Solnet.Extensions
     public class TokenWalletAccount : TokenWalletBalance
     {
 
-        public string Address { get; init; }
+        public string PublicKey { get; init; }
 
         public string Owner { get; init; }
 
@@ -25,7 +26,7 @@ namespace Solnet.Extensions
                                     string owner,
                                     bool isAta) : base(tokenMint, tokenSymbol, tokenName, decimalPlaces, balanceDecimal, balanceRaw, 1)
         {
-            Address = address ?? throw new ArgumentNullException(nameof(address));
+            PublicKey = address ?? throw new ArgumentNullException(nameof(address));
             Owner = owner ?? throw new ArgumentNullException(nameof(owner));
             IsAssociatedTokenAccount = isAta;
         }

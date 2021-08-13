@@ -38,16 +38,16 @@ namespace Solnet.Examples
             Console.WriteLine("Individual Accounts...");
             foreach (var account in tokenWallet.TokenAccounts())
             {
-                Console.WriteLine($"{account.Symbol.PadRight(maxsym)} {account.BalanceDecimal,14} {account.TokenName.PadRight(maxname)} {account.Address} {(account.IsAssociatedTokenAccount ? "[ATA]" : "")}");
+                Console.WriteLine($"{account.Symbol.PadRight(maxsym)} {account.BalanceDecimal,14} {account.TokenName.PadRight(maxname)} {account.PublicKey} {(account.IsAssociatedTokenAccount ? "[ATA]" : "")}");
             }
             Console.WriteLine();
 
             // show filtered accounts
-            Console.WriteLine("Individual Accounts...");
+            Console.WriteLine("Filtered Accounts...");
             var sublist = tokenWallet.TokenAccounts().WithSymbol("STT").WithMint("AHRNasvVB8UDkU9knqPcn4aVfRbnbVC9HJgSTBwbx8re");
             foreach (var account in sublist)
             {
-                Console.WriteLine($"{account.Symbol.PadRight(maxsym)} {account.BalanceDecimal,14} {account.TokenName.PadRight(maxname)} {account.Address} {(account.IsAssociatedTokenAccount ? "[ATA]" : "")}");
+                Console.WriteLine($"{account.Symbol.PadRight(maxsym)} {account.BalanceDecimal,14} {account.TokenName.PadRight(maxname)} {account.PublicKey} {(account.IsAssociatedTokenAccount ? "[ATA]" : "")}");
             }
             Console.WriteLine();
 

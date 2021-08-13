@@ -268,7 +268,7 @@ namespace Solnet.Extensions
 
             // build transfer instruction
             builder.AddInstruction(
-                Programs.TokenProgram.Transfer(new PublicKey(source.Address),
+                Programs.TokenProgram.Transfer(new PublicKey(source.PublicKey),
                     targetAta, source.ConvertDecimalToUlong(amount), new PublicKey(Owner)));
 
             // execute
@@ -308,7 +308,7 @@ namespace Solnet.Extensions
             {
 
                 // use the match address
-                return new PublicKey(targets.First().Address);
+                return new PublicKey(targets.First().PublicKey);
 
             }
 
