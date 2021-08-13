@@ -20,7 +20,7 @@ namespace Solnet.Extensions
         /// <summary>
         /// RPC client instance
         /// </summary>
-        private IRpcClient RpcClient { get; init; }
+        private ITokenWalletRpcProxy RpcClient { get; init; }
 
         /// <summary>
         /// Resolver for token mint
@@ -50,7 +50,7 @@ namespace Solnet.Extensions
         /// <summary>
         /// Private constructor, get your instances via Load methods
         /// </summary>
-        private TokenWallet(IRpcClient client, ITokenInfoResolver mintResolver, string publicKey)
+        private TokenWallet(ITokenWalletRpcProxy client, ITokenInfoResolver mintResolver, string publicKey)
         {
             if (client is null) throw new ArgumentNullException(nameof(client));
             if (mintResolver is null) throw new ArgumentNullException(nameof(mintResolver));
@@ -60,6 +60,8 @@ namespace Solnet.Extensions
             Owner = publicKey;
             _ataCache = new Dictionary<string, PublicKey>();
         }
+
+        #region Overloaded Load methods
 
         /// <summary>
         /// Get a TokenWallet instance for a given public key
@@ -74,7 +76,7 @@ namespace Solnet.Extensions
                                        string publicKey,
                                        Commitment commitment = Commitment.Finalized)
         {
-            var output = LoadAsync(client, mintResolver, new PublicKey(publicKey), commitment);
+            var output = LoadAsync(new TokenWalletRpcProxy(client), mintResolver, new PublicKey(publicKey), commitment);
             return output.Result;
         }
 
@@ -84,14 +86,42 @@ namespace Solnet.Extensions
                                        Commitment commitment = Commitment.Finalized)
         {
             if (owner == null) throw new ArgumentNullException(nameof(owner));
+            var output = LoadAsync(new TokenWalletRpcProxy(client), mintResolver, owner.PublicKey, commitment);
+            return output.Result;
+        }
+
+        public static TokenWallet Load(IRpcClient client,
+                                       ITokenInfoResolver mintResolver,
+                                       PublicKey publicKey,
+                                       Commitment commitment = Commitment.Finalized)
+        {
+            var output = LoadAsync(new TokenWalletRpcProxy(client), mintResolver, publicKey, commitment);
+            return output.Result;
+        }
+
+        public static TokenWallet Load(ITokenWalletRpcProxy client,
+                                       ITokenInfoResolver mintResolver,
+                                       string publicKey,
+                                       Commitment commitment = Commitment.Finalized)
+        {
+            var output = LoadAsync(client, mintResolver, new PublicKey(publicKey), commitment);
+            return output.Result;
+        }
+
+        public static TokenWallet Load(ITokenWalletRpcProxy client,
+                                       ITokenInfoResolver mintResolver,
+                                       Account owner,
+                                       Commitment commitment = Commitment.Finalized)
+        {
+            if (owner == null) throw new ArgumentNullException(nameof(owner));
             var output = LoadAsync(client, mintResolver, owner.PublicKey, commitment);
             return output.Result;
         }
-        
-        public static TokenWallet Load(IRpcClient client,
-                                               ITokenInfoResolver mintResolver,
-                                               PublicKey publicKey,
-                                               Commitment commitment = Commitment.Finalized)
+
+        public static TokenWallet Load(ITokenWalletRpcProxy client,
+                                       ITokenInfoResolver mintResolver,
+                                       PublicKey publicKey,
+                                       Commitment commitment = Commitment.Finalized)
         {
             var output = LoadAsync(client, mintResolver, publicKey, commitment);
             return output.Result;
@@ -103,10 +133,23 @@ namespace Solnet.Extensions
                                                         Commitment commitment = Commitment.Finalized)
         {
 
+            var output = new TokenWallet(new TokenWalletRpcProxy(client), mintResolver, publicKey);
+            var unused = await output.RefreshAsync(commitment);
+            return output;
+        }
+
+        public async static Task<TokenWallet> LoadAsync(ITokenWalletRpcProxy client,
+                                                        ITokenInfoResolver mintResolver,
+                                                        PublicKey publicKey,
+                                                        Commitment commitment = Commitment.Finalized)
+        {
+
             var output = new TokenWallet(client, mintResolver, publicKey);
             var unused = await output.RefreshAsync(commitment);
             return output;
         }
+
+        #endregion
 
         /// <summary>
         /// Refresh balances and token acconuts
@@ -221,11 +264,11 @@ namespace Solnet.Extensions
             builder.SetFeePayer(feePayer);
 
             // create or reuse target ata for token
-            var targetAta = destWallet.JitCreateAssociatedTokenAccount(builder, source.TokenMint, feePayer);
+            var targetAta = destWallet.JitCreateAssociatedTokenAccount(builder, source.TokenMint, feePayer.PublicKey);
 
             // build transfer instruction
             builder.AddInstruction(
-                Programs.TokenProgram.Transfer(new PublicKey(source.Address), 
+                Programs.TokenProgram.Transfer(new PublicKey(source.Address),
                     targetAta, source.ConvertDecimalToUlong(amount), new PublicKey(Owner)));
 
             // execute
@@ -242,7 +285,7 @@ namespace Solnet.Extensions
         /// <param name="mint"></param>
         /// <param name="feePayer"></param>
         /// <returns></returns>
-        public PublicKey JitCreateAssociatedTokenAccount(TransactionBuilder builder, string mint, Account feePayer)
+        public PublicKey JitCreateAssociatedTokenAccount(TransactionBuilder builder, string mint, PublicKey feePayer)
         {
 
             // find ata for this mint
@@ -255,7 +298,7 @@ namespace Solnet.Extensions
                 // add instruction to create it on chain
                 builder.AddInstruction(
                     AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(
-                        feePayer.PublicKey, new PublicKey(Owner), new PublicKey(mint)));
+                        feePayer, new PublicKey(Owner), new PublicKey(mint)));
 
                 // pass back for subsequent use (transfer to etc.)
                 return pubkey;
