@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Solnet.Programs;
 using Solnet.Rpc.Builders;
 using Solnet.Rpc.Messages;
 using Solnet.Wallet;
@@ -25,23 +26,6 @@ namespace Solnet.Extensions.Test
 
 
         [TestMethod]
-        public void TestMockJsonRpcParse()
-        {
-            var serializerOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                Converters =
-                {
-                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-                }
-            };
-            var json = File.ReadAllText("Resources/TokenWallet/GetBalanceResponse.json");
-            var result = JsonSerializer.Deserialize<JsonRpcResponse<ResponseValue<ulong>>>(json, serializerOptions);
-            Assert.IsNotNull(result);
-        }
-
-
-        [TestMethod]
         public void TestLoadKnownMint()
         {
             // get owner
@@ -51,8 +35,8 @@ namespace Solnet.Extensions.Test
 
             // get mocked RPC client
             var client = new MockTokenWalletRpc();
-            client.Add(File.ReadAllText("Resources/TokenWallet/GetBalanceResponse.json"));
-            client.Add(File.ReadAllText("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json"));
+            client.AddTextFile("Resources/TokenWallet/GetBalanceResponse.json");
+            client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json");
 
             // define some mints
             var tokens = new TokenInfoResolver();
@@ -98,8 +82,8 @@ namespace Solnet.Extensions.Test
 
             // get mocked RPC client
             var client = new MockTokenWalletRpc();
-            client.Add(File.ReadAllText("Resources/TokenWallet/GetBalanceResponse.json"));
-            client.Add(File.ReadAllText("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json"));
+            client.AddTextFile("Resources/TokenWallet/GetBalanceResponse.json");
+            client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json");
 
             // load account
             var tokens = new TokenInfoResolver();
@@ -134,8 +118,8 @@ namespace Solnet.Extensions.Test
 
             // get mocked RPC client
             var client = new MockTokenWalletRpc();
-            client.Add(File.ReadAllText("Resources/TokenWallet/GetBalanceResponse.json"));
-            client.Add(File.ReadAllText("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json"));
+            client.AddTextFile("Resources/TokenWallet/GetBalanceResponse.json");
+            client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json");
 
             // define some mints
             var tokens = new TokenInfoResolver();
@@ -183,10 +167,10 @@ namespace Solnet.Extensions.Test
 
             // get mocked RPC client
             var client = new MockTokenWalletRpc();
-            client.Add(File.ReadAllText("Resources/TokenWallet/GetBalanceResponse.json"));
-            client.Add(File.ReadAllText("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json"));
-            client.Add(File.ReadAllText("Resources/TokenWallet/GetBalanceResponse.json"));
-            client.Add(File.ReadAllText("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json"));
+            client.AddTextFile("Resources/TokenWallet/GetBalanceResponse.json");
+            client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json");
+            client.AddTextFile("Resources/TokenWallet/GetBalanceResponse.json");
+            client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json");
 
             // define some mints
             var tokens = new TokenInfoResolver();
@@ -206,32 +190,84 @@ namespace Solnet.Extensions.Test
 
 
         [TestMethod]
-        public void TestProvisionAtaExecuteBuilder()
+        public void TestSendTokenProvisionAta()
         {
+
+            // check these faked pubkeys are legit
+            // and can derive a PDA
+            var mintPubkey = new PublicKey("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819");
+            var targetOwner = new PublicKey("fakeLtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
+            var deterministicPda = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(targetOwner, mintPubkey);
+            Assert.IsNotNull(deterministicPda);
+
             // get owner
             var ownerWallet = new Wallet.Wallet(MnemonicWords);
             var signer = ownerWallet.GetAccount(1);
             Assert.AreEqual("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", signer.PublicKey.Key);
-
+            
             // get mocked RPC client
             var client = new MockTokenWalletRpc();
-            client.Add(File.ReadAllText("Resources/TokenWallet/GetBalanceResponse.json"));
-            client.Add(File.ReadAllText("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json"));
+            client.AddTextFile("Resources/TokenWallet/GetBalanceResponse.json");
+            client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json");
 
             // define some mints
             var tokens = new TokenInfoResolver();
             var testToken = new TokenInfo.TokenDef("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819", "TEST", "TEST", 2);
             tokens.Add(testToken);
 
-            // load account
+            // load account and identify test token account with some balance
             var wallet = TokenWallet.Load(client, tokens, "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
+            var testTokenAccount = wallet.TokenAccounts().ForToken(testToken).WithAtLeast(5M).First();
+            Assert.IsFalse(testTokenAccount.IsAssociatedTokenAccount);
 
             // check wallet 
             Assert.IsNotNull(wallet);
 
-            // TODO - test send
+            // going to send some TEST token to destination wallet that does not have a
+            // an Associated Token Account for that mint (so one will be provisioned)
+            // internally, this will trigger a wallet load so need to load two more mock responses
+            client.AddTextFile("Resources/TokenWallet/GetBalanceResponse.json");
+            client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse2.json");
+            client.AddTextFile("Resources/TokenWallet/GetRecentBlockhashResponse.json");
+            client.AddTextFile("Resources/TokenWallet/SendTransactionResponse.json");
+            var signature = wallet.Send(testTokenAccount, 1M, targetOwner, signer);
 
         }
+
+
+        [TestMethod]
+        public void TestMockJsonRpcParseResponseValue()
+        {
+            var serializerOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                Converters =
+            {
+                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+            }
+            };
+            var json = File.ReadAllText("Resources/TokenWallet/GetBalanceResponse.json");
+            var result = JsonSerializer.Deserialize<JsonRpcResponse<ResponseValue<ulong>>>(json, serializerOptions);
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void TestMockJsonRpcSendTxParse()
+        {
+            var serializerOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                Converters =
+            {
+                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+            }
+            };
+            var json = File.ReadAllText("Resources/TokenWallet/SendTransactionResponse.json");
+            var result = JsonSerializer.Deserialize<JsonRpcResponse<string>>(json, serializerOptions);
+            Assert.IsNotNull(result);
+        }
+
+
 
     }
 

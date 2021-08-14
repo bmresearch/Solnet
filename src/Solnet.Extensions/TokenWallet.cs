@@ -329,7 +329,9 @@ namespace Solnet.Extensions
             {
                 // derive deterministic associate token account
                 // see https://spl.solana.com/associated-token-account for more info
-                var address = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(new PublicKey(PublicKey), new PublicKey(mint));
+                var targetPubkey = new PublicKey(PublicKey);
+                var mintPubkey = new PublicKey(mint);
+                var address = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(targetPubkey, mintPubkey);
                 _ataCache[mint] = address;
                 return address;
             }

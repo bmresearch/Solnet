@@ -1,0 +1,15 @@
+{ 
+  "jsonrpc": "2.0",
+  "result": {
+    "context": {
+      "slot": 79206433
+    },
+    "value": {
+      "blockhash": "fakehashkwCZCnFbGujHxfVGnFgrgZiomczHr247Tn2p",
+      "feeCalculator": {
+        "lamportsPerSignature": 5000
+      }
+    }
+  },
+  "id": 0
+}

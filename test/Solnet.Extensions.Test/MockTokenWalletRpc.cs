@@ -4,6 +4,7 @@ using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -47,13 +48,41 @@ namespace Solnet.Extensions.Test
         }
 
 
-        public void Add(string resp)
+        public void AddTextFile(string filepath)
         {
-            _responses.Enqueue(resp);
+            _responses.Enqueue(File.ReadAllText(filepath));
         }
 
-        
-        private async Task<RequestResult<ResponseValue<T>>> MockResult<T>()
+
+        private async Task<RequestResult<ResponseValue<T>>> MockResponseValue<T>()
+        {
+            JsonRpcResponse<ResponseValue<T>> result = GetNextJsonResponse<ResponseValue<T>>();
+
+            // package as a successful response
+            var reqResult = new RequestResult<ResponseValue<T>>();
+            reqResult.WasHttpRequestSuccessful = true;
+            reqResult.WasRequestSuccessfullyHandled = true;
+            reqResult.HttpStatusCode = HttpStatusCode.OK;
+            reqResult.Result = result.Result;
+            return await Task.FromResult<RequestResult<ResponseValue<T>>>(reqResult);
+
+        }
+
+        private async Task<RequestResult<T>> MockValue<T>()
+        {
+            JsonRpcResponse<T> result = GetNextJsonResponse<T>();
+
+            // package as a successful response
+            var reqResult = new RequestResult<T>();
+            reqResult.WasHttpRequestSuccessful = true;
+            reqResult.WasRequestSuccessfullyHandled = true;
+            reqResult.HttpStatusCode = HttpStatusCode.OK;
+            reqResult.Result = result.Result;
+            return await Task.FromResult<RequestResult<T>>(reqResult);
+
+        }
+
+        private JsonRpcResponse<T> GetNextJsonResponse<T>()
         {
             // make sure we've got a queued response 
             if (_responses.Count == 0) throw new ApplicationException("Mock responses exhausted");
@@ -69,47 +98,32 @@ namespace Solnet.Extensions.Test
             }
 
             // deserialize JSON RPC response
-            var result = JsonSerializer.Deserialize<JsonRpcResponse<ResponseValue<T>>>(json, _serializerOptions);
+            var result = JsonSerializer.Deserialize<JsonRpcResponse<T>>(json, _serializerOptions);
             if (result == null) throw new ApplicationException("Mock response did not deserialize");
 
             // overwrite response id
             result.Id = id;
-
-            // package as a successful response
-            var reqResult = new RequestResult<ResponseValue<T>>();
-            reqResult.WasHttpRequestSuccessful = true;
-            reqResult.WasRequestSuccessfullyHandled = true;
-            reqResult.HttpStatusCode = HttpStatusCode.OK;
-            reqResult.Result = result.Result;
-            return await Task.FromResult<RequestResult<ResponseValue<T>>>(reqResult);
-
+            return result;
         }
 
         public async Task<RequestResult<ResponseValue<ulong>>> GetBalanceAsync(string pubKey, Commitment commitment = Commitment.Finalized)
         {
-            return await MockResult<ulong>();
+            return await MockResponseValue<ulong>();
         }
 
         public async Task<RequestResult<ResponseValue<BlockHash>>> GetRecentBlockHashAsync(Commitment commitment = Commitment.Finalized)
         {
-            return await MockResult<BlockHash>();
+            return await MockResponseValue<BlockHash>();
         }
 
         public async Task<RequestResult<ResponseValue<List<TokenAccount>>>> GetTokenAccountsByOwnerAsync(string ownerPubKey, string tokenMintPubKey = null, string tokenProgramId = null, Commitment commitment = Commitment.Finalized)
         {
-            return await MockResult<List<TokenAccount>>();
+            return await MockResponseValue<List<TokenAccount>>();
         }
 
         public async Task<RequestResult<string>> SendTransactionAsync(byte[] transaction, bool skipPreflight = false, Commitment commitment = Commitment.Finalized)
         {
-            var mocked = await MockResult<string>();
-
-            var reqResult = new RequestResult<string>();
-            reqResult.HttpStatusCode = HttpStatusCode.OK;
-            reqResult.Result = mocked.Result.Value;
-
-            return await Task.FromResult<RequestResult<string>>(reqResult);
-
+            return await MockValue<string>();
         }
     }
 }
