@@ -2,7 +2,9 @@
 using Solnet.Programs;
 using Solnet.Rpc.Builders;
 using Solnet.Rpc.Messages;
+using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -193,18 +195,68 @@ namespace Solnet.Extensions.Test
         public void TestSendTokenProvisionAta()
         {
 
-            // check these faked pubkeys are legit
-            // and can derive a PDA
+            // get owner
+            var ownerWallet = new Wallet.Wallet(MnemonicWords);
+            var signer = ownerWallet.GetAccount(1);
+            Assert.AreEqual("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", signer.PublicKey.Key);
+
+            // use other account as mock target and check derived PDA
             var mintPubkey = new PublicKey("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819");
-            var targetOwner = new PublicKey("fakeLtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
+            var targetOwner = ownerWallet.GetAccount(99);
             var deterministicPda = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(targetOwner, mintPubkey);
+            Assert.AreEqual("3FmSwkHqwRdqYQ74Nx84LNYLnwPhcNivuqhDGWghZY7F", targetOwner.PublicKey.Key);
             Assert.IsNotNull(deterministicPda);
+            Assert.AreEqual("HwkThm2LadHWCnqaSkJCpQutvrt8qwp2PpSxBHbhcwYV", deterministicPda.Key);
+
+            // get mocked RPC client
+            var client = new MockTokenWalletRpc();
+            client.AddTextFile("Resources/TokenWallet/GetBalanceResponse.json");
+            client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json");
+
+            // define some mints
+            var tokens = new TokenInfoResolver();
+            var testToken = new TokenInfo.TokenDef(mintPubkey.Key, "TEST", "TEST", 2);
+            tokens.Add(testToken);
+
+            // load account 
+            var wallet = TokenWallet.Load(client, tokens, "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
+            Assert.IsNotNull(wallet);
+
+            // identify test token account with some balance
+            var testTokenAccount = wallet.TokenAccounts().ForToken(testToken).WithAtLeast(5M).First();
+            Assert.IsFalse(testTokenAccount.IsAssociatedTokenAccount);
+
+            // going to send some TEST token to destination wallet that does not have a
+            // an Associated Token Account for that mint (so one will be provisioned)
+            // internally, this will trigger a wallet load so need to load two more mock responses
+            client.AddTextFile("Resources/TokenWallet/GetBalanceResponse.json");
+            client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse2.json");
+            client.AddTextFile("Resources/TokenWallet/GetRecentBlockhashResponse.json");
+            client.AddTextFile("Resources/TokenWallet/SendTransactionResponse.json");
+            wallet.Send(testTokenAccount, 1M, targetOwner, signer);
+
+        }
+
+
+        [TestMethod, ExpectedException(typeof(AggregateException))]
+        public void TestTokenWalletLoadAddressCheck()
+        {
+            // try to load a made up wallet address
+            var client = new MockTokenWalletRpc();
+            var tokens = new TokenInfoResolver();
+            TokenWallet.Load(client, tokens, "FAKEkjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
+        }
+
+
+        [TestMethod, ExpectedException(typeof(AggregateException))]
+        public void TestTokenWalletSendAddressCheck()
+        {
 
             // get owner
             var ownerWallet = new Wallet.Wallet(MnemonicWords);
             var signer = ownerWallet.GetAccount(1);
             Assert.AreEqual("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", signer.PublicKey.Key);
-            
+
             // get mocked RPC client
             var client = new MockTokenWalletRpc();
             client.AddTextFile("Resources/TokenWallet/GetBalanceResponse.json");
@@ -217,20 +269,13 @@ namespace Solnet.Extensions.Test
 
             // load account and identify test token account with some balance
             var wallet = TokenWallet.Load(client, tokens, "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
+            Assert.IsNotNull(wallet);
             var testTokenAccount = wallet.TokenAccounts().ForToken(testToken).WithAtLeast(5M).First();
             Assert.IsFalse(testTokenAccount.IsAssociatedTokenAccount);
 
-            // check wallet 
-            Assert.IsNotNull(wallet);
-
-            // going to send some TEST token to destination wallet that does not have a
-            // an Associated Token Account for that mint (so one will be provisioned)
-            // internally, this will trigger a wallet load so need to load two more mock responses
-            client.AddTextFile("Resources/TokenWallet/GetBalanceResponse.json");
-            client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse2.json");
-            client.AddTextFile("Resources/TokenWallet/GetRecentBlockhashResponse.json");
-            client.AddTextFile("Resources/TokenWallet/SendTransactionResponse.json");
-            var signature = wallet.Send(testTokenAccount, 1M, targetOwner, signer);
+            // trigger send to bogus target wallet
+            var targetOwner = "FAILzxtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5";
+            wallet.Send(testTokenAccount, 1M, targetOwner, signer);
 
         }
 
@@ -268,6 +313,25 @@ namespace Solnet.Extensions.Test
         }
 
 
+        [TestMethod]
+        public void TestOnCurveSanityChecks()
+        {
+            // check real wallet address
+            var ownerWallet = new Wallet.Wallet(MnemonicWords);
+            var owner = ownerWallet.GetAccount(1);
+            Assert.AreEqual("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", owner.PublicKey.Key);
+            Assert.IsTrue(Ed25519Extensions.IsOnCurve(owner.PublicKey.KeyBytes));
+
+            // spot an ata
+            var mintPubkey = new PublicKey(WellKnownTokens.Serum.TokenMint);
+            var ata = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(owner, mintPubkey);
+            Assert.IsFalse(Ed25519Extensions.IsOnCurve(ata.KeyBytes));
+
+            // spot a fake address
+            var fake = new PublicKey("FAKEkjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
+            Assert.IsFalse(Ed25519Extensions.IsOnCurve(fake.KeyBytes));
+
+        }
 
     }
 
