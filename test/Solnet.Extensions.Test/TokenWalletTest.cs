@@ -280,6 +280,48 @@ namespace Solnet.Extensions.Test
         }
 
 
+        /// <summary>
+        /// Check to make sure callee can not send source TokenWalletAccount from Wallet A using Wallet B
+        /// </summary>
+        [TestMethod, ExpectedException(typeof(AggregateException))]
+        public void TestSendTokenDefendAgainstAccountMismatch()
+        {
+
+            // define mints and get owner 
+            var client = new MockTokenWalletRpc();
+            var mintPubkey = new PublicKey("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819");
+            var tokens = new TokenInfoResolver();
+            var testToken = new TokenInfo.TokenDef(mintPubkey.Key, "TEST", "TEST", 2);
+            tokens.Add(testToken);
+            var ownerWallet = new Wallet.Wallet(MnemonicWords);
+
+            // load wallet a
+            var pubkey_a = ownerWallet.GetAccount(1);
+            Assert.AreEqual("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", pubkey_a.PublicKey.Key);
+            client.AddTextFile("Resources/TokenWallet/GetBalanceResponse.json");
+            client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json");
+            var wallet_a = TokenWallet.Load(client, tokens, pubkey_a);
+
+            // load wallet b
+            var pubkey_b = ownerWallet.GetAccount(2);
+            Assert.AreEqual("3F2RNf2f2kWYgJ2XsqcjzVeh3rsEQnwf6cawtBiJGyKV", pubkey_b.PublicKey.Key);
+            client.AddTextFile("Resources/TokenWallet/GetBalanceResponse.json");
+            client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse2.json");
+            var wallet_b = TokenWallet.Load(client, tokens, pubkey_b);
+
+            // use other account as mock target and check derived PDA
+            var destination = ownerWallet.GetAccount(99);
+
+            // identify test token account with some balance in Wallet A
+            var account_in_a = wallet_a.TokenAccounts().ForToken(testToken).WithAtLeast(5M).First();
+            Assert.IsFalse(account_in_a.IsAssociatedTokenAccount);
+
+            // attempt to send using wallet b - this should not succeed
+            wallet_b.Send(account_in_a, 1M, destination, pubkey_a);
+
+        }
+
+
         [TestMethod]
         public void TestMockJsonRpcParseResponseValue()
         {

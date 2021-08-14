@@ -273,8 +273,13 @@ namespace Solnet.Extensions
             if (source == null) throw new ArgumentNullException(nameof(source));
             if (destination == null) throw new ArgumentNullException(nameof(destination));
             if (feePayer == null) throw new ArgumentNullException(nameof(feePayer));
+
+            // are destination and feePayer valid publicKeys?
             if (!Ed25519Extensions.IsOnCurve(destination.KeyBytes)) throw new ArgumentException($"Destination PublicKey {destination.ToString()} is invalid wallet address.");
             if (!Ed25519Extensions.IsOnCurve(feePayer.PublicKey.KeyBytes)) throw new ArgumentException($"feePayer PublicKey {feePayer.PublicKey.ToString()} is invalid wallet address.");
+
+            // make sure source account originated from this wallet
+            if (source.Owner != this.PublicKey) throw new ApplicationException("Source account does not belong to this wallet.");
 
             // load destination wallet
             TokenWallet destWallet = await TokenWallet.LoadAsync(RpcClient, MintResolver, destination);
