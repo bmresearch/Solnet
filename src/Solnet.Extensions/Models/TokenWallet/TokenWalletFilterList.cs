@@ -40,6 +40,12 @@ namespace Solnet.Extensions.Models
             return new TokenWalletFilterList(_list.Where(x => x.Symbol == symbol));
         }
 
+        public TokenWalletAccount WithPublicKey(string publicKey)
+        {
+            if (string.IsNullOrWhiteSpace(publicKey)) throw new ArgumentException(nameof(publicKey));
+            return new TokenWalletFilterList(_list.Where(x => x.PublicKey == publicKey)).FirstOrDefault();
+        }
+
         public TokenWalletFilterList WithMint(string mint)
         {
             return new TokenWalletFilterList(_list.Where(x => x.TokenMint == mint));
