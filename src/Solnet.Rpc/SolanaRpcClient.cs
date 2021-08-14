@@ -109,6 +109,7 @@ namespace Solnet.Rpc
             List<object> filters = Parameters.Create(ConfigObject.Create(KeyValue.Create("dataSize", dataSize)));
             if (memCmpList != null)
             {
+                filters ??= new List<object>();
                 filters.AddRange(memCmpList.Select(filter => ConfigObject.Create(KeyValue.Create("memcmp",
                     ConfigObject.Create(KeyValue.Create("offset", filter.Offset),
                         KeyValue.Create("bytes", filter.Bytes))))));

@@ -25,7 +25,14 @@ namespace Solnet.Programs.Test.Utilities
         {
             71, 52, 172, 63,
         };
-        
+
+        private static readonly byte[] EncodedStringBytes =
+        {
+            21, 0, 0, 0, 116, 104, 105, 115, 32, 105, 115,
+            32, 97, 32, 116, 101, 115, 116, 32, 115, 116, 114,
+            105, 110, 103
+        };
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestWriteU8Exception()
@@ -243,6 +250,16 @@ namespace Solnet.Programs.Test.Utilities
             byte[] bytes = new byte[4];
             bytes.WriteSingle(value, 0);
             CollectionAssert.AreEqual(SingleBytes, bytes);
+        }
+
+        [TestMethod]
+        public void TestWriteRustString()
+        {
+            const string value = "this is a test string";
+
+            byte[] encodedString = Serialization.EncodeRustString(value);
+
+            CollectionAssert.AreEqual(EncodedStringBytes, encodedString);
         }
     }
 }

@@ -3,7 +3,9 @@ using Org.BouncyCastle.Crypto.Macs;
 using Org.BouncyCastle.Crypto.Parameters;
 using Solnet.Wallet.Utilities;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -61,11 +63,13 @@ namespace Solnet.Wallet
         /// <returns>A tuple consisting of the key and corresponding chain code.</returns>
         private static (byte[] Key, byte[] ChainCode) GetChildKeyDerivation(byte[] key, byte[] chainCode, uint index)
         {
-            BigEndianBuffer buffer = new ();
+            MemoryStream buffer = new ();
 
             buffer.Write(new byte[] { 0 });
             buffer.Write(key);
-            buffer.WriteUInt(index);
+            byte[] indexBytes = new byte[4];
+            BinaryPrimitives.WriteUInt32BigEndian(indexBytes, index);
+            buffer.Write(indexBytes);
 
             return HmacSha512(chainCode, buffer.ToArray());
         }
