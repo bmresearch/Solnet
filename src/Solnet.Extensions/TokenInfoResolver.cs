@@ -9,17 +9,37 @@ using Solnet.Extensions.TokenInfo;
 
 namespace Solnet.Extensions
 {
+    /// <summary>
+    /// The default implementation of the TokenInfoResolver.
+    /// <para>You can create your own by implementing ITokenInfoResolver.</para>
+    /// <para>You can use the Load method to load the Solana ecosystem's standard token list or 
+    /// populate your own instance with TokenDef objects.</para>
+    /// </summary>
     public class TokenInfoResolver : ITokenInfoResolver
     {
+
+        /// <summary>
+        /// The URL of the standard token list
+        /// </summary>
         private const string TOKENLIST_GITHUB_URL = "https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json";
 
+        /// <summary>
+        /// Internal lookfor for resolving mint public key addresses to TokenDef objects.
+        /// </summary>
         private Dictionary<string, TokenDef> _tokens;
 
+        /// <summary>
+        /// Constructs an empty TokenInfoResolver object.
+        /// </summary>
         public TokenInfoResolver()
         { 
             _tokens = new Dictionary<string, TokenDef>();
         }
 
+        /// <summary>
+        /// Constructs an empty TokenInfoResolver and populates with deserialized TokenListDoc.
+        /// </summary>
+        /// <param name="tokenList">A deserialised token list.</param>
         internal TokenInfoResolver(TokenListDoc tokenList) : this()
         { 
             foreach (var token in tokenList.tokens)
@@ -28,21 +48,38 @@ namespace Solnet.Extensions
             }
         }
 
+        /// <summary>
+        /// Return an instance of the TokenInfoResolver loaded with the Solana token list.
+        /// </summary>
+        /// <returns>An instance of the TokenInfoResolver populated with Solana token list definitions.</returns>
         public static TokenInfoResolver Load()
         {
             return LoadAsync().Result;
         }
 
+        /// <summary>
+        /// Return an instance of the TokenInfoResolver loaded dererialised token list JSON from the specified URL.
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns>An instance of the TokenInfoResolver populated with Solana token list definitions.</returns>
         public static TokenInfoResolver Load(string url)
         {
             return LoadAsync(url).Result;
         }
 
+        /// <summary>
+        /// Return an instance of the TokenInfoResolver loaded with the Solana token list.
+        /// </summary>
+        /// <returns>A task that will result in an instance of the TokenInfoResolver populated with Solana token list definitions.</returns>
         public static async Task<TokenInfoResolver> LoadAsync()
         {
             return await LoadAsync(TOKENLIST_GITHUB_URL);
         }
 
+        /// <summary>
+        /// Return an instance of the TokenInfoResolver loaded with the Solana token list.
+        /// </summary>
+        /// <returns>A task that will result in an instance of the TokenInfoResolver populated with Solana token list definitions.</returns>
         public static async Task<TokenInfoResolver> LoadAsync(string url)
         {
             using (var wc = new WebClient())
@@ -52,6 +89,11 @@ namespace Solnet.Extensions
             }
         }
 
+        /// <summary>
+        /// Return an instance of the TokenInfoResolver loaded with the dererialised JSON string supplied.
+        /// </summary>
+        /// <param name="json">The JSON to parse - should be shaped the same as the Solana token list.</param>
+        /// <returns>An instance of the TokenInfoResolver populated with the deserialized JSON provided.</returns>
         public static TokenInfoResolver ParseTokenList(string json)
         {
             if (json is null) throw new ArgumentNullException(nameof(json));
@@ -60,6 +102,20 @@ namespace Solnet.Extensions
             return new TokenInfoResolver(tokenList);
         }
 
+        /// <summary>
+        /// Resolve a token mint public key address into the token def.
+        /// <para>
+        /// If a token is not known, a default Unknown TokenDef instance with be created for that mint and stashed for any future lookups.
+        /// </para>
+        /// <para>
+        /// Unknown tokens will have decimal places of -1 by design. 
+        /// This will prevent their use when converting decimal balance values into lamports for TransactionBuilder.
+        /// It is unlikely this scenario will be encountered often as Unknown token are encounted by the TokenWallet Load method
+        /// when processing TokenAccountInfo RPC results that do contain the decimal places.
+        /// </para>
+        /// </summary>
+        /// <param name="mint"></param>
+        /// <returns></returns>
         public TokenDef Resolve(string mint)
         {
             if (_tokens.ContainsKey(mint))
@@ -74,6 +130,11 @@ namespace Solnet.Extensions
             }
         }
 
+        /// <summary>
+        /// Add a token to the TokenInfoResolver lookup.
+        /// Any collisions on token mint will replace the previous instance.
+        /// </summary>
+        /// <param name="token">An instance of TokenDef to be added.</param>
         public void Add(TokenDef token)
         {
             if (token is null) throw new ArgumentNullException(nameof(token));

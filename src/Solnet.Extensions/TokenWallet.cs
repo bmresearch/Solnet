@@ -15,6 +15,11 @@ using Solnet.Rpc.Utilities;
 
 namespace Solnet.Extensions
 {
+    /// <summary>
+    /// An object that represents the token wallet accounts that belong to a wallet address and methods to send tokens 
+    /// to other wallets whilst transparantly handling the complexities of Associated Token Accounts.
+    /// <para>Use Load method to get started and Send method to send tokens.</para>
+    /// </summary>
     public class TokenWallet
     {
 
@@ -65,13 +70,13 @@ namespace Solnet.Extensions
         #region Overloaded Load methods
 
         /// <summary>
-        /// Get a TokenWallet instance for a given public key
+        /// Load a TokenWallet instance for a given public key.
         /// </summary>
-        /// <param name="client"></param>
-        /// <param name="mintResolver"></param>
-        /// <param name="publicKey"></param>
-        /// <param name="commitment"></param>
-        /// <returns></returns>
+        /// <param name="client">An instance of the RPC client.</param>
+        /// <param name="mintResolver">An instance of a mint resolver.</param>
+        /// <param name="publicKey">The account public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>An instance of TokenWallet loaded with the token accounts of the publicKey provided.</returns>
         public static TokenWallet Load(IRpcClient client,
                                        ITokenInfoResolver mintResolver,
                                        string publicKey,
@@ -81,16 +86,32 @@ namespace Solnet.Extensions
             return output.Result;
         }
 
+        /// <summary>
+        /// Load a TokenWallet instance for a given Account.
+        /// </summary>
+        /// <param name="client">An instance of the RPC client.</param>
+        /// <param name="mintResolver">An instance of a mint resolver.</param>
+        /// <param name="account">The account to load.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>An instance of TokenWallet loaded with the token accounts of the account provided.</returns>
         public static TokenWallet Load(IRpcClient client,
                                        ITokenInfoResolver mintResolver,
-                                       Account owner,
+                                       Account account,
                                        Commitment commitment = Commitment.Finalized)
         {
-            if (owner == null) throw new ArgumentNullException(nameof(owner));
-            var output = LoadAsync(new TokenWalletRpcProxy(client), mintResolver, owner.PublicKey, commitment);
+            if (account == null) throw new ArgumentNullException(nameof(account));
+            var output = LoadAsync(new TokenWalletRpcProxy(client), mintResolver, account.PublicKey, commitment);
             return output.Result;
         }
 
+        /// <summary>
+        /// Load a TokenWallet instance for a given public key.
+        /// </summary>
+        /// <param name="client">An instance of the RPC client.</param>
+        /// <param name="mintResolver">An instance of a mint resolver.</param>
+        /// <param name="publicKey">The account public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>An instance of TokenWallet loaded with the token accounts of the publicKey provided.</returns>
         public static TokenWallet Load(IRpcClient client,
                                        ITokenInfoResolver mintResolver,
                                        PublicKey publicKey,
@@ -100,6 +121,14 @@ namespace Solnet.Extensions
             return output.Result;
         }
 
+        /// <summary>
+        /// Load a TokenWallet instance for a given public key.
+        /// </summary>
+        /// <param name="client">An instance of the RPC client.</param>
+        /// <param name="mintResolver">An instance of a mint resolver.</param>
+        /// <param name="publicKey">The account public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>An instance of TokenWallet loaded with the token accounts of the publicKey provided.</returns>
         public static TokenWallet Load(ITokenWalletRpcProxy client,
                                        ITokenInfoResolver mintResolver,
                                        string publicKey,
@@ -110,16 +139,32 @@ namespace Solnet.Extensions
             return output.Result;
         }
 
+        /// <summary>
+        /// Load a TokenWallet instance for a given public key.
+        /// </summary>
+        /// <param name="client">An instance of the RPC client.</param>
+        /// <param name="mintResolver">An instance of a mint resolver.</param>
+        /// <param name="account">The account public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>An instance of TokenWallet loaded with the token accounts of the account provided.</returns>
         public static TokenWallet Load(ITokenWalletRpcProxy client,
                                        ITokenInfoResolver mintResolver,
-                                       Account owner,
+                                       Account account,
                                        Commitment commitment = Commitment.Finalized)
         {
-            if (owner == null) throw new ArgumentNullException(nameof(owner));
-            var output = LoadAsync(client, mintResolver, owner.PublicKey, commitment);
+            if (account == null) throw new ArgumentNullException(nameof(account));
+            var output = LoadAsync(client, mintResolver, account.PublicKey, commitment);
             return output.Result;
         }
 
+        /// <summary>
+        /// Load a TokenWallet instance for a given public key.
+        /// </summary>
+        /// <param name="client">An instance of the RPC client.</param>
+        /// <param name="mintResolver">An instance of a mint resolver.</param>
+        /// <param name="publicKey">The account public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>An instance of TokenWallet loaded with the token accounts of the publicKey provided.</returns>
         public static TokenWallet Load(ITokenWalletRpcProxy client,
                                        ITokenInfoResolver mintResolver,
                                        PublicKey publicKey,
@@ -129,6 +174,14 @@ namespace Solnet.Extensions
             return output.Result;
         }
 
+        /// <summary>
+        /// Load a TokenWallet instance for a given public key.
+        /// </summary>
+        /// <param name="client">An instance of the RPC client.</param>
+        /// <param name="mintResolver">An instance of a mint resolver.</param>
+        /// <param name="publicKey">The account public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>An instance of TokenWallet loaded with the token accounts of the publicKey provided.</returns>
         public async static Task<TokenWallet> LoadAsync(IRpcClient client,
                                                         ITokenInfoResolver mintResolver,
                                                         PublicKey publicKey,
@@ -137,6 +190,14 @@ namespace Solnet.Extensions
             return await LoadAsync(new TokenWalletRpcProxy(client), mintResolver, publicKey, commitment);
         }
 
+        /// <summary>
+        /// Load a TokenWallet instance for a given public key.
+        /// </summary>
+        /// <param name="client">An instance of the RPC client.</param>
+        /// <param name="mintResolver">An instance of a mint resolver.</param>
+        /// <param name="publicKey">The account public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>A task that results in an instance of TokenWallet loaded with the token accounts of the publicKey provided.</returns>
         public async static Task<TokenWallet> LoadAsync(ITokenWalletRpcProxy client,
                                                         ITokenInfoResolver mintResolver,
                                                         PublicKey publicKey,
@@ -154,7 +215,8 @@ namespace Solnet.Extensions
         #endregion
 
         /// <summary>
-        /// Refresh balances and token acconuts
+        /// Refresh balances and token accounts
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// </summary>
         public void Refresh(Commitment commitment = Commitment.Finalized)
         {
@@ -162,7 +224,9 @@ namespace Solnet.Extensions
         }
 
         /// <summary>
-        /// Refresh balances and token acconuts
+        /// Refresh balances and token accounts
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>A task that results true once complete.</returns>
         /// </summary>
         public async Task<bool> RefreshAsync(Commitment commitment = Commitment.Finalized)
         {
@@ -220,7 +284,7 @@ namespace Solnet.Extensions
         /// to select the sub-account you want to use.
         /// </para>
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Results a list of TokenWalletAccounts for filtering.</returns>
         public TokenWalletFilterList TokenAccounts()
         {
             var list = new List<TokenWalletAccount>();
@@ -252,22 +316,61 @@ namespace Solnet.Extensions
         /// <param name="amount">Human readable amount of tokens to send.</param>
         /// <param name="destination">Destination wallet address.</param>
         /// <param name="feePayer">PublicKey of the fee payer address.</param>
-        /// <returns></returns>
+        /// <returns>A task that results in the transaction signature submitted to the RPC node.</returns>
         public RequestResult<string> Send(TokenWalletAccount source, decimal amount, PublicKey destination, Account feePayer)
         {
             return SendAsync(source, amount, destination, feePayer).Result;
         }
 
+        /// <summary>
+        /// Send tokens from source to target wallet Associated Token Account for the token mint.
+        /// </summary>
+        /// <para>
+        /// The <c>source</c> parameter is a TokenWalletAccount instance that tokens will be sent from. 
+        /// They will be deposited into an Associated Token Account in the destination wallet.
+        /// If an Associated Token Account does not exist, it will be created at the cost of feePayer.
+        /// </para>
+        /// <param name="source">Source account of tokens to be sent.</param>
+        /// <param name="amount">Human readable amount of tokens to send.</param>
+        /// <param name="destination">Destination wallet address.</param>
+        /// <param name="feePayer">PublicKey of the fee payer address.</param>
+        /// <returns>The transaction signature submitted to the RPC node.</returns>
         public RequestResult<string> Send(TokenWalletAccount source, decimal amount, string destination, Account feePayer)
         {
             return SendAsync(source, amount, new PublicKey(destination), feePayer).Result;
         }
 
+        /// <summary>
+        /// Send tokens from source to target wallet Associated Token Account for the token mint.
+        /// </summary>
+        /// <para>
+        /// The <c>source</c> parameter is a TokenWalletAccount instance that tokens will be sent from. 
+        /// They will be deposited into an Associated Token Account in the destination wallet.
+        /// If an Associated Token Account does not exist, it will be created at the cost of feePayer.
+        /// </para>
+        /// <param name="source">Source account of tokens to be sent.</param>
+        /// <param name="amount">Human readable amount of tokens to send.</param>
+        /// <param name="destination">Destination wallet address.</param>
+        /// <param name="feePayer">PublicKey of the fee payer address.</param>
+        /// <returns>A task that results in the transaction signature submitted to the RPC node.</returns>
         public async Task<RequestResult<string>> SendAsync(TokenWalletAccount source, decimal amount, string destination, Account feePayer)
         {
             return await SendAsync(source, amount, new PublicKey(destination), feePayer);
         }
 
+        /// <summary>
+        /// Send tokens from source to target wallet Associated Token Account for the token mint.
+        /// </summary>
+        /// <para>
+        /// The <c>source</c> parameter is a TokenWalletAccount instance that tokens will be sent from. 
+        /// They will be deposited into an Associated Token Account in the destination wallet.
+        /// If an Associated Token Account does not exist, it will be created at the cost of feePayer.
+        /// </para>
+        /// <param name="source">Source account of tokens to be sent.</param>
+        /// <param name="amount">Human readable amount of tokens to send.</param>
+        /// <param name="destination">Destination wallet address.</param>
+        /// <param name="feePayer">PublicKey of the fee payer address.</param>
+        /// <returns>A task that results in the transaction signature submitted to the RPC node.</returns>
         public async Task<RequestResult<string>> SendAsync(TokenWalletAccount source, decimal amount, PublicKey destination, Account feePayer)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));

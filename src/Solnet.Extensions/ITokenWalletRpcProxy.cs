@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Solnet.Extensions
 {
     /// <summary>
-    /// The subset RPC client interface used by TokenWallet
+    /// This interface contains the subset of methods from RPC client used by TokenWallet.
     /// </summary>
     public interface ITokenWalletRpcProxy
     {

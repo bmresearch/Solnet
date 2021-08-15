@@ -63,6 +63,7 @@ namespace Solnet.Extensions.Test
             Assert.AreEqual(1, testAccounts.Count());
             Assert.AreEqual((ulong)2039280, testAccounts.First().Lamports);
             Assert.AreEqual(0, testAccounts.WhichAreAssociatedTokenAccounts().Count());
+            Assert.AreEqual(1, wallet.TokenAccounts().WithCustomFilter(x => x.PublicKey.StartsWith("G")).Count());
             Assert.AreEqual(2, wallet.TokenAccounts().WithSymbol("TEST").First().DecimalPlaces);
             Assert.AreEqual(testToken.TokenMint, wallet.TokenAccounts().WithSymbol("TEST").First().TokenMint);
             Assert.AreEqual(testToken.Symbol, wallet.TokenAccounts().WithMint("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819").First().Symbol);
