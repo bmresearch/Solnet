@@ -41,6 +41,7 @@ Solnet is Solana's .NET SDK to integrate with the .NET ecosystem. Wherever you a
 - Transaction decoding from base64 and wire format and encoding back into wire format
 - Message decoding from base64 and wire format and encoding back into wire format
 - Instruction decompilation
+- TokenWallet object to send SPL tokens and JIT provisioning of [Associated Token Accounts](https://spl.solana.com/associated-token-account)
 - Programs
     - Native Programs
       - System Program
@@ -366,6 +367,43 @@ var msg = Message.Deserialize(msgBase64);
 // And you can decode all of the instructions in that message into a friendly structure
 // which holds the program name, the instruction name, and parameters relevant to the instruction itself
 var decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
+```
+
+### Display token balances of a wallet
+
+```c#
+// load Solana token list and get RPC client
+var tokens = TokenInfoResolver.Load();
+var client = ClientFactory.GetClient(Cluster.MainNet);
+
+// load snapshot of wallet and sub-accounts
+TokenWallet tokenWallet = TokenWallet.Load(client, tokens, ownerAccount);
+var balances = tokenWallet.Balances();
+
+// show individual token accounts
+var maxsym = balances.Max(x => x.Symbol.Length);
+var maxname = balances.Max(x => x.TokenName.Length);
+Console.WriteLine("Individual Accounts...");
+foreach (var account in tokenWallet.TokenAccounts())
+{
+    Console.WriteLine($"{account.Symbol.PadRight(maxsym)} {account.BalanceDecimal,14} {account.TokenName.PadRight(maxname)} {account.PublicKey} {(account.IsAssociatedTokenAccount ? "[ATA]" : "")}");
+}
+Console.WriteLine();
+```
+
+### Sending an SPL token
+
+```c#
+var client = ClientFactory.GetClient(Cluster.MainNet, logger);
+var tokens = New TokenInfoResolver();
+var wallet = TokenWallet.Load(client, tokens, feePayer);
+
+// find source of funds
+var source = wallet.TokenAccounts.ForToken(WellKnownTokens.Serum).WithAtLeast(12.75D).FirstOrDefault();
+
+// single-line SPL send - sends 12.75 SRM to target wallet ATA 
+// if required, ATA will be created funded by feePayer
+var sig = wallet.Send(source, 12.75D, target, feePayer);
 ```
 
 ## Contribution
