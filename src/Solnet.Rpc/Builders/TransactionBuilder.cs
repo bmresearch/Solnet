@@ -107,9 +107,9 @@ namespace Solnet.Rpc.Builders
         /// <summary>
         /// Sets the fee payer for the transaction.
         /// </summary>
-        /// <param name="account">The account that will pay the transaction fee</param>
+        /// <param name="account">The public key of the account that will pay the transaction fee</param>
         /// <returns>The transaction builder, so instruction addition can be chained.</returns>
-        public TransactionBuilder SetFeePayer(Account account)
+        public TransactionBuilder SetFeePayer(PublicKey account)
         {
             _messageBuilder.FeePayer = account;
             return this;
