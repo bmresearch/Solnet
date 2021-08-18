@@ -126,6 +126,7 @@ namespace Solnet.Rpc.Core.Http
                     {
                         result.Reason = errorRes.Error.Message;
                         result.ServerErrorCode = errorRes.Error.Code;
+                        result.ErrorData = errorRes.Error.Data;
                     }
                     else
                     {
