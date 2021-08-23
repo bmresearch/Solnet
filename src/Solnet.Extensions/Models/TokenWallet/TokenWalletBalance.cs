@@ -9,11 +9,11 @@ namespace Solnet.Extensions
     /// <summary>
     /// A consolidated token balance for a number of accounts of a given mint.
     /// </summary>
-    public class TokenWalletBalance
+    public class TokenWalletBalance : TokenQuantity
     {
 
         /// <summary>
-        /// Constructs a token balance instance.
+        /// Constructs a TokenWalletBalance instance.
         /// </summary>
         /// <param name="tokenMint">The token mint public key address.</param>
         /// <param name="tokenSymbol">The symbol this token uses.</param>
@@ -30,47 +30,16 @@ namespace Solnet.Extensions
                                     decimal balanceDecimal,
                                     ulong balanceRaw,
                                     ulong lamportsRaw,
-                                    int accountCount)
+                                    int accountCount) : base(tokenMint,
+                                                             tokenSymbol, 
+                                                             tokenName, 
+                                                             decimalPlaces, 
+                                                             balanceDecimal, 
+                                                             balanceRaw)
         {
-            TokenMint = tokenMint;
-            Symbol = tokenSymbol;
-            TokenName = tokenName;
-            DecimalPlaces = decimalPlaces;
-            BalanceDecimal = balanceDecimal;
-            BalanceRaw = balanceRaw;
             Lamports = lamportsRaw;
             AccountCount = accountCount;
         }
-
-        /// <summary>
-        /// The token mint public key address.
-        /// </summary>
-        public string TokenMint { get; init; }
-
-        /// <summary>
-        /// The symbol this token uses.
-        /// </summary>
-        public string Symbol { get; init; }
-
-        /// <summary>
-        /// The name of this token.
-        /// </summary>
-        public string TokenName { get; init; }
-
-        /// <summary>
-        /// The number of decimal places this token uses.
-        /// </summary>
-        public int DecimalPlaces { get; init; }
-
-        /// <summary>
-        /// Token balance in decimal.
-        /// </summary>
-        public decimal BalanceDecimal { get; init; }
-
-        /// <summary>
-        /// Token balance in raw ulong.
-        /// </summary>
-        public ulong BalanceRaw { get; init; }
 
         /// <summary>
         /// How many lamports does this balance represent.

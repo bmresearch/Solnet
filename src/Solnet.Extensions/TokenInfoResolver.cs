@@ -114,18 +114,19 @@ namespace Solnet.Extensions
         /// when processing TokenAccountInfo RPC results that do contain the decimal places.
         /// </para>
         /// </summary>
-        /// <param name="mint"></param>
+        /// <param name="tokenMint"></param>
         /// <returns></returns>
-        public TokenDef Resolve(string mint)
+        public TokenDef Resolve(string tokenMint)
         {
-            if (_tokens.ContainsKey(mint))
+            if (tokenMint == null) throw new ArgumentNullException(nameof(tokenMint));
+            if (_tokens.ContainsKey(tokenMint))
             {
-                return _tokens[mint];
+                return _tokens[tokenMint];
             }
             else
             {
-                var unknown = new TokenDef(mint, $"Unknown {mint}", string.Empty, -1);
-                _tokens[mint] = unknown;
+                var unknown = new TokenDef(tokenMint, $"Unknown {tokenMint}", string.Empty, -1);
+                _tokens[tokenMint] = unknown;
                 return unknown;
             }
         }
@@ -140,6 +141,7 @@ namespace Solnet.Extensions
             if (token is null) throw new ArgumentNullException(nameof(token));
             _tokens[token.TokenMint] = token;
         }
+
 
     }
 

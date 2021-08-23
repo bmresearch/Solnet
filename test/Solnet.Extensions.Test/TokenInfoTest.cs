@@ -55,6 +55,17 @@ namespace Solnet.Extensions.Test
 
         }
 
+        [TestMethod]
+        public void TestTokenDefCreateQuantity()
+        {
+            var qty = WellKnownTokens.USDC.CreateQuantity(4741784U);
+            Assert.AreEqual(4741784U, qty.BalanceRaw);
+            Assert.AreEqual(4.741784M, qty.BalanceDecimal);
+            Assert.AreEqual("USDC", qty.Symbol);
+            Assert.AreEqual(6, qty.DecimalPlaces);
+            Assert.AreEqual("4.741784 USDC (USD Coin)", qty.ToString());
+        }
+
     }
 
 }

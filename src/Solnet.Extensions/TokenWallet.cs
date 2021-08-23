@@ -398,10 +398,14 @@ namespace Solnet.Extensions
             // create or reuse target ata for token
             var targetAta = destWallet.JitCreateAssociatedTokenAccount(builder, source.TokenMint, feePayer.PublicKey);
 
+            // resolve the source account TokenMint and convert to raw quantity
+            var tokenDef = MintResolver.Resolve(source.TokenMint);
+            var qtyRaw = tokenDef.ConvertDecimalToUlong(amount);
+
             // build transfer instruction
             builder.AddInstruction(
                 Programs.TokenProgram.Transfer(new PublicKey(source.PublicKey),
-                    targetAta, source.ConvertDecimalToUlong(amount), new PublicKey(PublicKey)));
+                    targetAta, qtyRaw, new PublicKey(PublicKey)));
 
             // execute
             var tx = builder.Build(feePayer);

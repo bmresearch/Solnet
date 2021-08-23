@@ -65,20 +65,5 @@ namespace Solnet.Extensions
             return $"{base.ToString()} {(IsAssociatedTokenAccount?"[ATA]":"")}";
         }
 
-        /// <summary>
-        /// Helper method to convert a decimal value to ulong value used when building transaction instructions
-        /// based on the number of decimal places
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public ulong ConvertDecimalToUlong(decimal value)
-        {
-            if (DecimalPlaces < 0) throw new ApplicationException($"DecimalPlaces is unknown for mint {TokenMint}");
-            decimal impliedAmount = value;
-            for (int ix = 0; ix < DecimalPlaces; ix++) impliedAmount = decimal.Multiply(impliedAmount, 10);
-            ulong raw = Convert.ToUInt64(decimal.Floor(impliedAmount));
-            return raw;
-        }
-
     }
 }

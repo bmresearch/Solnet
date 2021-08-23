@@ -44,6 +44,8 @@ namespace Solnet.Extensions.Test
             var tokens = new TokenInfoResolver();
             var testToken = new TokenInfo.TokenDef("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819", "TEST", "TEST", 2);
             tokens.Add(testToken);
+            Assert.AreEqual(125U, testToken.ConvertDecimalToUlong(1.25M));
+            Assert.AreEqual(1.25M, testToken.ConvertUlongToDecimal(125U));
 
             // load account
             var publicKey = "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5";
@@ -68,7 +70,6 @@ namespace Solnet.Extensions.Test
             Assert.AreEqual(testToken.TokenMint, wallet.TokenAccounts().WithSymbol("TEST").First().TokenMint);
             Assert.AreEqual(testToken.Symbol, wallet.TokenAccounts().WithMint("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819").First().Symbol);
             Assert.AreEqual(10M, wallet.TokenAccounts().WithSymbol("TEST").First().BalanceDecimal);
-            Assert.AreEqual((ulong)125, wallet.TokenAccounts().WithSymbol("TEST").First().ConvertDecimalToUlong(1.25M));
             Assert.AreEqual("G5SA5eMmbqSFnNZNB2fQV9ipHbh9y9KS65aZkAh9t8zv", wallet.TokenAccounts().WithSymbol("TEST").First().PublicKey);
             Assert.AreEqual("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", wallet.TokenAccounts().WithSymbol("TEST").First().Owner);
 

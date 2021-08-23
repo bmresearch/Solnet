@@ -48,6 +48,55 @@ namespace Solnet.Extensions.TokenInfo
         /// </summary>
         public int DecimalPlaces { get; init; }
 
+        /// <summary>
+        /// Create an instance of the TokenQuantity object with the raw token quanity value provided.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns>A TokenQuantity instance.</returns>
+        public TokenQuantity CreateQuantity(uint value)
+        {
+            return new TokenQuantity(TokenMint, Symbol, TokenName, DecimalPlaces, ConvertUlongToDecimal(value), value);
+        }
+
+        /// <summary>
+        /// Create an instance of the TokenQuantity object with the decimal token quanity value provided.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns>A TokenQuantity instance.</returns>
+        public TokenQuantity CreateQuantity(decimal value)
+        {
+            return new TokenQuantity(TokenMint, Symbol, TokenName, DecimalPlaces, value, ConvertDecimalToUlong(value));
+        }
+
+        /// <summary>
+        /// Helper method to convert a decimal value to ulong value for this token's number of decimal places.
+        /// based on the number of decimal places
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public ulong ConvertDecimalToUlong(decimal value)
+        {
+            if (DecimalPlaces < 0) throw new ApplicationException($"DecimalPlaces is unknown for mint {TokenMint}");
+            decimal impliedAmount = value;
+            for (int ix = 0; ix < DecimalPlaces; ix++) impliedAmount = decimal.Multiply(impliedAmount, 10);
+            ulong raw = Convert.ToUInt64(decimal.Floor(impliedAmount));
+            return raw;
+        }
+
+        /// <summary>
+        /// Helper method to convert a raw ulong to decimal value for this token's number of decimal places.
+        /// based on the number of decimal places
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public decimal ConvertUlongToDecimal(ulong value)
+        {
+            if (DecimalPlaces < 0) throw new ApplicationException($"DecimalPlaces is unknown for mint {TokenMint}");
+            decimal impliedAmount = value;
+            for (int ix = 0; ix < DecimalPlaces; ix++) impliedAmount = decimal.Divide(impliedAmount, 10);
+            return impliedAmount;
+        }
+
     }
 
     /// <summary>
