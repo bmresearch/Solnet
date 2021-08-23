@@ -64,6 +64,13 @@ namespace Solnet.Extensions.Test
             Assert.AreEqual("USDC", qty.Symbol);
             Assert.AreEqual(6, qty.DecimalPlaces);
             Assert.AreEqual("4.741784 USDC (USD Coin)", qty.ToString());
+
+            var dec = WellKnownTokens.Raydium.ConvertUlongToDecimal(123456U);
+            Assert.AreEqual(0.123456M, dec);
+
+            var raw = WellKnownTokens.Raydium.ConvertDecimalToUlong(1.23M);
+            Assert.AreEqual(1230000U, raw);
+
         }
 
     }
