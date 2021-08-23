@@ -82,6 +82,7 @@ namespace Solnet.Extensions.Test
             var resolver = new TokenInfoResolver();
             resolver.Add(new TokenDef(pubkey.Key, "Fake Coin", "FK", 3));
 
+            // create via ulong
             var qty = resolver.Resolve(pubkey.Key).CreateQuantity(4741784U);
             Assert.AreEqual(pubkey.Key, qty.TokenMint);
             Assert.AreEqual(4741784U, qty.BalanceRaw);
@@ -89,6 +90,15 @@ namespace Solnet.Extensions.Test
             Assert.AreEqual("FK", qty.Symbol);
             Assert.AreEqual(3, qty.DecimalPlaces);
             Assert.AreEqual("4741.784 FK (Fake Coin)", qty.ToString());
+
+            // create via decimal
+            qty = resolver.Resolve(pubkey.Key).CreateQuantity(14741.784M);
+            Assert.AreEqual(pubkey.Key, qty.TokenMint);
+            Assert.AreEqual(14741784U, qty.BalanceRaw);
+            Assert.AreEqual(14741.784M, qty.BalanceDecimal);
+            Assert.AreEqual("FK", qty.Symbol);
+            Assert.AreEqual(3, qty.DecimalPlaces);
+            Assert.AreEqual("14741.784 FK (Fake Coin)", qty.ToString());
 
         }
 
