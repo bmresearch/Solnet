@@ -51,11 +51,22 @@ namespace Solnet.Extensions.TokenInfo
         /// <summary>
         /// Create an instance of the TokenQuantity object with the raw token quanity value provided.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="valueDecimal">Value as decimal.</param>
+        /// <param name="valueRaw">Value as ulong.</param>
         /// <returns>A TokenQuantity instance.</returns>
-        public TokenQuantity CreateQuantity(uint value)
+        public TokenQuantity CreateQuantity(decimal valueDecimal, ulong valueRaw)
         {
-            return new TokenQuantity(TokenMint, Symbol, TokenName, DecimalPlaces, ConvertUlongToDecimal(value), value);
+            return new TokenQuantity(TokenMint, Symbol, TokenName, DecimalPlaces, valueDecimal, valueRaw);
+        }
+
+        /// <summary>
+        /// Create an instance of the TokenQuantity object with the raw token quanity value provided.
+        /// </summary>
+        /// <param name="value">Value as ulong.</param>
+        /// <returns>A TokenQuantity instance.</returns>
+        public TokenQuantity CreateQuantityWithRaw(uint value)
+        {
+            return CreateQuantity(ConvertUlongToDecimal(value), value);
         }
 
         /// <summary>
@@ -63,9 +74,9 @@ namespace Solnet.Extensions.TokenInfo
         /// </summary>
         /// <param name="value"></param>
         /// <returns>A TokenQuantity instance.</returns>
-        public TokenQuantity CreateQuantity(decimal value)
+        public TokenQuantity CreateQuantityWithDecimal(decimal value)
         {
-            return new TokenQuantity(TokenMint, Symbol, TokenName, DecimalPlaces, value, ConvertDecimalToUlong(value));
+            return CreateQuantity(value, ConvertDecimalToUlong(value));
         }
 
         /// <summary>

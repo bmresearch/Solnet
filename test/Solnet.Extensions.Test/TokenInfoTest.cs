@@ -59,7 +59,7 @@ namespace Solnet.Extensions.Test
         [TestMethod]
         public void TestTokenDefCreateQuantity()
         {
-            var qty = WellKnownTokens.USDC.CreateQuantity(4741784U);
+            var qty = WellKnownTokens.USDC.CreateQuantityWithRaw(4741784U);
             Assert.AreEqual(4741784U, qty.BalanceRaw);
             Assert.AreEqual(4.741784M, qty.BalanceDecimal);
             Assert.AreEqual("USDC", qty.Symbol);
@@ -83,7 +83,7 @@ namespace Solnet.Extensions.Test
             resolver.Add(new TokenDef(pubkey.Key, "Fake Coin", "FK", 3));
 
             // create via ulong
-            var qty = resolver.Resolve(pubkey.Key).CreateQuantity(4741784U);
+            var qty = resolver.Resolve(pubkey.Key).CreateQuantityWithRaw(4741784U);
             Assert.AreEqual(pubkey.Key, qty.TokenMint);
             Assert.AreEqual(4741784U, qty.BalanceRaw);
             Assert.AreEqual(4741.784M, qty.BalanceDecimal);
@@ -92,7 +92,7 @@ namespace Solnet.Extensions.Test
             Assert.AreEqual("4741.784 FK (Fake Coin)", qty.ToString());
 
             // create via decimal
-            qty = resolver.Resolve(pubkey.Key).CreateQuantity(14741.784M);
+            qty = resolver.Resolve(pubkey.Key).CreateQuantityWithDecimal(14741.784M);
             Assert.AreEqual(pubkey.Key, qty.TokenMint);
             Assert.AreEqual(14741784U, qty.BalanceRaw);
             Assert.AreEqual(14741.784M, qty.BalanceDecimal);
