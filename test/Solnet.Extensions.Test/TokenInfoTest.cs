@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Solnet.Extensions.TokenInfo;
+using Solnet.Wallet;
 using System.IO;
 
 namespace Solnet.Extensions.Test
@@ -70,6 +71,24 @@ namespace Solnet.Extensions.Test
 
             var raw = WellKnownTokens.Raydium.ConvertDecimalToUlong(1.23M);
             Assert.AreEqual(1230000U, raw);
+
+        }
+
+        [TestMethod]
+        public void TestDynamicTokenDefCreateQuantity()
+        {
+            var pubkey = new PublicKey("FakekjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
+
+            var resolver = new TokenInfoResolver();
+            resolver.Add(new TokenDef(pubkey.Key, "Fake Coin", "FK", 3));
+
+            var qty = resolver.Resolve(pubkey.Key).CreateQuantity(4741784U);
+            Assert.AreEqual(pubkey.Key, qty.TokenMint);
+            Assert.AreEqual(4741784U, qty.BalanceRaw);
+            Assert.AreEqual(4741.784M, qty.BalanceDecimal);
+            Assert.AreEqual("FK", qty.Symbol);
+            Assert.AreEqual(3, qty.DecimalPlaces);
+            Assert.AreEqual("4741.784 FK (Fake Coin)", qty.ToString());
 
         }
 
