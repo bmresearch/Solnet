@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Solnet.Programs;
-using Solnet.Extensions.TokenInfo;
+using Solnet.Extensions.TokenMint;
 using System.Threading.Tasks;
 using Solnet.Extensions.Models;
 using Solnet.Rpc.Core.Http;
@@ -31,7 +31,7 @@ namespace Solnet.Extensions
         /// <summary>
         /// Resolver for token mint
         /// </summary>
-        private ITokenInfoResolver MintResolver { get; init; }
+        private ITokenMintResolver MintResolver { get; init; }
 
         /// <summary>
         /// PublicKey for the wallet
@@ -56,7 +56,7 @@ namespace Solnet.Extensions
         /// <summary>
         /// Private constructor, get your instances via Load methods
         /// </summary>
-        private TokenWallet(ITokenWalletRpcProxy client, ITokenInfoResolver mintResolver, string publicKey)
+        private TokenWallet(ITokenWalletRpcProxy client, ITokenMintResolver mintResolver, string publicKey)
         {
             if (client is null) throw new ArgumentNullException(nameof(client));
             if (mintResolver is null) throw new ArgumentNullException(nameof(mintResolver));
@@ -78,7 +78,7 @@ namespace Solnet.Extensions
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>An instance of TokenWallet loaded with the token accounts of the publicKey provided.</returns>
         public static TokenWallet Load(IRpcClient client,
-                                       ITokenInfoResolver mintResolver,
+                                       ITokenMintResolver mintResolver,
                                        string publicKey,
                                        Commitment commitment = Commitment.Finalized)
         {
@@ -95,7 +95,7 @@ namespace Solnet.Extensions
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>An instance of TokenWallet loaded with the token accounts of the account provided.</returns>
         public static TokenWallet Load(IRpcClient client,
-                                       ITokenInfoResolver mintResolver,
+                                       ITokenMintResolver mintResolver,
                                        Account account,
                                        Commitment commitment = Commitment.Finalized)
         {
@@ -113,7 +113,7 @@ namespace Solnet.Extensions
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>An instance of TokenWallet loaded with the token accounts of the publicKey provided.</returns>
         public static TokenWallet Load(IRpcClient client,
-                                       ITokenInfoResolver mintResolver,
+                                       ITokenMintResolver mintResolver,
                                        PublicKey publicKey,
                                        Commitment commitment = Commitment.Finalized)
         {
@@ -130,7 +130,7 @@ namespace Solnet.Extensions
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>An instance of TokenWallet loaded with the token accounts of the publicKey provided.</returns>
         public static TokenWallet Load(ITokenWalletRpcProxy client,
-                                       ITokenInfoResolver mintResolver,
+                                       ITokenMintResolver mintResolver,
                                        string publicKey,
                                        Commitment commitment = Commitment.Finalized)
         {
@@ -148,7 +148,7 @@ namespace Solnet.Extensions
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>An instance of TokenWallet loaded with the token accounts of the account provided.</returns>
         public static TokenWallet Load(ITokenWalletRpcProxy client,
-                                       ITokenInfoResolver mintResolver,
+                                       ITokenMintResolver mintResolver,
                                        Account account,
                                        Commitment commitment = Commitment.Finalized)
         {
@@ -166,7 +166,7 @@ namespace Solnet.Extensions
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>An instance of TokenWallet loaded with the token accounts of the publicKey provided.</returns>
         public static TokenWallet Load(ITokenWalletRpcProxy client,
-                                       ITokenInfoResolver mintResolver,
+                                       ITokenMintResolver mintResolver,
                                        PublicKey publicKey,
                                        Commitment commitment = Commitment.Finalized)
         {
@@ -183,7 +183,7 @@ namespace Solnet.Extensions
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>An instance of TokenWallet loaded with the token accounts of the publicKey provided.</returns>
         public async static Task<TokenWallet> LoadAsync(IRpcClient client,
-                                                        ITokenInfoResolver mintResolver,
+                                                        ITokenMintResolver mintResolver,
                                                         PublicKey publicKey,
                                                         Commitment commitment = Commitment.Finalized)
         {
@@ -199,7 +199,7 @@ namespace Solnet.Extensions
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>A task that results in an instance of TokenWallet loaded with the token accounts of the publicKey provided.</returns>
         public async static Task<TokenWallet> LoadAsync(ITokenWalletRpcProxy client,
-                                                        ITokenInfoResolver mintResolver,
+                                                        ITokenMintResolver mintResolver,
                                                         PublicKey publicKey,
                                                         Commitment commitment = Commitment.Finalized)
         {

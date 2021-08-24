@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\TokenInfo\SimpleTokenList.json">
+    <None Update="Resources\TokenMint\SimpleTokenList.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\TokenWallet\GetBalanceResponse.json">

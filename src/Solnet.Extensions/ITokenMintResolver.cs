@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Solnet.Extensions.TokenInfo
+namespace Solnet.Extensions.TokenMint
 {
     /// <summary>
     /// Contains the method used to resolve mint public key addresses into TokenDef objects.
     /// </summary>
-    public interface ITokenInfoResolver
+    public interface ITokenMintResolver
     {
         /// <summary>
         /// Resolve a mint public key address into a TokenDef object.

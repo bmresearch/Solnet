@@ -5,17 +5,17 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Solnet.Extensions.TokenInfo;
+using Solnet.Extensions.TokenMint;
 
 namespace Solnet.Extensions
 {
     /// <summary>
-    /// The default implementation of the TokenInfoResolver.
-    /// <para>You can create your own by implementing ITokenInfoResolver.</para>
+    /// The default implementation of the TokenMintResolver.
+    /// <para>You can create your own by implementing ITokenMintResolver.</para>
     /// <para>You can use the Load method to load the Solana ecosystem's standard token list or 
     /// populate your own instance with TokenDef objects.</para>
     /// </summary>
-    public class TokenInfoResolver : ITokenInfoResolver
+    public class TokenMintResolver : ITokenMintResolver
     {
 
         /// <summary>
@@ -29,18 +29,18 @@ namespace Solnet.Extensions
         private Dictionary<string, TokenDef> _tokens;
 
         /// <summary>
-        /// Constructs an empty TokenInfoResolver object.
+        /// Constructs an empty TokenMintResolver object.
         /// </summary>
-        public TokenInfoResolver()
+        public TokenMintResolver()
         { 
             _tokens = new Dictionary<string, TokenDef>();
         }
 
         /// <summary>
-        /// Constructs an empty TokenInfoResolver and populates with deserialized TokenListDoc.
+        /// Constructs an empty TokenMintResolver and populates with deserialized TokenListDoc.
         /// </summary>
         /// <param name="tokenList">A deserialised token list.</param>
-        internal TokenInfoResolver(TokenListDoc tokenList) : this()
+        internal TokenMintResolver(TokenListDoc tokenList) : this()
         { 
             foreach (var token in tokenList.tokens)
             {
@@ -49,38 +49,38 @@ namespace Solnet.Extensions
         }
 
         /// <summary>
-        /// Return an instance of the TokenInfoResolver loaded with the Solana token list.
+        /// Return an instance of the TokenMintResolver loaded with the Solana token list.
         /// </summary>
-        /// <returns>An instance of the TokenInfoResolver populated with Solana token list definitions.</returns>
-        public static TokenInfoResolver Load()
+        /// <returns>An instance of the TokenMintResolver populated with Solana token list definitions.</returns>
+        public static TokenMintResolver Load()
         {
             return LoadAsync().Result;
         }
 
         /// <summary>
-        /// Return an instance of the TokenInfoResolver loaded dererialised token list JSON from the specified URL.
+        /// Return an instance of the TokenMintResolver loaded dererialised token list JSON from the specified URL.
         /// </summary>
         /// <param name="url"></param>
-        /// <returns>An instance of the TokenInfoResolver populated with Solana token list definitions.</returns>
-        public static TokenInfoResolver Load(string url)
+        /// <returns>An instance of the TokenMintResolver populated with Solana token list definitions.</returns>
+        public static TokenMintResolver Load(string url)
         {
             return LoadAsync(url).Result;
         }
 
         /// <summary>
-        /// Return an instance of the TokenInfoResolver loaded with the Solana token list.
+        /// Return an instance of the TokenMintResolver loaded with the Solana token list.
         /// </summary>
-        /// <returns>A task that will result in an instance of the TokenInfoResolver populated with Solana token list definitions.</returns>
-        public static async Task<TokenInfoResolver> LoadAsync()
+        /// <returns>A task that will result in an instance of the TokenMintResolver populated with Solana token list definitions.</returns>
+        public static async Task<TokenMintResolver> LoadAsync()
         {
             return await LoadAsync(TOKENLIST_GITHUB_URL);
         }
 
         /// <summary>
-        /// Return an instance of the TokenInfoResolver loaded with the Solana token list.
+        /// Return an instance of the TokenMintResolver loaded with the Solana token list.
         /// </summary>
-        /// <returns>A task that will result in an instance of the TokenInfoResolver populated with Solana token list definitions.</returns>
-        public static async Task<TokenInfoResolver> LoadAsync(string url)
+        /// <returns>A task that will result in an instance of the TokenMintResolver populated with Solana token list definitions.</returns>
+        public static async Task<TokenMintResolver> LoadAsync(string url)
         {
             using (var wc = new WebClient())
             {
@@ -90,16 +90,16 @@ namespace Solnet.Extensions
         }
 
         /// <summary>
-        /// Return an instance of the TokenInfoResolver loaded with the dererialised JSON string supplied.
+        /// Return an instance of the TokenMintResolver loaded with the dererialised JSON string supplied.
         /// </summary>
         /// <param name="json">The JSON to parse - should be shaped the same as the Solana token list.</param>
-        /// <returns>An instance of the TokenInfoResolver populated with the deserialized JSON provided.</returns>
-        public static TokenInfoResolver ParseTokenList(string json)
+        /// <returns>An instance of the TokenMintResolver populated with the deserialized JSON provided.</returns>
+        public static TokenMintResolver ParseTokenList(string json)
         {
             if (json is null) throw new ArgumentNullException(nameof(json));
             var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
             var tokenList = JsonSerializer.Deserialize<TokenListDoc>(json, options);
-            return new TokenInfoResolver(tokenList);
+            return new TokenMintResolver(tokenList);
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Solnet.Extensions
         }
 
         /// <summary>
-        /// Add a token to the TokenInfoResolver lookup.
+        /// Add a token to the TokenMintResolver lookup.
         /// Any collisions on token mint will replace the previous instance.
         /// </summary>
         /// <param name="token">An instance of TokenDef to be added.</param>

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Solnet.Extensions.TokenInfo
+namespace Solnet.Extensions.TokenMint
 {
     /// <summary>
-    /// Token Definition object used by the TokenInfoResolver
+    /// Token Definition object used by the TokenMintResolver
     /// <para>TokenMint uniquely identifies a token on the Solana blockchain.
     /// Symbol is purley cosmetic and is not sufficient to uniquely identify a token by itself.</para>
     /// </summary>

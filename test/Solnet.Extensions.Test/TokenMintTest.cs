@@ -1,20 +1,20 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Solnet.Extensions.TokenInfo;
+using Solnet.Extensions.TokenMint;
 using Solnet.Wallet;
 using System.IO;
 
 namespace Solnet.Extensions.Test
 {
     [TestClass]
-    public class TokenInfoTest
+    public class TokenMintTest
     {
         [TestMethod]
         public void TestTokenInfoResolverParseAndFind()
         {
 
             // load simple 
-            var json = File.ReadAllText("Resources/TokenInfo/SimpleTokenList.json");
-            ITokenInfoResolver tokens = TokenInfoResolver.ParseTokenList(json);
+            var json = File.ReadAllText("Resources/TokenMint/SimpleTokenList.json");
+            ITokenMintResolver tokens = TokenMintResolver.ParseTokenList(json);
 
             // lookup by mint
             var wsol = tokens.Resolve(WellKnownTokens.WrappedSOL.TokenMint);
@@ -31,8 +31,8 @@ namespace Solnet.Extensions.Test
         {
 
             // load simple 
-            var json = File.ReadAllText("Resources/TokenInfo/SimpleTokenList.json");
-            var tokens = TokenInfoResolver.ParseTokenList(json);
+            var json = File.ReadAllText("Resources/TokenMint/SimpleTokenList.json");
+            var tokens = TokenMintResolver.ParseTokenList(json);
 
             // lookup unknown mint - non-fatal - returns unknown mint
             var unknown = tokens.Resolve("deadbeef11111111111111111111111111111111112");
@@ -79,7 +79,7 @@ namespace Solnet.Extensions.Test
         {
             var pubkey = new PublicKey("FakekjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
 
-            var resolver = new TokenInfoResolver();
+            var resolver = new TokenMintResolver();
             resolver.Add(new TokenDef(pubkey.Key, "Fake Coin", "FK", 3));
 
             // create via ulong

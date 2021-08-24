@@ -41,8 +41,8 @@ namespace Solnet.Extensions.Test
             client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json");
 
             // define some mints
-            var tokens = new TokenInfoResolver();
-            var testToken = new TokenInfo.TokenDef("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819", "TEST", "TEST", 2);
+            var tokens = new TokenMintResolver();
+            var testToken = new TokenMint.TokenDef("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819", "TEST", "TEST", 2);
             tokens.Add(testToken);
             Assert.AreEqual(125U, testToken.ConvertDecimalToUlong(1.25M));
             Assert.AreEqual(1.25M, testToken.ConvertUlongToDecimal(125U));
@@ -90,7 +90,7 @@ namespace Solnet.Extensions.Test
             client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json");
 
             // load account
-            var tokens = new TokenInfoResolver();
+            var tokens = new TokenMintResolver();
             var wallet = TokenWallet.Load(client, tokens, "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
 
             // check wallet 
@@ -126,8 +126,8 @@ namespace Solnet.Extensions.Test
             client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json");
 
             // define some mints
-            var tokens = new TokenInfoResolver();
-            var testToken = new TokenInfo.TokenDef("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819", "TEST", "TEST", 2);
+            var tokens = new TokenMintResolver();
+            var testToken = new TokenMint.TokenDef("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819", "TEST", "TEST", 2);
             tokens.Add(testToken);
 
             // load account
@@ -177,8 +177,8 @@ namespace Solnet.Extensions.Test
             client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json");
 
             // define some mints
-            var tokens = new TokenInfoResolver();
-            var testToken = new TokenInfo.TokenDef("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819", "TEST", "TEST", 2);
+            var tokens = new TokenMintResolver();
+            var testToken = new TokenMint.TokenDef("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819", "TEST", "TEST", 2);
             tokens.Add(testToken);
 
             // load account
@@ -216,8 +216,8 @@ namespace Solnet.Extensions.Test
             client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json");
 
             // define some mints
-            var tokens = new TokenInfoResolver();
-            var testToken = new TokenInfo.TokenDef(mintPubkey.Key, "TEST", "TEST", 2);
+            var tokens = new TokenMintResolver();
+            var testToken = new TokenMint.TokenDef(mintPubkey.Key, "TEST", "TEST", 2);
             tokens.Add(testToken);
 
             // load account 
@@ -245,7 +245,7 @@ namespace Solnet.Extensions.Test
         {
             // try to load a made up wallet address
             var client = new MockTokenWalletRpc();
-            var tokens = new TokenInfoResolver();
+            var tokens = new TokenMintResolver();
             TokenWallet.Load(client, tokens, "FAKEkjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
         }
 
@@ -265,8 +265,8 @@ namespace Solnet.Extensions.Test
             client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json");
 
             // define some mints
-            var tokens = new TokenInfoResolver();
-            var testToken = new TokenInfo.TokenDef("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819", "TEST", "TEST", 2);
+            var tokens = new TokenMintResolver();
+            var testToken = new TokenMint.TokenDef("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819", "TEST", "TEST", 2);
             tokens.Add(testToken);
 
             // load account and identify test token account with some balance
@@ -292,8 +292,8 @@ namespace Solnet.Extensions.Test
             // define mints and get owner 
             var client = new MockTokenWalletRpc();
             var mintPubkey = new PublicKey("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819");
-            var tokens = new TokenInfoResolver();
-            var testToken = new TokenInfo.TokenDef(mintPubkey.Key, "TEST", "TEST", 2);
+            var tokens = new TokenMintResolver();
+            var testToken = new TokenMint.TokenDef(mintPubkey.Key, "TEST", "TEST", 2);
             tokens.Add(testToken);
             var ownerWallet = new Wallet.Wallet(MnemonicWords);
 

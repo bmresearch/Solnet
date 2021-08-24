@@ -1,5 +1,5 @@
 ﻿using Solnet.Extensions;
-using Solnet.Extensions.TokenInfo;
+using Solnet.Extensions.TokenMint;
 using Solnet.Rpc;
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ namespace Solnet.Examples
             Wallet.Account ownerAccount = wallet.GetAccount(10);
 
             // add TokenDef for a TestNet minted token created by Solnet examples
-            var tokens = new TokenInfoResolver();
+            var tokens = new TokenMintResolver();
             tokens.Add(new TokenDef("AHRNasvVB8UDkU9knqPcn4aVfRbnbVC9HJgSTBwbx8re", "Solnet Test Token", "STT", 2));
 
             // load snapshot of wallet and sub-accounts

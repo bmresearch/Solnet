@@ -1,4 +1,4 @@
-﻿using Solnet.Extensions.TokenInfo;
+﻿using Solnet.Extensions.TokenMint;
 using System;
 using System.Collections.Generic;
 using System.Linq;
