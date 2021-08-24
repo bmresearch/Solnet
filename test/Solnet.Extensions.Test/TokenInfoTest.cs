@@ -60,8 +60,8 @@ namespace Solnet.Extensions.Test
         public void TestTokenDefCreateQuantity()
         {
             var qty = WellKnownTokens.USDC.CreateQuantityWithRaw(4741784U);
-            Assert.AreEqual(4741784U, qty.BalanceRaw);
-            Assert.AreEqual(4.741784M, qty.BalanceDecimal);
+            Assert.AreEqual(4741784U, qty.QuantityRaw);
+            Assert.AreEqual(4.741784M, qty.QuantityDecimal);
             Assert.AreEqual("USDC", qty.Symbol);
             Assert.AreEqual(6, qty.DecimalPlaces);
             Assert.AreEqual("4.741784 USDC (USD Coin)", qty.ToString());
@@ -85,8 +85,8 @@ namespace Solnet.Extensions.Test
             // create via ulong
             var qty = resolver.Resolve(pubkey.Key).CreateQuantityWithRaw(4741784U);
             Assert.AreEqual(pubkey.Key, qty.TokenMint);
-            Assert.AreEqual(4741784U, qty.BalanceRaw);
-            Assert.AreEqual(4741.784M, qty.BalanceDecimal);
+            Assert.AreEqual(4741784U, qty.QuantityRaw);
+            Assert.AreEqual(4741.784M, qty.QuantityDecimal);
             Assert.AreEqual("FK", qty.Symbol);
             Assert.AreEqual(3, qty.DecimalPlaces);
             Assert.AreEqual("4741.784 FK (Fake Coin)", qty.ToString());
@@ -94,8 +94,8 @@ namespace Solnet.Extensions.Test
             // create via decimal
             qty = resolver.Resolve(pubkey.Key).CreateQuantityWithDecimal(14741.784M);
             Assert.AreEqual(pubkey.Key, qty.TokenMint);
-            Assert.AreEqual(14741784U, qty.BalanceRaw);
-            Assert.AreEqual(14741.784M, qty.BalanceDecimal);
+            Assert.AreEqual(14741784U, qty.QuantityRaw);
+            Assert.AreEqual(14741.784M, qty.QuantityDecimal);
             Assert.AreEqual("FK", qty.Symbol);
             Assert.AreEqual(3, qty.DecimalPlaces);
             Assert.AreEqual("14741.784 FK (Fake Coin)", qty.ToString());

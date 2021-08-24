@@ -100,7 +100,7 @@ namespace Solnet.Extensions.Models
         /// <returns>A filtered list of accounts with at least the balance as decimal supplied.</returns>
         public TokenWalletFilterList WithAtLeast(decimal minimumBalance)
         {
-            return new TokenWalletFilterList(_list.Where(x => x.BalanceDecimal >= minimumBalance));
+            return new TokenWalletFilterList(_list.Where(x => x.QuantityDecimal >= minimumBalance));
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Solnet.Extensions.Models
         /// <returns>A filtered list of accounts with at least the balance as raw ulong supplied.</returns>
         public TokenWalletFilterList WithAtLeast(ulong minimumBalance)
         {
-            return new TokenWalletFilterList(_list.Where(x => x.BalanceRaw == minimumBalance));
+            return new TokenWalletFilterList(_list.Where(x => x.QuantityRaw == minimumBalance));
         }
 
         /// <summary>

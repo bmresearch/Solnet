@@ -38,7 +38,7 @@ namespace Solnet.Examples
             Console.WriteLine("Individual Accounts...");
             foreach (var account in tokenWallet.TokenAccounts())
             {
-                Console.WriteLine($"{account.Symbol.PadRight(maxsym)} {account.BalanceDecimal,14} {account.TokenName.PadRight(maxname)} {account.PublicKey} {(account.IsAssociatedTokenAccount ? "[ATA]" : "")}");
+                Console.WriteLine($"{account.Symbol.PadRight(maxsym)} {account.QuantityDecimal,14} {account.TokenName.PadRight(maxname)} {account.PublicKey} {(account.IsAssociatedTokenAccount ? "[ATA]" : "")}");
             }
             Console.WriteLine();
 
@@ -47,7 +47,7 @@ namespace Solnet.Examples
             var sublist = tokenWallet.TokenAccounts().WithSymbol("STT").WithMint("AHRNasvVB8UDkU9knqPcn4aVfRbnbVC9HJgSTBwbx8re");
             foreach (var account in sublist)
             {
-                Console.WriteLine($"{account.Symbol.PadRight(maxsym)} {account.BalanceDecimal,14} {account.TokenName.PadRight(maxname)} {account.PublicKey} {(account.IsAssociatedTokenAccount ? "[ATA]" : "")}");
+                Console.WriteLine($"{account.Symbol.PadRight(maxsym)} {account.QuantityDecimal,14} {account.TokenName.PadRight(maxname)} {account.PublicKey} {(account.IsAssociatedTokenAccount ? "[ATA]" : "")}");
             }
             Console.WriteLine();
 
@@ -55,7 +55,7 @@ namespace Solnet.Examples
             Console.WriteLine("Consolidated Balances...");
             foreach (var balance in tokenWallet.Balances())
             {
-                Console.WriteLine($"{balance.Symbol.PadRight(maxsym)} {balance.BalanceDecimal,14} {balance.TokenName.PadRight(maxname)} in {balance.AccountCount} {(balance.AccountCount == 1 ? "account" : "accounts")}");
+                Console.WriteLine($"{balance.Symbol.PadRight(maxsym)} {balance.QuantityDecimal,14} {balance.TokenName.PadRight(maxname)} in {balance.AccountCount} {(balance.AccountCount == 1 ? "account" : "accounts")}");
             }
             Console.WriteLine();
 

@@ -58,9 +58,9 @@ namespace Solnet.Extensions
         public override string ToString()
         {
             if (Symbol == TokenName)
-                return $"{BalanceDecimal} {Symbol}";
+                return $"{QuantityDecimal} {Symbol}";
             else
-                return $"{BalanceDecimal} {Symbol} ({TokenName})";
+                return $"{QuantityDecimal} {Symbol} ({TokenName})";
         }
 
         /// <summary>
@@ -77,8 +77,8 @@ namespace Solnet.Extensions
                                                int accountCount) {
 
             return new TokenWalletBalance(TokenMint, Symbol, TokenName, 
-                DecimalPlaces, BalanceDecimal + valueDecimal, 
-                BalanceRaw + valueRaw, Lamports + lamportsRaw, 
+                DecimalPlaces, QuantityDecimal + valueDecimal, 
+                QuantityRaw + valueRaw, Lamports + lamportsRaw, 
                 AccountCount + accountCount);
 
         }

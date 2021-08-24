@@ -34,8 +34,8 @@ namespace Solnet.Extensions
             Symbol = tokenSymbol ?? throw new ArgumentNullException(nameof(tokenSymbol));
             TokenName = tokenName ?? throw new ArgumentNullException(nameof(tokenName));
             DecimalPlaces = decimalPlaces;
-            BalanceDecimal = balanceDecimal;
-            BalanceRaw = balanceRaw;
+            QuantityDecimal = balanceDecimal;
+            QuantityRaw = balanceRaw;
         }
 
         /// <summary>
@@ -61,12 +61,12 @@ namespace Solnet.Extensions
         /// <summary>
         /// Token balance in decimal.
         /// </summary>
-        public decimal BalanceDecimal { get; init; }
+        public decimal QuantityDecimal { get; init; }
 
         /// <summary>
         /// Token balance in raw ulong.
         /// </summary>
-        public ulong BalanceRaw { get; init; }
+        public ulong QuantityRaw { get; init; }
 
         /// <summary>
         /// Provide a friendly to read balance with symbol and name.
@@ -75,9 +75,9 @@ namespace Solnet.Extensions
         public override string ToString()
         {
             if (Symbol == TokenName)
-                return $"{BalanceDecimal} {Symbol}";
+                return $"{QuantityDecimal} {Symbol}";
             else
-                return $"{BalanceDecimal} {Symbol} ({TokenName})";
+                return $"{QuantityDecimal} {Symbol} ({TokenName})";
         }
 
         /// <summary>
@@ -91,8 +91,8 @@ namespace Solnet.Extensions
         {
 
             return new TokenQuantity(TokenMint, Symbol, TokenName,
-                DecimalPlaces, BalanceDecimal + valueDecimal,
-                BalanceRaw + valueRaw);
+                DecimalPlaces, QuantityDecimal + valueDecimal,
+                QuantityRaw + valueRaw);
 
         }
 
