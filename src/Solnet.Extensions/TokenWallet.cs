@@ -87,24 +87,6 @@ namespace Solnet.Extensions
         }
 
         /// <summary>
-        /// Load a TokenWallet instance for a given Account.
-        /// </summary>
-        /// <param name="client">An instance of the RPC client.</param>
-        /// <param name="mintResolver">An instance of a mint resolver.</param>
-        /// <param name="account">The account to load.</param>
-        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
-        /// <returns>An instance of TokenWallet loaded with the token accounts of the account provided.</returns>
-        public static TokenWallet Load(IRpcClient client,
-                                       ITokenMintResolver mintResolver,
-                                       Account account,
-                                       Commitment commitment = Commitment.Finalized)
-        {
-            if (account == null) throw new ArgumentNullException(nameof(account));
-            var output = LoadAsync(new TokenWalletRpcProxy(client), mintResolver, account.PublicKey, commitment);
-            return output.Result;
-        }
-
-        /// <summary>
         /// Load a TokenWallet instance for a given public key.
         /// </summary>
         /// <param name="client">An instance of the RPC client.</param>
@@ -136,24 +118,6 @@ namespace Solnet.Extensions
         {
             if (publicKey == null) throw new ArgumentNullException(nameof(publicKey));
             var output = LoadAsync(client, mintResolver, new PublicKey(publicKey), commitment);
-            return output.Result;
-        }
-
-        /// <summary>
-        /// Load a TokenWallet instance for a given public key.
-        /// </summary>
-        /// <param name="client">An instance of the RPC client.</param>
-        /// <param name="mintResolver">An instance of a mint resolver.</param>
-        /// <param name="account">The account public key.</param>
-        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
-        /// <returns>An instance of TokenWallet loaded with the token accounts of the account provided.</returns>
-        public static TokenWallet Load(ITokenWalletRpcProxy client,
-                                       ITokenMintResolver mintResolver,
-                                       Account account,
-                                       Commitment commitment = Commitment.Finalized)
-        {
-            if (account == null) throw new ArgumentNullException(nameof(account));
-            var output = LoadAsync(client, mintResolver, account.PublicKey, commitment);
             return output.Result;
         }
 
