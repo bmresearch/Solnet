@@ -36,7 +36,7 @@ namespace Solnet.Extensions
         /// <summary>
         /// PublicKey for the wallet
         /// </summary>
-        public string PublicKey { get; init; }
+        public PublicKey PublicKey { get; init; }
 
         /// <summary>
         /// Cache of computed ATAs for mints
@@ -56,7 +56,7 @@ namespace Solnet.Extensions
         /// <summary>
         /// Private constructor, get your instances via Load methods
         /// </summary>
-        private TokenWallet(ITokenWalletRpcProxy client, ITokenMintResolver mintResolver, string publicKey)
+        private TokenWallet(ITokenWalletRpcProxy client, ITokenMintResolver mintResolver, PublicKey publicKey)
         {
             if (client is null) throw new ArgumentNullException(nameof(client));
             if (mintResolver is null) throw new ArgumentNullException(nameof(mintResolver));
@@ -232,8 +232,8 @@ namespace Solnet.Extensions
         {
 
             // get sol balance and token accounts
-            var balance = await RpcClient.GetBalanceAsync(PublicKey, commitment);
-            var tokenAccounts = await RpcClient.GetTokenAccountsByOwnerAsync(PublicKey.ToString(), null, TokenProgram.ProgramIdKey, commitment);
+            var balance = await RpcClient.GetBalanceAsync(PublicKey.Key, commitment);
+            var tokenAccounts = await RpcClient.GetTokenAccountsByOwnerAsync(PublicKey.Key, null, TokenProgram.ProgramIdKey, commitment);
 
             // handle balance response
             if (balance.WasSuccessful)
@@ -405,7 +405,7 @@ namespace Solnet.Extensions
             // build transfer instruction
             builder.AddInstruction(
                 Programs.TokenProgram.Transfer(new PublicKey(source.PublicKey),
-                    targetAta, qtyRaw, new PublicKey(PublicKey)));
+                    targetAta, qtyRaw, PublicKey));
 
             // execute
             var tx = builder.Build(feePayer);
@@ -441,7 +441,7 @@ namespace Solnet.Extensions
                 // add instruction to create it on chain
                 builder.AddInstruction(
                     AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(
-                        feePayer, new PublicKey(PublicKey), new PublicKey(mint)));
+                        feePayer, PublicKey, new PublicKey(mint)));
 
                 // pass back for subsequent use (transfer to etc.)
                 return pubkey;
@@ -465,14 +465,14 @@ namespace Solnet.Extensions
         /// <returns>The public key of the Associated Token Account.</returns>
         private PublicKey GetAssociatedTokenAddressForMint(string mint)
         {
-
+            if (mint == null) throw new ArgumentNullException(nameof(mint));
             if (_ataCache.ContainsKey(mint))
                 return _ataCache[mint];
             else
             {
                 // derive deterministic associate token account
                 // see https://spl.solana.com/associated-token-account for more info
-                var targetPubkey = new PublicKey(PublicKey);
+                var targetPubkey = PublicKey;
                 var mintPubkey = new PublicKey(mint);
                 var address = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(targetPubkey, mintPubkey);
                 _ataCache[mint] = address;
