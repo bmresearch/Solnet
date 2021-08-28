@@ -29,6 +29,7 @@ namespace Solnet.Programs
         static InstructionDecoder()
         {
             InstructionDictionary.Add(MemoProgram.ProgramIdKey, MemoProgram.Decode);
+            InstructionDictionary.Add(MemoProgram.ProgramIdKeyV2, MemoProgram.Decode);
             InstructionDictionary.Add(SystemProgram.ProgramIdKey, SystemProgram.Decode);
             InstructionDictionary.Add(TokenProgram.ProgramIdKey, TokenProgram.Decode);
             InstructionDictionary.Add(AssociatedTokenAccountProgram.ProgramIdKey, AssociatedTokenAccountProgram.Decode);
