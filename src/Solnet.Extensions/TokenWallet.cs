@@ -280,10 +280,13 @@ namespace Solnet.Extensions
         /// <param name="amount">Human readable amount of tokens to send.</param>
         /// <param name="destination">Destination wallet address.</param>
         /// <param name="feePayer">PublicKey of the fee payer address.</param>
+        /// <param name="signTxCallback">Call back function used to sign the TransactionBuilder.</param>
         /// <returns>A task that results in the transaction signature submitted to the RPC node.</returns>
-        public RequestResult<string> Send(TokenWalletAccount source, decimal amount, PublicKey destination, Account feePayer)
+        public RequestResult<string> Send(TokenWalletAccount source, decimal amount, 
+                                          PublicKey destination, PublicKey feePayer,
+                                          Func<TransactionBuilder, byte[]> signTxCallback)
         {
-            return SendAsync(source, amount, destination, feePayer).Result;
+            return SendAsync(source, amount, destination, feePayer, signTxCallback).Result;
         }
 
         /// <summary>
@@ -298,10 +301,13 @@ namespace Solnet.Extensions
         /// <param name="amount">Human readable amount of tokens to send.</param>
         /// <param name="destination">Destination wallet address.</param>
         /// <param name="feePayer">PublicKey of the fee payer address.</param>
+        /// <param name="signTxCallback">Call back function used to sign the TransactionBuilder.</param>
         /// <returns>The transaction signature submitted to the RPC node.</returns>
-        public RequestResult<string> Send(TokenWalletAccount source, decimal amount, string destination, Account feePayer)
+        public RequestResult<string> Send(TokenWalletAccount source, decimal amount, 
+                                          string destination, PublicKey feePayer,
+                                          Func<TransactionBuilder, byte[]> signTxCallback)
         {
-            return SendAsync(source, amount, new PublicKey(destination), feePayer).Result;
+            return SendAsync(source, amount, new PublicKey(destination), feePayer, signTxCallback).Result;
         }
 
         /// <summary>
@@ -316,10 +322,13 @@ namespace Solnet.Extensions
         /// <param name="amount">Human readable amount of tokens to send.</param>
         /// <param name="destination">Destination wallet address.</param>
         /// <param name="feePayer">PublicKey of the fee payer address.</param>
+        /// <param name="signTxCallback">Call back function used to sign the TransactionBuilder.</param>
         /// <returns>A task that results in the transaction signature submitted to the RPC node.</returns>
-        public async Task<RequestResult<string>> SendAsync(TokenWalletAccount source, decimal amount, string destination, Account feePayer)
+        public async Task<RequestResult<string>> SendAsync(TokenWalletAccount source, decimal amount, 
+                                                           string destination, PublicKey feePayer,
+                                                           Func<TransactionBuilder, byte[]> signTxCallback)
         {
-            return await SendAsync(source, amount, new PublicKey(destination), feePayer);
+            return await SendAsync(source, amount, new PublicKey(destination), feePayer, signTxCallback);
         }
 
         /// <summary>
@@ -334,16 +343,20 @@ namespace Solnet.Extensions
         /// <param name="amount">Human readable amount of tokens to send.</param>
         /// <param name="destination">Destination wallet address.</param>
         /// <param name="feePayer">PublicKey of the fee payer address.</param>
+        /// <param name="signTxCallback">Call back function used to sign the TransactionBuilder.</param>
         /// <returns>A task that results in the transaction signature submitted to the RPC node.</returns>
-        public async Task<RequestResult<string>> SendAsync(TokenWalletAccount source, decimal amount, PublicKey destination, Account feePayer)
+        public async Task<RequestResult<string>> SendAsync(TokenWalletAccount source, decimal amount, 
+                                                            PublicKey destination, PublicKey feePayer, 
+                                                            Func<TransactionBuilder, byte[]> signTxCallback)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
             if (destination == null) throw new ArgumentNullException(nameof(destination));
             if (feePayer == null) throw new ArgumentNullException(nameof(feePayer));
+            if (signTxCallback == null) throw new ArgumentNullException(nameof(signTxCallback));
 
             // are destination and feePayer valid publicKeys?
-            if (!Ed25519Extensions.IsOnCurve(destination.KeyBytes)) throw new ArgumentException($"Destination PublicKey {destination.ToString()} is invalid wallet address.");
-            if (!Ed25519Extensions.IsOnCurve(feePayer.PublicKey.KeyBytes)) throw new ArgumentException($"feePayer PublicKey {feePayer.PublicKey.ToString()} is invalid wallet address.");
+            if (!Ed25519Extensions.IsOnCurve(destination.KeyBytes)) throw new ArgumentException($"Destination PublicKey {destination.Key} is invalid wallet address.");
+            if (!Ed25519Extensions.IsOnCurve(feePayer.KeyBytes)) throw new ArgumentException($"feePayer PublicKey {feePayer.Key} is invalid wallet address.");
 
             // make sure source account originated from this wallet
             if (source.Owner != this.PublicKey) throw new ApplicationException("Source account does not belong to this wallet.");
@@ -360,7 +373,7 @@ namespace Solnet.Extensions
             builder.SetFeePayer(feePayer);
 
             // create or reuse target ata for token
-            var targetAta = destWallet.JitCreateAssociatedTokenAccount(builder, source.TokenMint, feePayer.PublicKey);
+            var targetAta = destWallet.JitCreateAssociatedTokenAccount(builder, source.TokenMint, feePayer);
 
             // resolve the source account TokenMint and convert to raw quantity
             var tokenDef = MintResolver.Resolve(source.TokenMint);
@@ -371,8 +384,11 @@ namespace Solnet.Extensions
                 Programs.TokenProgram.Transfer(new PublicKey(source.PublicKey),
                     targetAta, qtyRaw, PublicKey));
 
+            // request callee sign the transaction
+            var tx = signTxCallback.Invoke(builder);
+            if (tx == null) throw new ApplicationException($"Result from {signTxCallback} was null");
+
             // execute
-            var tx = builder.Build(feePayer);
             return await RpcClient.SendTransactionAsync(tx);
 
         }

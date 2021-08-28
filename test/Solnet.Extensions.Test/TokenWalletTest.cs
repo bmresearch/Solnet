@@ -235,7 +235,7 @@ namespace Solnet.Extensions.Test
             client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse2.json");
             client.AddTextFile("Resources/TokenWallet/GetRecentBlockhashResponse.json");
             client.AddTextFile("Resources/TokenWallet/SendTransactionResponse.json");
-            wallet.Send(testTokenAccount, 1M, targetOwner, signer);
+            wallet.Send(testTokenAccount, 1M, targetOwner, signer.PublicKey, builder => builder.Build(signer));
 
         }
 
@@ -277,7 +277,7 @@ namespace Solnet.Extensions.Test
 
             // trigger send to bogus target wallet
             var targetOwner = "FAILzxtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5";
-            wallet.Send(testTokenAccount, 1M, targetOwner, signer);
+            wallet.Send(testTokenAccount, 1M, targetOwner, signer.PublicKey, builder => builder.Build(signer));
 
         }
 
@@ -298,18 +298,18 @@ namespace Solnet.Extensions.Test
             var ownerWallet = new Wallet.Wallet(MnemonicWords);
 
             // load wallet a
-            var pubkey_a = ownerWallet.GetAccount(1);
-            Assert.AreEqual("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", pubkey_a.PublicKey.Key);
+            var account_a = ownerWallet.GetAccount(1);
+            Assert.AreEqual("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", account_a.PublicKey.Key);
             client.AddTextFile("Resources/TokenWallet/GetBalanceResponse.json");
             client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse.json");
-            var wallet_a = TokenWallet.Load(client, tokens, pubkey_a);
+            var wallet_a = TokenWallet.Load(client, tokens, account_a);
 
             // load wallet b
-            var pubkey_b = ownerWallet.GetAccount(2);
-            Assert.AreEqual("3F2RNf2f2kWYgJ2XsqcjzVeh3rsEQnwf6cawtBiJGyKV", pubkey_b.PublicKey.Key);
+            var account_b = ownerWallet.GetAccount(2);
+            Assert.AreEqual("3F2RNf2f2kWYgJ2XsqcjzVeh3rsEQnwf6cawtBiJGyKV", account_b.PublicKey.Key);
             client.AddTextFile("Resources/TokenWallet/GetBalanceResponse.json");
             client.AddTextFile("Resources/TokenWallet/GetTokenAccountsByOwnerResponse2.json");
-            var wallet_b = TokenWallet.Load(client, tokens, pubkey_b);
+            var wallet_b = TokenWallet.Load(client, tokens, account_b);
 
             // use other account as mock target and check derived PDA
             var destination = ownerWallet.GetAccount(99);
@@ -319,7 +319,7 @@ namespace Solnet.Extensions.Test
             Assert.IsFalse(account_in_a.IsAssociatedTokenAccount);
 
             // attempt to send using wallet b - this should not succeed
-            wallet_b.Send(account_in_a, 1M, destination, pubkey_a);
+            wallet_b.Send(account_in_a, 1M, destination, account_a.PublicKey, builder => builder.Build(account_b));
 
         }
 
