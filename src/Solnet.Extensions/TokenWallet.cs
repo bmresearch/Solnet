@@ -239,13 +239,13 @@ namespace Solnet.Extensions
             if (balance.WasSuccessful)
                 Lamports = balance.Result.Value;
             else
-                throw new ApplicationException($"Could not load balance for {PublicKey}");
+                throw new TokenWalletException($"Could not load balance for {PublicKey}", balance);
 
             // handle token accounts response
             if (tokenAccounts.WasSuccessful)
                 _tokenAccounts = tokenAccounts.Result.Value;
             else
-                throw new ApplicationException($"Could not load tokenAccounts for {PublicKey}");
+                throw new TokenWalletException($"Could not load tokenAccounts for {PublicKey}", tokenAccounts);
 
             return true;
 
