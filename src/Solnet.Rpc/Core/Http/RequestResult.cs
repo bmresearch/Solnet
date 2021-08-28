@@ -8,7 +8,7 @@ namespace Solnet.Rpc.Core.Http
     /// Represents the result of a given request.
     /// </summary>
     /// <typeparam name="T">The type of the result.</typeparam>
-    public class RequestResult<T>
+    public class RequestResult<T> : IRequestResult
     {
         /// <summary>
         /// Returns <c>true</c> if the request was successfully handled and parsed.
@@ -44,7 +44,7 @@ namespace Solnet.Rpc.Core.Http
         /// Returns the error code if one was found in the error object when the server is unable to handle the request.
         /// </summary>
         public int ServerErrorCode { get; set; }
-        
+
         /// <summary>
         /// The error data, if applicable.
         /// </summary>
