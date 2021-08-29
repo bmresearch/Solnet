@@ -64,7 +64,7 @@ namespace Solnet.Extensions.TokenMint
         /// </summary>
         /// <param name="value">Value as ulong.</param>
         /// <returns>A TokenQuantity instance.</returns>
-        public TokenQuantity CreateQuantityWithRaw(uint value)
+        public TokenQuantity CreateQuantityWithRaw(ulong value)
         {
             return CreateQuantity(ConvertUlongToDecimal(value), value);
         }
