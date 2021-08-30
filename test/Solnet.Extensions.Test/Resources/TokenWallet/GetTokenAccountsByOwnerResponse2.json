@@ -1,0 +1,39 @@
+{ 
+  "jsonrpc": "2.0",
+  "result": {
+    "context": {
+      "slot": 79200468
+    },
+    "value": [
+      {
+        "account": {
+          "data": {
+            "parsed": {
+              "info": {
+                "isNative": false,
+                "mint": "98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819",
+                "owner": "fakeLtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5",
+                "state": "initialized",
+                "tokenAmount": {
+                  "amount": "1000",
+                  "decimals": 2,
+                  "uiAmount": 10.0,
+                  "uiAmountString": "10"
+                }
+              },
+              "type": "account"
+            },
+            "program": "spl-token",
+            "space": 165
+          },
+          "executable": false,
+          "lamports": 2039280,
+          "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+          "rentEpoch": 195
+        },
+        "pubkey": "xyzA5eMmbqSFnNZNB2fQV9ipHbh9y9KS65aZkAh9t8zv"
+      }
+    ]
+  },
+  "id": 0
+}

@@ -44,7 +44,7 @@ namespace Solnet.Rpc.Core.Http
         /// Returns the error code if one was found in the error object when the server is unable to handle the request.
         /// </summary>
         public int ServerErrorCode { get; set; }
-        
+
         /// <summary>
         /// The error data, if applicable.
         /// </summary>
