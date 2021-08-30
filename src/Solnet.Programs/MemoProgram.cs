@@ -3,6 +3,7 @@ using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Solnet.Programs
@@ -19,6 +20,11 @@ namespace Solnet.Programs
         /// The public key of the Memo Program.
         /// </summary>
         public static readonly PublicKey ProgramIdKey = new("Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo");
+
+        /// <summary>
+        /// The public key of the Memo Program V2.
+        /// </summary>
+        public static readonly PublicKey ProgramIdKeyV2 = new("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
 
         /// <summary>
         /// The program's name.
@@ -51,6 +57,28 @@ namespace Solnet.Programs
                 Data = memoBytes
             };
         }
+        
+        /// <summary>
+        /// Initialize a new transaction instruction which interacts with the Memo Program.
+        /// </summary>
+        /// <param name="account">The public key of the account associated with the memo.</param>
+        /// <param name="memo">The memo to be included in the transaction.</param>
+        /// <returns>The <see cref="TransactionInstruction"/> which includes the memo data.</returns>
+        public static TransactionInstruction NewMemoV2(string memo, PublicKey account = null)
+        {
+            List<AccountMeta> keys = new ();
+            if (account != null)
+                keys.Add(AccountMeta.ReadOnly(account, true));
+            
+            byte[] memoBytes = Encoding.UTF8.GetBytes(memo);
+
+            return new TransactionInstruction
+            {
+                ProgramId = ProgramIdKeyV2.KeyBytes,
+                Keys = keys,
+                Data = memoBytes
+            };
+        }
 
         /// <summary>
         /// Decodes an instruction created by the Memo Program.
@@ -63,7 +91,7 @@ namespace Solnet.Programs
         {
             DecodedInstruction decodedInstruction = new ()
             {
-                PublicKey = ProgramIdKey,
+                PublicKey = keys.Any(x => x.Key == ProgramIdKey.Key) ? ProgramIdKey : ProgramIdKeyV2,
                 InstructionName = InstructionName,
                 ProgramName = ProgramName,
                 InnerInstructions = new List<DecodedInstruction>(),

@@ -40,7 +40,7 @@ namespace Solnet.Examples
 
                     Console.WriteLine($"Balance: {balance.Result.Value}");
 
-                    var memoInstruction = MemoProgram.NewMemo(wallet.Account, "Hello Solana World, using Solnet :)");
+                    var memoInstruction = MemoProgram.NewMemoV2("Hello Solana World, using Solnet :)");
 
                     var recentHash = rpcClient.GetRecentBlockHash();
 
