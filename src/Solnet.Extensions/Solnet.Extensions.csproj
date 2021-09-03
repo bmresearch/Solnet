@@ -10,4 +10,5 @@
     <ProjectReference Include="..\Solnet.Wallet\Solnet.Wallet.csproj" />
   </ItemGroup>
 
+  <Import Project="..\..\SharedBuildProperties.props" />
 </Project>
