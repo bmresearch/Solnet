@@ -31,7 +31,7 @@ namespace Solnet.Wallet
                 }
                 return _key;
             }
-            set { _key = value; }
+            set => _key = value;
         }
 
 
@@ -50,7 +50,7 @@ namespace Solnet.Wallet
                 }
                 return _keyBytes;
             }
-            set { _keyBytes = value; }
+            set => _keyBytes = value;
         }
 
 
@@ -60,6 +60,8 @@ namespace Solnet.Wallet
         /// <param name="key">The public key as byte array.</param>
         public PublicKey(byte[] key)
         {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
             if (key.Length != PublicKeyLength)
                 throw new ArgumentException("invalid key length", nameof(key));
             KeyBytes = new byte[PublicKeyLength];
@@ -72,7 +74,7 @@ namespace Solnet.Wallet
         /// <param name="key">The public key as base58 encoded string.</param>
         public PublicKey(string key)
         {
-            Key = key;
+            Key = key ?? throw new ArgumentNullException(nameof(key));
         }
 
         /// <summary>
