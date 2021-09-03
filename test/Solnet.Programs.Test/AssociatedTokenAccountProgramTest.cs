@@ -28,10 +28,10 @@ namespace Solnet.Programs.Test
 
             var txInstruction =
                 AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(
-                    ownerAccount, 
-                    ownerAccount.PublicKey, 
+                    ownerAccount,
+                    ownerAccount.PublicKey,
                     mintAccount.PublicKey);
-            
+
             Assert.AreEqual(7, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(ProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(System.Array.Empty<byte>(), txInstruction.Data);

@@ -12,22 +12,22 @@ namespace Solnet.Programs
         /// The public key of the program.
         /// </summary>
         public PublicKey PublicKey { get; set; }
-        
+
         /// <summary>
         /// The program name.
         /// </summary>
         public string ProgramName { get; set; }
-        
+
         /// <summary>
         /// The instruction name.
         /// </summary>
         public string InstructionName { get; set; }
-        
+
         /// <summary>
         /// Values decoded from the instruction.
         /// </summary>
         public Dictionary<string, object> Values { get; set; }
-        
+
         /// <summary>
         /// The inner instructions related to this decoded instruction.
         /// </summary>

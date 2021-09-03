@@ -9,12 +9,12 @@ namespace Solnet.Rpc.Types
         /// Returns no transaction details.
         /// </summary>
         None,
-        
+
         /// <summary>
         /// Returns only transaction signatures.
         /// </summary>
         Signatures,
-        
+
         /// <summary>
         /// Returns full transaction details.
         /// </summary>

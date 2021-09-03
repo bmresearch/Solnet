@@ -33,7 +33,7 @@ namespace Solnet.Wallet
             PrivateKey = new PrivateKey(privateKey);
             PublicKey = new PublicKey(publicKey);
         }
-        
+
         /// <summary>
         /// Initialize an account with the passed private and public keys.
         /// </summary>
@@ -77,7 +77,7 @@ namespace Solnet.Wallet
             RandomUtils.GetBytes(bytes);
             return bytes;
         }
-        
+
         /// <summary>
         /// Conversion between a <see cref="Account"/> object and the corresponding private key.
         /// </summary>
@@ -91,7 +91,7 @@ namespace Solnet.Wallet
         /// <param name="account">The Account object.</param>
         /// <returns>The public key as a byte array.</returns>
         public static implicit operator PublicKey(Account account) => account.PublicKey;
-        
+
         /// <inheritdoc cref="ToString"/>
         public override string ToString() => PublicKey;
     }

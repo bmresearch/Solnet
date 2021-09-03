@@ -48,7 +48,7 @@ namespace Solnet.Rpc.Builders
         private byte[] Serialize()
         {
             byte[] signaturesLength = ShortVectorEncoding.EncodeLength(_signatures.Count);
-            MemoryStream buffer = new (signaturesLength.Length + _signatures.Count * SignatureLength + _serializedMessage.Length);
+            MemoryStream buffer = new(signaturesLength.Length + _signatures.Count * SignatureLength + _serializedMessage.Length);
 
             buffer.Write(signaturesLength);
             foreach (string signature in _signatures)
@@ -71,9 +71,9 @@ namespace Solnet.Rpc.Builders
 
             if (_messageBuilder.FeePayer == null)
                 throw new Exception("fee payer is required");
-            
+
             _serializedMessage = _messageBuilder.Build();
-            
+
             foreach (Account signer in signers)
             {
                 byte[] signatureBytes = signer.Sign(_serializedMessage);
@@ -103,7 +103,7 @@ namespace Solnet.Rpc.Builders
             _messageBuilder.NonceInformation = nonceInfo;
             return this;
         }
-        
+
         /// <summary>
         /// Sets the fee payer for the transaction.
         /// </summary>
@@ -134,7 +134,7 @@ namespace Solnet.Rpc.Builders
         {
             return _messageBuilder.Build();
         }
-        
+
         /// <summary>
         /// Signs the transaction's message with the passed signer and add it to the transaction, serializing it.
         /// </summary>
@@ -142,9 +142,9 @@ namespace Solnet.Rpc.Builders
         /// <returns>The serialized transaction.</returns>
         public byte[] Build(Account signer)
         {
-            return Build(new List<Account>{ signer });
+            return Build(new List<Account> { signer });
         }
-        
+
         /// <summary>
         /// Signs the transaction's message with the passed list of signers and adds them to the transaction, serializing it.
         /// </summary>

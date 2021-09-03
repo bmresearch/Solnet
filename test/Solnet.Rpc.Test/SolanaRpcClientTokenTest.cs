@@ -25,7 +25,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri,};
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenSupply("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
@@ -50,7 +50,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri,};
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenSupply("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2", Commitment.Processed);
@@ -91,7 +91,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri,};
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenAccountsByOwner(
@@ -116,7 +116,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri,};
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenAccountsByOwner(
@@ -141,7 +141,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri,};
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenAccountsByDelegate(
@@ -177,7 +177,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri,};
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenAccountsByDelegate(
@@ -229,7 +229,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri,};
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenAccountBalance("7247amxcSBamBSKZJrqbj373CiJSa1v21cRav56C3WfZ");
@@ -254,7 +254,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri,};
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result =
@@ -281,7 +281,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri,};
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
@@ -308,7 +308,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri,};
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result =

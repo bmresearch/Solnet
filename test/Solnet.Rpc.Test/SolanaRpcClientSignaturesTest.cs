@@ -46,7 +46,7 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
-        
+
         [TestMethod]
         public void TestGetSignaturesForAddress2()
         {
@@ -94,7 +94,7 @@ namespace Solnet.Rpc.Test
             }
 
         }
-        
+
         [TestMethod]
         public void TestGetSignaturesForAddress2_InvalidCommitment()
         {
@@ -144,7 +144,7 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
-        
+
         [TestMethod]
         public void TestGetSignaturesForAddress2Until()
         {
@@ -208,7 +208,7 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
-        
+
         [TestMethod]
         public void TestGetSignaturesForAddress2Before()
         {
@@ -272,7 +272,7 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
-        
+
         [TestMethod]
         public void TestGetSignaturesForAddress2BeforeConfirmed()
         {

@@ -219,7 +219,7 @@ namespace Solnet.Wallet.Test
             CollectionAssert.AreEqual(SerializedMessageSignature, wallet.Account.Sign(SerializedMessage));
             CollectionAssert.AreEqual(SerializedMessageSignature, wallet.GetAccount(0).Sign(SerializedMessage));
         }
-        
+
         [TestMethod]
         public void TestWalletSignEd25519Bip32()
         {
@@ -237,7 +237,7 @@ namespace Solnet.Wallet.Test
             Assert.IsTrue(wallet.Account.Verify(SerializedMessage, SerializedMessageSignature));
             Assert.IsTrue(wallet.GetAccount(0).Verify(SerializedMessage, SerializedMessageSignature));
         }
-        
+
         [TestMethod]
         public void TestWalletVerifyEd25519Bip32()
         {
@@ -246,7 +246,7 @@ namespace Solnet.Wallet.Test
             Assert.IsTrue(wallet.Account.Verify(SerializedMessage, SerializedMessageSignature));
             Assert.IsTrue(wallet.Verify(SerializedMessage, SerializedMessageSignature));
         }
-        
+
         [TestMethod]
         public void TestWalletSignBip39()
         {

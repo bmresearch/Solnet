@@ -1,9 +1,9 @@
-﻿using System;
-using Solnet.Wallet;
+﻿using Solnet.Programs;
 using Solnet.Rpc;
-using Solnet.Wallet.Bip39;
-using Solnet.Programs;
 using Solnet.Rpc.Builders;
+using Solnet.Wallet;
+using Solnet.Wallet.Bip39;
+using System;
 
 namespace Solnet.Examples
 {

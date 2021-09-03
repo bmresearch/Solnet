@@ -135,7 +135,7 @@ namespace Solnet.Examples
             ulong minBalanceForExemptionMint =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
-            
+
             Account mintAccount = wallet.GetAccount(21);
             Console.WriteLine($"MintAccount: {mintAccount}");
             Account ownerAccount = wallet.GetAccount(10);
@@ -151,7 +151,7 @@ namespace Solnet.Examples
                     25000000,
                     ownerAccount.PublicKey))
                 .AddInstruction(MemoProgram.NewMemo(initialAccount.PublicKey, "Hello from Sol.Net"))
-                .Build(new List<Account> {ownerAccount});
+                .Build(new List<Account> { ownerAccount });
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
@@ -207,7 +207,7 @@ namespace Solnet.Examples
                     25000,
                     ownerAccount))
                 .AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net"))
-                .Build(new List<Account> {ownerAccount, newAccount, initialAccount});
+                .Build(new List<Account> { ownerAccount, newAccount, initialAccount });
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
@@ -269,7 +269,7 @@ namespace Solnet.Examples
                 .AddInstruction(MemoProgram.NewMemo(
                         initialAccount,
                         "Hello from Sol.Net"))
-                .Build(new List<Account> {ownerAccount, newAccount, initialAccount});
+                .Build(new List<Account> { ownerAccount, newAccount, initialAccount });
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
@@ -317,7 +317,7 @@ namespace Solnet.Examples
                 .AddInstruction(SystemProgram.InitializeNonceAccount(
                     nonceAccount,
                     ownerAccount))
-                .Build(new List<Account> {ownerAccount, nonceAccount});
+                .Build(new List<Account> { ownerAccount, nonceAccount });
 
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
@@ -380,12 +380,12 @@ namespace Solnet.Examples
             RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
             string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
-            
+
             RequestResult<string> txReq = rpcClient.SendTransaction(tx);
             Console.WriteLine($"Tx Signature: {txReq.Result}");
         }
     }
-    
+
     public class BurnExample : IExample
     {
         private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
@@ -396,10 +396,10 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new (MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
-            
+
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption MultiSig >> {minBalanceForExemptionMultiSig}");
@@ -409,7 +409,7 @@ namespace Solnet.Examples
             ulong minBalanceForExemptionMint =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
-            
+
             Account ownerAccount = wallet.GetAccount(10);
             Account mintAccount = wallet.GetAccount(21);
             Account initialAccount = wallet.GetAccount(26);
@@ -425,16 +425,16 @@ namespace Solnet.Examples
                 .CompileMessage();
 
             Message msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             Transaction tx = Transaction.Populate(msg,
                 new List<byte[]> { ownerAccount.Sign(msgData) });
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             string mintToSignature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(mintToSignature);
         }
     }
-    
+
 }

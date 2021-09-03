@@ -123,7 +123,7 @@ namespace Solnet.Programs.Utilities
                 throw new ArgumentOutOfRangeException(nameof(offset));
             return BinaryPrimitives.ReadInt64LittleEndian(data.Slice(offset, sizeof(long)));
         }
-        
+
         /// <summary>
         /// Get a span from the read-only span at the given offset with the given length.
         /// </summary>
@@ -166,7 +166,7 @@ namespace Solnet.Programs.Utilities
         /// <param name="isBigEndian">Whether the value is in big-endian byte order.</param>
         /// <returns>The <see cref="BigInteger"/> instance that represents the value.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
-        public static BigInteger GetBigInt(this ReadOnlySpan<byte> data, int offset, int length, 
+        public static BigInteger GetBigInt(this ReadOnlySpan<byte> data, int offset, int length,
             bool isSigned = false, bool isBigEndian = false)
         {
             if (offset + length > data.Length)
@@ -188,7 +188,7 @@ namespace Solnet.Programs.Utilities
 
             return BinaryPrimitives.ReadDoubleLittleEndian(data.Slice(offset, sizeof(double)));
         }
-        
+
         /// <summary>
         /// Get a single-precision floating-point number from the span at the given offset.
         /// </summary>
@@ -203,7 +203,7 @@ namespace Solnet.Programs.Utilities
 
             return BinaryPrimitives.ReadSingleLittleEndian(data.Slice(offset, sizeof(float)));
         }
-        
+
         /// <summary>
         /// Decodes a string from a transaction instruction.
         /// </summary>
@@ -215,10 +215,10 @@ namespace Solnet.Programs.Utilities
         {
             if (offset + sizeof(uint) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            
-            int stringLength = (int) data.GetU32(offset);
+
+            int stringLength = (int)data.GetU32(offset);
             byte[] stringBytes = data.GetSpan(offset + sizeof(uint), stringLength).ToArray();
-            
+
             return (EncodedString: Encoding.ASCII.GetString(stringBytes), Length: stringLength + sizeof(uint));
         }
     }

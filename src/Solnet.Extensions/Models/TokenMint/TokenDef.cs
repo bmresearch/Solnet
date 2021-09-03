@@ -21,7 +21,8 @@ namespace Solnet.Extensions.TokenMint
         /// <param name="name">The display name for this token.</param>
         /// <param name="symbol">The token symbol used to display balances of this token.</param>
         /// <param name="decimalPlaces"></param>
-        public TokenDef(string mint, string name, string symbol, int decimalPlaces) {
+        public TokenDef(string mint, string name, string symbol, int decimalPlaces)
+        {
             TokenMint = mint ?? throw new ArgumentNullException(nameof(mint));
             TokenName = name ?? throw new ArgumentNullException(nameof(name));
             Symbol = symbol ?? throw new ArgumentNullException(nameof(symbol));

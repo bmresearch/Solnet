@@ -23,10 +23,10 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new (MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
-            
+
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption MultiSig >> {minBalanceForExemptionMultiSig}");
@@ -36,13 +36,13 @@ namespace Solnet.Examples
             ulong minBalanceForExemptionMint =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
-            
+
             Account ownerAccount = wallet.GetAccount(10);
             Account mintAccount = wallet.GetAccount(94224);
             Account initialAccount = wallet.GetAccount(84224);
-            
+
             Account multiSignature = wallet.GetAccount(2011);
-            
+
             Account signerAccount1 = wallet.GetAccount(25100);
             Account signerAccount2 = wallet.GetAccount(25101);
             Account signerAccount3 = wallet.GetAccount(25102);
@@ -59,7 +59,7 @@ namespace Solnet.Examples
                     TokenProgram.ProgramIdKey))
                 .AddInstruction(TokenProgram.InitializeMultiSignature(
                     multiSignature,
-                    new List<PublicKey>{signerAccount1, signerAccount2, signerAccount3, signerAccount4, signerAccount5},
+                    new List<PublicKey> { signerAccount1, signerAccount2, signerAccount3, signerAccount4, signerAccount5 },
                     3))
                 .AddInstruction(SystemProgram.CreateAccount(
                     ownerAccount.PublicKey,
@@ -86,10 +86,10 @@ namespace Solnet.Examples
                 });
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             string createMultiSigAndMintSignature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(createMultiSigAndMintSignature);
-            
+
             blockHash = rpcClient.GetRecentBlockHash();
 
             msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
@@ -119,7 +119,7 @@ namespace Solnet.Examples
                 .CompileMessage();
 
             msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
                 new List<byte[]>
@@ -132,12 +132,12 @@ namespace Solnet.Examples
                 });
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             string mintToSignature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(mintToSignature);
         }
     }
-    
+
     /// <summary>
     /// An example on how to use multisig accounts to control the mint of a token.
     /// </summary>
@@ -151,10 +151,10 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new (MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
-            
+
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption MultiSig >> {minBalanceForExemptionMultiSig}");
@@ -164,13 +164,13 @@ namespace Solnet.Examples
             ulong minBalanceForExemptionMint =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
-            
+
             Account ownerAccount = wallet.GetAccount(10);
             Account mintAccount = wallet.GetAccount(94224);
             Account initialAccount = wallet.GetAccount(84224);
-            
+
             Account multiSignature = wallet.GetAccount(2011);
-            
+
             Account signerAccount1 = wallet.GetAccount(25100);
             Account signerAccount2 = wallet.GetAccount(25101);
             Account signerAccount4 = wallet.GetAccount(25103);
@@ -193,7 +193,7 @@ namespace Solnet.Examples
                 .CompileMessage();
 
             Message msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             Transaction tx = Transaction.Populate(msg,
                 new List<byte[]>
@@ -205,7 +205,7 @@ namespace Solnet.Examples
                 });
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             string mintToSignature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(mintToSignature);
         }
@@ -224,10 +224,10 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new (MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
-            
+
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption MultiSig >> {minBalanceForExemptionMultiSig}");
@@ -237,21 +237,21 @@ namespace Solnet.Examples
             ulong minBalanceForExemptionMint =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
-            
+
             Account ownerAccount = wallet.GetAccount(10);
             Account mintAccount = wallet.GetAccount(94224);
             Account initialAccount = wallet.GetAccount(84224);
 
             Account tokenAccountWithMultisigOwner = wallet.GetAccount(3042);
             Account tokenMultiSignature = wallet.GetAccount(3043);
-            
+
             // The signers for the token account
             Account tokenAccountSigner1 = wallet.GetAccount(25280);
             Account tokenAccountSigner2 = wallet.GetAccount(25281);
             Account tokenAccountSigner3 = wallet.GetAccount(25282);
             Account tokenAccountSigner4 = wallet.GetAccount(25283);
             Account tokenAccountSigner5 = wallet.GetAccount(25284);
-            
+
             // First we create a multi sig account to use as the token account authority
             // In this same transaction we transfer tokens using TransferChecked from the initialAccount in the example above
             // to the same token account we just finished creating
@@ -287,13 +287,13 @@ namespace Solnet.Examples
                 .AddInstruction(TokenProgram.TransferChecked(
                     initialAccount,
                     tokenAccountWithMultisigOwner,
-                    10000,10,
+                    10000, 10,
                     ownerAccount,
                     mintAccount))
                 .CompileMessage();
-            
+
             Message msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             Transaction tx = Transaction.Populate(msg,
                 new List<byte[]>
@@ -304,10 +304,10 @@ namespace Solnet.Examples
                 });
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             string signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
-            
+
             // After the previous transaction is confirmed we use TransferChecked to transfer tokens using the
             // multi sig account back to the initial account
             msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
@@ -323,9 +323,9 @@ namespace Solnet.Examples
                         tokenAccountSigner4,
                         tokenAccountSigner5
                     })).CompileMessage();
-            
+
             msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
                 new List<byte[]>
@@ -337,7 +337,7 @@ namespace Solnet.Examples
                 });
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
         }
@@ -356,10 +356,10 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new (MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
-            
+
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption MultiSig >> {minBalanceForExemptionMultiSig}");
@@ -369,11 +369,11 @@ namespace Solnet.Examples
             ulong minBalanceForExemptionMint =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
-            
+
             Account ownerAccount = wallet.GetAccount(10);
             Account mintAccount = wallet.GetAccount(94330);
             Account initialAccount = wallet.GetAccount(84330);
-            
+
             // the signers for the token mint
             Account mintMultiSignature = wallet.GetAccount(10116);
             Account mintSigner1 = wallet.GetAccount(251280);
@@ -381,7 +381,7 @@ namespace Solnet.Examples
             Account mintSigner3 = wallet.GetAccount(251282);
             Account mintSigner4 = wallet.GetAccount(251283);
             Account mintSigner5 = wallet.GetAccount(251284);
-            
+
             // The signers for the freeze account
             Account freezeMultiSignature = wallet.GetAccount(3057);
             Account freezeSigner1 = wallet.GetAccount(25410);
@@ -389,7 +389,7 @@ namespace Solnet.Examples
             Account freezeSigner3 = wallet.GetAccount(25412);
             Account freezeSigner4 = wallet.GetAccount(25413);
             Account freezeSigner5 = wallet.GetAccount(25414);
-            
+
             // First we create a multi sig account to use as the token's freeze authority
             byte[] msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
@@ -410,9 +410,9 @@ namespace Solnet.Examples
                         freezeSigner5
                     }, 3))
                 .CompileMessage();
-            
+
             Message msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             Transaction tx = Transaction.Populate(msg,
                 new List<byte[]>
@@ -422,13 +422,13 @@ namespace Solnet.Examples
                 });
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             string signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
 
             blockHash = rpcClient.GetRecentBlockHash();
-            
-            
+
+
             // Then we create an account which will be the token's mint authority
             // In this same transaction we initialize the token mint with said authorities
             msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
@@ -461,9 +461,9 @@ namespace Solnet.Examples
                     mintMultiSignature,
                     freezeMultiSignature))
                 .CompileMessage();
-            
+
             msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
                 new List<byte[]>
@@ -474,7 +474,7 @@ namespace Solnet.Examples
                 });
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
 
@@ -508,7 +508,7 @@ namespace Solnet.Examples
                 .CompileMessage();
 
             msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
                 new List<byte[]>
@@ -521,12 +521,12 @@ namespace Solnet.Examples
                 });
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
 
             blockHash = rpcClient.GetRecentBlockHash();
-            
+
             // After doing this, we freeze the account to which we just minted tokens
             // Notice how the signers used are different, because the `freezeAuthority` has different signers
             msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
@@ -546,7 +546,7 @@ namespace Solnet.Examples
                 .CompileMessage();
 
             msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
                 new List<byte[]>
@@ -556,14 +556,14 @@ namespace Solnet.Examples
                     freezeSigner3.Sign(msgData),
                     freezeSigner4.Sign(msgData),
                 });
-            
+
             txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
 
             blockHash = rpcClient.GetRecentBlockHash();
-            
+
             // Because we're actually cool people, we now thaw that same account and then set the authority to nothing
             msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
@@ -593,7 +593,7 @@ namespace Solnet.Examples
                 .CompileMessage();
 
             msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
                 new List<byte[]>
@@ -603,14 +603,14 @@ namespace Solnet.Examples
                     freezeSigner3.Sign(msgData),
                     freezeSigner4.Sign(msgData),
                 });
-            
+
             txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
         }
     }
-    
+
     /// <summary>
     /// Example of how to approve and revoke a delegate to transfer tokens using multisig
     /// </summary>
@@ -624,10 +624,10 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new (MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
-            
+
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption MultiSig >> {minBalanceForExemptionMultiSig}");
@@ -637,15 +637,15 @@ namespace Solnet.Examples
             ulong minBalanceForExemptionMint =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
-            
+
             Account ownerAccount = wallet.GetAccount(10);
             Account delegateAccount = wallet.GetAccount(194330);
             Account mintAccount = wallet.GetAccount(94330);
             Account initialAccount = wallet.GetAccount(84330);
-            
+
             // the token mint multisig
             Account mintMultiSignature = wallet.GetAccount(10116);
-            
+
             // the signers for the token mint authority multisig
             Account mintSigner1 = wallet.GetAccount(251280);
             Account mintSigner2 = wallet.GetAccount(251281);
@@ -657,14 +657,14 @@ namespace Solnet.Examples
             Account tokenAccountWithMultisigOwner = wallet.GetAccount(4044);
             // The multisig which is the token account authority
             Account tokenMultiSignature = wallet.GetAccount(4045);
-            
+
             // the signers for the token authority multisig
             Account tokenAccountSigner1 = wallet.GetAccount(25490);
             Account tokenAccountSigner2 = wallet.GetAccount(25491);
             Account tokenAccountSigner3 = wallet.GetAccount(25492);
             Account tokenAccountSigner4 = wallet.GetAccount(25493);
             Account tokenAccountSigner5 = wallet.GetAccount(25494);
-            
+
             byte[] msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
                 .AddInstruction(SystemProgram.CreateAccount(
@@ -688,7 +688,7 @@ namespace Solnet.Examples
                 .CompileMessage();
 
             Message msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             Transaction tx = Transaction.Populate(msg,
                 new List<byte[]>
@@ -698,12 +698,12 @@ namespace Solnet.Examples
                 });
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             string signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
-            
+
             blockHash = rpcClient.GetRecentBlockHash();
-            
+
             msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
                 .AddInstruction(SystemProgram.CreateAccount(
@@ -731,7 +731,7 @@ namespace Solnet.Examples
                 .CompileMessage();
 
             msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
                 new List<byte[]>
@@ -744,10 +744,10 @@ namespace Solnet.Examples
                 });
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
-            
+
             blockHash = rpcClient.GetRecentBlockHash();
 
             msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
@@ -769,7 +769,7 @@ namespace Solnet.Examples
                 .CompileMessage();
 
             msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
                 new List<byte[]>
@@ -781,13 +781,13 @@ namespace Solnet.Examples
                 });
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
-            
+
             blockHash = rpcClient.GetRecentBlockHash();
-            
-            
+
+
             msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
                 .AddInstruction(TokenProgram.TransferChecked(
@@ -810,10 +810,10 @@ namespace Solnet.Examples
                 .CompileMessage();
 
             msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
-                new List<byte[]> { 
+                new List<byte[]> {
                     ownerAccount.Sign(msgData),
                     delegateAccount.Sign(msgData),
                     tokenAccountSigner1.Sign(msgData),
@@ -822,13 +822,13 @@ namespace Solnet.Examples
                 });
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
 
         }
     }
-    
+
     /// <summary>
     /// Example of how to mint and burn using multisigs
     /// </summary>
@@ -842,10 +842,10 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new (MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
-            
+
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption MultiSig >> {minBalanceForExemptionMultiSig}");
@@ -855,29 +855,29 @@ namespace Solnet.Examples
             ulong minBalanceForExemptionMint =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
-            
+
             Account ownerAccount = wallet.GetAccount(10);
             Account mintAccount = wallet.GetAccount(94330);
             Account initialAccount = wallet.GetAccount(84330);
-            
+
             // the token mint multisig
             Account mintMultiSignature = wallet.GetAccount(10116);
             Account mintSigner1 = wallet.GetAccount(251280);
             Account mintSigner2 = wallet.GetAccount(251281);
             Account mintSigner3 = wallet.GetAccount(251282);
-            
+
             // The token account
             Account tokenAccountWithMultisigOwner = wallet.GetAccount(4044);
             // The multisig which is the token account authority
             Account tokenMultiSignature = wallet.GetAccount(4045);
-            
+
             // the signers for the token authority multisig
             Account tokenAccountSigner1 = wallet.GetAccount(25490);
             Account tokenAccountSigner2 = wallet.GetAccount(25491);
             Account tokenAccountSigner3 = wallet.GetAccount(25492);
             Account tokenAccountSigner4 = wallet.GetAccount(25493);
             Account tokenAccountSigner5 = wallet.GetAccount(25494);
-            
+
             byte[] msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
                 .AddInstruction(TokenProgram.MintToChecked(
@@ -893,7 +893,7 @@ namespace Solnet.Examples
                         mintSigner3
                     }))
                 .AddInstruction(TokenProgram.BurnChecked(
-                    mintAccount, 
+                    mintAccount,
                     tokenAccountWithMultisigOwner,
                     tokenMultiSignature,
                     500_000,
@@ -908,7 +908,7 @@ namespace Solnet.Examples
                 .CompileMessage();
 
             Message msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             Transaction tx = Transaction.Populate(msg,
                 new List<byte[]>
@@ -923,13 +923,13 @@ namespace Solnet.Examples
                 });
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             string signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
 
         }
     }
-    
+
     /// <summary>
     /// Example of how to close a multisig account
     /// </summary>
@@ -943,10 +943,10 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new (MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
-            
+
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption MultiSig >> {minBalanceForExemptionMultiSig}");
@@ -956,27 +956,27 @@ namespace Solnet.Examples
             ulong minBalanceForExemptionMint =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
-            
+
             Account ownerAccount = wallet.GetAccount(10);
             Account mintAccount = wallet.GetAccount(94330);
-            
+
             // The multisig which is the token account authority
             Account tokenAccountWithMultisigOwner = wallet.GetAccount(4044);
             Account tokenMultiSignature = wallet.GetAccount(4045);
             Account tokenAccountSigner1 = wallet.GetAccount(25490);
             Account tokenAccountSigner2 = wallet.GetAccount(25491);
             Account tokenAccountSigner3 = wallet.GetAccount(25492);
-            
+
             // The account has balance so we'll burn it before
-            RequestResult<ResponseValue<TokenBalance>> balance = 
+            RequestResult<ResponseValue<TokenBalance>> balance =
                 rpcClient.GetTokenAccountBalance(tokenAccountWithMultisigOwner.PublicKey);
 
             Console.WriteLine($"Account Balance >> {balance.Result.Value.UiAmountString}");
-            
+
             byte[] msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
                 .AddInstruction(TokenProgram.BurnChecked(
-                    mintAccount, 
+                    mintAccount,
                     tokenAccountWithMultisigOwner,
                     tokenMultiSignature,
                     balance.Result.Value.AmountUlong,
@@ -1002,7 +1002,7 @@ namespace Solnet.Examples
                 .CompileMessage();
 
             Message msg = Examples.DecodeMessageFromWire(msgData);
-            
+
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             Transaction tx = Transaction.Populate(msg,
                 new List<byte[]>
@@ -1014,11 +1014,11 @@ namespace Solnet.Examples
                 });
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
-            
+
             string signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
 
         }
     }
-    
+
 }

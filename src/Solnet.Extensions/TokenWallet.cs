@@ -1,17 +1,17 @@
-﻿using Solnet.Rpc;
+﻿using Solnet.Extensions.Models;
+using Solnet.Extensions.TokenMint;
+using Solnet.Programs;
+using Solnet.Rpc;
+using Solnet.Rpc.Builders;
+using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
+using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using Solnet.Programs;
-using Solnet.Extensions.TokenMint;
+using System.Linq;
 using System.Threading.Tasks;
-using Solnet.Extensions.Models;
-using Solnet.Rpc.Core.Http;
-using Solnet.Rpc.Builders;
-using Solnet.Rpc.Utilities;
 
 namespace Solnet.Extensions
 {
@@ -282,7 +282,7 @@ namespace Solnet.Extensions
         /// <param name="feePayer">PublicKey of the fee payer address.</param>
         /// <param name="signTxCallback">Call back function used to sign the TransactionBuilder.</param>
         /// <returns>A task that results in the transaction signature submitted to the RPC node.</returns>
-        public RequestResult<string> Send(TokenWalletAccount source, decimal amount, 
+        public RequestResult<string> Send(TokenWalletAccount source, decimal amount,
                                           PublicKey destination, PublicKey feePayer,
                                           Func<TransactionBuilder, byte[]> signTxCallback)
         {
@@ -303,7 +303,7 @@ namespace Solnet.Extensions
         /// <param name="feePayer">PublicKey of the fee payer address.</param>
         /// <param name="signTxCallback">Call back function used to sign the TransactionBuilder.</param>
         /// <returns>The transaction signature submitted to the RPC node.</returns>
-        public RequestResult<string> Send(TokenWalletAccount source, decimal amount, 
+        public RequestResult<string> Send(TokenWalletAccount source, decimal amount,
                                           string destination, PublicKey feePayer,
                                           Func<TransactionBuilder, byte[]> signTxCallback)
         {
@@ -324,7 +324,7 @@ namespace Solnet.Extensions
         /// <param name="feePayer">PublicKey of the fee payer address.</param>
         /// <param name="signTxCallback">Call back function used to sign the TransactionBuilder.</param>
         /// <returns>A task that results in the transaction signature submitted to the RPC node.</returns>
-        public async Task<RequestResult<string>> SendAsync(TokenWalletAccount source, decimal amount, 
+        public async Task<RequestResult<string>> SendAsync(TokenWalletAccount source, decimal amount,
                                                            string destination, PublicKey feePayer,
                                                            Func<TransactionBuilder, byte[]> signTxCallback)
         {
@@ -345,8 +345,8 @@ namespace Solnet.Extensions
         /// <param name="feePayer">PublicKey of the fee payer address.</param>
         /// <param name="signTxCallback">Call back function used to sign the TransactionBuilder.</param>
         /// <returns>A task that results in the transaction signature submitted to the RPC node.</returns>
-        public async Task<RequestResult<string>> SendAsync(TokenWalletAccount source, decimal amount, 
-                                                            PublicKey destination, PublicKey feePayer, 
+        public async Task<RequestResult<string>> SendAsync(TokenWalletAccount source, decimal amount,
+                                                            PublicKey destination, PublicKey feePayer,
                                                             Func<TransactionBuilder, byte[]> signTxCallback)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));

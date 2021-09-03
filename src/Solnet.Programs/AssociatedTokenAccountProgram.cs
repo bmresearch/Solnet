@@ -19,12 +19,12 @@ namespace Solnet.Programs
         /// The address of the Shared Memory Program.
         /// </summary>
         public static readonly PublicKey ProgramIdKey = new("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
-        
+
         /// <summary>
         /// The program's name.
         /// </summary>
         private const string ProgramName = "Associated Token Account Program";
-        
+
         /// <summary>
         /// The instruction's name.
         /// </summary>
@@ -43,7 +43,7 @@ namespace Solnet.Programs
             PublicKey associatedTokenAddress = DeriveAssociatedTokenAccount(owner, mint);
 
             if (associatedTokenAddress == null) return null;
-            
+
             List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(payer, true),
@@ -76,7 +76,7 @@ namespace Solnet.Programs
                 ProgramIdKey.KeyBytes, out byte[] derivedAssociatedTokenAddress, out _);
             return success ? new PublicKey(derivedAssociatedTokenAddress) : null;
         }
-        
+
         /// <summary>
         /// Decodes an instruction created by the Associated Token Account Program.
         /// </summary>

@@ -21,17 +21,17 @@ namespace Solnet.Programs
         /// The hash prefix used to calculate the SHA256 of the name record to be created.
         /// </summary>
         private static readonly string HashPrefix = "SPL Name Service";
-        
+
         /// <summary>
         /// The program's name.
         /// </summary>
         private const string ProgramName = "Name Service Program";
-        
+
         /// <summary>
         /// The offset at which the value which defines the instruction method begins.
         /// </summary>
         private const int MethodOffset = 0;
-        
+
         /// <summary>
         /// The public key of the Name Service Program.
         /// </summary>
@@ -56,7 +56,7 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         /// <exception cref="Exception">Thrown when it was not possible to derive a program address for the account.</exception>
         public static TransactionInstruction CreateNameRegistry(
-            PublicKey name, PublicKey payer, PublicKey nameOwner, ulong lamports, uint space, PublicKey nameClass = null, 
+            PublicKey name, PublicKey payer, PublicKey nameOwner, ulong lamports, uint space, PublicKey nameClass = null,
             PublicKey parentNameOwner = null, PublicKey parentName = null)
         {
             byte[] hashedName = ComputeHashedName(name.Key);
@@ -65,7 +65,7 @@ namespace Solnet.Programs
             return CreateNameRegistryInstruction(
                 nameAccountKey, nameOwner, payer, hashedName, lamports, space, nameClass, parentNameOwner, parentName);
         }
-        
+
         /// <summary>
         /// Gets the hash for the given value with the attached hash prefix.
         /// </summary>
@@ -78,7 +78,7 @@ namespace Solnet.Programs
             using SHA256Managed sha = new();
             return sha.ComputeHash(fullNameBytes, 0, fullNameBytes.Length);
         }
-        
+
         /// <summary>
         /// Get's the program derived address for the name.
         /// </summary>
@@ -95,7 +95,7 @@ namespace Solnet.Programs
             if (parentName != null) parentNameKeyBytes = parentName.KeyBytes;
 
             bool success = AddressExtensions.TryFindProgramAddress(
-                new List<byte[]> {hashedName.ToArray(), nameClassKey, parentNameKeyBytes}, ProgramIdKey.KeyBytes, out byte[] nameAccountPublicKey, out _);
+                new List<byte[]> { hashedName.ToArray(), nameClassKey, parentNameKeyBytes }, ProgramIdKey.KeyBytes, out byte[] nameAccountPublicKey, out _);
             return success ? new PublicKey(nameAccountPublicKey) : null;
         }
 
@@ -138,7 +138,7 @@ namespace Solnet.Programs
                 Data = EncodeCreateNameRegistryData(hashedName, lamports, space)
             };
         }
-        
+
         /// <summary>
         /// Initialize a new transaction instruction to update the data of a name record.
         /// <remarks>
@@ -154,11 +154,11 @@ namespace Solnet.Programs
         public static TransactionInstruction UpdateNameRegistry(
             PublicKey nameKey, uint offset, ReadOnlySpan<byte> data, PublicKey nameOwner = null, PublicKey nameClass = null)
         {
-            List<AccountMeta> keys = new() {AccountMeta.Writable(nameKey, false)};
-            
+            List<AccountMeta> keys = new() { AccountMeta.Writable(nameKey, false) };
+
             if (nameOwner != null)
                 keys.Add(AccountMeta.ReadOnly(nameOwner, true));
-            
+
             if (nameClass != null)
                 keys.Add(AccountMeta.ReadOnly(nameClass, true));
 
@@ -169,7 +169,7 @@ namespace Solnet.Programs
                 Data = EncodeUpdateNameRegistryData(offset, data)
             };
         }
-        
+
         /// <summary>
         /// Initialize a new transaction instruction to transfer ownership of a name record. 
         /// <remarks>
@@ -195,10 +195,12 @@ namespace Solnet.Programs
 
             return new TransactionInstruction
             {
-                Keys = keys, ProgramId = ProgramIdKey.KeyBytes, Data = EncodeTransferNameRegistryData(newOwner)
+                Keys = keys,
+                ProgramId = ProgramIdKey.KeyBytes,
+                Data = EncodeTransferNameRegistryData(newOwner)
             };
         }
-        
+
         /// <summary>
         /// Initialize a new transaction instruction to delete a name record.
         /// </summary>
@@ -218,7 +220,9 @@ namespace Solnet.Programs
 
             return new TransactionInstruction
             {
-                Keys = keys, ProgramId = ProgramIdKey.KeyBytes, Data = EncodeDeleteNameRegistryData()
+                Keys = keys,
+                ProgramId = ProgramIdKey.KeyBytes,
+                Data = EncodeDeleteNameRegistryData()
             };
         }
 
@@ -234,14 +238,14 @@ namespace Solnet.Programs
             byte[] methodBuffer = new byte[17 + hashedName.Length];
 
             methodBuffer.WriteU8((byte)NameServiceInstructions.Values.Create, MethodOffset);
-            methodBuffer.WriteU32((uint) hashedName.Length, 1);
+            methodBuffer.WriteU32((uint)hashedName.Length, 1);
             methodBuffer.WriteSpan(hashedName, 5);
             methodBuffer.WriteU64(lamports, 5 + hashedName.Length);
             methodBuffer.WriteU32(space, 13 + hashedName.Length);
 
             return methodBuffer;
         }
-        
+
         /// <summary>
         /// Encode the instruction data to be used with the <see cref="NameServiceInstructions.Values.Update"/> instruction.
         /// </summary>
@@ -251,14 +255,14 @@ namespace Solnet.Programs
         private static byte[] EncodeUpdateNameRegistryData(uint offset, ReadOnlySpan<byte> data)
         {
             byte[] methodBuffer = new byte[data.Length + 5];
-            
+
             methodBuffer.WriteU8((byte)NameServiceInstructions.Values.Update, MethodOffset);
             methodBuffer.WriteU32(offset, 1);
             methodBuffer.WriteSpan(data, 5);
 
             return methodBuffer;
         }
-        
+
         /// <summary>
         /// Encode the instruction data to be used with the <see cref="NameServiceInstructions.Values.Transfer"/> instruction.
         /// </summary>
@@ -267,13 +271,13 @@ namespace Solnet.Programs
         private static byte[] EncodeTransferNameRegistryData(PublicKey newOwner)
         {
             byte[] methodBuffer = new byte[33];
-            
+
             methodBuffer.WriteU8((byte)NameServiceInstructions.Values.Transfer, MethodOffset);
             methodBuffer.WritePubKey(newOwner, 1);
-            
+
             return methodBuffer;
-        }        
-        
+        }
+
         /// <summary>
         /// Encode the instruction data to be used with the <see cref="NameServiceInstructions.Values.Delete"/> instruction.
         /// </summary>
@@ -281,12 +285,12 @@ namespace Solnet.Programs
         private static byte[] EncodeDeleteNameRegistryData()
         {
             byte[] methodBuffer = new byte[1];
-            
+
             methodBuffer.WriteU8((byte)NameServiceInstructions.Values.Delete, MethodOffset);
-            
+
             return methodBuffer;
         }
-        
+
         /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="NameServiceInstructions.Values.Create"/> method
         /// </summary>
@@ -300,23 +304,23 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Payer", keys[keyIndices[1]]);
             decodedInstruction.Values.Add("Name Account", keys[keyIndices[2]]);
             decodedInstruction.Values.Add("Name Owner", keys[keyIndices[3]]);
-            
+
             if (keyIndices.Length >= 5)
                 decodedInstruction.Values.Add("Name Class", keys[keyIndices[4]]);
-            
+
             if (keyIndices.Length >= 6)
                 decodedInstruction.Values.Add("Parent Name", keys[keyIndices[5]]);
-            
+
             if (keyIndices.Length >= 7)
                 decodedInstruction.Values.Add("Parent Name Owner", keys[keyIndices[6]]);
 
             uint nameLength = data.GetU32(1);
             decodedInstruction.Values.Add("Hashed Name Length", nameLength);
-            decodedInstruction.Values.Add("Hashed Name", data.GetSpan(5, (int) nameLength).ToArray());
-            decodedInstruction.Values.Add("Lamports", data.GetU64(5 + (int) nameLength));
-            decodedInstruction.Values.Add("Space", data.GetU32(13 + (int) nameLength));
+            decodedInstruction.Values.Add("Hashed Name", data.GetSpan(5, (int)nameLength).ToArray());
+            decodedInstruction.Values.Add("Lamports", data.GetU64(5 + (int)nameLength));
+            decodedInstruction.Values.Add("Space", data.GetU32(13 + (int)nameLength));
         }
-        
+
         /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="NameServiceInstructions.Values.Update"/> method
         /// </summary>
@@ -328,17 +332,17 @@ namespace Solnet.Programs
             IList<PublicKey> keys, byte[] keyIndices)
         {
             decodedInstruction.Values.Add("Name Account", keys[keyIndices[0]]);
-            
+
             if (keyIndices.Length == 2)
                 decodedInstruction.Values.Add("Name Owner", keys[keyIndices[1]]);
-            
+
             if (keyIndices.Length == 3)
                 decodedInstruction.Values.Add("Name Class", keys[keyIndices[2]]);
-            
+
             decodedInstruction.Values.Add("Offset", data.GetU32(1));
             decodedInstruction.Values.Add("Data", data[5..].ToArray());
         }
-        
+
         /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="NameServiceInstructions.Values.Transfer"/> method
         /// </summary>
@@ -351,10 +355,10 @@ namespace Solnet.Programs
         {
             decodedInstruction.Values.Add("Name Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Name Owner", keys[keyIndices[1]]);
-            
+
             if (keyIndices.Length == 3)
                 decodedInstruction.Values.Add("Name Class", keys[keyIndices[2]]);
-            
+
             decodedInstruction.Values.Add("New Owner", data.GetPubKey(1));
         }
 
@@ -382,9 +386,9 @@ namespace Solnet.Programs
         public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
             byte instruction = data.GetU8(MethodOffset);
-            NameServiceInstructions.Values instructionValue = 
-                (NameServiceInstructions.Values) Enum.Parse(typeof(NameServiceInstructions.Values), instruction.ToString());
-            
+            NameServiceInstructions.Values instructionValue =
+                (NameServiceInstructions.Values)Enum.Parse(typeof(NameServiceInstructions.Values), instruction.ToString());
+
             DecodedInstruction decodedInstruction = new()
             {
                 PublicKey = ProgramIdKey,

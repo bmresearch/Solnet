@@ -82,7 +82,7 @@ namespace Solnet.Wallet.Test
             163, 56, 237, 112, 216, 151, 21, 209, 120, 79, 46, 85,
             162, 195, 155, 97, 136, 88, 16, 64
         };
-        
+
         [TestMethod]
         public void TestAccountNoKeys()
         {
@@ -158,7 +158,7 @@ namespace Solnet.Wallet.Test
             CollectionAssert.AreEqual(ExpectedPrivateKeyBytes, account.PrivateKey.KeyBytes);
             CollectionAssert.AreEqual(ExpectedPublicKeyBytes, account.PublicKey.KeyBytes);
         }
-        
+
         [TestMethod]
         public void TestAccountToString()
         {
@@ -170,7 +170,7 @@ namespace Solnet.Wallet.Test
         [TestMethod]
         public void TestImplicitPrivateKeyOperator()
         {
-            Account pk = new (PrivateKeyString, PublicKeyString);
+            Account pk = new(PrivateKeyString, PublicKeyString);
             byte[] pkBytes = TestImplicitPrivateKeyOperator(pk);
             Assert.IsInstanceOfType(pkBytes, typeof(byte[]));
         }
@@ -178,11 +178,11 @@ namespace Solnet.Wallet.Test
         [TestMethod]
         public void TestImplicitPublicKeyOperator()
         {
-            Account pk = new (PrivateKeyString, PublicKeyString);
+            Account pk = new(PrivateKeyString, PublicKeyString);
             byte[] pkBytes = testImplicitPublicKeyOperator(pk);
             Assert.IsInstanceOfType(pkBytes, typeof(byte[]));
         }
-        
+
         private static PrivateKey TestImplicitPrivateKeyOperator(PrivateKey key)
         {
             return key;

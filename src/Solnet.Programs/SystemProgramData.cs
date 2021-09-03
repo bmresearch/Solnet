@@ -14,7 +14,7 @@ namespace Solnet.Programs
         /// The offset at which the value which defines the program method begins. 
         /// </summary>
         internal const int MethodOffset = 0;
-        
+
         /// <summary>
         /// Encode transaction instruction data for the <see cref="SystemProgramInstructions.Values.CreateAccount"/> method.
         /// </summary>
@@ -25,12 +25,12 @@ namespace Solnet.Programs
         internal static byte[] EncodeCreateAccountData(PublicKey owner, ulong lamports, ulong space)
         {
             byte[] data = new byte[52];
-            
-            data.WriteU32((uint) SystemProgramInstructions.Values.CreateAccount, MethodOffset);
+
+            data.WriteU32((uint)SystemProgramInstructions.Values.CreateAccount, MethodOffset);
             data.WriteU64(lamports, 4);
             data.WriteU64(space, 12);
             data.WritePubKey(owner, 20);
-            
+
             return data;
         }
 
@@ -42,10 +42,10 @@ namespace Solnet.Programs
         internal static byte[] EncodeAssignData(PublicKey programId)
         {
             byte[] data = new byte[36];
-            
-            data.WriteU32((uint) SystemProgramInstructions.Values.Assign, MethodOffset);
+
+            data.WriteU32((uint)SystemProgramInstructions.Values.Assign, MethodOffset);
             data.WritePubKey(programId, 4);
-            
+
             return data;
         }
 
@@ -57,10 +57,10 @@ namespace Solnet.Programs
         internal static byte[] EncodeTransferData(ulong lamports)
         {
             byte[] data = new byte[12];
-            
-            data.WriteU32((uint) SystemProgramInstructions.Values.Transfer, MethodOffset);
+
+            data.WriteU32((uint)SystemProgramInstructions.Values.Transfer, MethodOffset);
             data.WriteU64(lamports, 4);
-            
+
             return data;
         }
 
@@ -78,17 +78,17 @@ namespace Solnet.Programs
         {
             byte[] encodedSeed = Serialization.EncodeRustString(seed);
             byte[] data = new byte[84 + encodedSeed.Length];
-            
-            data.WriteU32((uint) SystemProgramInstructions.Values.CreateAccountWithSeed, MethodOffset);
+
+            data.WriteU32((uint)SystemProgramInstructions.Values.CreateAccountWithSeed, MethodOffset);
             data.WritePubKey(baseAccount, 4);
             data.WriteSpan(encodedSeed, 36);
             data.WriteU64(lamports, 36 + encodedSeed.Length);
             data.WriteU64(space, 44 + encodedSeed.Length);
             data.WritePubKey(owner, 52 + encodedSeed.Length);
-            
+
             return data;
         }
-        
+
         /// <summary>
         /// Encode transaction instruction data for the <see cref="SystemProgramInstructions.Values.AdvanceNonceAccount"/> method.
         /// </summary>
@@ -96,12 +96,12 @@ namespace Solnet.Programs
         internal static byte[] EncodeAdvanceNonceAccountData()
         {
             byte[] data = new byte[4];
-            
-            data.WriteU32((uint) SystemProgramInstructions.Values.AdvanceNonceAccount, MethodOffset);
-            
+
+            data.WriteU32((uint)SystemProgramInstructions.Values.AdvanceNonceAccount, MethodOffset);
+
             return data;
         }
-        
+
         /// <summary>
         /// Encode transaction instruction data for the <see cref="SystemProgramInstructions.Values.WithdrawNonceAccount"/> method.
         /// </summary>
@@ -110,13 +110,13 @@ namespace Solnet.Programs
         internal static byte[] EncodeWithdrawNonceAccountData(ulong lamports)
         {
             byte[] data = new byte[12];
-            
-            data.WriteU32((uint) SystemProgramInstructions.Values.WithdrawNonceAccount, MethodOffset);
+
+            data.WriteU32((uint)SystemProgramInstructions.Values.WithdrawNonceAccount, MethodOffset);
             data.WriteU64(lamports, 4);
-            
+
             return data;
         }
-        
+
         /// <summary>
         /// Encode transaction instruction data for the <see cref="SystemProgramInstructions.Values.InitializeNonceAccount"/> method.
         /// </summary>
@@ -125,13 +125,13 @@ namespace Solnet.Programs
         internal static byte[] EncodeInitializeNonceAccountData(PublicKey authorized)
         {
             byte[] data = new byte[36];
-            
-            data.WriteU32((uint) SystemProgramInstructions.Values.InitializeNonceAccount, MethodOffset);
+
+            data.WriteU32((uint)SystemProgramInstructions.Values.InitializeNonceAccount, MethodOffset);
             data.WritePubKey(authorized, 4);
-            
+
             return data;
         }
-        
+
         /// <summary>
         /// Encode transaction instruction data for the <see cref="SystemProgramInstructions.Values.AuthorizeNonceAccount"/> method.
         /// </summary>
@@ -140,13 +140,13 @@ namespace Solnet.Programs
         internal static byte[] EncodeAuthorizeNonceAccountData(PublicKey authorized)
         {
             byte[] data = new byte[36];
-            
-            data.WriteU32((uint) SystemProgramInstructions.Values.AuthorizeNonceAccount, MethodOffset);
+
+            data.WriteU32((uint)SystemProgramInstructions.Values.AuthorizeNonceAccount, MethodOffset);
             data.WritePubKey(authorized, 4);
-            
+
             return data;
         }
-        
+
         /// <summary>
         /// Encode transaction instruction data for the <see cref="SystemProgramInstructions.Values.Allocate"/> method.
         /// </summary>
@@ -155,13 +155,13 @@ namespace Solnet.Programs
         internal static byte[] EncodeAllocateData(ulong space)
         {
             byte[] data = new byte[12];
-            
-            data.WriteU32((uint) SystemProgramInstructions.Values.Allocate, MethodOffset);
+
+            data.WriteU32((uint)SystemProgramInstructions.Values.Allocate, MethodOffset);
             data.WriteU64(space, 4);
-            
+
             return data;
         }
-        
+
         /// <summary>
         /// Encode transaction instruction data for the <see cref="SystemProgramInstructions.Values.AllocateWithSeed"/> method.
         /// </summary>
@@ -175,16 +175,16 @@ namespace Solnet.Programs
         {
             byte[] encodedSeed = Serialization.EncodeRustString(seed);
             byte[] data = new byte[76 + encodedSeed.Length];
-            
-            data.WriteU32((uint) SystemProgramInstructions.Values.AllocateWithSeed, MethodOffset);
+
+            data.WriteU32((uint)SystemProgramInstructions.Values.AllocateWithSeed, MethodOffset);
             data.WritePubKey(baseAccount, 4);
             data.WriteSpan(encodedSeed, 36);
             data.WriteU64(space, 36 + encodedSeed.Length);
             data.WritePubKey(owner, 44 + encodedSeed.Length);
-            
+
             return data;
         }
-        
+
         /// <summary>
         /// Encode transaction instruction data for the <see cref="SystemProgramInstructions.Values.AssignWithSeed"/> method.
         /// </summary>
@@ -197,15 +197,15 @@ namespace Solnet.Programs
         {
             byte[] encodedSeed = Serialization.EncodeRustString(seed);
             byte[] data = new byte[68 + encodedSeed.Length];
-            
-            data.WriteU32((uint) SystemProgramInstructions.Values.AssignWithSeed, MethodOffset);
+
+            data.WriteU32((uint)SystemProgramInstructions.Values.AssignWithSeed, MethodOffset);
             data.WritePubKey(baseAccount, 4);
             data.WriteSpan(encodedSeed, 36);
             data.WritePubKey(owner, 36 + encodedSeed.Length);
-            
+
             return data;
         }
-        
+
         /// <summary>
         /// Encode transaction instruction data for the <see cref="SystemProgramInstructions.Values.TransferWithSeed"/> method.
         /// </summary>
@@ -217,15 +217,15 @@ namespace Solnet.Programs
         {
             byte[] encodedSeed = Serialization.EncodeRustString(seed);
             byte[] data = new byte[44 + encodedSeed.Length];
-            
-            data.WriteU32((uint) SystemProgramInstructions.Values.TransferWithSeed, MethodOffset);
+
+            data.WriteU32((uint)SystemProgramInstructions.Values.TransferWithSeed, MethodOffset);
             data.WriteU64(lamports, 4);
             data.WriteSpan(encodedSeed, 12);
             data.WritePubKey(owner, 12 + encodedSeed.Length);
-            
+
             return data;
         }
-        
+
         /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="SystemProgramInstructions.Values.CreateAccount"/> method
         /// </summary>
@@ -241,7 +241,7 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Amount", data.GetU64(4));
             decodedInstruction.Values.Add("Space", data.GetU64(12));
         }
-        
+
         /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="SystemProgramInstructions.Values.Assign"/> method
         /// </summary>
@@ -255,7 +255,7 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Assign To", data.GetPubKey(4));
         }
-        
+
         /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="SystemProgramInstructions.Values.Transfer"/> method
         /// </summary>
@@ -270,7 +270,7 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("To Account", keys[keyIndices[1]]);
             decodedInstruction.Values.Add("Amount", data.GetU64(4));
         }
-        
+
         /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="SystemProgramInstructions.Values.CreateAccountWithSeed"/> method
         /// </summary>
@@ -288,9 +288,9 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Seed", createSeed);
             decodedInstruction.Values.Add("Amount", data.GetU64(36 + createLength));
             decodedInstruction.Values.Add("Space", data.GetU64(44 + createLength));
-            decodedInstruction.Values.Add("Owner", data.GetPubKey(52 + createLength)); 
+            decodedInstruction.Values.Add("Owner", data.GetPubKey(52 + createLength));
         }
-        
+
         /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="SystemProgramInstructions.Values.AdvanceNonceAccount"/> method
         /// </summary>
@@ -303,7 +303,7 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Nonce Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Authority", keys[keyIndices[2]]);
         }
-        
+
         /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="SystemProgramInstructions.Values.WithdrawNonceAccount"/> method
         /// </summary>
@@ -319,7 +319,7 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Authority", keys[keyIndices[4]]);
             decodedInstruction.Values.Add("Amount", data.GetU64(4));
         }
-        
+
         /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="SystemProgramInstructions.Values.InitializeNonceAccount"/> method
         /// </summary>
@@ -333,7 +333,7 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Nonce Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Authority", data.GetPubKey(4));
         }
-        
+
         /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="SystemProgramInstructions.Values.AuthorizeNonceAccount"/> method
         /// </summary>
@@ -348,7 +348,7 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Current Authority", keys[keyIndices[1]]);
             decodedInstruction.Values.Add("New Authority", data.GetPubKey(4));
         }
-        
+
         /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="SystemProgramInstructions.Values.Allocate"/> method
         /// </summary>
@@ -362,7 +362,7 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Space", data.GetU64(4));
         }
-        
+
         /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="SystemProgramInstructions.Values.AllocateWithSeed"/> method
         /// </summary>
@@ -378,9 +378,9 @@ namespace Solnet.Programs
             (string allocateSeed, int allocateLength) = data.DecodeRustString(36);
             decodedInstruction.Values.Add("Seed", allocateSeed);
             decodedInstruction.Values.Add("Space", data.GetU64(36 + allocateLength));
-            decodedInstruction.Values.Add("Owner", data.GetPubKey(44 + allocateLength)); 
+            decodedInstruction.Values.Add("Owner", data.GetPubKey(44 + allocateLength));
         }
-        
+
         /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="SystemProgramInstructions.Values.AssignWithSeed"/> method
         /// </summary>
@@ -397,7 +397,7 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Seed", assignSeed);
             decodedInstruction.Values.Add("Owner", data.GetPubKey(36 + assignLength));
         }
-        
+
         /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="SystemProgramInstructions.Values.TransferWithSeed"/> method
         /// </summary>
@@ -416,6 +416,6 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Seed", transferSeed);
             decodedInstruction.Values.Add("From Owner", data.GetPubKey(12 + transferLength));
         }
-        
+
     }
 }

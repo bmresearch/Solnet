@@ -23,7 +23,7 @@ namespace Solnet.Rpc.Models
         {
             get
             {
-                List<AccountMeta> list = new (_accounts.Values);
+                List<AccountMeta> list = new(_accounts.Values);
                 list.Sort();
                 return list;
             }

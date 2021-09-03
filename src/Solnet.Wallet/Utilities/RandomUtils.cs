@@ -87,7 +87,7 @@ namespace Solnet.Wallet.Utilities
             PushEntropy(data);
             return data;
         }
-        
+
         /// <summary>
         /// Get random bytes.
         /// </summary>
