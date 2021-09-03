@@ -80,6 +80,14 @@ namespace Solnet.Wallet.Test
         
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
+        public void TestNullPrivateKeyBytes()
+        {
+            byte[] key = null;
+            _ = new PrivateKey(key);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void TestNullPrivateKeyString()
         {
             string key = null;
@@ -107,12 +115,19 @@ namespace Solnet.Wallet.Test
             _ = new PublicKey(InvalidPublicKeyBytes.AsSpan());
         }
         
-        
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void TestNullPublicKeyString()
         {
             string key = null;
+            _ = new PublicKey(key);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestNullPublicKeyBytes()
+        {
+            byte[] key = null;
             _ = new PublicKey(key);
         }
 
