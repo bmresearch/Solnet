@@ -76,6 +76,11 @@ namespace Solnet.Extensions
         public static TokenDef Raydium = new TokenDef("4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R", "Raydium", "RAY", 6);
 
         /// <summary>
+        /// FIDA (Bonfida)
+        /// </summary>
+        public static TokenDef Bonfida = new TokenDef("EchesyfXePKdLtoiZSL8pBe8Myagyy8ZRqsACNCFGnvp", "Bonfida", "FIDA", 6);
+
+        /// <summary>
         /// COPE
         /// </summary>
         public static TokenDef Cope = new TokenDef("8HGyAAB1yoM1ttS7pXjHMa3dukTFGQggnFFH3hJZgzQh", "Cope", "COPE", 6);
