@@ -15,7 +15,7 @@ namespace Solnet.Examples
 {
     public class TransactionDecodingExample : IExample
     {
-        
+
         private static readonly IRpcClient RpcClient = ClientFactory.GetClient(Cluster.TestNet);
 
         private const string MnemonicWords =
@@ -77,7 +77,7 @@ namespace Solnet.Examples
 
             Console.WriteLine($"Message: {Convert.ToBase64String(msgData)}");
             var txx = Transaction.Populate(Convert.ToBase64String(msgData),
-                new List<byte[]> {ownerAccount.Sign(msgData), mintAccount.Sign(msgData), initialAccount.Sign(msgData)});
+                new List<byte[]> { ownerAccount.Sign(msgData), mintAccount.Sign(msgData), initialAccount.Sign(msgData) });
 
             byte[] txBytes = txx.Serialize();
 

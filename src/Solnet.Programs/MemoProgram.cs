@@ -30,7 +30,7 @@ namespace Solnet.Programs
         /// The program's name.
         /// </summary>
         private const string ProgramName = "Memo Program";
-        
+
         /// <summary>
         /// The instruction's name.
         /// </summary>
@@ -44,7 +44,7 @@ namespace Solnet.Programs
         /// <returns>The <see cref="TransactionInstruction"/> which includes the memo data.</returns>
         public static TransactionInstruction NewMemo(PublicKey account, string memo)
         {
-            List<AccountMeta> keys = new ()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.ReadOnly(account, true)
             };
@@ -57,7 +57,7 @@ namespace Solnet.Programs
                 Data = memoBytes
             };
         }
-        
+
         /// <summary>
         /// Initialize a new transaction instruction which interacts with the Memo Program.
         /// </summary>
@@ -66,10 +66,10 @@ namespace Solnet.Programs
         /// <returns>The <see cref="TransactionInstruction"/> which includes the memo data.</returns>
         public static TransactionInstruction NewMemoV2(string memo, PublicKey account = null)
         {
-            List<AccountMeta> keys = new ();
+            List<AccountMeta> keys = new();
             if (account != null)
                 keys.Add(AccountMeta.ReadOnly(account, true));
-            
+
             byte[] memoBytes = Encoding.UTF8.GetBytes(memo);
 
             return new TransactionInstruction
@@ -89,7 +89,7 @@ namespace Solnet.Programs
         /// <returns>A decoded instruction.</returns>
         public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
-            DecodedInstruction decodedInstruction = new ()
+            DecodedInstruction decodedInstruction = new()
             {
                 PublicKey = keys.Any(x => x.Key == ProgramIdKey.Key) ? ProgramIdKey : ProgramIdKeyV2,
                 InstructionName = InstructionName,

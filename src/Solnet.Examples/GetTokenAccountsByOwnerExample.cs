@@ -22,7 +22,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new (MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
             Account ownerAccount = wallet.GetAccount(10);
             RequestResult<ResponseValue<List<TokenAccount>>> token_accounts = rpcClient.GetTokenAccountsByOwner(ownerAccount.PublicKey, tokenProgramId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 
@@ -34,22 +34,22 @@ namespace Solnet.Examples
 
             var tokAccount = new PublicKey("CuieVDEDtLo7FypA9SbLM9saXFdb1dsshEkyErMqkRQq");
             var tokenAccounts = mRpcClient.GetTokenAccountsByOwner(tokAccount, tokenProgramId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
-            
+
             foreach (TokenAccount account in tokenAccounts.Result.Value)
             {
-                Console.WriteLine(account.Account.Data.Parsed.Info.DelegatedAmount == null ? 
-                    $"Account: {account.PublicKey} - Mint: {account.Account.Data.Parsed.Info.Mint} - TokenBalance: {account.Account.Data.Parsed.Info.TokenAmount.UiAmountString}" : 
+                Console.WriteLine(account.Account.Data.Parsed.Info.DelegatedAmount == null ?
+                    $"Account: {account.PublicKey} - Mint: {account.Account.Data.Parsed.Info.Mint} - TokenBalance: {account.Account.Data.Parsed.Info.TokenAmount.UiAmountString}" :
                     $"Account: {account.PublicKey} - Mint: {account.Account.Data.Parsed.Info.Mint} - TokenBalance: {account.Account.Data.Parsed.Info.TokenAmount.UiAmountString}" +
                     $" - Delegate: {account.Account.Data.Parsed.Info.Delegate} - DelegatedBalance: {account.Account.Data.Parsed.Info.DelegatedAmount.UiAmountString}");
             }
-            
+
             var delegateKey = new PublicKey("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T");
             var delegateTokenAccounts = mRpcClient.GetTokenAccountsByDelegate(delegateKey, "StepAscQoEioFxxWGnh2sLBDFp9d8rvKz2Yp39iDpyT");
-            
+
             foreach (TokenAccount account in delegateTokenAccounts.Result.Value)
             {
-                Console.WriteLine(account.Account.Data.Parsed.Info.DelegatedAmount == null ? 
-                    $"Account: {account.PublicKey} - Mint: {account.Account.Data.Parsed.Info.Mint} - TokenBalance: {account.Account.Data.Parsed.Info.TokenAmount.UiAmountString}" : 
+                Console.WriteLine(account.Account.Data.Parsed.Info.DelegatedAmount == null ?
+                    $"Account: {account.PublicKey} - Mint: {account.Account.Data.Parsed.Info.Mint} - TokenBalance: {account.Account.Data.Parsed.Info.TokenAmount.UiAmountString}" :
                     $"Account: {account.PublicKey} - Mint: {account.Account.Data.Parsed.Info.Mint} - TokenBalance: {account.Account.Data.Parsed.Info.TokenAmount.UiAmountString}" +
                     $" - Delegate: {account.Account.Data.Parsed.Info.Delegate} - DelegatedBalance: {account.Account.Data.Parsed.Info.DelegatedAmount.UiAmountString}");
             }

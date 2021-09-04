@@ -12,12 +12,12 @@ namespace Solnet.Rpc.Models
         /// The public key as a byte array.
         /// </summary>
         public byte[] PublicKeyBytes { get; }
-        
+
         /// <summary>
         /// Get the public key encoded as base58.
         /// </summary>
         public string PublicKey { get; }
-        
+
         /// <summary>
         /// A boolean which defines if the account is a signer account.
         /// </summary>
@@ -41,7 +41,7 @@ namespace Solnet.Rpc.Models
             IsSigner = isSigner;
             IsWritable = isWritable;
         }
-        
+
         /// <summary>
         /// Initializes an <see cref="AccountMeta"/> for a writable account with the given <see cref="PublicKey"/>
         /// and a bool that signals whether the account is a signer or not.
@@ -49,7 +49,7 @@ namespace Solnet.Rpc.Models
         /// <param name="publicKey">The public key.</param>
         /// <param name="isSigner">Whether the account is a signer.</param>
         /// <returns>The <see cref="AccountMeta"/> instance.</returns>
-        public static AccountMeta Writable(PublicKey publicKey, bool isSigner) => new (publicKey, true, isSigner);
+        public static AccountMeta Writable(PublicKey publicKey, bool isSigner) => new(publicKey, true, isSigner);
 
         /// <summary>
         /// Initializes an <see cref="AccountMeta"/> for a read-only account with the given <see cref="PublicKey"/>
@@ -58,7 +58,7 @@ namespace Solnet.Rpc.Models
         /// <param name="publicKey">The public key.</param>
         /// <param name="isSigner">Whether the account is a signer.</param>
         /// <returns>The <see cref="AccountMeta"/> instance.</returns>
-        public static AccountMeta ReadOnly(PublicKey publicKey, bool isSigner) => new (publicKey, false, isSigner);
+        public static AccountMeta ReadOnly(PublicKey publicKey, bool isSigner) => new(publicKey, false, isSigner);
 
         /// <summary>
         /// Compares the account meta instance with another account meta.
@@ -75,7 +75,7 @@ namespace Solnet.Rpc.Models
             {
                 throw new ArgumentNullException(nameof(other));
             }
-            
+
             int cmpSigner = IsSigner == other.IsSigner ? 0 : IsSigner ? -1 : 1;
             if (cmpSigner != 0)
             {

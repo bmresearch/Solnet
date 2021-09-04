@@ -19,7 +19,7 @@ namespace Solnet.Wallet.Bip39
         /// <exception cref="PlatformNotSupportedException">Thrown if the input string could not be normalized.</exception>
         public static string NormalizeKd(string str)
         {
-            StringBuilder builder = new (str.Length);
+            StringBuilder builder = new(str.Length);
             foreach (char c in str)
             {
                 if (!Supported(c))
@@ -78,7 +78,7 @@ namespace Solnet.Wallet.Bip39
         {
             return SupportedChars.Any(r => r[0] <= c && c <= r[1]);
         }
-        
+
         /// <summary>
         /// The supported characters.
         /// </summary>

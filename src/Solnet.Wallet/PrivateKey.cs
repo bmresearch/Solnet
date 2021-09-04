@@ -90,7 +90,7 @@ namespace Solnet.Wallet
             KeyBytes = new byte[PrivateKeyLength];
             key.CopyTo(KeyBytes.AsSpan());
         }
-        
+
         /// <summary>
         /// Sign the data.
         /// </summary>
@@ -109,27 +109,27 @@ namespace Solnet.Wallet
         /// <param name="privateKey">The PrivateKey object.</param>
         /// <returns>The base-58 encoded private key.</returns>
         public static implicit operator string(PrivateKey privateKey) => privateKey.Key;
-        
+
         /// <summary>
         /// Conversion between a base-58 encoded private key and the <see cref="PrivateKey"/> object.
         /// </summary>
         /// <param name="address">The base-58 encoded private key.</param>
         /// <returns>The PrivateKey object.</returns>
-        public static explicit operator PrivateKey(string address) => new (address);
-        
+        public static explicit operator PrivateKey(string address) => new(address);
+
         /// <summary>
         /// Conversion between a <see cref="PrivateKey"/> object and the private key as a byte array.
         /// </summary>
         /// <param name="privateKey">The PrivateKey object.</param>
         /// <returns>The private key as a byte array.</returns>
         public static implicit operator byte[](PrivateKey privateKey) => privateKey.KeyBytes;
-        
+
         /// <summary>
         /// Conversion between a private key as a byte array and the corresponding <see cref="PrivateKey"/> object.
         /// </summary>
         /// <param name="keyBytes">The private key as a byte array.</param>
         /// <returns>The PrivateKey object.</returns>
-        public static explicit operator PrivateKey(byte[] keyBytes) => new (keyBytes);
+        public static explicit operator PrivateKey(byte[] keyBytes) => new(keyBytes);
 
         /// <inheritdoc cref="ToString"/>
         public override string ToString() => Key;

@@ -15,7 +15,7 @@ namespace Solnet.Wallet.Utilities
         /// The base58 characters.
         /// </summary>
         private static readonly char[] PszBase58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".ToCharArray();
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -61,7 +61,7 @@ namespace Solnet.Wallet.Utilities
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
-            
+
             // Skip & count leading zeroes.
             int zeroes = 0;
             int length = 0;
@@ -70,17 +70,17 @@ namespace Solnet.Wallet.Utilities
                 offset++;
                 zeroes++;
             }
-            
+
             // Allocate enough space in big-endian base58 representation.
             int size = (count - offset) * 138 / 100 + 1; // log(256) / log(58), rounded up.
             byte[] b58 = new byte[size];
-            
+
             // Process the bytes.
             while (offset != count)
             {
                 int carry = data[offset];
                 int i = 0;
-                
+
                 // Apply "b58 = b58 * 256 + ch".
                 for (int it = size - 1; (carry != 0 || i < length) && it >= 0; i++, it--)
                 {
@@ -92,12 +92,12 @@ namespace Solnet.Wallet.Utilities
                 length = i;
                 offset++;
             }
-            
+
             // Skip leading zeroes in base58 result.
             int it2 = (size - length);
             while (it2 != size && b58[it2] == 0)
                 it2++;
-            
+
             // Translate the result into a string.
             char[] str = new char[zeroes + size - it2];
             Array.Fill(str, '1', 0, zeroes);
@@ -119,11 +119,11 @@ namespace Solnet.Wallet.Utilities
             if (encoded == null)
                 throw new ArgumentNullException(nameof(encoded));
             int psz = 0;
-            
+
             // Skip leading spaces.
             while (psz < encoded.Length && IsSpace(encoded[psz]))
                 psz++;
-            
+
             // Skip and count leading '1's.
             int zeroes = 0;
             int length = 0;
@@ -132,11 +132,11 @@ namespace Solnet.Wallet.Utilities
                 zeroes++;
                 psz++;
             }
-            
+
             // Allocate enough space in big-endian base256 representation.
             int size = (encoded.Length - psz) * 733 / 1000 + 1; // log(58) / log(256), rounded up.
             byte[] b256 = new byte[size];
-            
+
             // Process the characters.
             while (psz < encoded.Length && !IsSpace(encoded[psz]))
             {
@@ -154,7 +154,7 @@ namespace Solnet.Wallet.Utilities
                 length = i;
                 psz++;
             }
-            
+
             // Skip trailing spaces.
             while (psz < encoded.Length && IsSpace(encoded[psz]))
                 psz++;

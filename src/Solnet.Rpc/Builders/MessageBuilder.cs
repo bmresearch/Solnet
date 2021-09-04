@@ -90,7 +90,7 @@ namespace Solnet.Rpc.Builders
                 _accountKeysList.Add(NonceInformation.Instruction.Keys);
                 _accountKeysList.Add(AccountMeta.ReadOnly(new PublicKey(NonceInformation.Instruction.ProgramId),
                     false));
-                List<TransactionInstruction> newInstructions = new() {NonceInformation.Instruction};
+                List<TransactionInstruction> newInstructions = new() { NonceInformation.Instruction };
                 newInstructions.AddRange(Instructions);
                 Instructions = newInstructions;
             }
@@ -99,7 +99,7 @@ namespace Solnet.Rpc.Builders
 
             List<AccountMeta> keysList = GetAccountKeys();
             byte[] accountAddressesLength = ShortVectorEncoding.EncodeLength(keysList.Count);
-            int compiledInstructionsLength = 0; 
+            int compiledInstructionsLength = 0;
             List<CompiledInstruction> compiledInstructions = new();
 
             foreach (TransactionInstruction instruction in Instructions)
@@ -178,10 +178,10 @@ namespace Solnet.Rpc.Builders
         /// <returns></returns>
         private List<AccountMeta> GetAccountKeys()
         {
-            List<AccountMeta> newList = new ();
+            List<AccountMeta> newList = new();
             IList<AccountMeta> keysList = _accountKeysList.AccountList;
             int feePayerIndex = FindAccountIndex(keysList, FeePayer.KeyBytes);
-            
+
             if (feePayerIndex == -1)
             {
                 newList.Add(AccountMeta.Writable(FeePayer, true));
@@ -191,7 +191,7 @@ namespace Solnet.Rpc.Builders
                 keysList.RemoveAt(feePayerIndex);
                 newList.Add(AccountMeta.Writable(FeePayer, true));
             }
-            
+
             newList.AddRange(keysList);
 
             return newList;

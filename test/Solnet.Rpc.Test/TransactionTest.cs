@@ -126,7 +126,7 @@ namespace Solnet.Rpc.Test
             "uoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgFHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgMCAAI0AAAAAPAdHwAAAA" +
             "AApQAAAAAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQUEAgEABAEBBQMBAgAJB0BCDwAAAAAABgECEkhlbGxvIG" +
             "Zyb20gU29sLk5ldA==";
-        
+
         [TestMethod]
         [ExpectedException(typeof(Exception))]
         public void TransactionDeserializeExceptionTest()
@@ -274,7 +274,8 @@ namespace Solnet.Rpc.Test
 
             Transaction tx = new()
             {
-                FeePayer = ownerAccount, RecentBlockHash = "EtLZEUfN1sSsaHRzTtrGW6N62hagTXjc5jokiWqZ9qQ3"
+                FeePayer = ownerAccount,
+                RecentBlockHash = "EtLZEUfN1sSsaHRzTtrGW6N62hagTXjc5jokiWqZ9qQ3"
             };
 
             byte[] txBytes = tx
@@ -320,7 +321,8 @@ namespace Solnet.Rpc.Test
 
             Transaction tx = new()
             {
-                FeePayer = ownerAccount, RecentBlockHash = "EtLZEUfN1sSsaHRzTtrGW6N62hagTXjc5jokiWqZ9qQ3"
+                FeePayer = ownerAccount,
+                RecentBlockHash = "EtLZEUfN1sSsaHRzTtrGW6N62hagTXjc5jokiWqZ9qQ3"
             };
 
             byte[] txBytes = tx
@@ -353,7 +355,7 @@ namespace Solnet.Rpc.Test
                 .Add(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net"))
                 .CompileMessage();
 
-            tx.PartialSign(new List<Account> {ownerAccount, ownerAccount});
+            tx.PartialSign(new List<Account> { ownerAccount, ownerAccount });
             tx.PartialSign(mintAccount);
 
             tx.AddSignature(initialAccount.PublicKey, initialAccount.Sign(txBytes));

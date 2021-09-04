@@ -344,7 +344,7 @@ namespace Solnet.Programs
         /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
         /// <param name="keys">The account keys present in the transaction.</param>
         /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
-        internal static void DecodeCloseAccountData(DecodedInstruction decodedInstruction, IList<PublicKey> keys, 
+        internal static void DecodeCloseAccountData(DecodedInstruction decodedInstruction, IList<PublicKey> keys,
             byte[] keyIndices)
         {
             decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);

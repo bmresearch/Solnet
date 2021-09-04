@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Solnet.Rpc.Models;
 using Solnet.Wallet;
-using Solnet.Rpc.Models;
+using System;
+using System.Collections.Generic;
 
 namespace Solnet.Rpc.Builders
 {
@@ -19,9 +19,10 @@ namespace Solnet.Rpc.Builders
         /// <param name="keys">The keys associated with the instruction.</param>
         /// <param name="data">The instruction-specific data.</param>
         /// <returns></returns>
-        public static TransactionInstruction Create(PublicKey programId, 
-                                                    IList<AccountMeta> keys, 
-                                                    byte[] data) {
+        public static TransactionInstruction Create(PublicKey programId,
+                                                    IList<AccountMeta> keys,
+                                                    byte[] data)
+        {
 
             if (programId == null) throw new ArgumentNullException(nameof(programId));
             if (keys == null) throw new ArgumentNullException(nameof(keys));

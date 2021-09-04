@@ -88,7 +88,7 @@ namespace Solnet.Wallet
             KeyBytes = new byte[PublicKeyLength];
             key.CopyTo(KeyBytes.AsSpan());
         }
-        
+
         /// <summary>
         /// Verify the signed message.
         /// </summary>

@@ -15,7 +15,7 @@ namespace Solnet.Wallet.Utilities
         /// The values of the bit writer.
         /// </summary>
         private readonly List<bool> _values = new();
-        
+
         /// <summary>
         /// The number of values.
         /// </summary>
@@ -48,7 +48,7 @@ namespace Solnet.Wallet.Utilities
         public void Write(byte[] bytes, int bitCount)
         {
             bytes = SwapEndianBytes(bytes);
-            BitArray array = new (bytes);
+            BitArray array = new(bytes);
             _values.InsertRange(Position, array.OfType<bool>().Take(bitCount));
             Position += bitCount;
         }
@@ -92,7 +92,7 @@ namespace Solnet.Wallet.Utilities
         /// <returns>The bit array.</returns>
         public BitArray ToBitArray()
         {
-            return new (_values.ToArray());
+            return new(_values.ToArray());
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Solnet.Wallet.Utilities
         /// <returns>The array of integers.</returns>
         public int[] ToIntegers()
         {
-            BitArray array = new (_values.ToArray());
+            BitArray array = new(_values.ToArray());
             return ToIntegers(array);
         }
 
@@ -169,7 +169,7 @@ namespace Solnet.Wallet.Utilities
         /// <returns>The string.</returns>
         public override string ToString()
         {
-            StringBuilder builder = new (_values.Count);
+            StringBuilder builder = new(_values.Count);
             for (int i = 0; i < Count; i++)
             {
                 if (i != 0 && i % 8 == 0)

@@ -18,7 +18,7 @@ namespace Solnet.Programs.Abstract
         {
             Value = mask;
         }
-        
+
         /// <summary>
         /// Checks whether the Kth bit for a given number N is set.
         /// </summary>

@@ -37,7 +37,7 @@ namespace Solnet.Programs
         /// Account layout size.
         /// </summary>
         public const int TokenAccountDataSize = 165;
-        
+
         /// <summary>
         /// Multisig account layout size for the given number of signers.
         /// </summary>
@@ -64,7 +64,9 @@ namespace Solnet.Programs
             keys = AddSigners(keys, authority, signers);
             return new TransactionInstruction
             {
-                ProgramId = ProgramIdKey.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeTransferData(amount)
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = keys,
+                Data = TokenProgramData.EncodeTransferData(amount)
             };
         }
 
@@ -212,7 +214,9 @@ namespace Solnet.Programs
 
             return new TransactionInstruction
             {
-                ProgramId = ProgramIdKey.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeMintToData(amount)
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = keys,
+                Data = TokenProgramData.EncodeMintToData(amount)
             };
         }
 
@@ -239,7 +243,9 @@ namespace Solnet.Programs
 
             return new TransactionInstruction
             {
-                ProgramId = ProgramIdKey.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeApproveData(amount)
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = keys,
+                Data = TokenProgramData.EncodeApproveData(amount)
             };
         }
 
@@ -261,7 +267,9 @@ namespace Solnet.Programs
 
             return new TransactionInstruction
             {
-                ProgramId = ProgramIdKey.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeRevokeData()
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = keys,
+                Data = TokenProgramData.EncodeRevokeData()
             };
         }
 
@@ -314,7 +322,9 @@ namespace Solnet.Programs
             keys = AddSigners(keys, authority, signers);
             return new TransactionInstruction()
             {
-                ProgramId = ProgramIdKey.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeBurnData(amount)
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = keys,
+                Data = TokenProgramData.EncodeBurnData(amount)
             };
         }
 
@@ -338,7 +348,9 @@ namespace Solnet.Programs
             keys = AddSigners(keys, authority, signers);
             return new TransactionInstruction()
             {
-                ProgramId = programId.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeCloseAccountData()
+                ProgramId = programId.KeyBytes,
+                Keys = keys,
+                Data = TokenProgramData.EncodeCloseAccountData()
             };
         }
 
@@ -362,7 +374,9 @@ namespace Solnet.Programs
             keys = AddSigners(keys, freezeAuthority, signers);
             return new TransactionInstruction()
             {
-                ProgramId = programId.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeFreezeAccountData()
+                ProgramId = programId.KeyBytes,
+                Keys = keys,
+                Data = TokenProgramData.EncodeFreezeAccountData()
             };
         }
 
@@ -386,7 +400,9 @@ namespace Solnet.Programs
             keys = AddSigners(keys, freezeAuthority, signers);
             return new TransactionInstruction()
             {
-                ProgramId = programId.KeyBytes, Keys = keys, Data = TokenProgramData.EncodeThawAccountData()
+                ProgramId = programId.KeyBytes,
+                Keys = keys,
+                Data = TokenProgramData.EncodeThawAccountData()
             };
         }
 
@@ -498,7 +514,7 @@ namespace Solnet.Programs
         {
             if (signers != null)
             {
-                keys.Add(AccountMeta.ReadOnly(authority,  false));
+                keys.Add(AccountMeta.ReadOnly(authority, false));
                 keys.AddRange(signers.Select(signer => AccountMeta.ReadOnly(signer, true)));
             }
             else
@@ -520,8 +536,8 @@ namespace Solnet.Programs
         {
             uint instruction = data.GetU8(TokenProgramData.MethodOffset);
             TokenProgramInstructions.Values instructionValue =
-                (TokenProgramInstructions.Values) Enum.Parse(typeof(TokenProgramInstructions.Values), instruction.ToString());
-            
+                (TokenProgramInstructions.Values)Enum.Parse(typeof(TokenProgramInstructions.Values), instruction.ToString());
+
             DecodedInstruction decodedInstruction = new()
             {
                 PublicKey = ProgramIdKey,
@@ -560,11 +576,11 @@ namespace Solnet.Programs
                 case TokenProgramInstructions.Values.Burn:
                     TokenProgramData.DecodeBurnData(decodedInstruction, data, keys, keyIndices);
                     break;
-                case TokenProgramInstructions.Values.CloseAccount:                    
+                case TokenProgramInstructions.Values.CloseAccount:
                     TokenProgramData.DecodeCloseAccountData(decodedInstruction, keys, keyIndices);
                     break;
                 case TokenProgramInstructions.Values.FreezeAccount:
-                    TokenProgramData.DecodeFreezeAccountData(decodedInstruction,  keys, keyIndices);
+                    TokenProgramData.DecodeFreezeAccountData(decodedInstruction, keys, keyIndices);
                     break;
                 case TokenProgramInstructions.Values.ThawAccount:
                     TokenProgramData.DecodeThawAccountData(decodedInstruction, keys, keyIndices);

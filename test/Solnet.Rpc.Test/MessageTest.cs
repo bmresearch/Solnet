@@ -36,7 +36,7 @@ namespace Solnet.Rpc.Test
         public void MessageDeserializeTest()
         {
             Message msg = Message.Deserialize(Base64Message);
-            
+
             Assert.IsNotNull(msg);
             Assert.AreEqual(2, msg.Header.RequiredSignatures);
             Assert.AreEqual(0, msg.Header.ReadOnlySignedAccounts);
@@ -52,18 +52,18 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual(2, msg.Instructions.Count);
             Assert.AreEqual(4, msg.Instructions[0].ProgramIdIndex);
-            CollectionAssert.AreEqual(new byte[]{0, 1}, msg.Instructions[0].KeyIndices);
-            CollectionAssert.AreEqual(new byte[]{2}, msg.Instructions[0].KeyIndicesCount);
-            CollectionAssert.AreEqual(new byte[]{52}, msg.Instructions[0].DataLength);
+            CollectionAssert.AreEqual(new byte[] { 0, 1 }, msg.Instructions[0].KeyIndices);
+            CollectionAssert.AreEqual(new byte[] { 2 }, msg.Instructions[0].KeyIndicesCount);
+            CollectionAssert.AreEqual(new byte[] { 52 }, msg.Instructions[0].DataLength);
             CollectionAssert.AreEqual(new byte[]{0, 0, 0, 0, 240, 29, 31, 0,
                 0, 0, 0, 0, 165, 0, 0, 0, 0, 0, 0, 0, 6, 221, 246, 225, 215, 101, 161, 147, 217, 203, 225, 70, 206, 235,
                 121, 172, 28, 180, 133, 237, 95, 91, 55, 145, 58, 140, 245, 133, 126, 255, 0, 169}, msg.Instructions[0].Data);
-            
+
             Assert.AreEqual(5, msg.Instructions[1].ProgramIdIndex);
-            CollectionAssert.AreEqual(new byte[]{1, 2, 0, 3}, msg.Instructions[1].KeyIndices);
-            CollectionAssert.AreEqual(new byte[]{4}, msg.Instructions[1].KeyIndicesCount);
-            CollectionAssert.AreEqual(new byte[]{1}, msg.Instructions[1].DataLength);
-            CollectionAssert.AreEqual(new byte[]{1}, msg.Instructions[1].Data);
+            CollectionAssert.AreEqual(new byte[] { 1, 2, 0, 3 }, msg.Instructions[1].KeyIndices);
+            CollectionAssert.AreEqual(new byte[] { 4 }, msg.Instructions[1].KeyIndicesCount);
+            CollectionAssert.AreEqual(new byte[] { 1 }, msg.Instructions[1].DataLength);
+            CollectionAssert.AreEqual(new byte[] { 1 }, msg.Instructions[1].Data);
         }
 
         [TestMethod]
