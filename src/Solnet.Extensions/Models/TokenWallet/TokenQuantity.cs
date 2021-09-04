@@ -21,8 +21,6 @@ namespace Solnet.Extensions
         /// <param name="decimalPlaces">The number of decimal places this token uses.</param>
         /// <param name="balanceDecimal">Token balance in decimal.</param>
         /// <param name="balanceRaw">Token balance in raw ulong.</param>
-        /// <param name="lamportsRaw">How many lamports does this balance represent.</param>
-        /// <param name="accountCount">The number of accounts this balance represents. Start with 1.</param>
         internal TokenQuantity(string tokenMint,
                                string tokenSymbol,
                                string tokenName,
