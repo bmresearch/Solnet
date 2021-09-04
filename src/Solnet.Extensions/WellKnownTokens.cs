@@ -126,6 +126,16 @@ namespace Solnet.Extensions
         public static TokenDef Liquid = new TokenDef("4wjPQJ6PrkC4dHhYghwJzGBVP78DkBzA2U3kHoFNBuhj", "LIQ Protocol", "LIQ", 6);
 
         /// <summary>
+        /// Step
+        /// </summary>
+        public static TokenDef Step = new TokenDef("StepAscQoEioFxxWGnh2sLBDFp9d8rvKz2Yp39iDpyT", "Step", "STEP", 9);
+
+        /// <summary>
+        /// SLRS (Solrise Finance)
+        /// </summary>
+        public static TokenDef Solrise = new TokenDef("SLRSSpSLUTP7okbCUBYStWCo1vUgyt775faPqz8HUMr", "Solrise Finance", "SLRS", 6);
+
+        /// <summary>
         /// LIKE (Only1)
         /// </summary>
         public static TokenDef Only1 = new TokenDef("3bRTivrVsitbmCTGtqwp7hxXPsybkjn4XLNtPsHqa3zR", "Only1", "LIKE", 9);
