@@ -114,6 +114,15 @@ namespace Solnet.Extensions.Models
         }
 
         /// <summary>
+        /// Keeps all accounts with a non-zero balance.
+        /// </summary>
+        /// <returns>A filtered list of accounts with at least the balance as raw ulong supplied.</returns>
+        public TokenWalletFilterList WithNonZero()
+        {
+            return new TokenWalletFilterList(_list.Where(x => x.QuantityRaw > 0));
+        }
+
+        /// <summary>
         /// Keeps all Associated Token Account instances in the list.
         /// </summary>
         /// <returns>A filtered list that only contains Associated Token Accounts.</returns>
