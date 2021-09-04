@@ -8,7 +8,7 @@ namespace Solnet.Programs.Test.Utilities
 {
     [TestClass]
     public class SerializationUtilitiesTest
-    {       
+    {
         private static readonly byte[] PublicKeyBytes =
         {
             6, 221, 246, 225, 215, 101, 161, 147, 217, 203,
@@ -20,7 +20,7 @@ namespace Solnet.Programs.Test.Utilities
         {
             108, 251, 85, 215, 136, 134, 245, 63
         };
-        
+
         private static readonly byte[] SingleBytes =
         {
             71, 52, 172, 63,
@@ -40,15 +40,15 @@ namespace Solnet.Programs.Test.Utilities
             byte[] sut = new byte[1];
             sut.WriteU8(1, 2);
         }
-        
+
         [TestMethod]
         public void TestWriteU8()
         {
             byte[] sut = new byte[1];
             sut.WriteU8(1, 0);
-            CollectionAssert.AreEqual(new byte[]{ 1 }, sut);
+            CollectionAssert.AreEqual(new byte[] { 1 }, sut);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestWriteU16Exception()
@@ -62,7 +62,7 @@ namespace Solnet.Programs.Test.Utilities
         {
             byte[] sut = new byte[2];
             sut.WriteU16(1, 0);
-            CollectionAssert.AreEqual(new byte[]{ 1, 0 }, sut);
+            CollectionAssert.AreEqual(new byte[] { 1, 0 }, sut);
         }
 
         [TestMethod]
@@ -78,7 +78,7 @@ namespace Solnet.Programs.Test.Utilities
         {
             byte[] sut = new byte[4];
             sut.WriteU32(1, 0);
-            CollectionAssert.AreEqual(new byte[]{1, 0, 0, 0}, sut);
+            CollectionAssert.AreEqual(new byte[] { 1, 0, 0, 0 }, sut);
         }
 
         [TestMethod]
@@ -94,9 +94,9 @@ namespace Solnet.Programs.Test.Utilities
         {
             byte[] sut = new byte[8];
             sut.WriteU64(1, 0);
-            CollectionAssert.AreEqual(new byte[]{1, 0, 0, 0, 0, 0, 0, 0}, sut);
+            CollectionAssert.AreEqual(new byte[] { 1, 0, 0, 0, 0, 0, 0, 0 }, sut);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestWriteS8Exception()
@@ -104,15 +104,15 @@ namespace Solnet.Programs.Test.Utilities
             byte[] sut = new byte[1];
             sut.WriteS8(1, 2);
         }
-        
+
         [TestMethod]
         public void TestWriteS8()
         {
             byte[] sut = new byte[1];
             sut.WriteS8(1, 0);
-            CollectionAssert.AreEqual(new byte[]{1}, sut);
+            CollectionAssert.AreEqual(new byte[] { 1 }, sut);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestWriteS16Exception()
@@ -126,9 +126,9 @@ namespace Solnet.Programs.Test.Utilities
         {
             byte[] sut = new byte[2];
             sut.WriteS16(1, 0);
-            CollectionAssert.AreEqual(new byte[]{1, 0}, sut);
+            CollectionAssert.AreEqual(new byte[] { 1, 0 }, sut);
         }
-                 
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestWriteS32Exception()
@@ -136,15 +136,15 @@ namespace Solnet.Programs.Test.Utilities
             byte[] sut = new byte[4];
             sut.WriteS32(1, 1);
         }
-       
+
         [TestMethod]
         public void TestWriteS32()
         {
             byte[] sut = new byte[4];
             sut.WriteS32(1, 0);
-            CollectionAssert.AreEqual(new byte[]{1, 0, 0, 0}, sut);
+            CollectionAssert.AreEqual(new byte[] { 1, 0, 0, 0 }, sut);
         }
-                    
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestWriteS64Exception()
@@ -152,15 +152,15 @@ namespace Solnet.Programs.Test.Utilities
             byte[] sut = new byte[8];
             sut.WriteS64(1, 1);
         }
-    
+
         [TestMethod]
         public void TestWriteS64()
         {
             byte[] sut = new byte[8];
             sut.WriteS64(1, 0);
-            CollectionAssert.AreEqual(new byte[]{1, 0, 0, 0, 0, 0, 0, 0}, sut);
+            CollectionAssert.AreEqual(new byte[] { 1, 0, 0, 0, 0, 0, 0, 0 }, sut);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestWriteSpanException()
@@ -176,7 +176,7 @@ namespace Solnet.Programs.Test.Utilities
             sut.WriteSpan(PublicKeyBytes, 0);
             CollectionAssert.AreEqual(PublicKeyBytes, sut);
         }
-                
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestWritePublicKeyException()
@@ -192,7 +192,7 @@ namespace Solnet.Programs.Test.Utilities
             sut.WritePubKey(new PublicKey(PublicKeyBytes), 0);
             CollectionAssert.AreEqual(PublicKeyBytes, sut);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestWriteBigIntegerException()
@@ -200,22 +200,22 @@ namespace Solnet.Programs.Test.Utilities
             byte[] sut = new byte[16];
             sut.WriteBigInt(new BigInteger(15000000000000000000000000D), 8);
         }
-        
+
         [TestMethod]
         public void TestWriteBigInteger()
         {
             byte[] sut = new byte[16];
             BigInteger bi = BigInteger.Parse("34028236692093846346337460743176821145");
-            
+
             int written = sut.WriteBigInt(bi, 0);
-            
+
             Assert.AreEqual(bi.GetByteCount(), written);
             CollectionAssert.AreEqual(new byte[]
             {
                 153, 153, 153, 153, 153, 153, 153, 153, 153, 153, 153, 153, 153, 153, 153, 25,
             }, sut);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestWriteDoubleException()
@@ -224,7 +224,7 @@ namespace Solnet.Programs.Test.Utilities
             byte[] bytes = new byte[8];
             bytes.WriteDouble(value, 1);
         }
-        
+
         [TestMethod]
         public void TestWriteDouble()
         {
@@ -233,7 +233,7 @@ namespace Solnet.Programs.Test.Utilities
             bytes.WriteDouble(value, 0);
             CollectionAssert.AreEqual(DoubleBytes, bytes);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestWriteSingleException()
@@ -242,7 +242,7 @@ namespace Solnet.Programs.Test.Utilities
             byte[] bytes = new byte[4];
             bytes.WriteSingle(value, 1);
         }
-        
+
         [TestMethod]
         public void TestWriteSingle()
         {

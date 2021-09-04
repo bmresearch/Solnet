@@ -326,7 +326,7 @@ namespace Solnet.Rpc
 
             if (firstSlot.HasValue)
             {
-                Dictionary<string, object> range = new Dictionary<string, object> {{"firstSlot", firstSlot.Value}};
+                Dictionary<string, object> range = new Dictionary<string, object> { { "firstSlot", firstSlot.Value } };
 
                 if (lastSlot.HasValue)
                 {
@@ -341,7 +341,7 @@ namespace Solnet.Rpc
                     "Range parameters are optional, but the lastSlot argument must be paired with a firstSlot.");
             }
 
-            List<object> args = parameters.Count > 0 ? new List<object> {parameters} : null;
+            List<object> args = parameters.Count > 0 ? new List<object> { parameters } : null;
 
             return await SendRequestAsync<ResponseValue<BlockProductionInfo>>("getBlockProduction", args);
         }
@@ -641,7 +641,7 @@ namespace Solnet.Rpc
         public async Task<RequestResult<List<PerformanceSample>>> GetRecentPerformanceSamplesAsync(ulong limit = 720)
         {
             return await SendRequestAsync<List<PerformanceSample>>("getRecentPerformanceSamples",
-                new List<object> {limit});
+                new List<object> { limit });
         }
 
         /// <inheritdoc cref="IRpcClient.GetRecentPerformanceSamples"/>

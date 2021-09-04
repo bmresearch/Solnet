@@ -14,7 +14,7 @@ namespace Solnet.Wallet.Bip39
         /// The word lists.
         /// </summary>
         private static readonly Dictionary<string, string> WordLists;
-        
+
         /// <summary>
         /// Initialize the static instance of the hardcoded word list source.
         /// </summary>
@@ -71,7 +71,7 @@ namespace Solnet.Wallet.Bip39
             string list = WordLists.TryGet(name);
             if (list == null)
                 return null;
-            return Task.FromResult(new WordList(list.Split(new [] { "\n" }, StringSplitOptions.RemoveEmptyEntries),
+            return Task.FromResult(new WordList(list.Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries),
                 name == "japanese" ? '　' : ' ', name
                 ));
         }

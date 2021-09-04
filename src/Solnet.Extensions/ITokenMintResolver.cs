@@ -19,6 +19,6 @@ namespace Solnet.Extensions
         /// <param name="tokenMint"></param>
         /// <returns>An instance of the TokenDef containing known info about this token or a constructed unknown entry.</returns>
         TokenDef Resolve(string tokenMint);
-        
+
     }
 }

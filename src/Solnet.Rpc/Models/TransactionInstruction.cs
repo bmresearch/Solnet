@@ -24,7 +24,7 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public byte[] Data { get; init; }
     }
-    
+
     /// <summary>
     /// A compiled instruction within the transaction's message.
     /// </summary>
@@ -54,7 +54,7 @@ namespace Solnet.Rpc.Models
         /// The <see cref="ShortVectorEncoding"/> encoded length representing the number of key indices.
         /// </summary>
         public byte[] KeyIndicesCount { get; init; }
-        
+
         /// <summary>
         /// The indices of the account keys for the instruction as they appear in the transaction.
         /// </summary>
@@ -78,13 +78,13 @@ namespace Solnet.Rpc.Models
         {
             return 1 + KeyIndicesCount.Length + KeyIndices.Length + DataLength.Length + Data.Length;
         }
-        
+
         /// <summary>
         /// Attempts to deserialize a compiled instruction from the given data.
         /// </summary>
         /// <param name="data">The data to deserialize.</param>
         public static (CompiledInstruction Instruction, int Length) Deserialize(ReadOnlySpan<byte> data)
-        {                
+        {
             int instructionLength = 0;
             // Read the programId index
             byte programIdIndex = data[Layout.ProgramIdIndexOffset];
@@ -106,11 +106,11 @@ namespace Solnet.Rpc.Models
             }
 
             // Read the length of the instruction's data
-            ReadOnlySpan<byte> encodedDataLength = 
-                data.Length > instructionLength + ShortVectorEncoding.SpanLength ? 
-                    data.Slice(instructionLength, ShortVectorEncoding.SpanLength) 
-                    : data.Slice(instructionLength, data.Length - instructionLength) ;
-            
+            ReadOnlySpan<byte> encodedDataLength =
+                data.Length > instructionLength + ShortVectorEncoding.SpanLength ?
+                    data.Slice(instructionLength, ShortVectorEncoding.SpanLength)
+                    : data.Slice(instructionLength, data.Length - instructionLength);
+
             (int dataLength, int dataLengthEncodedLength) = ShortVectorEncoding.DecodeLength(encodedDataLength);
             instructionLength += dataLengthEncodedLength;
 

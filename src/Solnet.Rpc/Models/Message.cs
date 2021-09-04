@@ -63,7 +63,7 @@ namespace Solnet.Rpc.Models
         /// <returns>The byte array.</returns>
         internal byte[] ToBytes()
         {
-            return new[] {RequiredSignatures, ReadOnlySignedAccounts, ReadOnlyUnsignedAccounts};
+            return new[] { RequiredSignatures, ReadOnlySignedAccounts, ReadOnlyUnsignedAccounts };
         }
     }
 

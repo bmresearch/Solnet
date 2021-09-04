@@ -30,7 +30,7 @@ namespace Solnet.Rpc.Utilities
         /// <exception cref="ArgumentException">Throws exception when one of the seeds has an invalid length.</exception>
         public static bool TryCreateProgramAddress(IList<byte[]> seeds, byte[] programId, out byte[] publicKeyBytes)
         {
-            MemoryStream buffer = new (32 * seeds.Count + ProgramDerivedAddressBytes.Length + programId.Length);
+            MemoryStream buffer = new(32 * seeds.Count + ProgramDerivedAddressBytes.Length + programId.Length);
 
             foreach (byte[] seed in seeds)
             {
@@ -79,7 +79,7 @@ namespace Solnet.Rpc.Utilities
                     nonce = derivationNonce;
                     return true;
                 }
-                
+
                 buffer.RemoveAt(buffer.Count - 1);
                 derivationNonce--;
             }
@@ -88,7 +88,7 @@ namespace Solnet.Rpc.Utilities
             nonce = 0;
             return false;
         }
-        
+
         /// <summary>
         /// Calculates the SHA256 of the given data.
         /// </summary>
@@ -97,7 +97,7 @@ namespace Solnet.Rpc.Utilities
         private static byte[] Sha256(byte[] data)
         {
             byte[] i = new byte[32];
-            Sha256Digest digest = new ();
+            Sha256Digest digest = new();
             digest.BlockUpdate(data, 0, data.Length);
             digest.DoFinal(i, 0);
             return i;

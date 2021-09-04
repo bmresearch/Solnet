@@ -17,20 +17,20 @@ namespace Solnet.Programs
         /// </summary>
         internal static readonly Dictionary<Values, string> Names = new()
         {
-            { Values.CreateAccount, "Create Account"},
-            { Values.Assign, "Assign"},
-            { Values.Transfer, "Transfer"},
-            { Values.CreateAccountWithSeed, "Create Account With Seed"},
-            { Values.AdvanceNonceAccount, "Advance Nonce Account"},
-            { Values.WithdrawNonceAccount, "Withdraw Nonce Account"},
-            { Values.InitializeNonceAccount, "Initialize Nonce Account"},
-            { Values.AuthorizeNonceAccount, "Authorize Nonce Account"},
-            { Values.Allocate, "Allocate"},
-            { Values.AllocateWithSeed, "Allocate With Seed"},
-            { Values.AssignWithSeed, "Assign With Seed"},
-            { Values.TransferWithSeed, "Transfer With Seed"},
+            { Values.CreateAccount, "Create Account" },
+            { Values.Assign, "Assign" },
+            { Values.Transfer, "Transfer" },
+            { Values.CreateAccountWithSeed, "Create Account With Seed" },
+            { Values.AdvanceNonceAccount, "Advance Nonce Account" },
+            { Values.WithdrawNonceAccount, "Withdraw Nonce Account" },
+            { Values.InitializeNonceAccount, "Initialize Nonce Account" },
+            { Values.AuthorizeNonceAccount, "Authorize Nonce Account" },
+            { Values.Allocate, "Allocate" },
+            { Values.AllocateWithSeed, "Allocate With Seed" },
+            { Values.AssignWithSeed, "Assign With Seed" },
+            { Values.TransferWithSeed, "Transfer With Seed" },
         };
-        
+
         /// <summary>
         /// Represents the instruction types for the <see cref="SystemProgram"/>.
         /// </summary>

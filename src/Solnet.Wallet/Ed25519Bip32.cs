@@ -63,7 +63,7 @@ namespace Solnet.Wallet
         /// <returns>A tuple consisting of the key and corresponding chain code.</returns>
         private static (byte[] Key, byte[] ChainCode) GetChildKeyDerivation(byte[] key, byte[] chainCode, uint index)
         {
-            MemoryStream buffer = new ();
+            MemoryStream buffer = new();
 
             buffer.Write(new byte[] { 0 });
             buffer.Write(key);
@@ -83,9 +83,9 @@ namespace Solnet.Wallet
         private static (byte[] Key, byte[] ChainCode) HmacSha512(byte[] keyBuffer, byte[] data)
         {
             byte[] i = new byte[64];
-            Sha512Digest digest = new ();
-            HMac hmac = new (digest);
-            
+            Sha512Digest digest = new();
+            HMac hmac = new(digest);
+
             hmac.Init(new KeyParameter(keyBuffer));
             hmac.BlockUpdate(data, 0, data.Length);
             hmac.DoFinal(i, 0);
@@ -104,7 +104,7 @@ namespace Solnet.Wallet
         /// <returns>A boolean.</returns>
         private static bool IsValidPath(string path)
         {
-            Regex regex = new ("^m(\\/[0-9]+')+$");
+            Regex regex = new("^m(\\/[0-9]+')+$");
 
             if (!regex.IsMatch(path))
                 return false;

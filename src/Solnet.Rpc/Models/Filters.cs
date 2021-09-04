@@ -11,7 +11,7 @@ namespace Solnet.Rpc.Models
         /// The offset into program account data at which to start the comparison.
         /// </summary>
         public int Offset { get; set; }
-        
+
         /// <summary>
         /// The data to match against the program data, as base-58 encoded string and limited to 129 bytes.
         /// </summary>

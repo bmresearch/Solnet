@@ -21,24 +21,24 @@ namespace Solnet.Programs
         /// <summary>
         /// The public key of the System Program.
         /// </summary>
-        public static readonly PublicKey ProgramIdKey = new ("11111111111111111111111111111111");
-        
+        public static readonly PublicKey ProgramIdKey = new("11111111111111111111111111111111");
+
         /// <summary>
         /// The public key of the Recent Block Hashes System Variable. 
         /// </summary>
         public static readonly PublicKey
             SysVarRecentBlockHashesKey = new("SysvarRecentB1ockHashes11111111111111111111");
-        
+
         /// <summary>
         /// The public key of the Rent System Variable.
         /// </summary>
-        public static readonly PublicKey SysVarRentKey = new ("SysvarRent111111111111111111111111111111111");
-        
+        public static readonly PublicKey SysVarRentKey = new("SysvarRent111111111111111111111111111111111");
+
         /// <summary>
         /// The program's name.
         /// </summary>
         private const string ProgramName = "System Program";
-        
+
         /// <summary>
         /// Initialize a new transaction instruction which interacts with the System Program to create a new account.
         /// </summary>
@@ -51,7 +51,7 @@ namespace Solnet.Programs
         public static TransactionInstruction CreateAccount(
             PublicKey fromAccount, PublicKey newAccountPublicKey, ulong lamports, ulong space, PublicKey programId)
         {
-            List<AccountMeta> keys = new ()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(fromAccount, true),
                 AccountMeta.Writable(newAccountPublicKey, true)
@@ -72,8 +72,8 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Assign(PublicKey account, PublicKey programId)
         {
-            List<AccountMeta> keys = new() {AccountMeta.Writable(account, true)};
-            
+            List<AccountMeta> keys = new() { AccountMeta.Writable(account, true) };
+
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -91,7 +91,7 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Transfer(PublicKey fromPublicKey, PublicKey toPublicKey, ulong lamports)
         {
-            List<AccountMeta> keys = new ()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(fromPublicKey, true),
                 AccountMeta.Writable(toPublicKey, false)
@@ -120,7 +120,7 @@ namespace Solnet.Programs
             PublicKey fromPublicKey, PublicKey toPublicKey, PublicKey baseAccount,
             string seed, ulong lamports, ulong space, PublicKey owner)
         {
-            List<AccountMeta> keys = new ()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(fromPublicKey, true),
                 AccountMeta.Writable(toPublicKey, false),
@@ -144,7 +144,7 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction AdvanceNonceAccount(PublicKey nonceAccountPublicKey, PublicKey authorized)
         {
-            List<AccountMeta> keys = new ()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(nonceAccountPublicKey, false),
                 AccountMeta.ReadOnly(SysVarRecentBlockHashesKey, false),
@@ -169,7 +169,7 @@ namespace Solnet.Programs
         public static TransactionInstruction WithdrawNonceAccount(
             PublicKey nonceAccountPublicKey, PublicKey toPublicKey, PublicKey authorized, ulong lamports)
         {
-            List<AccountMeta> keys = new ()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(nonceAccountPublicKey, false),
                 AccountMeta.Writable(toPublicKey, false),
@@ -194,7 +194,7 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction InitializeNonceAccount(PublicKey nonceAccountPublicKey, PublicKey authorized)
         {
-            List<AccountMeta> keys = new ()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(nonceAccountPublicKey, false),
                 AccountMeta.ReadOnly(SysVarRecentBlockHashesKey, false),
@@ -218,7 +218,7 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction AuthorizeNonceAccount(PublicKey nonceAccountPublicKey, PublicKey authorized, PublicKey newAuthority)
         {
-            List<AccountMeta> keys = new ()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(nonceAccountPublicKey, false),
                 AccountMeta.ReadOnly(authorized, true),
@@ -240,7 +240,7 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Allocate(PublicKey account, ulong space)
         {
-            List<AccountMeta> keys = new ()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(account, true)
             };
@@ -265,7 +265,7 @@ namespace Solnet.Programs
         public static TransactionInstruction AllocateWithSeed(
             PublicKey account, PublicKey baseAccount, string seed, ulong space, PublicKey owner)
         {
-            List<AccountMeta> keys = new ()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(account, false),
                 AccountMeta.ReadOnly(baseAccount, true)
@@ -290,7 +290,7 @@ namespace Solnet.Programs
         public static TransactionInstruction AssignWithSeed(
             PublicKey account, PublicKey baseAccount, string seed, PublicKey owner)
         {
-            List<AccountMeta> keys = new ()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(account, false),
                 AccountMeta.ReadOnly(baseAccount, true)
@@ -318,7 +318,7 @@ namespace Solnet.Programs
             PublicKey fromPublicKey, PublicKey fromBaseAccount, string seed, PublicKey fromOwner,
             PublicKey toPublicKey, ulong lamports)
         {
-            List<AccountMeta> keys = new ()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(fromPublicKey, false),
                 AccountMeta.ReadOnly(fromBaseAccount, true),
@@ -331,7 +331,7 @@ namespace Solnet.Programs
                 Data = SystemProgramData.EncodeTransferWithSeedData(fromOwner, seed, lamports)
             };
         }
-        
+
         /// <summary>
         /// Decodes an instruction created by the System Program.
         /// </summary>
@@ -343,8 +343,8 @@ namespace Solnet.Programs
         {
             uint instruction = data.GetU32(SystemProgramData.MethodOffset);
             SystemProgramInstructions.Values instructionValue =
-                (SystemProgramInstructions.Values) Enum.Parse(typeof(SystemProgramInstructions.Values), instruction.ToString());
-            
+                (SystemProgramInstructions.Values)Enum.Parse(typeof(SystemProgramInstructions.Values), instruction.ToString());
+
             DecodedInstruction decodedInstruction = new()
             {
                 PublicKey = ProgramIdKey,
@@ -356,42 +356,42 @@ namespace Solnet.Programs
 
             switch (instructionValue)
             {
-                    case SystemProgramInstructions.Values.CreateAccount:
-                        SystemProgramData.DecodeCreateAccountData(decodedInstruction, data, keys, keyIndices);
-                        break;
-                    case SystemProgramInstructions.Values.Assign:
-                        SystemProgramData.DecodeAssignData(decodedInstruction, data, keys, keyIndices);
-                        break;
-                    case SystemProgramInstructions.Values.Transfer:
-                        SystemProgramData.DecodeTransferData(decodedInstruction, data, keys, keyIndices);
-                        break;
-                    case SystemProgramInstructions.Values.CreateAccountWithSeed:    
-                        SystemProgramData.DecodeCreateAccountWithSeedData(decodedInstruction, data, keys, keyIndices);                   
-                        break;
-                    case SystemProgramInstructions.Values.AdvanceNonceAccount:
-                        SystemProgramData.DecodeAdvanceNonceAccountData(decodedInstruction, keys, keyIndices);
-                        break;
-                    case SystemProgramInstructions.Values.WithdrawNonceAccount:
-                        SystemProgramData.DecodeWithdrawNonceAccountData(decodedInstruction, data, keys, keyIndices);
-                        break;
-                    case SystemProgramInstructions.Values.InitializeNonceAccount:
-                        SystemProgramData.DecodeInitializeNonceAccountData(decodedInstruction, data, keys, keyIndices);
-                        break;
-                    case SystemProgramInstructions.Values.AuthorizeNonceAccount:
-                        SystemProgramData.DecodeAuthorizeNonceAccountData(decodedInstruction, data, keys, keyIndices);
-                        break;
-                    case SystemProgramInstructions.Values.Allocate:
-                        SystemProgramData.DecodeAllocateData(decodedInstruction, data, keys, keyIndices);
-                        break;
-                    case SystemProgramInstructions.Values.AllocateWithSeed:    
-                        SystemProgramData.DecodeAllocateWithSeedData(decodedInstruction, data, keys, keyIndices);
-                        break;
-                    case SystemProgramInstructions.Values.AssignWithSeed:
-                        SystemProgramData.DecodeAssignWithSeedData(decodedInstruction, data, keys, keyIndices);
-                        break;
-                    case SystemProgramInstructions.Values.TransferWithSeed:
-                        SystemProgramData.DecodeTransferWithSeedData(decodedInstruction, data, keys, keyIndices);
-                        break;
+                case SystemProgramInstructions.Values.CreateAccount:
+                    SystemProgramData.DecodeCreateAccountData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case SystemProgramInstructions.Values.Assign:
+                    SystemProgramData.DecodeAssignData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case SystemProgramInstructions.Values.Transfer:
+                    SystemProgramData.DecodeTransferData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case SystemProgramInstructions.Values.CreateAccountWithSeed:
+                    SystemProgramData.DecodeCreateAccountWithSeedData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case SystemProgramInstructions.Values.AdvanceNonceAccount:
+                    SystemProgramData.DecodeAdvanceNonceAccountData(decodedInstruction, keys, keyIndices);
+                    break;
+                case SystemProgramInstructions.Values.WithdrawNonceAccount:
+                    SystemProgramData.DecodeWithdrawNonceAccountData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case SystemProgramInstructions.Values.InitializeNonceAccount:
+                    SystemProgramData.DecodeInitializeNonceAccountData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case SystemProgramInstructions.Values.AuthorizeNonceAccount:
+                    SystemProgramData.DecodeAuthorizeNonceAccountData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case SystemProgramInstructions.Values.Allocate:
+                    SystemProgramData.DecodeAllocateData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case SystemProgramInstructions.Values.AllocateWithSeed:
+                    SystemProgramData.DecodeAllocateWithSeedData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case SystemProgramInstructions.Values.AssignWithSeed:
+                    SystemProgramData.DecodeAssignWithSeedData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case SystemProgramInstructions.Values.TransferWithSeed:
+                    SystemProgramData.DecodeTransferWithSeedData(decodedInstruction, data, keys, keyIndices);
+                    break;
             }
 
             return decodedInstruction;

@@ -23,18 +23,18 @@ namespace Solnet.Extensions
         /// <param name="balanceRaw">Token balance in raw ulong.</param>
         /// <param name="lamportsRaw">How many lamports does this balance represent.</param>
         /// <param name="accountCount">The number of accounts this balance represents. Start with 1.</param>
-        internal TokenWalletBalance(string tokenMint, 
-                                    string tokenSymbol, 
-                                    string tokenName, 
-                                    int decimalPlaces, 
+        internal TokenWalletBalance(string tokenMint,
+                                    string tokenSymbol,
+                                    string tokenName,
+                                    int decimalPlaces,
                                     decimal balanceDecimal,
                                     ulong balanceRaw,
                                     ulong lamportsRaw,
                                     int accountCount) : base(tokenMint,
-                                                             tokenSymbol, 
-                                                             tokenName, 
-                                                             decimalPlaces, 
-                                                             balanceDecimal, 
+                                                             tokenSymbol,
+                                                             tokenName,
+                                                             decimalPlaces,
+                                                             balanceDecimal,
                                                              balanceRaw)
         {
             Lamports = lamportsRaw;
@@ -71,14 +71,15 @@ namespace Solnet.Extensions
         /// <param name="lamportsRaw">Number of lamports to add to this consolidated balance.</param>
         /// <param name="accountCount">Number of accounts to add to this consolidated balance.</param>
         /// <returns>A new instance with this account provdided added to the accumulators.</returns>
-        internal TokenWalletBalance AddAccount(decimal valueDecimal, 
+        internal TokenWalletBalance AddAccount(decimal valueDecimal,
                                                ulong valueRaw,
-                                               ulong lamportsRaw, 
-                                               int accountCount) {
+                                               ulong lamportsRaw,
+                                               int accountCount)
+        {
 
-            return new TokenWalletBalance(TokenMint, Symbol, TokenName, 
-                DecimalPlaces, QuantityDecimal + valueDecimal, 
-                QuantityRaw + valueRaw, Lamports + lamportsRaw, 
+            return new TokenWalletBalance(TokenMint, Symbol, TokenName,
+                DecimalPlaces, QuantityDecimal + valueDecimal,
+                QuantityRaw + valueRaw, Lamports + lamportsRaw,
                 AccountCount + accountCount);
 
         }

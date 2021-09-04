@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Solnet.Extensions.TokenMint;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Solnet.Extensions.TokenMint;
 
 namespace Solnet.Extensions
 {
@@ -32,7 +32,7 @@ namespace Solnet.Extensions
         /// Constructs an empty TokenMintResolver object.
         /// </summary>
         public TokenMintResolver()
-        { 
+        {
             _tokens = new Dictionary<string, TokenDef>();
         }
 
@@ -41,10 +41,10 @@ namespace Solnet.Extensions
         /// </summary>
         /// <param name="tokenList">A deserialised token list.</param>
         internal TokenMintResolver(TokenListDoc tokenList) : this()
-        { 
+        {
             foreach (var token in tokenList.tokens)
             {
-                Add(new TokenDef(token.Address, token.Name, token.Symbol, token.Decimals)); 
+                Add(new TokenDef(token.Address, token.Name, token.Symbol, token.Decimals));
             }
         }
 

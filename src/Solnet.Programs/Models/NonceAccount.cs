@@ -16,7 +16,7 @@ namespace Solnet.Programs.Models
         /// The size of the data for a nonce account.
         /// </summary>
         public const int AccountDataSize = 80;
-        
+
         #region Layout
 
         /// <summary>
@@ -33,12 +33,12 @@ namespace Solnet.Programs.Models
             /// The offset at which the state value begins.
             /// </summary>
             internal const int StateOffset = 4;
-            
+
             /// <summary>
             /// The offset at which the authorized public key value begins.
             /// </summary>
             internal const int AuthorizedKeyOffset = 8;
-            
+
             /// <summary>
             /// The offset at which the current nonce public key value begins.
             /// </summary>
@@ -61,7 +61,7 @@ namespace Solnet.Programs.Models
         /// The state of the nonce account.
         /// </summary>
         public uint State;
-        
+
         /// <summary>
         /// The public key of the account authorized to interact with the nonce account.
         /// </summary>
@@ -86,8 +86,8 @@ namespace Solnet.Programs.Models
         {
             if (data.Length != AccountDataSize)
                 return null;
-            
-            return new ()
+
+            return new()
             {
                 Version = data.GetU32(Layout.VersionOffset),
                 State = data.GetU32(Layout.StateOffset),

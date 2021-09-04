@@ -86,7 +86,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual("D8qh6AeX4KaTe6ZBpsZDdntTQUyPy7x6Xjp7NnEigCWH", first.Transaction.Message.RecentBlockhash);
             FinishTest(messageHandlerMock, TestnetUri);
         }
-        
+
         [TestMethod]
         public void TestGetConfirmedBlock()
         {
@@ -183,7 +183,7 @@ namespace Solnet.Rpc.Test
             // everything else was already validated above
             FinishTest(messageHandlerMock, TestnetUri);
         }
-        
+
         [TestMethod]
         public void TestGetConfirmedBlockConfirmed()
         {
@@ -208,7 +208,7 @@ namespace Solnet.Rpc.Test
             // everything else was already validated above
             FinishTest(messageHandlerMock, TestnetUri);
         }
-        
+
         [TestMethod]
         public void TestGetConfirmedBlockInvalid()
         {
@@ -441,7 +441,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual("6XGYfEJ5CGGBA5E8E7Gw4ToyDLDNNAyUCb7CJj1rLk21", first.Transaction.Message.RecentBlockhash);
             FinishTest(messageHandlerMock, TestnetUri);
         }
-        
+
         [TestMethod]
         public void TestGetConfirmedTransactionProcessed()
         {
@@ -464,7 +464,7 @@ namespace Solnet.Rpc.Test
             Assert.IsNotNull(res.Result);
             FinishTest(messageHandlerMock, TestnetUri);
         }
-        
+
         [TestMethod]
         public void TestGetTransaction()
         {
@@ -573,7 +573,7 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
-        
+
         [TestMethod]
         public void TestGetConfirmedBlocks()
         {
@@ -615,7 +615,7 @@ namespace Solnet.Rpc.Test
                 Assert.AreEqual(typeof(ArgumentException), e.InnerException.GetType());
             }
         }
-        
+
         [TestMethod]
         public void TestGetConfirmedBlocksInvalidCommitment()
         {
@@ -657,7 +657,7 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
-        
+
         [TestMethod]
         public void TestGetConfirmedBlocksConfirmed()
         {
@@ -711,7 +711,7 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
-        
+
         [TestMethod]
         public void TestGetConfirmedBlocksWithLimit()
         {
@@ -765,7 +765,7 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
-        
+
         [TestMethod]
         public void TestGetConfirmedBlocksWithLimitConfirmed()
         {
@@ -808,7 +808,7 @@ namespace Solnet.Rpc.Test
                 Assert.AreEqual(typeof(ArgumentException), e.InnerException.GetType());
             }
         }
-        
+
         [TestMethod]
         public void TestGetConfirmedBlocksWithLimitBadCommitment()
         {

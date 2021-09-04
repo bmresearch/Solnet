@@ -12,7 +12,7 @@ namespace Solnet.Rpc.Utilities
         /// The length of the compact-u16 multi-byte encoding.
         /// </summary>
         internal const int SpanLength = 3;
-        
+
         /// <summary>
         /// Encodes the number of account keys present in the transaction as a short vector, see remarks.
         /// <remarks>
@@ -61,7 +61,7 @@ namespace Solnet.Rpc.Utilities
         {
             int len = 0;
             int size = 0;
-            
+
             foreach (byte elem in data)
             {
                 len |= (elem & 0x7f) << (size * 7);

@@ -19,7 +19,7 @@ namespace Solnet.Programs.Test
             "SF7V9bN5E6jPWFfv8AqeIfQzb6ERv8S2AqP3kpqFe1rhOi8a8q+HoB5Z/4WUfiAgQCAAE0AAAAAPAdHwAA" +
             "AAAApQAAAAAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQUEAQIAAwEB";
 
-        private const string CreateNameRecordMessage = 
+        private const string CreateNameRecordMessage =
             "AQAEB0dpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxey2F2FblAWiu/ZiWbtqWN8z7Ge/AluZCaFnLAg" +
             "KgEtFkwslVgjMhgItKaUceGeZWs2nDDtcND1HZzSINSX4+RUowAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
             "AAAAAAA7aYX6pwktdoNpXyPx7Nh0YfhYfKpR+3sTN7r+G2scDYLrVH0E8HzqZRg2QDYvy7Wkn7KNNe3hCv4EK" +
@@ -120,12 +120,12 @@ namespace Solnet.Programs.Test
             "sXFEhjMlMPUrxf1ja7gibof1E49vZigAAAACHEetpR5UtsSacYYjH7rp2SZreGmXDVinNPeuZO1XQ8AICAgABNAAAAAA" +
             "AFxYAAAAAAFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAwEDBCQGAAAAR2mrlyBLqD+wyu4" +
             "X94aPHgdOUhWBoNidlDedqmW3F7I=";
-        
+
         private const string AuthorizeNonceAccountMessage =
             "AQABA0dpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxey3/TlOFbzAEpWOjiOEYJxkz0BiH7zFuKtbErUaFHHeLQA" +
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkF38bO8K2XOUFDq7VOkCaRObsKUZyPb587Rcoo4eivAQICAQAkB" +
             "wAAACqCAIOtweetcVDQTjbgtE+ULaVRy1/RIR5APIhz/3J6";
-        
+
         [TestMethod]
         public void InstructionDecoderRegisterTest()
         {
@@ -134,7 +134,7 @@ namespace Solnet.Programs.Test
             Assert.IsNotNull(InstructionDecoder.Decode(new PublicKey("11111111111111111111111111111112"), Array.Empty<byte>(),
                 new List<PublicKey>(), Array.Empty<byte>()));
         }
-        
+
         [TestMethod]
         public void InstructionDecoderRegisterNullTest()
         {
@@ -164,7 +164,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("FWUPMzrLbAEuH83cf1QphoFdyUdhenDF5oHftwd9Vjyr", (PublicKey)newAccount);
             Assert.AreEqual(2039280UL, (ulong)amount);
             Assert.AreEqual(165UL, (ulong)space);
-            
+
             Assert.AreEqual("Initialize Account", decodedInstructions[1].InstructionName);
             Assert.AreEqual("Token Program", decodedInstructions[1].ProgramName);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", decodedInstructions[1].PublicKey);
@@ -189,7 +189,7 @@ namespace Solnet.Programs.Test
                 });
 
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(txMeta);
-            
+
             Assert.AreEqual(3, decodedInstructions.Count);
 
             Assert.AreEqual("Create Associated Token Account", decodedInstructions[0].InstructionName);
@@ -244,7 +244,7 @@ namespace Solnet.Programs.Test
                 });
 
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(txMeta);
-            
+
             Assert.AreEqual(4, decodedInstructions.Count);
 
             Assert.AreEqual("Unknown", decodedInstructions[2].InstructionName);
@@ -253,8 +253,8 @@ namespace Solnet.Programs.Test
                 decodedInstructions[2].PublicKey);
             Assert.AreEqual(1, decodedInstructions[2].InnerInstructions.Count);
         }
-        
-        
+
+
         [TestMethod]
         public void DecodeInstructionsFromTransactionUnknownInnerInstructionTest()
         {
@@ -279,7 +279,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin",
                 decodedInstructions[0].InnerInstructions[0].PublicKey);
             Assert.AreEqual(0, decodedInstructions[0].InnerInstructions[0].InnerInstructions.Count);
-            
+
             Assert.AreEqual("Unknown", decodedInstructions[1].InstructionName);
             Assert.AreEqual("Unknown", decodedInstructions[1].ProgramName);
             Assert.AreEqual("675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",
@@ -299,7 +299,7 @@ namespace Solnet.Programs.Test
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
             Assert.AreEqual(4, decodedInstructions.Count);
-            
+
             Assert.AreEqual("Unknown", decodedInstructions[2].InstructionName);
             Assert.AreEqual("Unknown", decodedInstructions[2].ProgramName);
             Assert.AreEqual("HgQBwfas29FTc2hFw2KfdtrhChYVfk5LmMraSHUTTh9L", decodedInstructions[2].PublicKey);
@@ -311,7 +311,7 @@ namespace Solnet.Programs.Test
         {
             Message msg = Message.Deserialize(CreateNameRecordMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
-            
+
             Assert.AreEqual(3, decodedInstructions.Count);
 
             // Create name registry instruction
@@ -370,13 +370,13 @@ namespace Solnet.Programs.Test
             Assert.AreEqual(32U, (uint)hashedNameLength);
             Assert.AreEqual("pzT91B4byCH5j/ED1h+mUHphJItZaJ/JIbddoj769Sw=", Convert.ToBase64String((byte[])hashedName));
         }
-        
+
         [TestMethod]
         public void DecodeUpdateNameRegistryFullTest()
         {
             Message msg = Message.Deserialize(UpdateNameRegistryMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
-            
+
             Assert.AreEqual(3, decodedInstructions.Count);
 
             // update name registry instruction
@@ -391,9 +391,9 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("DBJo83875zELNsWd8zicSTFhAzyFAVgKmcRvWv8tndvX", (PublicKey)nameAccount);
             Assert.AreEqual("8ZhEweTBhjTVzuRyoJteCqNU7AiHdpYTfreD1y9FvoFu", (PublicKey)nameClass);
             Assert.AreEqual(125U, (uint)offset);
-            CollectionAssert.AreEqual(new byte[] {0,0,1,1}, (byte[]) data);
+            CollectionAssert.AreEqual(new byte[] { 0, 0, 1, 1 }, (byte[])data);
         }
-        
+
         [TestMethod]
         public void DecodeTransferNameRegistryFullTest()
         {
@@ -416,13 +416,13 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("GzgX4Lv8wQp5o8ovtjT8w6ukQT98HB2a7vg7s1PXqydF", (PublicKey)nameOwner);
             Assert.AreEqual("987cq6uofpTKzTyQywsyqNNyAKHAkJkBvY6ggqPnS8gJ", (PublicKey)newOwner);
         }
-        
+
         [TestMethod]
         public void DecodeDeleteNameRegistryFullTest()
         {
             Message msg = Message.Deserialize(DeleteNameRegistryMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
-            
+
             Assert.AreEqual(3, decodedInstructions.Count);
 
             // update name registry instruction
@@ -452,7 +452,7 @@ namespace Solnet.Programs.Test
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Offset", out object offset));
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Data", out object data));
             Assert.AreEqual(35UL, (ulong)offset);
-            CollectionAssert.AreEqual(new byte[]{ 1, 0, 15, 25, 77,}, (byte[])data);
+            CollectionAssert.AreEqual(new byte[] { 1, 0, 15, 25, 77, }, (byte[])data);
         }
 
         [TestMethod]
@@ -471,7 +471,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("G5EWCBwDM5GzVNwrG9LbgpTdQBD9PEAaey82ttuJJ7Qo", (PublicKey)nonceAccount);
             Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", (PublicKey)authority);
         }
-        
+
         [TestMethod]
         public void DecodeCreateAccountWithSeedTest()
         {
@@ -498,8 +498,8 @@ namespace Solnet.Programs.Test
             Assert.AreEqual(2039280UL, (ulong)amount);
             Assert.AreEqual(165UL, (ulong)space);
             Assert.AreEqual("Some Seed", (string)seed);
-            
-            
+
+
             Assert.AreEqual("Transfer Checked", decodedInstructions[2].InstructionName);
             Assert.AreEqual("Token Program", decodedInstructions[2].ProgramName);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", decodedInstructions[2].PublicKey);
@@ -577,7 +577,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("Gg12mmahG97PDACxKiBta7ch2kkqDkXUzjn5oAcbPZct", (PublicKey)baseAccount);
             Assert.AreEqual("J6WZY5nuYGJmfFtBGZaXgwZSRVuLWxNR6gd4d3XTHqTk", (PublicKey)ownerAccount);
             Assert.AreEqual("Some Seed", (string)seed);
-            
+
             Assert.AreEqual("Withdraw Nonce Account", decodedInstructions[2].InstructionName);
             Assert.AreEqual("System Program", decodedInstructions[2].ProgramName);
             Assert.AreEqual("11111111111111111111111111111111", decodedInstructions[2].PublicKey);
@@ -608,7 +608,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("G5EWCBwDM5GzVNwrG9LbgpTdQBD9PEAaey82ttuJJ7Qo", (PublicKey)nonceAccount);
             Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", (PublicKey)authority);
         }
-        
+
         [TestMethod]
         public void DecodeAuthorizeNonceAccountTest()
         {

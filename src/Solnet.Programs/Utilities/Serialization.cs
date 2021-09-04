@@ -79,7 +79,7 @@ namespace Solnet.Programs.Utilities
         {
             if (offset > data.Length - sizeof(sbyte))
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            data[offset] = (byte) value;
+            data[offset] = (byte)value;
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Solnet.Programs.Utilities
                 throw new ArgumentOutOfRangeException(nameof(offset));
             BinaryPrimitives.WriteInt64LittleEndian(data.AsSpan(offset, sizeof(long)), value);
         }
-        
+
         /// <summary>
         /// Write a span of bytes to the byte array at the given offset.
         /// </summary>
@@ -169,7 +169,7 @@ namespace Solnet.Programs.Utilities
             int byteCount = bigInteger.GetByteCount(isSigned);
             if (offset + byteCount > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            
+
             bigInteger.TryWriteBytes(
                 data.AsSpan(offset, byteCount),
                 out int written,
@@ -177,7 +177,7 @@ namespace Solnet.Programs.Utilities
                 isBigEndian);
             return written;
         }
-        
+
         /// <summary>
         /// Write a double-precision floating-point value to the byte array at the given offset.
         /// </summary>
@@ -189,10 +189,10 @@ namespace Solnet.Programs.Utilities
         {
             if (offset + sizeof(double) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            
+
             BinaryPrimitives.WriteDoubleLittleEndian(data.AsSpan(offset, sizeof(double)), value);
         }
-        
+
         /// <summary>
         /// Write a single-precision floating-point value to the byte array at the given offset.
         /// </summary>
@@ -204,7 +204,7 @@ namespace Solnet.Programs.Utilities
         {
             if (offset + sizeof(float) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            
+
             BinaryPrimitives.WriteSingleLittleEndian(data.AsSpan(offset, sizeof(float)), value);
         }
 
@@ -220,8 +220,8 @@ namespace Solnet.Programs.Utilities
         {
             byte[] stringBytes = Encoding.ASCII.GetBytes(data);
             byte[] encoded = new byte[stringBytes.Length + sizeof(uint)];
-            
-            encoded.WriteU32((uint) stringBytes.Length, 0);
+
+            encoded.WriteU32((uint)stringBytes.Length, 0);
             encoded.WriteSpan(stringBytes, sizeof(uint));
             return encoded;
         }

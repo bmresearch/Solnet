@@ -37,8 +37,8 @@ namespace Solnet.Programs.Test
             160, 216, 157, 148, 55, 157, 170, 101, 183, 23, 178, 1, 71, 105, 171, 151, 32, 75, 168, 63, 176,
             202, 238, 23, 247, 134, 143, 30, 7, 78, 82, 21, 129, 160, 216, 157, 148, 55, 157, 170, 101, 183, 23, 178
         };
-        
-        private static readonly byte[] ExpectedInitializeMultiSignatureData = { 2,3 };
+
+        private static readonly byte[] ExpectedInitializeMultiSignatureData = { 2, 3 };
 
         private static readonly byte[] ExpectedMintToData =
         {
@@ -48,7 +48,7 @@ namespace Solnet.Programs.Test
         {
             14, 168, 97, 0, 0, 0, 0, 0, 0,2
         };
-        
+
         private static readonly byte[] ExpectedBurnData =
         {
             8, 168, 97, 0, 0, 0, 0, 0, 0
@@ -90,10 +90,10 @@ namespace Solnet.Programs.Test
             104, 196, 10, 219, 24
         };
 
-        private static readonly byte[] ExpectedCloseAccountData = {9};
-        private static readonly byte[] ExpectedFreezeAccountData = {10};
-        private static readonly byte[] ExpectedThawAccountData = {11};
-        
+        private static readonly byte[] ExpectedCloseAccountData = { 9 };
+        private static readonly byte[] ExpectedFreezeAccountData = { 10 };
+        private static readonly byte[] ExpectedThawAccountData = { 11 };
+
         private const string InitializeMultisigMessage =
             "AwAJDEdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyeLALNX+Hq5QvYpjBUrxcE6c1OPFtuOsWTs" +
             "RwZ22JTNv0sF4mdbv4FGc/JcD4qM+DJXE0k+DhmNmPu8MItrFyfgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
@@ -116,7 +116,7 @@ namespace Solnet.Programs.Test
             "7EcGdtiUzbBUpTUPhdyILWFKVWcniKKW3fHqur0KYGeIhJMvTu9qD2GZ+Dnx/yuoM4nlAAN0csYxYXMvDV/e" +
             "u6teeG3c6leQQGAgABNAAAAADwHR8AAAAAAKUAAAAAAAAABt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX" +
             "7/AKkIBAEFAAcBAQgGBQEJAgMECQeoYQAAAAAAAAoBABJIZWxsbyBmcm9tIFNvbC5OZXQ=";
-        
+
         private const string MintToCheckedMultisigMessage =
             "BAMDCUdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyvTw+I1BPNR0VlSo4bmnhoQQ61IkVLEPD0WuhpIewXAM21" +
             "dIJXptqHEGAzyrbL29j+nmPnYitkZQkG68gg4lvRD4ib5rT0bTgxA+F6nChCfZUa5KY6gOxm99EnyKbyFOF9LBeJnW7+BR" +
@@ -125,7 +125,7 @@ namespace Solnet.Programs.Test
             "6vQpgZ4iEky9O72oNUxQB2XR+CQ9oj6l2DuNeQzPY0Dssm7niyiU8X1dvS0AgcGBAUGAQIDCg6oYQAAAAAAAAoIAQASS" +
             "GVsbG8gZnJvbSBTb2wuTmV0";
 
-        private const string TransferCheckedMultisigMessage = 
+        private const string TransferCheckedMultisigMessage =
             "BAMDCUdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyD2fbBe7VA8Jg3kfhUQh7HJ6f+hBs2QriyfCGiO1vi" +
             "oqKRK/h3D+lChZA2mVDAGmJHlYiSn8C/yKAGnfXHxgoMvF9c15So4YdnqahN6SHKY5ln1tsHqBpfwwM9RDfRR8GA/" +
             "GByjZ4HWOhY8ZF4ebvMWq3S6h+LX7eLV5BsR18QkUOnC1i7fbauPEwr4QPwO60eHE6R2A3RGXr8HuhWwwwbvSw" +
@@ -180,7 +180,7 @@ namespace Solnet.Programs.Test
             "yILWFKVWcniKKW3fHqur0KYGeIhJMvTu9qB+xPGUTXg2vBJsCn9SndzdNl7ce3CFxZEa4Z79/Jic2AMIBAUHBgEK" +
             "DIgTAAAAAAAACggFBQkCAwQBBQoBABJIZWxsbyBmcm9tIFNvbC5OZXQ=";
 
-        private const string TransferMultisigMessage = 
+        private const string TransferMultisigMessage =
             "BAMCCEdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyD2fbBe7VA8Jg3kfhUQh7HJ6f+hBs2QriyfCGiO1vi" +
             "oqKRK/h3D+lChZA2mVDAGmJHlYiSn8C/yKAGnfXHxgoMvF9c15So4YdnqahN6SHKY5ln1tsHqBpfwwM9RDfRR8GO" +
             "YMO0iFs4aMUVosQrrL+aWspebSXbUiMaf5/Vser1b0OnC1i7fbauPEwr4QPwO60eHE6R2A3RGXr8HuhWwwwbpw3w" +
@@ -202,7 +202,7 @@ namespace Solnet.Programs.Test
             "24ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/AKleBK+z0jTSaV7/4hRI4BMt1rCtA1KNlQwI7zks/4PYaQVKU1" +
             "D4XciC1hSlVnJ4iilt3x6rq9CmBniISTL07vagihio101USobGeALw3d3LcSK6mlzMa9mMnFhtC8Lu0TMDCgYHC" +
             "AkBAgMJBwDKmjsAAAAACgYIBwsEBQYJCCChBwAAAAAADAEAEkhlbGxvIGZyb20gU29sLk5ldA==";
-        
+
         private const string BurnCheckedMultisigMessage =
             "BwYEDUdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeycDwgqOcK+3X1trbsFnKJjJKBgrQXdLlTOB5aifN" +
             "HLtKETKhqe0g+wN+JrGfVqRiZwqCoRuq712fzPKETjfAjo37NtrVZKnuugavqUxUkmxtuQXmdFg6sfds4GokwOq" +
@@ -220,7 +220,7 @@ namespace Solnet.Programs.Test
             "tkGF4Er7PSNNJpXv/iFEjgEy3WsK0DUo2VDAjvOSz/g9hpBt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/" +
             "AKkFSlNQ+F3IgtYUpVZyeIopbd8eq6vQpgZ4iEky9O72oBsCrLfKwExmcW/hntBXRIKAe6vTrQDRoyz2ZvGtaL" +
             "7sAwcGBAUGAQIDCg/gnyZ3AAAAAAoHBgQABgECAwEJCAEAEkhlbGxvIGZyb20gU29sLk5ldA==";
-        
+
         [TestMethod]
         public void TestTransfer()
         {
@@ -264,7 +264,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedTransferCheckedData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestTransferCheckedMultiSignature()
         {
@@ -275,12 +275,12 @@ namespace Solnet.Programs.Test
             var initialAccount = wallet.GetAccount(26);
             var newAccount = wallet.GetAccount(27);
             var signers = new List<PublicKey>();
-            
+
             for (int i = 0; i < 5; i++)
             {
-                signers.Add(wallet.GetAccount(420+i));
+                signers.Add(wallet.GetAccount(420 + i));
             }
-            
+
             var txInstruction = TokenProgram.TransferChecked(
                 initialAccount.PublicKey,
                 newAccount.PublicKey,
@@ -345,10 +345,10 @@ namespace Solnet.Programs.Test
 
             for (int i = 0; i < 5; i++)
             {
-                signers.Add(wallet.GetAccount(420+i).PublicKey);
+                signers.Add(wallet.GetAccount(420 + i).PublicKey);
             }
             var txInstruction = TokenProgram.InitializeMultiSignature(multiSig.PublicKey, signers, 3);
-            
+
             Assert.AreEqual(7, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedInitializeMultiSignatureData, txInstruction.Data);
@@ -374,7 +374,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedMintToData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestMintToChecked()
         {
@@ -409,7 +409,7 @@ namespace Solnet.Programs.Test
 
             for (int i = 0; i < 5; i++)
             {
-                signers.Add(wallet.GetAccount(420+i));
+                signers.Add(wallet.GetAccount(420 + i));
             }
             var txInstruction =
                 TokenProgram.MintToChecked(
@@ -423,7 +423,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedMintToCheckedData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestBurnChecked()
         {
@@ -458,7 +458,7 @@ namespace Solnet.Programs.Test
 
             for (int i = 0; i < 5; i++)
             {
-                signers.Add(wallet.GetAccount(420+i));
+                signers.Add(wallet.GetAccount(420 + i));
             }
             var txInstruction =
                 TokenProgram.BurnChecked(
@@ -472,8 +472,8 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedBurnCheckedData, txInstruction.Data);
         }
-        
-        
+
+
         [TestMethod]
         public void TestApprove()
         {
@@ -485,7 +485,7 @@ namespace Solnet.Programs.Test
 
             var txInstruction =
                 TokenProgram.Approve(
-                    sourceAccount.PublicKey, 
+                    sourceAccount.PublicKey,
                     delegateAccount.PublicKey,
                     ownerAccount,
                     25000);
@@ -494,7 +494,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedApproveData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestApproveMultiSignature()
         {
@@ -504,14 +504,14 @@ namespace Solnet.Programs.Test
             var delegateAccount = wallet.GetAccount(420);
             var ownerAccount = wallet.GetAccount(1);
             var signers = new List<PublicKey>();
-            
+
             for (int i = 0; i < 5; i++)
             {
-                signers.Add(wallet.GetAccount(420+i));
+                signers.Add(wallet.GetAccount(420 + i));
             }
             var txInstruction =
                 TokenProgram.Approve(
-                    sourceAccount.PublicKey, 
+                    sourceAccount.PublicKey,
                     delegateAccount.PublicKey,
                     ownerAccount,
                     25000, signers);
@@ -520,7 +520,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedApproveData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestApproveChecked()
         {
@@ -531,15 +531,15 @@ namespace Solnet.Programs.Test
             var delegateAccount = wallet.GetAccount(420);
             var ownerAccount = wallet.GetAccount(1);
             var signers = new List<PublicKey>();
-            
+
             for (int i = 0; i < 5; i++)
             {
-                signers.Add(wallet.GetAccount(420+i));
+                signers.Add(wallet.GetAccount(420 + i));
             }
-            
+
             var txInstruction =
                 TokenProgram.ApproveChecked(
-                    sourceAccount.PublicKey, 
+                    sourceAccount.PublicKey,
                     delegateAccount.PublicKey,
                     25000,
                     2,
@@ -551,7 +551,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedApproveCheckedData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestApproveCheckedMultiSignature()
         {
@@ -562,14 +562,14 @@ namespace Solnet.Programs.Test
             var delegateAccount = wallet.GetAccount(420);
             var ownerAccount = wallet.GetAccount(1);
             var signers = new List<PublicKey>();
-            
+
             for (int i = 0; i < 5; i++)
             {
-                signers.Add(wallet.GetAccount(420+i));
+                signers.Add(wallet.GetAccount(420 + i));
             }
             var txInstruction =
                 TokenProgram.Approve(
-                    sourceAccount.PublicKey, 
+                    sourceAccount.PublicKey,
                     delegateAccount.PublicKey,
                     ownerAccount,
                     25000, signers);
@@ -594,7 +594,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedRevokeData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestRevokeMultiSignature()
         {
@@ -603,10 +603,10 @@ namespace Solnet.Programs.Test
             var delegateAccount = wallet.GetAccount(420);
             var ownerAccount = wallet.GetAccount(1);
             var signers = new List<PublicKey>();
-            
+
             for (int i = 0; i < 5; i++)
             {
-                signers.Add(wallet.GetAccount(420+i));
+                signers.Add(wallet.GetAccount(420 + i));
             }
             var txInstruction =
                 TokenProgram.Revoke(delegateAccount.PublicKey, ownerAccount, signers);
@@ -625,24 +625,24 @@ namespace Solnet.Programs.Test
             var ownerAccount = wallet.GetAccount(1);
             var newOwnerAccount = wallet.GetAccount(2);
             var signers = new List<PublicKey>();
-            
+
             for (int i = 0; i < 5; i++)
             {
-                signers.Add(wallet.GetAccount(420+i));
+                signers.Add(wallet.GetAccount(420 + i));
             }
 
             var txInstruction =
                 TokenProgram.SetAuthority(
-                    account.PublicKey, 
-                    AuthorityType.AccountOwner, 
-                    ownerAccount, 
+                    account.PublicKey,
+                    AuthorityType.AccountOwner,
+                    ownerAccount,
                     newOwnerAccount.PublicKey);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedSetAuthorityOwnerData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestSetAuthorityOwnerMultiSignature()
         {
@@ -652,17 +652,17 @@ namespace Solnet.Programs.Test
             var ownerAccount = wallet.GetAccount(1);
             var newOwnerAccount = wallet.GetAccount(2);
             var signers = new List<PublicKey>();
-            
+
             for (int i = 0; i < 5; i++)
             {
-                signers.Add(wallet.GetAccount(420+i));
+                signers.Add(wallet.GetAccount(420 + i));
             }
 
             var txInstruction =
                 TokenProgram.SetAuthority(
-                    account.PublicKey, 
-                    AuthorityType.AccountOwner, 
-                    ownerAccount, 
+                    account.PublicKey,
+                    AuthorityType.AccountOwner,
+                    ownerAccount,
                     newOwnerAccount.PublicKey,
                     signers);
 
@@ -670,7 +670,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedSetAuthorityOwnerData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestSetAuthorityClose()
         {
@@ -682,16 +682,16 @@ namespace Solnet.Programs.Test
 
             var txInstruction =
                 TokenProgram.SetAuthority(
-                    account.PublicKey, 
-                    AuthorityType.CloseAccount, 
-                    ownerAccount, 
+                    account.PublicKey,
+                    AuthorityType.CloseAccount,
+                    ownerAccount,
                     newOwnerAccount.PublicKey);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedSetAuthorityCloseData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestSetAuthorityFreeze()
         {
@@ -703,16 +703,16 @@ namespace Solnet.Programs.Test
 
             var txInstruction =
                 TokenProgram.SetAuthority(
-                    account.PublicKey, 
-                    AuthorityType.FreezeAccount, 
-                    ownerAccount, 
+                    account.PublicKey,
+                    AuthorityType.FreezeAccount,
+                    ownerAccount,
                     newOwnerAccount.PublicKey);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedSetAuthorityFreezeData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestSetAuthorityMint()
         {
@@ -724,16 +724,16 @@ namespace Solnet.Programs.Test
 
             var txInstruction =
                 TokenProgram.SetAuthority(
-                    account.PublicKey, 
-                    AuthorityType.MintTokens, 
-                    ownerAccount, 
+                    account.PublicKey,
+                    AuthorityType.MintTokens,
+                    ownerAccount,
                     newOwnerAccount.PublicKey);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedSetAuthorityMintData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestBurn()
         {
@@ -746,14 +746,14 @@ namespace Solnet.Programs.Test
 
             var txInstruction =
                 TokenProgram.Burn(
-                    initialAccount.PublicKey, 
+                    initialAccount.PublicKey,
                     mintAccount.PublicKey, 25000UL, ownerAccount);
 
             Assert.AreEqual(3, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedBurnData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestBurnMultiSignature()
         {
@@ -766,19 +766,19 @@ namespace Solnet.Programs.Test
 
             for (int i = 0; i < 5; i++)
             {
-                signers.Add(wallet.GetAccount(420+i));
+                signers.Add(wallet.GetAccount(420 + i));
             }
 
             var txInstruction =
                 TokenProgram.Burn(
-                    initialAccount.PublicKey, 
+                    initialAccount.PublicKey,
                     mintAccount.PublicKey, 25000UL, ownerAccount, signers);
 
             Assert.AreEqual(8, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedBurnData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestCloseAccount()
         {
@@ -789,8 +789,8 @@ namespace Solnet.Programs.Test
 
             var txInstruction =
                 TokenProgram.CloseAccount(
-                    initialAccount.PublicKey, 
-                    ownerAccount.PublicKey, 
+                    initialAccount.PublicKey,
+                    ownerAccount.PublicKey,
                     ownerAccount,
                     TokenProgram.ProgramIdKey);
 
@@ -798,7 +798,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedCloseAccountData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestCloseAccountMultiSignature()
         {
@@ -810,13 +810,13 @@ namespace Solnet.Programs.Test
 
             for (int i = 0; i < 5; i++)
             {
-                signers.Add(wallet.GetAccount(420+i));
+                signers.Add(wallet.GetAccount(420 + i));
             }
 
             var txInstruction =
                 TokenProgram.CloseAccount(
-                    initialAccount.PublicKey, 
-                    ownerAccount.PublicKey, 
+                    initialAccount.PublicKey,
+                    ownerAccount.PublicKey,
                     ownerAccount,
                     TokenProgram.ProgramIdKey, signers);
 
@@ -824,7 +824,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedCloseAccountData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestFreezeAccount()
         {
@@ -836,8 +836,8 @@ namespace Solnet.Programs.Test
 
             var txInstruction =
                 TokenProgram.FreezeAccount(
-                    initialAccount.PublicKey, 
-                    mintAccount.PublicKey, 
+                    initialAccount.PublicKey,
+                    mintAccount.PublicKey,
                     ownerAccount,
                     TokenProgram.ProgramIdKey);
 
@@ -845,7 +845,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedFreezeAccountData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestFreezeAccountMultiSignature()
         {
@@ -858,13 +858,13 @@ namespace Solnet.Programs.Test
 
             for (int i = 0; i < 5; i++)
             {
-                signers.Add(wallet.GetAccount(420+i));
+                signers.Add(wallet.GetAccount(420 + i));
             }
 
             var txInstruction =
                 TokenProgram.FreezeAccount(
-                    initialAccount.PublicKey, 
-                    mintAccount.PublicKey, 
+                    initialAccount.PublicKey,
+                    mintAccount.PublicKey,
                     ownerAccount,
                     TokenProgram.ProgramIdKey, signers);
 
@@ -872,7 +872,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedFreezeAccountData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestThawAccount()
         {
@@ -883,8 +883,8 @@ namespace Solnet.Programs.Test
             var initialAccount = wallet.GetAccount(22);
             var txInstruction =
                 TokenProgram.ThawAccount(
-                    initialAccount.PublicKey, 
-                    mintAccount.PublicKey, 
+                    initialAccount.PublicKey,
+                    mintAccount.PublicKey,
                     ownerAccount,
                     TokenProgram.ProgramIdKey);
 
@@ -892,7 +892,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedThawAccountData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void TestThawAccountMultiSignature()
         {
@@ -905,13 +905,13 @@ namespace Solnet.Programs.Test
 
             for (int i = 0; i < 5; i++)
             {
-                signers.Add(wallet.GetAccount(420+i));
+                signers.Add(wallet.GetAccount(420 + i));
             }
 
             var txInstruction =
                 TokenProgram.ThawAccount(
-                    initialAccount.PublicKey, 
-                    mintAccount.PublicKey, 
+                    initialAccount.PublicKey,
+                    mintAccount.PublicKey,
                     ownerAccount,
                     TokenProgram.ProgramIdKey, signers);
 
@@ -919,7 +919,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedThawAccountData, txInstruction.Data);
         }
-        
+
         [TestMethod]
         public void InitializeMultisigDecodeTest()
         {
@@ -987,7 +987,7 @@ namespace Solnet.Programs.Test
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
             Assert.AreEqual(4, decodedInstructions.Count);
-            
+
             // Create Account instruction
             Assert.AreEqual("Create Account", decodedInstructions[0].InstructionName);
             Assert.AreEqual("System Program", decodedInstructions[0].ProgramName);
@@ -1001,7 +1001,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("z2qF2eWM89sQrXP2ygrLkYkhc58182KqPVRETjv8Dch", (PublicKey)newAccount);
             Assert.AreEqual(2039280UL, (ulong)amount);
             Assert.AreEqual(165UL, (ulong)space);
-            
+
             // initialize account instruction
             Assert.AreEqual("Initialize Account", decodedInstructions[1].InstructionName);
             Assert.AreEqual("Token Program", decodedInstructions[1].ProgramName);
@@ -1013,7 +1013,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("z2qF2eWM89sQrXP2ygrLkYkhc58182KqPVRETjv8Dch", (PublicKey)account);
             Assert.AreEqual("HUATcRqk8qaNHTfRjBePt9mUZ16dDN1cbpWQDk7QFUGm", (PublicKey)mint);
             Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", (PublicKey)owner);
-            
+
             // mint to multisig instruction
             Assert.AreEqual("Mint To", decodedInstructions[2].InstructionName);
             Assert.AreEqual("Token Program", decodedInstructions[2].ProgramName);
@@ -1034,7 +1034,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("HUATcRqk8qaNHTfRjBePt9mUZ16dDN1cbpWQDk7QFUGm", (PublicKey)mint);
             Assert.AreEqual("987cq6uofpTKzTyQywsyqNNyAKHAkJkBvY6ggqPnS8gJ", (PublicKey)mintAuthority);
         }
-        
+
         [TestMethod]
         public void DecodeMintToCheckedMessageTest()
         {
@@ -1142,7 +1142,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("6dRt18mbEHu28fxdyXQGmnLvc9zrp8AsAfBW26vAxVTR", (PublicKey)signer2);
             Assert.AreEqual("8GrcvhyiKdVk9DTYtKkW5qiiR74hevpiQQ1cFMFAmR3o", (PublicKey)signer3);
         }
-        
+
         [TestMethod]
         public void DecodeThawAccountAndSetAuthorityTest()
         {
@@ -1166,7 +1166,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("jk6EcAAv1t4o7Nd4cge3nkXWAmUEcg4HDVvew3szjWp", (PublicKey)signer1);
             Assert.AreEqual("6dRt18mbEHu28fxdyXQGmnLvc9zrp8AsAfBW26vAxVTR", (PublicKey)signer2);
             Assert.AreEqual("8GrcvhyiKdVk9DTYtKkW5qiiR74hevpiQQ1cFMFAmR3o", (PublicKey)signer3);
-            
+
             Assert.AreEqual("Set Authority", decodedInstructions[1].InstructionName);
             Assert.AreEqual("Token Program", decodedInstructions[1].ProgramName);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", decodedInstructions[1].PublicKey);
@@ -1188,13 +1188,13 @@ namespace Solnet.Programs.Test
             Assert.AreEqual(1, (byte)authorityOption);
             Assert.AreEqual(AuthorityType.AccountOwner, (AuthorityType)authorityType);
         }
-        
+
         [TestMethod]
         public void DecodeApproveCheckedMultisigTest()
         {
             Message msg = Message.Deserialize(ApproveCheckedMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
-            
+
             Assert.AreEqual(2, decodedInstructions.Count);
             Assert.AreEqual("Approve Checked", decodedInstructions[0].InstructionName);
             Assert.AreEqual("Token Program", decodedInstructions[0].ProgramName);
@@ -1218,14 +1218,14 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("DNE44u4kYtiswWUy91eEAypWfZoAhVPjqpQ8JxctY6qC", (PublicKey)signer3);
             Assert.AreEqual(5000UL, (ulong)amount);
             Assert.AreEqual(10, (byte)decimals);
-        } 
-        
+        }
+
         [TestMethod]
         public void DecodeApproveMultisigTest()
         {
             Message msg = Message.Deserialize(ApproveMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
-            
+
             Assert.AreEqual(2, decodedInstructions.Count);
             Assert.AreEqual("Approve", decodedInstructions[0].InstructionName);
             Assert.AreEqual("Token Program", decodedInstructions[0].ProgramName);
@@ -1246,7 +1246,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("BRp1JDyCy4xzS77xTjB14mimRhSTBZtaHer5LuueAyTA", (PublicKey)signer3);
             Assert.AreEqual(5000UL, (ulong)amount);
         }
-                
+
         [TestMethod]
         public void DecodeTransferMultisigTest()
         {
@@ -1273,7 +1273,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("HFgCrTmWC8KGxxSLXN8Xm4FVQU73FtoupdZNDRqfMtV3", (PublicKey)signer3);
             Assert.AreEqual(10000UL, (ulong)amount);
         }
-        
+
         [TestMethod]
         public void DecodeBurnTest()
         {
@@ -1320,7 +1320,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("5Xcw7EQb6msgpVdGB8Hf8kpCqVyacTChgFBUphpuUeBo", (PublicKey)signer3);
             Assert.AreEqual(500000UL, (ulong)amount);
         }
-        
+
         [TestMethod]
         public void DecodeBurnCheckedMultisigTest()
         {
@@ -1377,7 +1377,7 @@ namespace Solnet.Programs.Test
         {
             Message msg = Message.Deserialize(CloseAccountMultisigMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
-            
+
             Assert.AreEqual("Burn Checked", decodedInstructions[0].InstructionName);
             Assert.AreEqual("Token Program", decodedInstructions[0].ProgramName);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", decodedInstructions[0].PublicKey);
@@ -1398,7 +1398,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("5Xcw7EQb6msgpVdGB8Hf8kpCqVyacTChgFBUphpuUeBo", (PublicKey)signer3);
             Assert.AreEqual(1999020000UL, (ulong)amount);
             Assert.AreEqual(10, (byte)decimals);
-            
+
             Assert.AreEqual("Close Account", decodedInstructions[1].InstructionName);
             Assert.AreEqual("Token Program", decodedInstructions[1].ProgramName);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", decodedInstructions[1].PublicKey);

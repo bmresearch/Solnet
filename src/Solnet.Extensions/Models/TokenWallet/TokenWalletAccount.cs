@@ -40,14 +40,14 @@ namespace Solnet.Extensions
         /// <param name="publicKey">The public key of the account.</param>
         /// <param name="owner">The owner public key of the account.</param>
         /// <param name="isAta">A flag to indicate whether this account is an Associated Token Account.</param>
-        internal TokenWalletAccount(string tokenMint, 
-                                    string tokenSymbol, 
-                                    string tokenName, 
-                                    int decimalPlaces, 
-                                    decimal balanceDecimal, 
+        internal TokenWalletAccount(string tokenMint,
+                                    string tokenSymbol,
+                                    string tokenName,
+                                    int decimalPlaces,
+                                    decimal balanceDecimal,
                                     ulong balanceRaw,
-                                    ulong lamportsRaw, 
-                                    string publicKey, 
+                                    ulong lamportsRaw,
+                                    string publicKey,
                                     string owner,
                                     bool isAta) : base(tokenMint, tokenSymbol, tokenName, decimalPlaces, balanceDecimal, balanceRaw, lamportsRaw, 1)
         {
@@ -62,7 +62,7 @@ namespace Solnet.Extensions
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{base.ToString()} {(IsAssociatedTokenAccount?"[ATA]":"")}";
+            return $"{base.ToString()} {(IsAssociatedTokenAccount ? "[ATA]" : "")}";
         }
 
     }

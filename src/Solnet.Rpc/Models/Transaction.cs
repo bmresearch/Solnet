@@ -83,7 +83,7 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public byte[] CompileMessage()
         {
-            MessageBuilder messageBuilder = new() {FeePayer = FeePayer};
+            MessageBuilder messageBuilder = new() { FeePayer = FeePayer };
 
             if (RecentBlockHash != null) messageBuilder.RecentBlockHash = RecentBlockHash;
             if (NonceInformation != null) messageBuilder.NonceInformation = NonceInformation;
@@ -136,9 +136,9 @@ namespace Solnet.Rpc.Models
             foreach (Account account in uniqueSigners)
             {
                 byte[] signatureBytes = account.Sign(serializedMessage);
-                Signatures.Add(new SignaturePubKeyPair{ PublicKey = account.PublicKey, Signature = signatureBytes});
+                Signatures.Add(new SignaturePubKeyPair { PublicKey = account.PublicKey, Signature = signatureBytes });
             }
-            
+
             return VerifySignatures();
         }
 
@@ -160,7 +160,7 @@ namespace Solnet.Rpc.Models
         /// </remarks>
         /// </summary>
         /// <param name="signer">The signer account.</param>
-        public bool Sign(Account signer) => Sign(new List<Account> {signer});
+        public bool Sign(Account signer) => Sign(new List<Account> { signer });
 
         /// <summary>
         /// Partially sign a transaction with the specified accounts.
@@ -176,7 +176,7 @@ namespace Solnet.Rpc.Models
             foreach (Account account in uniqueSigners)
             {
                 byte[] signatureBytes = account.Sign(serializedMessage);
-                Signatures.Add(new SignaturePubKeyPair{ PublicKey = account.PublicKey, Signature = signatureBytes});
+                Signatures.Add(new SignaturePubKeyPair { PublicKey = account.PublicKey, Signature = signatureBytes });
             }
         }
 
@@ -187,7 +187,7 @@ namespace Solnet.Rpc.Models
         /// <returns>The signer accounts with removed duplicates</returns>
         private static IEnumerable<Account> DeduplicateSigners(IEnumerable<Account> signers)
         {
-            List<Account> uniqueSigners = new ();
+            List<Account> uniqueSigners = new();
             HashSet<Account> seen = new();
 
             foreach (Account account in signers)
@@ -206,7 +206,7 @@ namespace Solnet.Rpc.Models
         /// The account must correspond to either the fee payer or a signer account in the transaction instructions.
         /// </summary>
         /// <param name="signer">The signer account.</param>
-        public void PartialSign(Account signer) => PartialSign(new List<Account> {signer});
+        public void PartialSign(Account signer) => PartialSign(new List<Account> { signer });
 
         /// <summary>
         /// Signs the transaction's message with the passed signer and add it to the transaction, serializing it.
@@ -215,7 +215,7 @@ namespace Solnet.Rpc.Models
         /// <returns>The serialized transaction.</returns>
         public byte[] Build(Account signer)
         {
-            return Build(new List<Account> {signer});
+            return Build(new List<Account> { signer });
         }
 
         /// <summary>
@@ -239,7 +239,7 @@ namespace Solnet.Rpc.Models
         public void AddSignature(PublicKey publicKey, byte[] signature)
         {
             Signatures ??= new List<SignaturePubKeyPair>();
-            Signatures.Add(new SignaturePubKeyPair {PublicKey = publicKey, Signature = signature});
+            Signatures.Add(new SignaturePubKeyPair { PublicKey = publicKey, Signature = signature });
         }
 
         /// <summary>
@@ -260,7 +260,7 @@ namespace Solnet.Rpc.Models
         /// <param name="instruction">The instruction to add.</param>
         /// <returns>The transaction instance.</returns>
         public Transaction Add(TransactionInstruction instruction) =>
-            Add(new List<TransactionInstruction> {instruction});
+            Add(new List<TransactionInstruction> { instruction });
 
         /// <summary>
         /// Serializes the transaction into wire format.
@@ -309,16 +309,17 @@ namespace Solnet.Rpc.Models
                 {
                     tx.Signatures.Add(new SignaturePubKeyPair
                     {
-                        PublicKey = message.AccountKeys[i], Signature = signatures[i]
+                        PublicKey = message.AccountKeys[i],
+                        Signature = signatures[i]
                     });
                 }
             }
 
-            for(int i = 0; i < message.Instructions.Count; i++)
+            for (int i = 0; i < message.Instructions.Count; i++)
             {
                 CompiledInstruction compiledInstruction = message.Instructions[i];
                 (int accountLength, _) = ShortVectorEncoding.DecodeLength(compiledInstruction.KeyIndicesCount);
-                
+
                 List<AccountMeta> accounts = new(accountLength);
                 for (int j = 0; j < accountLength; j++)
                 {
@@ -333,9 +334,9 @@ namespace Solnet.Rpc.Models
                     ProgramId = message.AccountKeys[compiledInstruction.ProgramIdIndex],
                     Data = compiledInstruction.Data
                 };
-                if (i == 0 && accounts.Any(a => a.PublicKey =="SysvarRecentB1ockHashes11111111111111111111"))
+                if (i == 0 && accounts.Any(a => a.PublicKey == "SysvarRecentB1ockHashes11111111111111111111"))
                 {
-                    tx.NonceInformation = new NonceInformation {Instruction = instruction, Nonce = tx.RecentBlockHash};
+                    tx.NonceInformation = new NonceInformation { Instruction = instruction, Nonce = tx.RecentBlockHash };
                     continue;
                 }
                 tx.Instructions.Add(instruction);

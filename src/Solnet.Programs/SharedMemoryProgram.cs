@@ -26,12 +26,12 @@ namespace Solnet.Programs
         /// The program's name.
         /// </summary>
         private const string ProgramName = "Shared Memory Program";
-        
+
         /// <summary>
         /// The instruction's name.
         /// </summary>
         private const string InstructionName = "Write";
-        
+
         /// <summary>
         /// Creates an instruction used to interact with the Shared memory program.
         /// This instruction writes data to a given program starting at a specific offset.
@@ -42,7 +42,7 @@ namespace Solnet.Programs
         /// <returns>The <see cref="TransactionInstruction"/> encoded that interacts with the shared memory program..</returns>
         public static TransactionInstruction Write(PublicKey dest, ReadOnlySpan<byte> payload, ulong offset)
         {
-            List<AccountMeta> keys = new ()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(dest, false)
             };
@@ -59,7 +59,7 @@ namespace Solnet.Programs
                 Data = transactionData
             };
         }
-        
+
         /// <summary>
         /// Decodes an instruction created by the System Program.
         /// </summary>

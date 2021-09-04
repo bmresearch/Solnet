@@ -59,7 +59,7 @@ namespace Solnet.Rpc.Test
             Assert.IsTrue(tryFindSuccess);
 
             var createProgSuccess = AddressExtensions.TryCreateProgramAddress(
-                new[] {Encoding.UTF8.GetBytes(""), new[] {(byte)derivationNonce}},
+                new[] { Encoding.UTF8.GetBytes(""), new[] { (byte)derivationNonce } },
                 Encoding.UTF8.GetBytes(LoaderProgramId), out byte[] pubKey);
             Assert.IsTrue(createProgSuccess);
             CollectionAssert.AreEqual(

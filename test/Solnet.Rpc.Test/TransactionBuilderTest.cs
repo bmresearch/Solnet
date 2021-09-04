@@ -37,7 +37,7 @@ namespace Solnet.Rpc.Test
             "7hf3ho8eB05SFYGg2J2UN52qZbcXsgFHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgMCAAI0AAAA" +
             "APAdHwAAAAAApQAAAAAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQUEAgEABAEBBQMBAgA" +
             "JB6hhAAAAAAAABgECEkhlbGxvIGZyb20gU29sLk5ldA==";
-        
+
         private const string Nonce = "2S1kjspXLPs6jpNVXQfNMqZzzSrKLbGdr9Fxap5h1DLN";
 
         private static byte[] CompiledMessageBytes =
@@ -81,7 +81,7 @@ namespace Solnet.Rpc.Test
                 .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)"))
                 .Build(fromAccount);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(Exception))]
         public void TestTransactionBuilderBuildNullFeePayerException()
@@ -95,7 +95,7 @@ namespace Solnet.Rpc.Test
                 .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)"))
                 .Build(fromAccount);
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(Exception))]
         public void TestTransactionBuilderBuildEmptySignersException()
@@ -168,20 +168,20 @@ namespace Solnet.Rpc.Test
                     25000,
                     ownerAccount))
                 .AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net"))
-                .Build(new List<Account> { ownerAccount, mintAccount, initialAccount});
+                .Build(new List<Account> { ownerAccount, mintAccount, initialAccount });
 
             Assert.AreEqual(ExpectedTransactionHashCreateInitializeAndMintTo, Convert.ToBase64String(tx));
         }
-        
+
         [TestMethod]
         public void CompileMessageTest()
         {
-            Wallet.Wallet wallet = new (MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             Account ownerAccount = wallet.GetAccount(10);
             Account nonceAccount = wallet.GetAccount(1119);
             Account toAccount = wallet.GetAccount(1);
-            NonceInformation nonceInfo = new ()
+            NonceInformation nonceInfo = new()
             {
                 Nonce = Nonce,
                 Instruction = SystemProgram.AdvanceNonceAccount(
@@ -189,7 +189,7 @@ namespace Solnet.Rpc.Test
                     ownerAccount
                 )
             };
-            
+
             byte[] txBytes = new TransactionBuilder()
                 .SetFeePayer(ownerAccount)
                 .SetNonceInformation(nonceInfo)
@@ -200,7 +200,7 @@ namespace Solnet.Rpc.Test
                         1_000_000_000)
                 )
                 .CompileMessage();
-            
+
             CollectionAssert.AreEqual(CompiledMessageBytes, txBytes);
         }
 

@@ -17,12 +17,12 @@ namespace Solnet.Programs
         /// The dictionary which maps the program public keys to their decoding method.
         /// </summary>
         private static readonly Dictionary<string, DecodeMethodType> InstructionDictionary = new();
-        
+
         /// <summary>
         /// The method type which is used to perform instruction decoding.
         /// </summary>
         public delegate DecodedInstruction DecodeMethodType(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices);
-        
+
         /// <summary>
         /// Initialize the instruction decoder instance.
         /// </summary>
@@ -36,7 +36,7 @@ namespace Solnet.Programs
             InstructionDictionary.Add(NameServiceProgram.ProgramIdKey, NameServiceProgram.Decode);
             InstructionDictionary.Add(SharedMemoryProgram.ProgramIdKey, SharedMemoryProgram.Decode);
         }
-        
+
         /// <summary>
         /// Register the public key of a program and it's method used for instruction decoding.
         /// </summary>
@@ -46,7 +46,7 @@ namespace Solnet.Programs
         {
             InstructionDictionary.Add(programKey, decodingMethod);
         }
-        
+
         /// <summary>
         /// Decodes the given instruction data for a given program key 
         /// </summary>
@@ -70,7 +70,7 @@ namespace Solnet.Programs
         {
             List<DecodedInstruction> decodedInstructions = new();
 
-            for(int i = 0; i < txMetaInfo.Transaction.Message.Instructions.Length; i++)
+            for (int i = 0; i < txMetaInfo.Transaction.Message.Instructions.Length; i++)
             {
                 DecodedInstruction decodedInstruction = null;
                 InstructionInfo instructionInfo = txMetaInfo.Transaction.Message.Instructions[i];
@@ -80,9 +80,11 @@ namespace Solnet.Programs
                 if (!registered)
                 {
                     decodedInstruction = AddUnknownInstruction(
-                        instructionInfo, programKey, txMetaInfo.Transaction.Message.AccountKeys, 
+                        instructionInfo, programKey, txMetaInfo.Transaction.Message.AccountKeys,
                         txMetaInfo.Transaction.Message.Instructions[i].Accounts);
-                } else {
+                }
+                else
+                {
                     decodedInstruction = method.Invoke(
                                         Encoders.Base58.DecodeData(instructionInfo.Data),
                                         txMetaInfo.Transaction.Message.AccountKeys.Select(a => new PublicKey(a)).ToList(),
@@ -98,13 +100,15 @@ namespace Solnet.Programs
                         DecodedInstruction innerDecodedInstruction = null;
                         programKey = txMetaInfo.Transaction.Message.AccountKeys[innerInstructionInfo.ProgramIdIndex];
                         registered = InstructionDictionary.TryGetValue(programKey, out method);
-                        
+
                         if (!registered)
                         {
                             innerDecodedInstruction = AddUnknownInstruction(
-                                innerInstructionInfo, programKey, txMetaInfo.Transaction.Message.AccountKeys, 
+                                innerInstructionInfo, programKey, txMetaInfo.Transaction.Message.AccountKeys,
                                 txMetaInfo.Transaction.Message.Instructions[i].Accounts);
-                        } else {
+                        }
+                        else
+                        {
                             innerDecodedInstruction = method.Invoke(
                                 Encoders.Base58.DecodeData(innerInstructionInfo.Data),
                                 txMetaInfo.Transaction.Message.AccountKeys.Select(a => new PublicKey(a)).ToList(),
@@ -119,7 +123,7 @@ namespace Solnet.Programs
             }
             return decodedInstructions;
         }
-        
+
         /// <summary>
         /// Decodes the instructions present in the given transaction and it's metadata information.
         /// </summary>
@@ -128,15 +132,15 @@ namespace Solnet.Programs
         public static List<DecodedInstruction> DecodeInstructions(Message message)
         {
             List<DecodedInstruction> decodedInstructions = new();
-            
+
             foreach (CompiledInstruction compiledInstruction in message.Instructions)
             {
                 string programKey = message.AccountKeys[compiledInstruction.ProgramIdIndex];
                 bool registered = InstructionDictionary.TryGetValue(programKey, out DecodeMethodType method);
-                
+
                 if (!registered)
                 {
-                    DecodedInstruction decodedInstruction = new ()
+                    DecodedInstruction decodedInstruction = new()
                     {
                         InstructionName = "Unknown",
                         ProgramName = "Unknown",
@@ -169,7 +173,7 @@ namespace Solnet.Programs
         private static DecodedInstruction AddUnknownInstruction(
             InstructionInfo instructionInfo, string programKey, IReadOnlyList<string> keys, IReadOnlyList<int> keyIndices)
         {
-            DecodedInstruction decodedInstruction = new ()
+            DecodedInstruction decodedInstruction = new()
             {
                 Values = new Dictionary<string, object>
                 {
