@@ -102,6 +102,15 @@ namespace Solnet.Extensions.Test
 
         }
 
+        [TestMethod]
+        public void TestPreloadedMintResolver()
+        {
+            var tokens = WellKnownTokens.CreateTokenMintResolver();
+            var cope = tokens.Resolve("8HGyAAB1yoM1ttS7pXjHMa3dukTFGQggnFFH3hJZgzQh"); // COPE 
+            Assert.AreEqual(6, cope.DecimalPlaces);
+        }
+
+
     }
 
 }
