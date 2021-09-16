@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Solnet.Rpc.Messages;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -67,15 +68,28 @@ namespace Solnet.Rpc.Core.Http
             {
                 _logger?.LogInformation(new EventId(req.Id, req.Method), $"Sending request: {requestJson}");
 
-                using (var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Post, "/")
+                // create byte buffer to avoid charset=utf-8 in content-type header
+                // as this is rejected by some RPC nodes
+                var buffer = Encoding.UTF8.GetBytes(requestJson);
+                using var httpReq = new HttpRequestMessage(HttpMethod.Post, "/")
                 {
-                    Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
-                }).ConfigureAwait(false))
+                    Content = new ByteArrayContent(buffer)
+                    {
+                        Headers = {
+                            { "Content-Type", "application/json"}
+                        }
+                    }
+                };
+
+                // execute POST
+                using (var response = await _httpClient.SendAsync(httpReq).ConfigureAwait(false))
                 {
                     var result = await HandleResult<T>(req, response).ConfigureAwait(false);
                     result.RawRpcRequest = requestJson;
                     return result;
                 }
+
+
             }
             catch (HttpRequestException e)
             {
@@ -105,8 +119,6 @@ namespace Solnet.Rpc.Core.Http
         private async Task<RequestResult<T>> HandleResult<T>(JsonRpcRequest req, HttpResponseMessage response)
         {
             RequestResult<T> result = new RequestResult<T>(response);
-            if (!result.WasHttpRequestSuccessful) return result;
-
             try
             {
                 result.RawRpcResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
