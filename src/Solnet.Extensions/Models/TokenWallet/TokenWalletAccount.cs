@@ -22,7 +22,7 @@ namespace Solnet.Extensions
         /// A flag to indicate whether this account is an Associated Token Account.
         /// </summary>
         public bool IsAssociatedTokenAccount { get; init; }
-        
+
         /// <summary>
         /// Token definition metadata.
         /// </summary>
@@ -40,15 +40,9 @@ namespace Solnet.Extensions
         /// <param name="publicKey">The public key of the account.</param>
         /// <param name="owner">The owner public key of the account.</param>
         /// <param name="isAta">A flag to indicate whether this account is an Associated Token Account.</param>
-        internal TokenWalletAccount(string tokenMint,
-                                    TokenDef meta,
-                                    int decimalPlaces,
-                                    decimal balanceDecimal,
-                                    ulong balanceRaw,
-                                    ulong lamportsRaw,
-                                    string publicKey,
-                                    string owner,
-                                    bool isAta) : base(tokenMint, meta.Symbol, meta.TokenName, meta.CoinGeckoId, decimalPlaces, balanceDecimal, balanceRaw, lamportsRaw, 1)
+        internal TokenWalletAccount(string tokenMint, TokenDef meta, int decimalPlaces, decimal balanceDecimal,
+            ulong balanceRaw, ulong lamportsRaw, string publicKey, string owner, bool isAta) : base(tokenMint,
+            meta.Symbol, meta.TokenName, meta.CoinGeckoId, decimalPlaces, balanceDecimal, balanceRaw, lamportsRaw, 1)
         {
             PublicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
             Owner = owner ?? throw new ArgumentNullException(nameof(owner));
@@ -63,6 +57,5 @@ namespace Solnet.Extensions
         {
             return $"{base.ToString()} {(IsAssociatedTokenAccount ? "[ATA]" : "")}";
         }
-
     }
 }

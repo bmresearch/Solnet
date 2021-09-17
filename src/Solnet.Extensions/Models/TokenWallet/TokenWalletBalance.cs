@@ -5,7 +5,6 @@
     /// </summary>
     public class TokenWalletBalance : TokenQuantity
     {
-
         /// <summary>
         /// Constructs a TokenWalletBalance instance.
         /// </summary>
@@ -18,21 +17,9 @@
         /// <param name="balanceRaw">Token balance in raw ulong.</param>
         /// <param name="lamportsRaw">How many lamports does this balance represent.</param>
         /// <param name="accountCount">The number of accounts this balance represents. Start with 1.</param>
-        internal TokenWalletBalance(string tokenMint,
-                                    string tokenSymbol,
-                                    string tokenName,
-                                    string coinGeckoId,
-                                    int decimalPlaces,
-                                    decimal balanceDecimal,
-                                    ulong balanceRaw,
-                                    ulong lamportsRaw,
-                                    int accountCount) : base(tokenMint,
-                                                             tokenSymbol,
-                                                             tokenName,
-                                                             coinGeckoId,
-                                                             decimalPlaces,
-                                                             balanceDecimal,
-                                                             balanceRaw)
+        internal TokenWalletBalance(string tokenMint, string tokenSymbol, string tokenName, string coinGeckoId,
+            int decimalPlaces, decimal balanceDecimal, ulong balanceRaw, ulong lamportsRaw, int accountCount)
+            : base(tokenMint, tokenSymbol, tokenName, coinGeckoId, decimalPlaces, balanceDecimal, balanceRaw)
         {
             Lamports = lamportsRaw;
             AccountCount = accountCount;
@@ -69,18 +56,14 @@
         /// <param name="accountCount">Number of accounts to add to this consolidated balance.</param>
         /// <returns>A new instance with this account provdided added to the accumulators.</returns>
         internal TokenWalletBalance AddAccount(decimal valueDecimal,
-                                               ulong valueRaw,
-                                               ulong lamportsRaw,
-                                               int accountCount)
+            ulong valueRaw,
+            ulong lamportsRaw,
+            int accountCount)
         {
-
             return new TokenWalletBalance(TokenMint, Symbol, TokenName, CoinGeckoId,
                 DecimalPlaces, QuantityDecimal + valueDecimal,
                 QuantityRaw + valueRaw, Lamports + lamportsRaw,
                 AccountCount + accountCount);
-
         }
-
     }
-
 }

@@ -7,7 +7,6 @@ namespace Solnet.Extensions
     /// </summary>
     public class TokenQuantity
     {
-
         /// <summary>
         /// Constructs a TokenQuantity instance.
         /// </summary>
@@ -18,13 +17,8 @@ namespace Solnet.Extensions
         /// <param name="decimalPlaces">The number of decimal places this token uses.</param>
         /// <param name="balanceDecimal">Token balance in decimal.</param>
         /// <param name="balanceRaw">Token balance in raw ulong.</param>
-        internal TokenQuantity(string tokenMint,
-                               string tokenSymbol,
-                               string tokenName,
-                               string coinGeckoId,
-                               int decimalPlaces,
-                               decimal balanceDecimal,
-                               ulong balanceRaw)
+        internal TokenQuantity(string tokenMint, string tokenSymbol, string tokenName, string coinGeckoId,
+            int decimalPlaces, decimal balanceDecimal, ulong balanceRaw)
         {
             TokenMint = tokenMint ?? throw new ArgumentNullException(nameof(tokenMint));
             Symbol = tokenSymbol ?? throw new ArgumentNullException(nameof(tokenSymbol));
@@ -49,7 +43,7 @@ namespace Solnet.Extensions
         /// The name of this token.
         /// </summary>
         public string TokenName { get; init; }
-        
+
         /// <summary>
         /// The token's CoinGecko ID.
         /// </summary>
@@ -86,9 +80,8 @@ namespace Solnet.Extensions
         /// <param name="valueRaw">Number of tokens as ulong to add to this TokenQuantity.</param>
         /// <returns>A new instance with this TokenQuantity added to the accumulators.</returns>
         internal TokenQuantity AddQuantity(decimal valueDecimal,
-                                           ulong valueRaw)
+            ulong valueRaw)
         {
-
             return new TokenQuantity(TokenMint, Symbol, TokenName, CoinGeckoId,
                 DecimalPlaces, QuantityDecimal + valueDecimal,
                 QuantityRaw + valueRaw);
