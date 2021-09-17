@@ -232,7 +232,7 @@ namespace Solnet.Extensions
                 {
                     var meta = MintResolver.Resolve(mint);
                     var decimals = token.Account.Data.Parsed.Info.TokenAmount.Decimals;
-                    mintBalances[mint] = new TokenWalletBalance(mint, meta.Symbol, meta.TokenName, decimals, balancDecimal, balancRaw, lamportsRaw, 1);
+                    mintBalances[mint] = new TokenWalletBalance(mint, meta.Symbol, meta.TokenName, meta.CoinGeckoId, decimals, balancDecimal, balancRaw, lamportsRaw, 1);
                 }
                 else
                     mintBalances[mint] = mintBalances[mint].AddAccount(balancDecimal, balancRaw, lamportsRaw, 1);
@@ -263,7 +263,7 @@ namespace Solnet.Extensions
                 var decimals = account.Account.Data.Parsed.Info.TokenAmount.Decimals;
                 var balanceRaw = account.Account.Data.Parsed.Info.TokenAmount.AmountUlong;
                 var balanceDecimal = account.Account.Data.Parsed.Info.TokenAmount.AmountDecimal;
-                list.Add(new TokenWalletAccount(mint, meta.Symbol, meta.TokenName, decimals, balanceDecimal, balanceRaw, lamportsRaw, account.PublicKey, owner, isAta));
+                list.Add(new TokenWalletAccount(mint, meta, decimals, balanceDecimal, balanceRaw, lamportsRaw, account.PublicKey, owner, isAta));
             }
             return new TokenWalletFilterList(list.OrderBy(x => x.TokenName));
         }

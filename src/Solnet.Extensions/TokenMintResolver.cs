@@ -1,9 +1,7 @@
 ﻿using Solnet.Extensions.TokenMint;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -39,12 +37,14 @@ namespace Solnet.Extensions
         /// <summary>
         /// Constructs an empty TokenMintResolver and populates with deserialized TokenListDoc.
         /// </summary>
-        /// <param name="tokenList">A deserialised token list.</param>
+        /// <param name="tokenList">A deserialized token list.</param>
         internal TokenMintResolver(TokenListDoc tokenList) : this()
         {
             foreach (var token in tokenList.tokens)
             {
-                Add(new TokenDef(token.Address, token.Name, token.Symbol, token.Decimals));
+                token.Extensions.TryGetValue("coingeckoId", out object coinGeckoId);
+                string cgId = ((JsonElement?)coinGeckoId)?.GetString();
+                Add(new TokenDef(token.Address, token.Name, token.Symbol, token.Decimals, cgId));
             }
         }
 
@@ -125,7 +125,7 @@ namespace Solnet.Extensions
             }
             else
             {
-                var unknown = new TokenDef(tokenMint, $"Unknown {tokenMint}", string.Empty, -1);
+                var unknown = new TokenDef(tokenMint, $"Unknown {tokenMint}", string.Empty, -1, string.Empty);
                 _tokens[tokenMint] = unknown;
                 return unknown;
             }

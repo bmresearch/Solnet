@@ -20,13 +20,15 @@ namespace Solnet.Extensions.TokenMint
         /// <param name="mint">The public key of the token mint address.</param>
         /// <param name="name">The display name for this token.</param>
         /// <param name="symbol">The token symbol used to display balances of this token.</param>
+        /// <param name="coinGeckoId">The token's CoinGecko ID.</param>
         /// <param name="decimalPlaces"></param>
-        public TokenDef(string mint, string name, string symbol, int decimalPlaces)
+        public TokenDef(string mint, string name, string symbol, int decimalPlaces, string coinGeckoId)
         {
             TokenMint = mint ?? throw new ArgumentNullException(nameof(mint));
             TokenName = name ?? throw new ArgumentNullException(nameof(name));
             Symbol = symbol ?? throw new ArgumentNullException(nameof(symbol));
             DecimalPlaces = decimalPlaces;
+            CoinGeckoId = coinGeckoId;
         }
 
         /// <summary>
@@ -43,6 +45,11 @@ namespace Solnet.Extensions.TokenMint
         /// The symbol to use when displaying balances of this token to a user.
         /// </summary>
         public string Symbol { get; init; }
+        
+        /// <summary>
+        /// The token's coin gecko id.
+        /// </summary>
+        public string CoinGeckoId { get; init; }
 
         /// <summary>
         /// The number of decimal places this token uses.
@@ -57,7 +64,7 @@ namespace Solnet.Extensions.TokenMint
         /// <returns>A TokenQuantity instance.</returns>
         public TokenQuantity CreateQuantity(decimal valueDecimal, ulong valueRaw)
         {
-            return new TokenQuantity(TokenMint, Symbol, TokenName, DecimalPlaces, valueDecimal, valueRaw);
+            return new TokenQuantity(TokenMint, Symbol, TokenName, CoinGeckoId, DecimalPlaces, valueDecimal, valueRaw);
         }
 
         /// <summary>

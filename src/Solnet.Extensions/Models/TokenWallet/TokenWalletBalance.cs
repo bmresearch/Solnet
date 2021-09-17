@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Solnet.Extensions
+﻿namespace Solnet.Extensions
 {
     /// <summary>
     /// A consolidated token balance for a number of accounts of a given mint.
@@ -18,6 +12,7 @@ namespace Solnet.Extensions
         /// <param name="tokenMint">The token mint public key address.</param>
         /// <param name="tokenSymbol">The symbol this token uses.</param>
         /// <param name="tokenName">The name of this token.</param>
+        /// <param name="coinGeckoId">The token's CoinGecko ID.</param>
         /// <param name="decimalPlaces">The number of decimal places this token uses.</param>
         /// <param name="balanceDecimal">Token balance in decimal.</param>
         /// <param name="balanceRaw">Token balance in raw ulong.</param>
@@ -26,6 +21,7 @@ namespace Solnet.Extensions
         internal TokenWalletBalance(string tokenMint,
                                     string tokenSymbol,
                                     string tokenName,
+                                    string coinGeckoId,
                                     int decimalPlaces,
                                     decimal balanceDecimal,
                                     ulong balanceRaw,
@@ -33,6 +29,7 @@ namespace Solnet.Extensions
                                     int accountCount) : base(tokenMint,
                                                              tokenSymbol,
                                                              tokenName,
+                                                             coinGeckoId,
                                                              decimalPlaces,
                                                              balanceDecimal,
                                                              balanceRaw)
@@ -77,7 +74,7 @@ namespace Solnet.Extensions
                                                int accountCount)
         {
 
-            return new TokenWalletBalance(TokenMint, Symbol, TokenName,
+            return new TokenWalletBalance(TokenMint, Symbol, TokenName, CoinGeckoId,
                 DecimalPlaces, QuantityDecimal + valueDecimal,
                 QuantityRaw + valueRaw, Lamports + lamportsRaw,
                 AccountCount + accountCount);

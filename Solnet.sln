@@ -34,6 +34,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Programs.Test", "tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Extensions", "src\Solnet.Extensions\Solnet.Extensions.csproj", "{676C103F-927C-42A1-A5C3-16136E50E805}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solnet.Extensions.Test", "test\Solnet.Extensions.Test\Solnet.Extensions.Test.csproj", "{306F6D53-1CC5-4CFF-9424-B88F8BDFD1D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,11 +82,18 @@ Global
 		{676C103F-927C-42A1-A5C3-16136E50E805}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{676C103F-927C-42A1-A5C3-16136E50E805}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{676C103F-927C-42A1-A5C3-16136E50E805}.Release|Any CPU.Build.0 = Release|Any CPU
+		{306F6D53-1CC5-4CFF-9424-B88F8BDFD1D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{306F6D53-1CC5-4CFF-9424-B88F8BDFD1D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{306F6D53-1CC5-4CFF-9424-B88F8BDFD1D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{306F6D53-1CC5-4CFF-9424-B88F8BDFD1D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BE3287F3-8CBC-4793-8CC9-A1AE4B8266ED}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{306F6D53-1CC5-4CFF-9424-B88F8BDFD1D1} = {A651E8AD-703B-4B21-B344-68F5F09CDA67}
 	EndGlobalSection
 EndGlobal

@@ -46,12 +46,13 @@ namespace Solnet.Extensions.Test
             Assert.AreSame(unknown, unknown2);
 
             // replace with known def
-            tokens.Add(new TokenDef(unknown2.TokenMint, "Test Mint", "MINT", 4));
+            tokens.Add(new TokenDef(unknown2.TokenMint, "Test Mint", "MINT", 4, "TEST"));
             var known = tokens.Resolve(unknown.TokenMint);
             Assert.IsNotNull(known);
             Assert.AreNotSame(known, unknown);
             Assert.AreEqual(4, known.DecimalPlaces);
             Assert.AreEqual("Test Mint", known.TokenName);
+            Assert.AreEqual("TEST", known.CoinGeckoId);
             Assert.AreEqual(unknown.TokenMint, known.TokenMint);
 
         }
@@ -80,7 +81,7 @@ namespace Solnet.Extensions.Test
             var pubkey = new PublicKey("FakekjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
 
             var resolver = new TokenMintResolver();
-            resolver.Add(new TokenDef(pubkey.Key, "Fake Coin", "FK", 3));
+            resolver.Add(new TokenDef(pubkey.Key, "Fake Coin", "FK", 3, "FAKE"));
 
             // create via ulong
             var qty = resolver.Resolve(pubkey.Key).CreateQuantityWithRaw(4741784U);
@@ -88,6 +89,7 @@ namespace Solnet.Extensions.Test
             Assert.AreEqual(4741784U, qty.QuantityRaw);
             Assert.AreEqual(4741.784M, qty.QuantityDecimal);
             Assert.AreEqual("FK", qty.Symbol);
+            Assert.AreEqual("FAKE", qty.CoinGeckoId);
             Assert.AreEqual(3, qty.DecimalPlaces);
             Assert.AreEqual("4741.784 FK (Fake Coin)", qty.ToString());
 

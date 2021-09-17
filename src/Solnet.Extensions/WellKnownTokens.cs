@@ -53,107 +53,107 @@ namespace Solnet.Extensions
         /// <summary>
         /// Wrapped SOL
         /// </summary>
-        public static TokenDef WrappedSOL = new TokenDef("So11111111111111111111111111111111111111112", "Wrapped SOL", "SOL", 9);
+        public static TokenDef WrappedSOL = new TokenDef("So11111111111111111111111111111111111111112", "Wrapped SOL", "SOL", 9, "solana");
 
         /// <summary>
         /// USDC
         /// </summary>
-        public static TokenDef USDC = new TokenDef("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", "USD Coin", "USDC", 6);
+        public static TokenDef USDC = new TokenDef("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", "USD Coin", "USDC", 6, "usd-coin");
 
         /// <summary>
         /// USDT
         /// </summary>
-        public static TokenDef USDT = new TokenDef("Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", "USDT", "USDT", 6);
+        public static TokenDef USDT = new TokenDef("Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB", "USDT", "USDT", 6, "tether");
 
         /// <summary>
         /// SRM (Serum)
         /// </summary>
-        public static TokenDef Serum = new TokenDef("SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt", "Serum", "SRM", 6);
+        public static TokenDef Serum = new TokenDef("SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt", "Serum", "SRM", 6, "serum");
 
         /// <summary>
         /// RAY (Raydium)
         /// </summary>
-        public static TokenDef Raydium = new TokenDef("4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R", "Raydium", "RAY", 6);
+        public static TokenDef Raydium = new TokenDef("4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R", "Raydium", "RAY", 6, "raydium");
 
         /// <summary>
         /// FIDA (Bonfida)
         /// </summary>
-        public static TokenDef Bonfida = new TokenDef("EchesyfXePKdLtoiZSL8pBe8Myagyy8ZRqsACNCFGnvp", "Bonfida", "FIDA", 6);
+        public static TokenDef Bonfida = new TokenDef("EchesyfXePKdLtoiZSL8pBe8Myagyy8ZRqsACNCFGnvp", "Bonfida", "FIDA", 6, "bonfida");
 
         /// <summary>
         /// COPE
         /// </summary>
-        public static TokenDef Cope = new TokenDef("8HGyAAB1yoM1ttS7pXjHMa3dukTFGQggnFFH3hJZgzQh", "Cope", "COPE", 6);
+        public static TokenDef Cope = new TokenDef("8HGyAAB1yoM1ttS7pXjHMa3dukTFGQggnFFH3hJZgzQh", "Cope", "COPE", 6, "cope");
 
         /// <summary>
         /// KIN
         /// </summary>
-        public static TokenDef Kin = new TokenDef("kinXdEcpDQeHPEuQnqmUgtYykqKGVFq6CeVX5iAHJq6", "KIN", "KIN", 9);
+        public static TokenDef Kin = new TokenDef("kinXdEcpDQeHPEuQnqmUgtYykqKGVFq6CeVX5iAHJq6", "KIN", "KIN", 9, "kin");
 
         /// <summary>
         /// TULIP (Tulip/Solfarm)
         /// </summary>
-        public static TokenDef Tulip = new TokenDef("TuLipcqtGVXP9XR62wM8WWCm6a9vhLs7T1uoWBk6FDs", "Tulip", "TULIP", 6);
+        public static TokenDef Tulip = new TokenDef("TuLipcqtGVXP9XR62wM8WWCm6a9vhLs7T1uoWBk6FDs", "Tulip", "TULIP", 6, "solfarm");
 
         /// <summary>
         /// Orca
         /// </summary>
-        public static TokenDef Orca = new TokenDef("orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE", "Orca", "ORCA", 6);
+        public static TokenDef Orca = new TokenDef("orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE", "Orca", "ORCA", 6, "orca");
 
         /// <summary>
         /// MNGO (Mango Markets)
         /// </summary>
-        public static TokenDef Mango = new TokenDef("MangoCzJ36AjZyKwVj3VnYU4GTonjfVEnJmvvWaxLac", "Mango", "MNGO", 6);
+        public static TokenDef Mango = new TokenDef("MangoCzJ36AjZyKwVj3VnYU4GTonjfVEnJmvvWaxLac", "Mango", "MNGO", 6, "mango-markets");
 
         /// <summary>
         /// SAMO (Samoyed Coin) 
         /// </summary>
-        public static TokenDef Samoyed = new TokenDef("7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU", "Samoyed Coin", "SAMO", 9);
+        public static TokenDef Samoyed = new TokenDef("7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU", "Samoyed Coin", "SAMO", 9, "samoyedcoin");
 
         /// <summary>
         /// SBR (Saber)
         /// </summary>
-        public static TokenDef Saber = new TokenDef("Saber2gLauYim4Mvftnrasomsv6NvAuncvMEZwcLpD1", "Saber", "SBR", 6);
+        public static TokenDef Saber = new TokenDef("Saber2gLauYim4Mvftnrasomsv6NvAuncvMEZwcLpD1", "Saber", "SBR", 6, "saber");
 
         /// <summary>
         /// FAB (Fabric Protocol)
         /// </summary>
-        public static TokenDef Fabric = new TokenDef("EdAhkbj5nF9sRM7XN7ewuW8C9XEUMs8P7cnoQ57SYE96", "Fabric", "FAB", 9);
+        public static TokenDef Fabric = new TokenDef("EdAhkbj5nF9sRM7XN7ewuW8C9XEUMs8P7cnoQ57SYE96", "Fabric", "FAB", 9, "fabric");
 
         /// <summary>
         /// BOP (Boring Protocol)
         /// </summary>
-        public static TokenDef Boring = new TokenDef("BLwTnYKqf7u4qjgZrrsKeNs2EzWkMLqVCu6j8iHyrNA3", "Boring Protocol", "BOP", 9);
+        public static TokenDef Boring = new TokenDef("BLwTnYKqf7u4qjgZrrsKeNs2EzWkMLqVCu6j8iHyrNA3", "Boring Protocol", "BOP", 9, "boring-protocol");
 
         /// <summary>
         /// LIQ (Liquid)
         /// </summary>
-        public static TokenDef Liquid = new TokenDef("4wjPQJ6PrkC4dHhYghwJzGBVP78DkBzA2U3kHoFNBuhj", "LIQ Protocol", "LIQ", 6);
+        public static TokenDef Liquid = new TokenDef("4wjPQJ6PrkC4dHhYghwJzGBVP78DkBzA2U3kHoFNBuhj", "LIQ Protocol", "LIQ", 6, "liq-protocol");
 
         /// <summary>
         /// Step
         /// </summary>
-        public static TokenDef Step = new TokenDef("StepAscQoEioFxxWGnh2sLBDFp9d8rvKz2Yp39iDpyT", "Step", "STEP", 9);
+        public static TokenDef Step = new TokenDef("StepAscQoEioFxxWGnh2sLBDFp9d8rvKz2Yp39iDpyT", "Step", "STEP", 9, "step-finance");
 
         /// <summary>
         /// SLRS (Solrise Finance)
         /// </summary>
-        public static TokenDef Solrise = new TokenDef("SLRSSpSLUTP7okbCUBYStWCo1vUgyt775faPqz8HUMr", "Solrise Finance", "SLRS", 6);
+        public static TokenDef Solrise = new TokenDef("SLRSSpSLUTP7okbCUBYStWCo1vUgyt775faPqz8HUMr", "Solrise Finance", "SLRS", 6, "solrise-finance");
 
         /// <summary>
         /// LIKE (Only1)
         /// </summary>
-        public static TokenDef Only1 = new TokenDef("3bRTivrVsitbmCTGtqwp7hxXPsybkjn4XLNtPsHqa3zR", "Only1", "LIKE", 9);
+        public static TokenDef Only1 = new TokenDef("3bRTivrVsitbmCTGtqwp7hxXPsybkjn4XLNtPsHqa3zR", "Only1", "LIKE", 9, "only1");
 
         /// <summary>
         /// ATLAS (Star Atlas)
         /// </summary>
-        public static TokenDef StarAtlas = new TokenDef("ATLASXmbPQxBUYbxPsV97usA3fPQYEqzQBUHgiFCUsXx", "Star Atlas", "ATLAS", 8);
+        public static TokenDef StarAtlas = new TokenDef("ATLASXmbPQxBUYbxPsV97usA3fPQYEqzQBUHgiFCUsXx", "Star Atlas", "ATLAS", 8, "star-atlas");
 
         /// <summary>
         /// POLIS (Star Atlas DAO)
         /// </summary>
-        public static TokenDef StarAtlasDao = new TokenDef("poLisWXnNRwC6oBu1vHiuKQzFjGL4XDSu4g9qjz9qVk", "Star Atlas DAO", "POLIS", 8);
+        public static TokenDef StarAtlasDao = new TokenDef("poLisWXnNRwC6oBu1vHiuKQzFjGL4XDSu4g9qjz9qVk", "Star Atlas DAO", "POLIS", 8, "star-atlas-dao");
 
     }
 }

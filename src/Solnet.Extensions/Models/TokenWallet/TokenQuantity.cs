@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Solnet.Extensions
 {
@@ -18,12 +14,14 @@ namespace Solnet.Extensions
         /// <param name="tokenMint">The token mint public key address.</param>
         /// <param name="tokenSymbol">The symbol this token uses.</param>
         /// <param name="tokenName">The name of this token.</param>
+        /// <param name="coinGeckoId">The token's CoinGecko ID.</param>
         /// <param name="decimalPlaces">The number of decimal places this token uses.</param>
         /// <param name="balanceDecimal">Token balance in decimal.</param>
         /// <param name="balanceRaw">Token balance in raw ulong.</param>
         internal TokenQuantity(string tokenMint,
                                string tokenSymbol,
                                string tokenName,
+                               string coinGeckoId,
                                int decimalPlaces,
                                decimal balanceDecimal,
                                ulong balanceRaw)
@@ -31,6 +29,7 @@ namespace Solnet.Extensions
             TokenMint = tokenMint ?? throw new ArgumentNullException(nameof(tokenMint));
             Symbol = tokenSymbol ?? throw new ArgumentNullException(nameof(tokenSymbol));
             TokenName = tokenName ?? throw new ArgumentNullException(nameof(tokenName));
+            CoinGeckoId = coinGeckoId;
             DecimalPlaces = decimalPlaces;
             QuantityDecimal = balanceDecimal;
             QuantityRaw = balanceRaw;
@@ -50,6 +49,11 @@ namespace Solnet.Extensions
         /// The name of this token.
         /// </summary>
         public string TokenName { get; init; }
+        
+        /// <summary>
+        /// The token's CoinGecko ID.
+        /// </summary>
+        public string CoinGeckoId { get; init; }
 
         /// <summary>
         /// The number of decimal places this token uses.
@@ -72,10 +76,7 @@ namespace Solnet.Extensions
         /// <returns></returns>
         public override string ToString()
         {
-            if (Symbol == TokenName)
-                return $"{QuantityDecimal} {Symbol}";
-            else
-                return $"{QuantityDecimal} {Symbol} ({TokenName})";
+            return Symbol == TokenName ? $"{QuantityDecimal} {Symbol}" : $"{QuantityDecimal} {Symbol} ({TokenName})";
         }
 
         /// <summary>
@@ -88,12 +89,9 @@ namespace Solnet.Extensions
                                            ulong valueRaw)
         {
 
-            return new TokenQuantity(TokenMint, Symbol, TokenName,
+            return new TokenQuantity(TokenMint, Symbol, TokenName, CoinGeckoId,
                 DecimalPlaces, QuantityDecimal + valueDecimal,
                 QuantityRaw + valueRaw);
-
         }
-
     }
-
 }

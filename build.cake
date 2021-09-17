@@ -7,7 +7,8 @@ var testProjectsRelativePaths = new string[]
     "./test/Solnet.Rpc.Test/Solnet.Rpc.Test.csproj",
     "./test/Solnet.Wallet.Test/Solnet.Wallet.Test.csproj",
     "./test/Solnet.KeyStore.Test/Solnet.KeyStore.Test.csproj",
-    "./test/Solnet.Programs.Test/Solnet.Programs.Test.csproj"
+    "./test/Solnet.Programs.Test/Solnet.Programs.Test.csproj",
+    "./test/Solnet.Extensions.Test/Solnet.Extensions.Test.csproj"
 };
 
 var target = Argument("target", "Pack");
