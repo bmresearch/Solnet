@@ -72,7 +72,7 @@ namespace Solnet.Extensions.TokenMint
         /// <returns>A TokenQuantity instance.</returns>
         public TokenQuantity CreateQuantity(decimal valueDecimal, ulong valueRaw)
         {
-            return new TokenQuantity(TokenMint, Symbol, TokenName, DecimalPlaces, valueDecimal, valueRaw);
+            return new TokenQuantity(this, valueDecimal, valueRaw);
         }
 
         /// <summary>
@@ -123,6 +123,24 @@ namespace Solnet.Extensions.TokenMint
             for (int ix = 0; ix < DecimalPlaces; ix++) impliedAmount = decimal.Divide(impliedAmount, 10);
             return impliedAmount;
         }
+
+        /// <summary>
+        /// Creates a clone of this TokenDef instance setting the decimalPlaces.
+        /// Used to go from a TokenDef with unknown decimal places (-1) to known decimal places.
+        /// </summary>
+        /// <param name="decimalPlaces">Number of decimal places for this token.</param>
+        /// <returns>A new TokenDef instance.</returns>
+        internal TokenDef CloneWithKnownDecimals(int decimalPlaces)
+        {
+            if (decimalPlaces < 0) throw new ArgumentOutOfRangeException("Decimal places must be 0+");
+            return new TokenDef(this.TokenMint, this.TokenName, this.Symbol, decimalPlaces)
+            {
+                CoinGeckoId = this.CoinGeckoId,
+                TokenLogoUrl = this.TokenLogoUrl,
+                TokenProjectUrl = this.TokenProjectUrl
+            };
+        }
+
 
     }
 

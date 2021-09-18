@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Solnet.Extensions.TokenMint;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,25 +16,16 @@ namespace Solnet.Extensions
         /// <summary>
         /// Constructs a TokenWalletBalance instance.
         /// </summary>
-        /// <param name="tokenMint">The token mint public key address.</param>
-        /// <param name="tokenSymbol">The symbol this token uses.</param>
-        /// <param name="tokenName">The name of this token.</param>
-        /// <param name="decimalPlaces">The number of decimal places this token uses.</param>
+        /// <param name="tokenDef">A TokenDef instance that describes this token.</param>
         /// <param name="balanceDecimal">Token balance in decimal.</param>
         /// <param name="balanceRaw">Token balance in raw ulong.</param>
         /// <param name="lamportsRaw">How many lamports does this balance represent.</param>
         /// <param name="accountCount">The number of accounts this balance represents. Start with 1.</param>
-        internal TokenWalletBalance(string tokenMint,
-                                    string tokenSymbol,
-                                    string tokenName,
-                                    int decimalPlaces,
+        internal TokenWalletBalance(TokenDef tokenDef,
                                     decimal balanceDecimal,
                                     ulong balanceRaw,
                                     ulong lamportsRaw,
-                                    int accountCount) : base(tokenMint,
-                                                             tokenSymbol,
-                                                             tokenName,
-                                                             decimalPlaces,
+                                    int accountCount) : base(tokenDef,
                                                              balanceDecimal,
                                                              balanceRaw)
         {
@@ -77,8 +69,9 @@ namespace Solnet.Extensions
                                                int accountCount)
         {
 
-            return new TokenWalletBalance(TokenMint, Symbol, TokenName,
-                DecimalPlaces, QuantityDecimal + valueDecimal,
+            return new TokenWalletBalance(
+                this.TokenDef,
+                QuantityDecimal + valueDecimal,
                 QuantityRaw + valueRaw, Lamports + lamportsRaw,
                 AccountCount + accountCount);
 
