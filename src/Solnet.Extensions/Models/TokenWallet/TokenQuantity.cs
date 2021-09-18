@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Solnet.Extensions.TokenMint;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,26 +16,26 @@ namespace Solnet.Extensions
         /// <summary>
         /// Constructs a TokenQuantity instance.
         /// </summary>
-        /// <param name="tokenMint">The token mint public key address.</param>
-        /// <param name="tokenSymbol">The symbol this token uses.</param>
-        /// <param name="tokenName">The name of this token.</param>
-        /// <param name="decimalPlaces">The number of decimal places this token uses.</param>
+        /// <param name="tokenDef">A TokenDef instance that describes this token.</param>
         /// <param name="balanceDecimal">Token balance in decimal.</param>
         /// <param name="balanceRaw">Token balance in raw ulong.</param>
-        internal TokenQuantity(string tokenMint,
-                               string tokenSymbol,
-                               string tokenName,
-                               int decimalPlaces,
+        internal TokenQuantity(TokenDef tokenDef,
                                decimal balanceDecimal,
                                ulong balanceRaw)
         {
-            TokenMint = tokenMint ?? throw new ArgumentNullException(nameof(tokenMint));
-            Symbol = tokenSymbol ?? throw new ArgumentNullException(nameof(tokenSymbol));
-            TokenName = tokenName ?? throw new ArgumentNullException(nameof(tokenName));
-            DecimalPlaces = decimalPlaces;
+            TokenDef = tokenDef ?? throw new ArgumentNullException(nameof(tokenDef));
+            Symbol = tokenDef.Symbol;
+            TokenName = tokenDef.TokenName;
+            TokenMint = tokenDef.TokenMint;
+            DecimalPlaces = tokenDef.DecimalPlaces;
             QuantityDecimal = balanceDecimal;
             QuantityRaw = balanceRaw;
         }
+
+        /// <summary>
+        /// The origin TokenDef instance
+        /// </summary>
+        public TokenDef TokenDef { get; init; }
 
         /// <summary>
         /// The token mint public key address.
@@ -88,8 +89,8 @@ namespace Solnet.Extensions
                                            ulong valueRaw)
         {
 
-            return new TokenQuantity(TokenMint, Symbol, TokenName,
-                DecimalPlaces, QuantityDecimal + valueDecimal,
+            return new TokenQuantity(this.TokenDef,
+                QuantityDecimal + valueDecimal,
                 QuantityRaw + valueRaw);
 
         }

@@ -230,9 +230,17 @@ namespace Solnet.Extensions
                 var balancDecimal = token.Account.Data.Parsed.Info.TokenAmount.AmountDecimal;
                 if (!mintBalances.ContainsKey(mint))
                 {
-                    var meta = MintResolver.Resolve(mint);
+                    var tokenDef = MintResolver.Resolve(mint);
                     var decimals = token.Account.Data.Parsed.Info.TokenAmount.Decimals;
-                    mintBalances[mint] = new TokenWalletBalance(mint, meta.Symbol, meta.TokenName, decimals, balancDecimal, balancRaw, lamportsRaw, 1);
+
+                    // have we gained knowledge about decimal places from token account
+                    // where it was previously unknown?
+                    if (tokenDef.DecimalPlaces == -1 && decimals >= 0)
+                        tokenDef = tokenDef.CloneWithKnownDecimals(decimals);
+
+                    // create initial wallet balance for this mint
+                    mintBalances[mint] = new TokenWalletBalance(tokenDef, balancDecimal, balancRaw, lamportsRaw, 1);
+
                 }
                 else
                     mintBalances[mint] = mintBalances[mint].AddAccount(balancDecimal, balancRaw, lamportsRaw, 1);
@@ -257,13 +265,22 @@ namespace Solnet.Extensions
                 var mint = account.Account.Data.Parsed.Info.Mint;
                 var ata = GetAssociatedTokenAddressForMint(mint);
                 var isAta = ata.ToString() == account.PublicKey;
-                var meta = MintResolver.Resolve(mint);
                 var lamportsRaw = account.Account.Lamports;
                 var owner = account.Account.Data.Parsed.Info.Owner ?? PublicKey;
                 var decimals = account.Account.Data.Parsed.Info.TokenAmount.Decimals;
                 var balanceRaw = account.Account.Data.Parsed.Info.TokenAmount.AmountUlong;
                 var balanceDecimal = account.Account.Data.Parsed.Info.TokenAmount.AmountDecimal;
-                list.Add(new TokenWalletAccount(mint, meta.Symbol, meta.TokenName, decimals, balanceDecimal, balanceRaw, lamportsRaw, account.PublicKey, owner, isAta));
+
+                // resolve the TokenDef
+                var tokenDef = MintResolver.Resolve(mint);
+
+                // have we gained knowledge about decimal places from token account
+                // where it was previously unknown?
+                if (tokenDef.DecimalPlaces == -1 && decimals >= 0)
+                    tokenDef = tokenDef.CloneWithKnownDecimals(decimals);
+
+                // add the account instance
+                list.Add(new TokenWalletAccount(tokenDef, balanceDecimal, balanceRaw, lamportsRaw, account.PublicKey, owner, isAta));
             }
             return new TokenWalletFilterList(list.OrderBy(x => x.TokenName));
         }

@@ -50,6 +50,21 @@ namespace Solnet.Extensions.TokenMint
         public int DecimalPlaces { get; init; }
 
         /// <summary>
+        /// The Coingecko identifier as supplied by the standard Solana token list or null
+        /// </summary>
+        public string CoinGeckoId { get; init; }
+
+        /// <summary>
+        /// The token project / more info url as supplied by the standard Solana token list or null
+        /// </summary>
+        public string TokenProjectUrl { get; init; }
+
+        /// <summary>
+        /// The token logo url as supplied by the standard Solana token list or null
+        /// </summary>
+        public string TokenLogoUrl { get; init; }
+
+        /// <summary>
         /// Create an instance of the TokenQuantity object with the raw token quanity value provided.
         /// </summary>
         /// <param name="valueDecimal">Value as decimal.</param>
@@ -57,7 +72,7 @@ namespace Solnet.Extensions.TokenMint
         /// <returns>A TokenQuantity instance.</returns>
         public TokenQuantity CreateQuantity(decimal valueDecimal, ulong valueRaw)
         {
-            return new TokenQuantity(TokenMint, Symbol, TokenName, DecimalPlaces, valueDecimal, valueRaw);
+            return new TokenQuantity(this, valueDecimal, valueRaw);
         }
 
         /// <summary>
@@ -109,6 +124,24 @@ namespace Solnet.Extensions.TokenMint
             return impliedAmount;
         }
 
+        /// <summary>
+        /// Creates a clone of this TokenDef instance setting the decimalPlaces.
+        /// Used to go from a TokenDef with unknown decimal places (-1) to known decimal places.
+        /// </summary>
+        /// <param name="decimalPlaces">Number of decimal places for this token.</param>
+        /// <returns>A new TokenDef instance.</returns>
+        internal TokenDef CloneWithKnownDecimals(int decimalPlaces)
+        {
+            if (decimalPlaces < 0) throw new ArgumentOutOfRangeException("Decimal places must be 0+");
+            return new TokenDef(this.TokenMint, this.TokenName, this.Symbol, decimalPlaces)
+            {
+                CoinGeckoId = this.CoinGeckoId,
+                TokenLogoUrl = this.TokenLogoUrl,
+                TokenProjectUrl = this.TokenProjectUrl
+            };
+        }
+
+
     }
 
     /// <summary>
@@ -128,6 +161,7 @@ namespace Solnet.Extensions.TokenMint
         public string Symbol { get; set; }
         public string Name { get; set; }
         public int Decimals { get; set; }
+        public string LogoUri { get; set; }
         public Dictionary<string, object> Extensions { get; set; }
     }
 

@@ -44,7 +44,7 @@ namespace Solnet.Extensions
         {
             foreach (var token in tokenList.tokens)
             {
-                Add(new TokenDef(token.Address, token.Name, token.Symbol, token.Decimals));
+                Add(token);
             }
         }
 
@@ -139,6 +139,37 @@ namespace Solnet.Extensions
         public void Add(TokenDef token)
         {
             if (token is null) throw new ArgumentNullException(nameof(token));
+            _tokens[token.TokenMint] = token;
+        }
+
+        /// <summary>
+        /// Construct a TokenDef instance populated with extension goodies from the Solana token list.
+        /// </summary>
+        /// <param name="tokenItem">A TokenListItem instance.</param>
+        internal void Add(TokenListItem tokenItem)
+        {
+            if (tokenItem is null) throw new ArgumentNullException(nameof(tokenItem));
+
+            // pick out the token logo or null
+            string logoUrl = tokenItem.LogoUri;
+
+            // pick out the coingecko identifier if available
+            string coingeckoId = null;
+            if (tokenItem.Extensions.ContainsKey("coingeckoId")) coingeckoId = ((JsonElement) tokenItem.Extensions["coingeckoId"]).GetString();
+
+            // pick out the project website if available
+            string projectUrl = null;
+            if (tokenItem.Extensions.ContainsKey("website")) projectUrl = ((JsonElement)tokenItem.Extensions["website"]).GetString();
+
+            // construct the TokenDef instance
+            var token = new TokenDef(tokenItem.Address, tokenItem.Name, tokenItem.Symbol, tokenItem.Decimals)
+            {
+                CoinGeckoId = coingeckoId,
+                TokenLogoUrl = logoUrl,
+                TokenProjectUrl = projectUrl
+            };
+
+            // stash it
             _tokens[token.TokenMint] = token;
         }
 
