@@ -110,6 +110,24 @@ namespace Solnet.Extensions.Test
             Assert.AreEqual(6, cope.DecimalPlaces);
         }
 
+        [TestMethod]
+        public void TestExtendedTokenMeta() 
+        {
+            // load simple 
+            var json = File.ReadAllText("Resources/TokenMint/SimpleTokenList.json");
+            var tokens = TokenMintResolver.ParseTokenList(json);
+
+            // lookup unknown mint - non-fatal - returns unknown mint
+            var usdc = tokens.Resolve("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
+            Assert.IsNotNull(usdc);
+            Assert.AreEqual(6, usdc.DecimalPlaces);
+            Assert.AreEqual("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", usdc.TokenMint);
+            Assert.AreEqual("usd-coin", usdc.CoinGeckoId);
+            Assert.AreEqual("https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png", usdc.TokenLogoUrl);
+            Assert.AreEqual("https://www.centre.io/", usdc.TokenProjectUrl);
+
+        }
+
 
     }
 

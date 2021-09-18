@@ -50,6 +50,21 @@ namespace Solnet.Extensions.TokenMint
         public int DecimalPlaces { get; init; }
 
         /// <summary>
+        /// The Coingecko identifier as supplied by the standard Solana token list or null
+        /// </summary>
+        public string CoinGeckoId { get; init; }
+
+        /// <summary>
+        /// The token project / more info url as supplied by the standard Solana token list or null
+        /// </summary>
+        public string TokenProjectUrl { get; init; }
+
+        /// <summary>
+        /// The token logo url as supplied by the standard Solana token list or null
+        /// </summary>
+        public string TokenLogoUrl { get; init; }
+
+        /// <summary>
         /// Create an instance of the TokenQuantity object with the raw token quanity value provided.
         /// </summary>
         /// <param name="valueDecimal">Value as decimal.</param>
@@ -128,6 +143,7 @@ namespace Solnet.Extensions.TokenMint
         public string Symbol { get; set; }
         public string Name { get; set; }
         public int Decimals { get; set; }
+        public string LogoUri { get; set; }
         public Dictionary<string, object> Extensions { get; set; }
     }
 
