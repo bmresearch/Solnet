@@ -117,7 +117,7 @@ namespace Solnet.Extensions.Test
             var json = File.ReadAllText("Resources/TokenMint/SimpleTokenList.json");
             var tokens = TokenMintResolver.ParseTokenList(json);
 
-            // lookup unknown mint - non-fatal - returns unknown mint
+            // lookup USDC using mint 
             var usdc = tokens.Resolve("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
             Assert.IsNotNull(usdc);
             Assert.AreEqual(6, usdc.DecimalPlaces);
