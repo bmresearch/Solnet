@@ -1,5 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Solnet.Programs.Abstract;
+using System;
+using System.Reflection;
 
 namespace Solnet.Programs.Test.Abstract
 {
@@ -7,123 +9,78 @@ namespace Solnet.Programs.Test.Abstract
     public class ByteFlagTest
     {
         [TestMethod]
-        public void TestBit0()
+        public void TestAllBitsSet()
         {
-            ByteFlag sut = new (1);
-            Assert.AreEqual(1, sut.Value);
-            Assert.IsTrue(sut.Bit0);
-            Assert.IsFalse(sut.Bit1);
-            Assert.IsFalse(sut.Bit2);
-            Assert.IsFalse(sut.Bit3);
-            Assert.IsFalse(sut.Bit4);
-            Assert.IsFalse(sut.Bit5);
-            Assert.IsFalse(sut.Bit6);
-            Assert.IsFalse(sut.Bit7);
+            ByteFlag sut = new(byte.MaxValue);
+
+            PropertyInfo[] props = sut.GetType().GetProperties();
+
+            foreach (PropertyInfo prop in props)
+            {
+                MethodInfo getMethod = prop.GetGetMethod();
+                Assert.IsNotNull(getMethod);
+
+                string methodName = getMethod.ToString();
+                Assert.IsNotNull(methodName);
+
+                if (!methodName.Contains("Bit"))
+                    continue;
+
+                object isBitSet = getMethod.Invoke(sut, null);
+                Assert.IsNotNull(isBitSet);
+                Assert.IsTrue((bool)isBitSet);
+            }
         }
-        
+
         [TestMethod]
-        public void TestBit1()
+        public void TestNoBitsSet()
         {
-            ByteFlag sut = new (2);
-            Assert.AreEqual(2, sut.Value);
-            Assert.IsFalse(sut.Bit0);
-            Assert.IsTrue(sut.Bit1);
-            Assert.IsFalse(sut.Bit2);
-            Assert.IsFalse(sut.Bit3);
-            Assert.IsFalse(sut.Bit4);
-            Assert.IsFalse(sut.Bit5);
-            Assert.IsFalse(sut.Bit6);
-            Assert.IsFalse(sut.Bit7);
+            ByteFlag sut = new(byte.MinValue);
+
+            PropertyInfo[] props = sut.GetType().GetProperties();
+
+            foreach (PropertyInfo prop in props)
+            {
+                MethodInfo getMethod = prop.GetGetMethod();
+                Assert.IsNotNull(getMethod);
+
+                string methodName = getMethod.ToString();
+                Assert.IsNotNull(methodName);
+
+                if (!methodName.Contains("Bit"))
+                    continue;
+
+                object isBitSet = getMethod.Invoke(sut, null);
+                Assert.IsNotNull(isBitSet);
+                Assert.IsFalse((bool)isBitSet);
+            }
         }
-        
+
         [TestMethod]
-        public void TestBit2()
+        public void TestIndividualBitSet()
         {
-            ByteFlag sut = new (4);
-            Assert.AreEqual(4, sut.Value);
-            Assert.IsFalse(sut.Bit0);
-            Assert.IsFalse(sut.Bit1);
-            Assert.IsTrue(sut.Bit2);
-            Assert.IsFalse(sut.Bit3);
-            Assert.IsFalse(sut.Bit4);
-            Assert.IsFalse(sut.Bit5);
-            Assert.IsFalse(sut.Bit6);
-            Assert.IsFalse(sut.Bit7);
-        }
-        
-        [TestMethod]
-        public void TestBit3()
-        {
-            ByteFlag sut = new (8);
-            Assert.AreEqual(8, sut.Value);
-            Assert.IsFalse(sut.Bit0);
-            Assert.IsFalse(sut.Bit1);
-            Assert.IsFalse(sut.Bit2);
-            Assert.IsTrue(sut.Bit3);
-            Assert.IsFalse(sut.Bit4);
-            Assert.IsFalse(sut.Bit5);
-            Assert.IsFalse(sut.Bit6);
-            Assert.IsFalse(sut.Bit7);
-        }
-        
-        [TestMethod]
-        public void TestBit4()
-        {
-            ByteFlag sut = new (16);
-            Assert.AreEqual(16, sut.Value);
-            Assert.IsFalse(sut.Bit0);
-            Assert.IsFalse(sut.Bit1);
-            Assert.IsFalse(sut.Bit2);
-            Assert.IsFalse(sut.Bit3);
-            Assert.IsTrue(sut.Bit4);
-            Assert.IsFalse(sut.Bit5);
-            Assert.IsFalse(sut.Bit6);
-            Assert.IsFalse(sut.Bit7);
-        }
-        
-        [TestMethod]
-        public void TestBit5()
-        {
-            ByteFlag sut = new (32);
-            Assert.AreEqual(32, sut.Value);
-            Assert.IsFalse(sut.Bit0);
-            Assert.IsFalse(sut.Bit1);
-            Assert.IsFalse(sut.Bit2);
-            Assert.IsFalse(sut.Bit3);
-            Assert.IsFalse(sut.Bit4);
-            Assert.IsTrue(sut.Bit5);
-            Assert.IsFalse(sut.Bit6);
-            Assert.IsFalse(sut.Bit7);
-        }
-        
-        [TestMethod]
-        public void TestBit6()
-        {
-            ByteFlag sut = new (64);
-            Assert.AreEqual(64, sut.Value);
-            Assert.IsFalse(sut.Bit0);
-            Assert.IsFalse(sut.Bit1);
-            Assert.IsFalse(sut.Bit2);
-            Assert.IsFalse(sut.Bit3);
-            Assert.IsFalse(sut.Bit4);
-            Assert.IsFalse(sut.Bit5);
-            Assert.IsTrue(sut.Bit6);
-            Assert.IsFalse(sut.Bit7);
-        }
-        
-        [TestMethod]
-        public void TestBit7()
-        {
-            ByteFlag sut = new (128);
-            Assert.AreEqual(128, sut.Value);
-            Assert.IsFalse(sut.Bit0);
-            Assert.IsFalse(sut.Bit1);
-            Assert.IsFalse(sut.Bit2);
-            Assert.IsFalse(sut.Bit3);
-            Assert.IsFalse(sut.Bit4);
-            Assert.IsFalse(sut.Bit5);
-            Assert.IsFalse(sut.Bit6);
-            Assert.IsTrue(sut.Bit7);
+            PropertyInfo[] props = typeof(ByteFlag).GetProperties();
+
+            foreach (PropertyInfo prop in props)
+            {
+                MethodInfo getMethod = prop.GetGetMethod();
+                Assert.IsNotNull(getMethod);
+
+                string methodName = getMethod.ToString();
+                Assert.IsNotNull(methodName);
+
+                if (!methodName.Contains("Bit"))
+                    continue;
+
+                byte bitNumber = byte.Parse(methodName.Split("_Bit")[1].Split("()")[0]);
+                double bitMaskValue = Math.Pow(2, bitNumber);
+
+                ByteFlag sut = new((byte)bitMaskValue);
+
+                object isBitSet = getMethod.Invoke(sut, null);
+                Assert.IsNotNull(isBitSet);
+                Assert.IsTrue((bool)isBitSet);
+            }
         }
     }
 }

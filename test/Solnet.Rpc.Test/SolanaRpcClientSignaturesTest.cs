@@ -48,6 +48,36 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
+        public void TestGetSignaturesForAddress2()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Signatures/GetConfirmedSignaturesForAddress2Request.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetConfirmedSignaturesForAddress2("4Rf9mGD7FeYknun5JczX5nGLTfQuS1GRjNVfkEMKE92b", limit: 3);
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(3, result.Result.Count);
+            Assert.AreEqual(1616245823UL, result.Result[0].BlockTime);
+            Assert.AreEqual(68710495UL, result.Result[0].Slot);
+            Assert.AreEqual("5Jofwx5JcPT1dMsgo6DkyT6x61X5chS9K7hM7huGKAnUq8xxHwGKuDnnZmPGoapWVZcN4cPvQtGNCicnWZfPHowr", result.Result[0].Signature);
+            Assert.AreEqual(null, result.Result[0].Memo);
+            Assert.AreEqual(null, result.Result[0].Error);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
         public void TestGetSignaturesForAddress_InvalidCommitment()
         {
 
@@ -56,6 +86,24 @@ namespace Solnet.Rpc.Test
             try
             {
                 var res = sut.GetSignaturesForAddress("4Rf9mGD7FeYknun5JczX5nGLTfQuS1GRjNVfkEMKE92b", commitment: Types.Commitment.Processed);
+                Assert.Fail("Should throw exception before here.");
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(typeof(ArgumentException), e.InnerException.GetType());
+            }
+
+        }
+
+        [TestMethod]
+        public void TestGetSignaturesForAddress2_InvalidCommitment()
+        {
+
+            var sut = new SolanaRpcClient(TestnetUrl, null);
+
+            try
+            {
+                var res = sut.GetConfirmedSignaturesForAddress2("4Rf9mGD7FeYknun5JczX5nGLTfQuS1GRjNVfkEMKE92b", commitment: Types.Commitment.Processed);
                 Assert.Fail("Should throw exception before here.");
             }
             catch (Exception e)
@@ -81,6 +129,38 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetSignaturesForAddress(
+                "Vote111111111111111111111111111111111111111",
+                1, until: "Vote111111111111111111111111111111111111111");
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(1, result.Result.Count);
+            Assert.AreEqual(null, result.Result[0].BlockTime);
+            Assert.AreEqual(114UL, result.Result[0].Slot);
+            Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", result.Result[0].Signature);
+            Assert.AreEqual(null, result.Result[0].Memo);
+            Assert.AreEqual(null, result.Result[0].Error);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetSignaturesForAddress2Until()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressUntilResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Signatures/GetConfirmedSignaturesForAddress2UntilRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetConfirmedSignaturesForAddress2(
                 "Vote111111111111111111111111111111111111111",
                 1, until: "Vote111111111111111111111111111111111111111");
 
@@ -130,6 +210,38 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
+        public void TestGetSignaturesForAddress2Before()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressBeforeResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Signatures/GetConfirmedSignaturesForAddress2BeforeRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetConfirmedSignaturesForAddress2(
+                "Vote111111111111111111111111111111111111111",
+                1, before: "Vote111111111111111111111111111111111111111");
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(1, result.Result.Count);
+            Assert.AreEqual(null, result.Result[0].BlockTime);
+            Assert.AreEqual(114UL, result.Result[0].Slot);
+            Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", result.Result[0].Signature);
+            Assert.AreEqual(null, result.Result[0].Memo);
+            Assert.AreEqual(null, result.Result[0].Error);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
         public void TestGetSignaturesForAddressBeforeConfirmed()
         {
             var responseData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressBeforeResponse.json");
@@ -145,6 +257,38 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetSignaturesForAddress(
+                "Vote111111111111111111111111111111111111111",
+                1, before: "Vote111111111111111111111111111111111111111", commitment: Types.Commitment.Confirmed);
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(1, result.Result.Count);
+            Assert.AreEqual(null, result.Result[0].BlockTime);
+            Assert.AreEqual(114UL, result.Result[0].Slot);
+            Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", result.Result[0].Signature);
+            Assert.AreEqual(null, result.Result[0].Memo);
+            Assert.AreEqual(null, result.Result[0].Error);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetSignaturesForAddress2BeforeConfirmed()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Signatures/GetSignaturesForAddressBeforeResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Signatures/GetConfirmedSignaturesForAddress2BeforeConfirmedRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetConfirmedSignaturesForAddress2(
                 "Vote111111111111111111111111111111111111111",
                 1, before: "Vote111111111111111111111111111111111111111", commitment: Types.Commitment.Confirmed);
 

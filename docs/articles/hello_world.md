@@ -133,8 +133,8 @@ using Solnet.Programs;
 using Solnet.Rpc.Builders;
 ```
 
-To call a program, we have to send a transaction using the `IRpcClient.SendTransaction` method. But for this we need to craft a transaction. The `TransactionBuilder` was created with this in mind. This builder abstracts all the logic regarding [transactions](https://docs.solana.com/developing/programming-model/transactions) (headers, signatures, public keys, etc) and has only 4 methods: Build, AddInstruction, SetFeePayer, SetRecentBlockHash.
-To sum things nicely, a transaction is a collection of instructions, each transaction needs someone to pay the fees, and to prevent the network to be spammed we need a (ver) recent block hash.
+To call a program, we have to send a transaction using the `IRpcClient.SendTransaction` method. But for this we need to craft a transaction. The `TransactionBuilder` was created with this in mind. This builder abstracts all the logic regarding [transactions](https://docs.solana.com/developing/programming-model/transactions) (headers, signatures, public keys, etc) and allows you to craft a transaction using only 4 methods: Build, AddInstruction, SetFeePayer, SetRecentBlockHash. However, it is fully compliant with web3.js implementation, and you can craft a transaction using Solnet and sign it elsewhere after calling CompileMessage.
+To sum things nicely, a transaction is a collection of instructions, each transaction needs someone to pay the fees, and to prevent the network to be spammed we need a (very) recent block hash.
 
 The Solnet.Programs library, abstracts the usage of programs, and the creation of instructions that interact with these programs. For this example, we are using the static class `MemoProgram`.
 
@@ -145,7 +145,11 @@ var memoInstruction = MemoProgram.NewMemo(wallet.Account, "Hello Solana World, u
 
 var recentHash = rpcClient.GetRecentBlockHash();
 
-var tx = new TransactionBuilder().AddInstruction(memoInstruction).SetFeePayer(wallet.Account).SetRecentBlockHash(recentHash.Result.Value.Blockhash).Build();
+var tx = new TransactionBuilder()
+            .AddInstruction(memoInstruction)
+            .SetFeePayer(wallet.Account)
+            .SetRecentBlockHash(recentHash.Result.Value.Blockhash)
+            .Build(wallet.Account);
 
 var txHash = rpcClient.SendTransaction(tx);
 

@@ -42,6 +42,11 @@ namespace Solnet.Rpc.Test
             Assert.IsFalse(result.WasSuccessful);
             Assert.AreEqual("Invalid param: WrongSize", result.Reason);
             Assert.AreEqual(-32602, result.ServerErrorCode);
+            Assert.IsNotNull(result.RawRpcRequest);
+            Assert.IsNotNull(result.RawRpcResponse);
+            Assert.AreEqual(requestData, result.RawRpcRequest);
+            Assert.AreEqual(responseData, result.RawRpcResponse);
+
         }
 
         [TestMethod]
@@ -72,6 +77,9 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(msg, result.Reason);
             Assert.IsFalse(result.WasHttpRequestSuccessful);
             Assert.IsFalse(result.WasRequestSuccessfullyHandled);
+            Assert.IsNotNull(result.RawRpcRequest);
+            Assert.IsNull(result.RawRpcResponse);
+            Assert.AreEqual(requestData, result.RawRpcRequest);
         }
 
         [TestMethod]
@@ -102,6 +110,10 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(msg, result.Reason);
             Assert.IsFalse(result.WasHttpRequestSuccessful);
             Assert.IsFalse(result.WasRequestSuccessfullyHandled);
+            Assert.IsNotNull(result.RawRpcRequest);
+            Assert.IsNull(result.RawRpcResponse);
+            Assert.AreEqual(requestData, result.RawRpcRequest);
+
         }
 
         [TestMethod]
@@ -120,12 +132,15 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetBalance("hoakwpFB8UoLnPpLC56gsjpY7XbVwaCuRQRMQzN5TVh");
-
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(79274779UL, result.Result.Context.Slot);
             Assert.AreEqual(168855000000UL, result.Result.Value);
+            Assert.IsNotNull(result.RawRpcRequest);
+            Assert.IsNotNull(result.RawRpcResponse);
+            Assert.AreEqual(requestData, result.RawRpcRequest);
+            Assert.AreEqual(responseData, result.RawRpcResponse);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -897,5 +912,77 @@ namespace Solnet.Rpc.Test
             FinishTest(messageHandlerMock, TestnetUri);
 
         }
+
+        /// <summary>
+        /// Backstory - public RPC nodes no longer support GetProgramAccount requests for the Serum program-id
+        /// These are dealt with a HTTP 410 "GONE" response.
+        /// Make sure that the JsonRpc gives an practical response under these circumstances.
+        /// </summary>
+        [TestMethod]
+        public void TestFailHttp410Gone()
+        {
+            var responseData = File.ReadAllText("Resources/Http/GetProgramAccountsResponse-Fail-410.json");
+            var requestData = File.ReadAllText("Resources/Http/GetProgramAccountsRequest-Fail-410.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData, HttpStatusCode.Gone);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            List<MemCmp> filters = new()
+            {
+                new MemCmp { Offset = 45, Bytes = "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5" },
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetProgramAccounts("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", // serum program-id
+                dataSize:3228, memCmpList:filters ); 
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(HttpStatusCode.Gone, result.HttpStatusCode);
+            Assert.AreEqual(responseData, result.RawRpcResponse);
+            Assert.IsFalse(result.WasSuccessful);
+            Assert.IsNull(result.Result);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        /// <summary>
+        /// Backstory - when hopping from public RPC node to Serum RPC node there was a difference in their configuration
+        /// Solnet was sending Content-Type header of `application/json; charset=utf-8` which is rejected by Serum RPC cluster.
+        /// This was dealt with by a HTTP 415 response which was not accessible in the Solnet Result.
+        /// </summary>
+        [TestMethod]
+        public void TestFailHttp415UnsupportedMediaType()
+        {
+            var responseData = "Supplied content type is not allowed. Content-Type: application/json is required";
+            var requestData = File.ReadAllText("Resources/Http/GetBalanceRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData, HttpStatusCode.UnsupportedMediaType);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetBalance("hoakwpFB8UoLnPpLC56gsjpY7XbVwaCuRQRMQzN5TVh");
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(HttpStatusCode.UnsupportedMediaType, result.HttpStatusCode);
+            Assert.AreEqual(responseData, result.RawRpcResponse);
+            Assert.IsFalse(result.WasSuccessful);
+            Assert.IsNull(result.Result);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+
     }
 }

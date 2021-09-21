@@ -3,10 +3,11 @@ using Solnet.Rpc;
 using Solnet.Rpc.Builders;
 using Solnet.Wallet;
 using System;
+using System.Collections.Generic;
 
 namespace Solnet.Examples
 {
-    public class NameServiceProgramExamples : IExample
+    public class CreateNameRegistryProgramExamples : IExample
     {
         private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
 
@@ -18,7 +19,7 @@ namespace Solnet.Examples
         /// The public key of the Twitter Verification Authority.
         /// </summary>
         public static readonly PublicKey TwitterVerificationAuthorityKey = new PublicKey("867BLob5b52i81SNaV9Awm5ejkZV6VGSv9SxLcwukDDJ");
-        
+
         /// <summary>
         /// The public key of the Twitter Root Parent Registry.
         /// </summary>
@@ -35,7 +36,7 @@ namespace Solnet.Examples
             PublicKey nameAccountKey = NameServiceProgram.DeriveNameAccountKey(hashedName, TwitterVerificationAuthorityKey, null);
             return nameAccountKey;
         }
-        
+
         /// <summary>
         /// Get the derived account address for the twitter handle registry.
         /// </summary>
@@ -47,7 +48,7 @@ namespace Solnet.Examples
             PublicKey nameAccountKey = NameServiceProgram.DeriveNameAccountKey(hashedName, null, TwitterRootParentRegistryKey);
             return nameAccountKey;
         }
-        
+
         public void Run()
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
@@ -55,12 +56,12 @@ namespace Solnet.Examples
             var blockHash = rpcClient.GetRecentBlockHash();
             var minBalanceForExemptionNameAcc =
                 rpcClient.GetMinimumBalanceForRentExemption(NameServiceProgram.NameAccountSize + 96).Result;
-            
+
             Console.WriteLine($"MinBalanceForRentExemption NameAccount >> {minBalanceForExemptionNameAcc}");
             var minBalanceForExemptionNameReverseRegistry =
-                rpcClient.GetMinimumBalanceForRentExemption(96+18).Result;
+                rpcClient.GetMinimumBalanceForRentExemption(96 + 18).Result;
             Console.WriteLine($"MinBalanceForRentExemption ReverseRegistry >> {minBalanceForExemptionNameReverseRegistry}");
-            
+
             var payerAccount = wallet.GetAccount(10);
             var ownerAccount = wallet.GetAccount(152);
             Console.WriteLine($"PayerAccount: {payerAccount.PublicKey.Key}");
@@ -75,26 +76,22 @@ namespace Solnet.Examples
             var reverseRegistry = GetReverseRegistryKey(ownerAccount.PublicKey.Key);
             Console.WriteLine($"ReverseRegistryKey: {reverseRegistry.Key}");
 
-            var tx = new TransactionBuilder().
-                SetRecentBlockHash(blockHash.Result.Value.Blockhash).
-                SetFeePayer(payerAccount).
-                AddInstruction(
+            var tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
+                .SetFeePayer(payerAccount).AddInstruction(
                     NameServiceProgram.CreateNameRegistry(
-                        twitterHandleRegistry, 
+                        twitterHandleRegistry,
                         payerAccount,
                         ownerAccount.PublicKey,
-                        minBalanceForExemptionNameReverseRegistry, 
+                        minBalanceForExemptionNameReverseRegistry,
                         NameServiceProgram.NameAccountSize + 96)
-                ).
-                AddInstruction(
-                    NameServiceProgram.CreateNameRegistry(
-                        reverseRegistry, 
-                        payerAccount,
-                        ownerAccount.PublicKey, 
-                        minBalanceForExemptionNameReverseRegistry, 
-                        96+18)
-                ).
-                AddInstruction(MemoProgram.NewMemo(payerAccount, "Hello from Sol.Net")).Build();
+                ).AddInstruction(
+                    NameServiceProgram.UpdateNameRegistry(
+                        reverseRegistry,
+                        125,
+                        new byte[] { 0, 0, 1, 1 },
+                        ownerAccount.PublicKey,
+                        (PublicKey)"8ZhEweTBhjTVzuRyoJteCqNU7AiHdpYTfreD1y9FvoFu")
+                ).AddInstruction(MemoProgram.NewMemo(payerAccount, "Hello from Sol.Net")).CompileMessage();
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 

@@ -17,7 +17,7 @@ namespace Solnet.Programs.Test
 
         [TestMethod]
         public void WriteEncodingTest()
-        { 
+        {
             var wallet = new Wallet.Wallet(MnemonicWords);
             var payload = Encoding.UTF8.GetBytes("Hello World!");
             var fromAccount = wallet.GetAccount(0);

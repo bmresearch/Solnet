@@ -1,5 +1,6 @@
 ﻿// ReSharper disable ClassNeverInstantiated.Global
 using System;
+using System.Globalization;
 
 namespace Solnet.Rpc.Models
 {
@@ -30,9 +31,9 @@ namespace Solnet.Rpc.Models
         public string Delegate { get; set; }
 
         /// <summary>
-        /// The delegated amount of tokens.
+        /// The token balance that has been delegated.
         /// </summary>
-        public ulong DelegatedAmount { get; set; }
+        public TokenBalance DelegatedAmount { get; set; }
 
         /// <summary>
         /// The account's state.
@@ -140,5 +141,20 @@ namespace Solnet.Rpc.Models
         /// The token account balance as a string, using mint-prescribed decimals.
         /// </summary>
         public string UiAmountString { get; set; }
+
+        /// <summary>
+        /// The token account balance as a ulong
+        /// </summary>
+        public ulong AmountUlong => Convert.ToUInt64(Amount);
+
+        /// <summary>
+        /// The token account balance as a decimal
+        /// </summary>
+        public decimal AmountDecimal => Convert.ToDecimal(UiAmountString, CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// The token account balance as a double
+        /// </summary>
+        public double AmountDouble => Convert.ToDouble(UiAmountString, CultureInfo.InvariantCulture);
     }
 }

@@ -27,7 +27,7 @@ namespace Solnet.Rpc
         /// <param name="pubKey">The account public key.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>A task which may return a request result holding the context and account info.</returns>
-        Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey, 
+        Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey,
             Commitment commitment = Commitment.Finalized);
 
         /// <summary>
@@ -64,26 +64,98 @@ namespace Solnet.Rpc
         RequestResult<ResponseValue<ulong>> GetBalance(string pubKey, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
-        /// Returns identity and transaction information about a confirmed block in the ledger.
+        /// Returns identity and transaction information about a block in the ledger.
         /// <remarks>
-        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// <para>
+        /// The <c>commitment</c> parameter is optional, <see cref="Commitment.Processed"/> is not supported,
+        /// the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </para>
+        /// <para>
+        /// The <c>transactionDetails</c> parameter is optional, the default value <see cref="TransactionDetailsFilterType.Full"/> is not sent.
+        /// </para>
+        /// <para>
+        /// The <c>blockRewards</c> parameter is optional, the default value, <c>false</c>, is not sent.
+        /// </para>
         /// </remarks>
         /// </summary>
         /// <param name="slot">The slot.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <param name="transactionDetails">The level of transaction detail to return, see <see cref="TransactionDetailsFilterType"/>.</param>
+        /// <param name="blockRewards">Whether to populate the <c>rewards</c> array, the default includes rewards.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<BlockInfo>> GetBlockAsync(ulong slot, Commitment commitment = Commitment.Finalized);
+        Task<RequestResult<BlockInfo>> GetBlockAsync(ulong slot, Commitment commitment = Commitment.Finalized,
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false);
 
         /// <summary>
         /// Returns identity and transaction information about a confirmed block in the ledger.
         /// <remarks>
-        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// <para>
+        /// The <c>commitment</c> parameter is optional, <see cref="Commitment.Processed"/> is not supported,
+        /// the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </para>
+        /// <para>
+        /// The <c>transactionDetails</c> parameter is optional, the default value <see cref="TransactionDetailsFilterType.Full"/> is not sent.
+        /// </para>
+        /// <para>
+        /// The <c>blockRewards</c> parameter is optional, the default value, <c>false</c>, is not sent.
+        /// </para>
         /// </remarks>
         /// </summary>
         /// <param name="slot">The slot.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <param name="transactionDetails">The level of transaction detail to return, see <see cref="TransactionDetailsFilterType"/>.</param>
+        /// <param name="blockRewards">Whether to populate the <c>rewards</c> array, the default includes rewards.</param>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        [Obsolete("Please use GetBlockAsync whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        Task<RequestResult<BlockInfo>> GetConfirmedBlockAsync(ulong slot, Commitment commitment = Commitment.Finalized,
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false);
+
+        /// <summary>
+        /// Returns identity and transaction information about a block in the ledger.
+        /// <remarks>
+        /// <para>
+        /// The <c>commitment</c> parameter is optional, <see cref="Commitment.Processed"/> is not supported,
+        /// the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </para>
+        /// <para>
+        /// The <c>transactionDetails</c> parameter is optional, the default value <see cref="TransactionDetailsFilterType.Full"/> is not sent.
+        /// </para>
+        /// <para>
+        /// The <c>blockRewards</c> parameter is optional, the default value, <c>false</c>, is not sent.
+        /// </para>
+        /// </remarks>
+        /// </summary>
+        /// <param name="slot">The slot.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <param name="transactionDetails">The level of transaction detail to return, see <see cref="TransactionDetailsFilterType"/>.</param>
+        /// <param name="blockRewards">Whether to populate the <c>rewards</c> array, the default includes rewards.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<BlockInfo> GetBlock(ulong slot, Commitment commitment = Commitment.Finalized);
+        RequestResult<BlockInfo> GetBlock(ulong slot, Commitment commitment = Commitment.Finalized,
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false);
+
+        /// <summary>
+        /// Returns identity and transaction information about a confirmed block in the ledger.
+        /// <remarks>
+        /// <para>
+        /// The <c>commitment</c> parameter is optional, <see cref="Commitment.Processed"/> is not supported,
+        /// the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </para>
+        /// <para>
+        /// The <c>transactionDetails</c> parameter is optional, the default value <see cref="TransactionDetailsFilterType.Full"/> is not sent.
+        /// </para>
+        /// <para>
+        /// The <c>blockRewards</c> parameter is optional, the default value, <c>false</c>, is not sent.
+        /// </para>
+        /// </remarks>
+        /// </summary>
+        /// <param name="slot">The slot.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <param name="transactionDetails">The level of transaction detail to return, see <see cref="TransactionDetailsFilterType"/>.</param>
+        /// <param name="blockRewards">Whether to populate the <c>rewards</c> array, the default includes rewards.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        [Obsolete("Please use GetBlock whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        RequestResult<BlockInfo> GetConfirmedBlock(ulong slot, Commitment commitment = Commitment.Finalized,
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false);
 
         /// <summary>
         /// Gets the block commitment of a certain block, identified by slot.
@@ -142,7 +214,7 @@ namespace Solnet.Rpc
             ulong? firstSlot = null, ulong? lastSlot = null, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
-        /// Returns a list of confirmed blocks between two slots.
+        /// Returns a list of blocks between two slots.
         /// </summary>
         /// <param name="startSlot">The start slot (inclusive).</param>
         /// <param name="endSlot">The start slot (inclusive and optional).</param>
@@ -154,12 +226,44 @@ namespace Solnet.Rpc
         /// <summary>
         /// Returns a list of confirmed blocks between two slots.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The <c>commitment</c> parameter is optional, <see cref="Commitment.Processed"/> is not supported,
+        /// the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </para>
+        /// </remarks>
+        /// <param name="startSlot">The start slot (inclusive).</param>
+        /// <param name="endSlot">The start slot (inclusive and optional).</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        [Obsolete("Please use GetBlocksAsync whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        Task<RequestResult<List<ulong>>> GetConfirmedBlocksAsync(ulong startSlot, ulong endSlot = 0, Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Returns a list of blocks between two slots.
+        /// </summary>
         /// <param name="startSlot">The start slot (inclusive).</param>
         /// <param name="endSlot">The start slot (inclusive and optional).</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<List<ulong>> GetBlocks(ulong startSlot, ulong endSlot = 0,
             Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Returns a list of confirmed blocks between two slots.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The <c>commitment</c> parameter is optional, <see cref="Commitment.Processed"/> is not supported,
+        /// the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </para>
+        /// </remarks>
+        /// <param name="startSlot">The start slot (inclusive).</param>
+        /// <param name="endSlot">The start slot (inclusive and optional).</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        [Obsolete("Please use GetBlocks whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        RequestResult<List<ulong>> GetConfirmedBlocks(ulong startSlot, ulong endSlot = 0, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Returns a list of confirmed blocks starting at the given slot.
@@ -177,9 +281,31 @@ namespace Solnet.Rpc
         /// <param name="startSlot">The start slot (inclusive).</param>
         /// <param name="limit">The max number of blocks to return.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        [Obsolete("Please use GetBlocksWithLimitAsync whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        Task<RequestResult<List<ulong>>> GetConfirmedBlocksWithLimitAsync(ulong startSlot,
+            ulong limit, Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Returns a list of confirmed blocks starting at the given slot.
+        /// </summary>
+        /// <param name="startSlot">The start slot (inclusive).</param>
+        /// <param name="limit">The max number of blocks to return.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<List<ulong>> GetBlocksWithLimit(ulong startSlot, ulong limit,
             Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Returns a list of confirmed blocks starting at the given slot.
+        /// </summary>
+        /// <param name="startSlot">The start slot (inclusive).</param>
+        /// <param name="limit">The max number of blocks to return.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        [Obsolete("Please use GetBlocksWithLimit whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        RequestResult<List<ulong>> GetConfirmedBlocksWithLimit(ulong startSlot,
+            ulong limit, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Gets the estimated production time for a certain block, identified by slot.
@@ -497,23 +623,27 @@ namespace Solnet.Rpc
 
         /// <summary>
         /// Returns all accounts owned by the provided program Pubkey.
+        /// <remarks>Accounts must meet all filter criteria to be included in the results.</remarks>
         /// </summary>
         /// <param name="pubKey">The program public key.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
-        /// <param name="dataSize">The data size of the account.</param>
+        /// <param name="dataSize">The data size of the account to compare against the program account data.</param>
+        /// <param name="memCmpList">The list of comparisons to match against the program account data.</param>
         /// <returns>A task which may return a request result holding the context and account info.</returns>
         Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey, Commitment commitment = Commitment.Finalized,
-            int? dataSize = null);
+            int? dataSize = null, IList<MemCmp> memCmpList = null);
 
         /// <summary>
         /// Returns all accounts owned by the provided program Pubkey.
+        /// <remarks>Accounts must meet all filter criteria to be included in the results.</remarks>
         /// </summary>
         /// <param name="pubKey">The program public key.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
-        /// <param name="dataSize">The data size of the account.</param>
+        /// <param name="dataSize">The data size of the account to compare against the program account data.</param>
+        /// <param name="memCmpList">The list of comparisons to match against the program account data.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey, Commitment commitment = Commitment.Finalized,
-            int? dataSize = null);
+            int? dataSize = null, IList<MemCmp> memCmpList = null);
 
         /// <summary>
         /// Gets a recent block hash.
@@ -550,7 +680,7 @@ namespace Solnet.Rpc
         RequestResult<List<PerformanceSample>> GetRecentPerformanceSamples(ulong limit = 720);
 
         /// <summary>
-        /// Gets confirmed signatures for transactions involving the address.
+        /// Gets signatures with the given commitment for transactions involving the address.
         /// <remarks>
         /// Unless <c>searchTransactionHistory</c> is included, this method only searches the recent status cache of signatures.
         /// </remarks>
@@ -575,8 +705,40 @@ namespace Solnet.Rpc
         /// <param name="before">Start searching backwards from this transaction signature.</param>
         /// <param name="until">Search until this transaction signature, if found before limit is reached.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        [Obsolete("Please use GetSignaturesForAddressAsync whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        Task<RequestResult<List<SignatureStatusInfo>>> GetConfirmedSignaturesForAddress2Async(string accountPubKey, ulong limit = 1000,
+            string before = null, string until = null, Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Gets signatures with the given commitment for transactions involving the address.
+        /// <remarks>
+        /// Unless <c>searchTransactionHistory</c> is included, this method only searches the recent status cache of signatures.
+        /// </remarks>
+        /// </summary>
+        /// <param name="accountPubKey">The account address as base-58 encoded string.</param>
+        /// <param name="limit">Maximum transaction signatures to return, between 1-1000. Default is 1000.</param>
+        /// <param name="before">Start searching backwards from this transaction signature.</param>
+        /// <param name="until">Search until this transaction signature, if found before limit is reached.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<List<SignatureStatusInfo>> GetSignaturesForAddress(string accountPubKey, ulong limit = 1000,
+            string before = null, string until = null, Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Gets confirmed signatures for transactions involving the address.
+        /// <remarks>
+        /// Unless <c>searchTransactionHistory</c> is included, this method only searches the recent status cache of signatures.
+        /// </remarks>
+        /// </summary>
+        /// <param name="accountPubKey">The account address as base-58 encoded string.</param>
+        /// <param name="limit">Maximum transaction signatures to return, between 1-1000. Default is 1000.</param>
+        /// <param name="before">Start searching backwards from this transaction signature.</param>
+        /// <param name="until">Search until this transaction signature, if found before limit is reached.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        [Obsolete("Please use GetSignaturesForAddress whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        RequestResult<List<SignatureStatusInfo>> GetConfirmedSignaturesForAddress2(string accountPubKey, ulong limit = 1000,
             string before = null, string until = null, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
@@ -764,7 +926,7 @@ namespace Solnet.Rpc
         /// <param name="tokenMintPubKey">Public key of Token Mint to query, as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<ResponseValue<List<LargeTokenAccount>>>> GetTokenLargestAccountsAsync(string tokenMintPubKey, 
+        Task<RequestResult<ResponseValue<List<LargeTokenAccount>>>> GetTokenLargestAccountsAsync(string tokenMintPubKey,
             Commitment commitment = Commitment.Finalized);
 
         /// <summary>
@@ -773,7 +935,7 @@ namespace Solnet.Rpc
         /// <param name="tokenMintPubKey">Public key of Token Mint to query, as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<ResponseValue<List<LargeTokenAccount>>> GetTokenLargestAccounts(string tokenMintPubKey, 
+        RequestResult<ResponseValue<List<LargeTokenAccount>>> GetTokenLargestAccounts(string tokenMintPubKey,
             Commitment commitment = Commitment.Finalized);
 
         /// <summary>
@@ -782,7 +944,7 @@ namespace Solnet.Rpc
         /// <param name="tokenMintPubKey">Public key of Token Mint to query, as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<ResponseValue<TokenBalance>>> GetTokenSupplyAsync(string tokenMintPubKey, 
+        Task<RequestResult<ResponseValue<TokenBalance>>> GetTokenSupplyAsync(string tokenMintPubKey,
             Commitment commitment = Commitment.Finalized);
 
         /// <summary>
@@ -795,8 +957,14 @@ namespace Solnet.Rpc
 
         /// <summary>
         /// Returns transaction details for a confirmed transaction.
+        /// <remarks>
+        /// <para>
+        /// The <c>commitment</c> parameter is optional, <see cref="Commitment.Processed"/> is not supported,
+        /// the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </para>
+        /// </remarks>
         /// </summary>
-        /// <param name="signature">ransaction signature as base-58 encoded string.</param>
+        /// <param name="signature">Transaction signature as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
         Task<RequestResult<TransactionMetaSlotInfo>> GetTransactionAsync(string signature,
@@ -804,11 +972,47 @@ namespace Solnet.Rpc
 
         /// <summary>
         /// Returns transaction details for a confirmed transaction.
+        /// <remarks>
+        /// <para>
+        /// The <c>commitment</c> parameter is optional, <see cref="Commitment.Processed"/> is not supported,
+        /// the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </para>
+        /// </remarks>
+        /// </summary>
+        /// <param name="signature">Transaction signature as base-58 encoded string.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        [Obsolete("Please use GetTransactionAsync whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        Task<RequestResult<TransactionMetaSlotInfo>> GetConfirmedTransactionAsync(string signature, Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Returns transaction details for a confirmed transaction.
+        /// <remarks>
+        /// <para>
+        /// The <c>commitment</c> parameter is optional, <see cref="Commitment.Processed"/> is not supported,
+        /// the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </para>
+        /// </remarks>
         /// </summary>
         /// <param name="signature">Transaction signature as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature, Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Returns transaction details for a confirmed transaction.
+        /// <remarks>
+        /// <para>
+        /// The <c>commitment</c> parameter is optional, <see cref="Commitment.Processed"/> is not supported,
+        /// the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </para>
+        /// </remarks>
+        /// </summary>
+        /// <param name="signature">Transaction signature as base-58 encoded string.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        [Obsolete("Please use GetTransaction whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        RequestResult<TransactionMetaSlotInfo> GetConfirmedTransaction(string signature, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Gets the total transaction count of the ledger.
@@ -885,7 +1089,7 @@ namespace Solnet.Rpc
         /// <param name="skipPreflight">If true skip the prflight transaction checks (default false).</param>
         /// <param name="preFlightCommitment">The block commitment used for preflight.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<string>> SendTransactionAsync(string transaction, bool skipPreflight = false, 
+        Task<RequestResult<string>> SendTransactionAsync(string transaction, bool skipPreflight = false,
             Commitment preFlightCommitment = Commitment.Finalized);
 
         /// <summary>
@@ -915,7 +1119,7 @@ namespace Solnet.Rpc
         /// <param name="skipPreflight">If true skip the prflight transaction checks (default false).</param>
         /// <param name="commitment">The block commitment used to retrieve block hashes and verify success.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<string> SendTransaction(byte[] transaction, bool skipPreflight = false, 
+        RequestResult<string> SendTransaction(byte[] transaction, bool skipPreflight = false,
             Commitment commitment = Commitment.Finalized);
 
         /// <summary>
@@ -929,7 +1133,7 @@ namespace Solnet.Rpc
         /// (default false, conflicts with <c>sigVerify</c></param>
         /// <param name="accountsToReturn">List of accounts to return, as base-58 encoded strings.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        Task<RequestResult<ResponseValue<SimulationLogs>>> SimulateTransactionAsync(string transaction, bool sigVerify = false, 
+        Task<RequestResult<ResponseValue<SimulationLogs>>> SimulateTransactionAsync(string transaction, bool sigVerify = false,
             Commitment commitment = Commitment.Finalized, bool replaceRecentBlockhash = false, IList<string> accountsToReturn = null);
 
         /// <summary>

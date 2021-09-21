@@ -66,6 +66,23 @@ namespace Solnet.Wallet.Test
         private const string ExpectedEncodedPublicKey = "ALSzrjtGi8MZGmAZa6ZhtUZq3rwurWuJqWFdgcj9MMFL";
         private const string ExpectedEncodedPrivateKey = "5ZD7ntKtyHrnqMhfSuKBLdqHzT5N3a2aYnCGBcz4N78b84TKpjwQ4QBsapEnpnZFchM7F1BpqDkSuLdwMZwM8hLi";
 
+        private const string PrivateKeyString = "c1BzdtL4RByNQnzcaUq3WuNLuyY4tQogGT7JWwy4YGBE8FGSgWUH8eNJFyJgXNYtwTKq4emhC4V132QX9REwujm";
+        private static readonly byte[] ExpectedPrivateKeyBytes =
+        {
+            30, 47, 124, 64, 115, 181, 108, 148, 133, 204, 66, 60, 190,
+            64, 208, 182, 169, 19, 112, 20, 186, 227, 179, 134, 96, 155,
+            90, 163, 54, 6, 152, 33, 123, 172, 114, 217, 192, 233, 194,
+            40, 233, 234, 173, 25, 163, 56, 237, 112, 216, 151, 21, 209,
+            120, 79, 46, 85, 162, 195, 155, 97, 136, 88, 16, 64
+        };
+        private const string PublicKeyString = "9KmfMX4Ne5ocb8C7PwjmJTWTpQTQcPhkeD2zY35mawhq";
+        private static readonly byte[] ExpectedPublicKeyBytes =
+        {
+            123, 172, 114, 217, 192, 233, 194, 40, 233, 234, 173, 25,
+            163, 56, 237, 112, 216, 151, 21, 209, 120, 79, 46, 85,
+            162, 195, 155, 97, 136, 88, 16, 64
+        };
+
         [TestMethod]
         public void TestAccountNoKeys()
         {
@@ -131,6 +148,48 @@ namespace Solnet.Wallet.Test
             CollectionAssert.AreEqual(PrivateKey, account.PrivateKey.KeyBytes);
             CollectionAssert.AreEqual(PublicKey, account.PublicKey.KeyBytes);
             Assert.IsTrue(account.Verify(SerializedMessage, SerializedMessageSignature));
+        }
+
+        [TestMethod]
+        public void TestAccountInitFromPair()
+        {
+            var account = new Account(PrivateKeyString, PublicKeyString);
+
+            CollectionAssert.AreEqual(ExpectedPrivateKeyBytes, account.PrivateKey.KeyBytes);
+            CollectionAssert.AreEqual(ExpectedPublicKeyBytes, account.PublicKey.KeyBytes);
+        }
+
+        [TestMethod]
+        public void TestAccountToString()
+        {
+            var account = new Account(PrivateKeyString, PublicKeyString);
+
+            Assert.AreEqual(PublicKeyString, account.ToString());
+        }
+
+        [TestMethod]
+        public void TestImplicitPrivateKeyOperator()
+        {
+            Account pk = new(PrivateKeyString, PublicKeyString);
+            byte[] pkBytes = TestImplicitPrivateKeyOperator(pk);
+            Assert.IsInstanceOfType(pkBytes, typeof(byte[]));
+        }
+
+        [TestMethod]
+        public void TestImplicitPublicKeyOperator()
+        {
+            Account pk = new(PrivateKeyString, PublicKeyString);
+            byte[] pkBytes = testImplicitPublicKeyOperator(pk);
+            Assert.IsInstanceOfType(pkBytes, typeof(byte[]));
+        }
+
+        private static PrivateKey TestImplicitPrivateKeyOperator(PrivateKey key)
+        {
+            return key;
+        }
+        private static PublicKey testImplicitPublicKeyOperator(PublicKey key)
+        {
+            return key;
         }
     }
 }

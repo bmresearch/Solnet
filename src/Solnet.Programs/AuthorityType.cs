@@ -8,21 +8,21 @@ namespace Solnet.Programs
         /// <summary>
         /// Authority to mint new tokens.
         /// </summary>
-        MintTokens = 1,
-        
+        MintTokens = 0,
+
         /// <summary>
         /// Authority to freeze any account associated with the mint.
         /// </summary>
-        FreezeAccount = 2,
-        
+        FreezeAccount = 1,
+
         /// <summary>
         /// Owner of a given account token.
         /// </summary>
-        AccountOwner = 3,
-        
+        AccountOwner = 2,
+
         /// <summary>
         /// Authority to close a given account.
         /// </summary>
-        CloseAccount = 4,
+        CloseAccount = 3,
     }
 }

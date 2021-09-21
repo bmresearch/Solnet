@@ -17,7 +17,7 @@ namespace Solnet.Rpc.Core.Http
 
         internal static KeyValue Create(string key, object value)
         {
-            if(value != null)
+            if (value != null)
             {
                 return new KeyValue(key, value);
             }
@@ -39,11 +39,11 @@ namespace Solnet.Rpc.Core.Http
             return null;
         }
 
-        internal static Dictionary<string, object> Create(KeyValue pair1, KeyValue pair2) 
+        internal static Dictionary<string, object> Create(KeyValue pair1, KeyValue pair2)
         {
             var dict = Create(pair1) ?? new Dictionary<string, object>();
 
-            if(pair2 != null)
+            if (pair2 != null)
             {
                 dict.Add(pair2.Item1, pair2.Item2);
             }
@@ -51,11 +51,11 @@ namespace Solnet.Rpc.Core.Http
             return dict.Count > 0 ? dict : null;
         }
 
-        internal static Dictionary<string, object> Create(KeyValue pair1, KeyValue pair2, KeyValue pair3) 
+        internal static Dictionary<string, object> Create(KeyValue pair1, KeyValue pair2, KeyValue pair3)
         {
             var dict = Create(pair1, pair2) ?? new Dictionary<string, object>();
 
-            if(pair3 != null)
+            if (pair3 != null)
             {
                 dict.Add(pair3.Item1, pair3.Item2);
             }
@@ -63,11 +63,11 @@ namespace Solnet.Rpc.Core.Http
             return dict.Count > 0 ? dict : null;
         }
 
-        internal static Dictionary<string, object> Create(KeyValue pair1, KeyValue pair2, KeyValue pair3, KeyValue pair4) 
+        internal static Dictionary<string, object> Create(KeyValue pair1, KeyValue pair2, KeyValue pair3, KeyValue pair4)
         {
             var dict = Create(pair1, pair2, pair3) ?? new Dictionary<string, object>();
 
-            if(pair4 != null)
+            if (pair4 != null)
             {
                 dict.Add(pair4.Item1, pair4.Item2);
             }
@@ -75,11 +75,11 @@ namespace Solnet.Rpc.Core.Http
             return dict.Count > 0 ? dict : null;
         }
 
-        internal static Dictionary<string, object> Create(KeyValue pair1, KeyValue pair2, KeyValue pair3, KeyValue pair4, KeyValue pair5) 
+        internal static Dictionary<string, object> Create(KeyValue pair1, KeyValue pair2, KeyValue pair3, KeyValue pair4, KeyValue pair5)
         {
             var dict = Create(pair1, pair2, pair3, pair4) ?? new Dictionary<string, object>();
 
-            if(pair5 != null)
+            if (pair5 != null)
             {
                 dict.Add(pair5.Item1, pair5.Item2);
             }
@@ -95,7 +95,7 @@ namespace Solnet.Rpc.Core.Http
     {
         internal static List<object> Create(object val1)
         {
-            if(val1 != null)
+            if (val1 != null)
             {
                 return new List<object> { val1 };
             }
@@ -105,7 +105,7 @@ namespace Solnet.Rpc.Core.Http
         internal static List<object> Create(object val1, object val2)
         {
             var list = Create(val1) ?? new List<object>();
-            if(val2 != null)
+            if (val2 != null)
             {
                 list.Add(val2);
             }
@@ -115,7 +115,7 @@ namespace Solnet.Rpc.Core.Http
         internal static List<object> Create(object val1, object val2, object val3)
         {
             var list = Create(val1, val2) ?? new List<object>();
-            if(val3 != null)
+            if (val3 != null)
             {
                 list.Add(val3);
             }

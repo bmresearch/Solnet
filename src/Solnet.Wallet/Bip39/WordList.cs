@@ -24,7 +24,7 @@ namespace Solnet.Wallet.Bip39
         /// The japanese word list.
         /// </summary>
         private static WordList _japanese;
-        
+
         /// <summary>
         /// The japanese word list.
         /// </summary>
@@ -34,17 +34,17 @@ namespace Solnet.Wallet.Bip39
         /// The simplified chinese word list.
         /// </summary>
         private static WordList _chineseSimplified;
-        
+
         /// <summary>
         /// The simplified chinese word list.
         /// </summary>
         public static WordList ChineseSimplified => _chineseSimplified ??= LoadWordList(Language.ChineseSimplified).Result;
-        
+
         /// <summary>
         /// The traditional chinese word list.
         /// </summary>
         private static WordList _chineseTraditional;
-        
+
         /// <summary>
         /// The traditional chinese word list.
         /// </summary>
@@ -54,7 +54,7 @@ namespace Solnet.Wallet.Bip39
         /// The spanish word list.
         /// </summary>
         private static WordList _spanish;
-        
+
         /// <summary>
         /// The spanish word list.
         /// </summary>
@@ -64,7 +64,7 @@ namespace Solnet.Wallet.Bip39
         /// The english word list.
         /// </summary>
         private static WordList _english;
-        
+
         /// <summary>
         /// The english word list.
         /// </summary>
@@ -74,7 +74,7 @@ namespace Solnet.Wallet.Bip39
         /// The french word list.
         /// </summary>
         private static WordList _french;
-        
+
         /// <summary>
         /// The french word list.
         /// </summary>
@@ -84,7 +84,7 @@ namespace Solnet.Wallet.Bip39
         /// The brazilian portuguese word list.
         /// </summary>
         private static WordList _portugueseBrazil;
-        
+
         /// <summary>
         /// The brazilian portuguese word list.
         /// </summary>
@@ -94,7 +94,7 @@ namespace Solnet.Wallet.Bip39
         /// The czech word list.
         /// </summary>
         private static WordList _czech;
-        
+
         /// <summary>
         /// The czech word list.
         /// </summary>
@@ -138,8 +138,8 @@ namespace Solnet.Wallet.Bip39
         /// <summary>
         /// The loaded word lists.
         /// </summary>
-        private static readonly Dictionary<string, WordList> LoadedLists = new ();
-        
+        private static readonly Dictionary<string, WordList> LoadedLists = new();
+
         /// <summary>
         /// Loads a word list by name.
         /// </summary>
@@ -162,13 +162,13 @@ namespace Solnet.Wallet.Bip39
             if (WordlistSource == null)
                 throw new InvalidOperationException("WordList.WordlistSource is not initialized, could not fetch word list.");
             result = await WordlistSource.LoadAsync(name).ConfigureAwait(false);
-            
+
             if (result != null)
                 lock (LoadedLists)
                 {
                     LoadedLists.AddOrReplace(name, result);
                 }
-            
+
             return result;
         }
 
@@ -241,7 +241,7 @@ namespace Solnet.Wallet.Bip39
         /// The number of all the words in the wordlist
         /// </summary>
         public int WordCount => _words.Length;
-        
+
         /// <summary>
         /// Auto detects the language of the word list.
         /// </summary>
@@ -259,7 +259,7 @@ namespace Solnet.Wallet.Bip39
         /// <returns>The language.</returns>
         public static Language AutoDetectLanguage(IEnumerable<string> words)
         {
-            List<int> languageCount = new (new [] { 0, 0, 0, 0, 0, 0, 0, 0 });
+            List<int> languageCount = new(new[] { 0, 0, 0, 0, 0, 0, 0, 0 });
 
             foreach (string s in words)
             {
@@ -415,7 +415,7 @@ namespace Solnet.Wallet.Bip39
         {
             if (values.Any(v => v >= 2048))
                 throw new ArgumentException("values should be between 0 and 2048", nameof(values));
-            BitArray result = new (values.Length * 11);
+            BitArray result = new(values.Length * 11);
             int i = 0;
             foreach (int val in values)
             {
