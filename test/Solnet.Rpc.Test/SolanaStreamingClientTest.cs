@@ -158,7 +158,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(99118135UL, resultNotification.Context.Slot);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", resultNotification.Value.Owner);
             Assert.AreEqual("F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV", resultNotification.Value.Data.Parsed.Info.Owner);
-            Assert.AreEqual(9830001302037UL, resultNotification.Value.Data.Parsed.Info.TokenAmount.Amount);
+            Assert.AreEqual("9830001302037", resultNotification.Value.Data.Parsed.Info.TokenAmount.Amount);
             Assert.AreEqual("9830001.302037", resultNotification.Value.Data.Parsed.Info.TokenAmount.UiAmountString);
             Assert.AreEqual(6, resultNotification.Value.Data.Parsed.Info.TokenAmount.Decimals);
             Assert.AreEqual(2039280UL, resultNotification.Value.Lamports);

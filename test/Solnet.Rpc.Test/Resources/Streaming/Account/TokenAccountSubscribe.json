@@ -1,9 +1,1 @@
-{
-  "method": "accountSubscribe",
-  "params": [
-    "8CFo8bL8mZQK8abbFyypFMwEDd8tVJjHTTojMLgQTUSZ",
-    { "encoding": "jsonParsed" }
-  ],
-  "jsonrpc": "2.0",
-  "id": 0
-}
+{"method":"accountSubscribe","params":["CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12",{"encoding":"jsonParsed"}],"jsonrpc":"2.0","id":0}
