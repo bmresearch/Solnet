@@ -7,7 +7,7 @@ using System;
 
 namespace Solnet.Examples
 {
-    class HelloWorldExample : IExample
+    public class HelloWorldExample : IExample
     {
         public void Run()
         {

@@ -81,6 +81,8 @@ namespace Solnet.Rpc
             bool handled = false;
             bool? boolResult = null;
 
+            Utf8JsonReader savedState = default;
+
             while (!handled && jsonReader.Read())
             {
                 switch (jsonReader.TokenType)
@@ -89,8 +91,10 @@ namespace Solnet.Rpc
                         prop = jsonReader.GetString();
                         if (prop == "params")
                         {
-                            HandleDataMessage(ref jsonReader, method);
-                            handled = true;
+                            savedState = jsonReader;
+                            jsonReader.Read();
+                            jsonReader.Read();
+                            jsonReader.Skip();
                         }
                         else if (prop == "error")
                         {
@@ -112,6 +116,12 @@ namespace Solnet.Rpc
                         else if (prop == "result")
                         {
                             intResult = jsonReader.GetInt32();
+                        }
+                        else if (prop == "subscription")
+                        {
+                            id = jsonReader.GetInt32();
+                            HandleDataMessage(ref savedState, method, id);
+                            handled = true;
                         }
                         if (id != -1 && intResult != -1)
                         {
@@ -253,44 +263,55 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="reader">The current JsonReader being used to parse the message.</param>
         /// <param name="method">The method parameter already parsed within the message.</param>
-        private void HandleDataMessage(ref Utf8JsonReader reader, string method)
+        private void HandleDataMessage(ref Utf8JsonReader reader, string method, int subscriptionId)
         {
             JsonSerializerOptions opts = new JsonSerializerOptions() { MaxDepth = 64, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
+            var sub = RetrieveSubscription(subscriptionId);
+
+            object result = null;
 
             switch (method)
             {
                 case "accountNotification":
-                    var accNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<AccountInfo>>>(ref reader, opts);
-                    if (accNotification == null) break;
-                    NotifyData(accNotification.Subscription, accNotification.Result);
-                    break;
+                    {
+                        if (sub.Channel == SubscriptionChannel.TokenAccount)
+                        {
+                            //var newReader = new Utf8JsonReader()
+                            var tokenAccNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<TokenAccountInfo>>>(ref reader, opts);
+                            result = tokenAccNotification.Result;
+                        }
+                        else
+                        {
+                            var accNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<AccountInfo>>>(ref reader, opts);
+                            result = accNotification.Result;
+                        }
+                        break;
+                    }
                 case "logsNotification":
                     var logsNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<LogInfo>>>(ref reader, opts);
-                    if (logsNotification == null) break;
-                    NotifyData(logsNotification.Subscription, logsNotification.Result);
+                    result = logsNotification.Result;
                     break;
                 case "programNotification":
                     var programNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<AccountKeyPair>>>(ref reader, opts);
-                    if (programNotification == null) break;
-                    NotifyData(programNotification.Subscription, programNotification.Result);
+                    result = programNotification.Result; 
                     break;
                 case "signatureNotification":
                     var signatureNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<ErrorResult>>>(ref reader, opts);
-                    if (signatureNotification == null) break;
-                    NotifyData(signatureNotification.Subscription, signatureNotification.Result);
+                    result = signatureNotification.Result;
                     RemoveSubscription(signatureNotification.Subscription, true);
                     break;
                 case "slotNotification":
                     var slotNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<SlotInfo>>(ref reader, opts);
-                    if (slotNotification == null) break;
-                    NotifyData(slotNotification.Subscription, slotNotification.Result);
+                    result = slotNotification.Result;
                     break;
                 case "rootNotification":
                     var rootNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<int>>(ref reader, opts);
-                    if (rootNotification == null) break;
-                    NotifyData(rootNotification.Subscription, rootNotification.Result);
+                    result = rootNotification.Result;
                     break;
             }
+
+            sub.HandleData(result);
         }
 
         /// <summary>
@@ -330,6 +351,33 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="IStreamingRpcClient.SubscribeAccountInfo(string, Action{SubscriptionState, ResponseValue{AccountInfo}}, Commitment)"/>
         public SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, Commitment commitment = Commitment.Finalized)
             => SubscribeAccountInfoAsync(pubkey, callback, commitment).Result;
+        #endregion
+
+        #region TokenAccount
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeTokenAccountAsync(string, Action{SubscriptionState, ResponseValue{TokenAccountInfo}}, Commitment)"/>
+        public async Task<SubscriptionState> SubscribeTokenAccountAsync(string pubkey, Action<SubscriptionState, ResponseValue<TokenAccountInfo>> callback, Commitment commitment = Commitment.Finalized)
+
+        {
+            var parameters = new List<object> { pubkey };
+            var configParams = new Dictionary<string, object> { { "encoding", "jsonParsed" } };
+
+            if (commitment != Commitment.Finalized)
+            {
+                configParams.Add("commitment", commitment);
+            }
+
+            parameters.Add(configParams);
+
+            var sub = new SubscriptionState<ResponseValue<TokenAccountInfo>>(this, SubscriptionChannel.TokenAccount, callback, parameters);
+
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "accountSubscribe", parameters);
+
+            return await Subscribe(sub, msg).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeAccountInfo(string, Action{SubscriptionState, ResponseValue{TokenAccountInfo}}, Commitment)"/>
+        public SubscriptionState SubscribeTokenAccount(string pubkey, Action<SubscriptionState, ResponseValue<TokenAccountInfo>> callback, Commitment commitment = Commitment.Finalized)
+            => SubscribeTokenAccountAsync(pubkey, callback, commitment).Result;
         #endregion
 
         #region Logs
