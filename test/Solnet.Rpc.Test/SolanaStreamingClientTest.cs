@@ -125,6 +125,46 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
+        public void SubscribeTokenAccountTest()
+        {
+            var expected = File.ReadAllText("Resources/Streaming/Account/TokenAccountSubscribe.json");
+            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            var notificationContents = File.ReadAllBytes("Resources/Streaming/Account/TokenAccountSubscribeNotification.json");
+            ResponseValue<TokenAccountInfo> resultNotification = null;
+            var result = new ReadOnlyMemory<byte>();
+
+            SetupAction(out Action<SubscriptionState, ResponseValue<TokenAccountInfo>> action,
+                (x) => resultNotification = x,
+                (x) => result = x,
+                subConfirmContent,
+                notificationContents);
+
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+
+            const string pubKey = "CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12";
+
+            sut.ConnectAsync().Wait();
+            _ = sut.SubscribeTokenAccount(pubKey, action);
+            _subConfirmEvent.Set();
+
+            _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
+                WebSocketMessageType.Text,
+                true,
+                It.IsAny<CancellationToken>()));
+            var res = Encoding.UTF8.GetString(result.Span);
+            Assert.AreEqual(expected, res);
+
+            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.AreEqual(99118135UL, resultNotification.Context.Slot);
+            Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", resultNotification.Value.Owner);
+            Assert.AreEqual("F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV", resultNotification.Value.Data.Parsed.Info.Owner);
+            Assert.AreEqual("9830001302037", resultNotification.Value.Data.Parsed.Info.TokenAmount.Amount);
+            Assert.AreEqual("9830001.302037", resultNotification.Value.Data.Parsed.Info.TokenAmount.UiAmountString);
+            Assert.AreEqual(6, resultNotification.Value.Data.Parsed.Info.TokenAmount.Decimals);
+            Assert.AreEqual(2039280UL, resultNotification.Value.Lamports);
+        }
+
+        [TestMethod]
         public void SubscribeAccountInfoTestProcessed()
         {
             var expected = File.ReadAllText("Resources/Streaming/Account/AccountSubscribeProcessed.json");

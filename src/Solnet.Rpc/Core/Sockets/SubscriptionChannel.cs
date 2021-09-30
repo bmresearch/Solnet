@@ -8,6 +8,10 @@
         /// <summary>
         /// Account subscription (<c>accountSubscribe</c>). 
         /// </summary>
+        TokenAccount,
+        /// <summary>
+        /// Account subscription (<c>accountSubscribe</c>). 
+        /// </summary>
         Account,
         /// <summary>
         /// Logs subscription (<c>logsSubscribe</c>). 

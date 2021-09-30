@@ -58,6 +58,30 @@ namespace Solnet.Rpc
         SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
+        /// Subscribes asynchronously to Token Account notifications. Note: Only works if the account is a Token Account.
+        /// </summary>
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
+        /// <param name="pubkey">The public key of the account.</param>
+        /// <param name="callback">The callback to handle data notifications.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>The task object representing the asynchronous operation.</returns>
+        Task<SubscriptionState> SubscribeTokenAccountAsync(string pubkey, Action<SubscriptionState, ResponseValue<TokenAccountInfo>> callback, Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Subscribes  to Token Account notifications. Note: Only works if the account is a Token Account.
+        /// </summary>
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
+        /// <param name="pubkey">The public key of the account.</param>
+        /// <param name="callback">The callback to handle data notifications.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns an object representing the state of the subscription.</returns>
+        SubscriptionState SubscribeTokenAccount(string pubkey, Action<SubscriptionState, ResponseValue<TokenAccountInfo>> callback, Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
         /// Subscribes asynchronously to the logs notifications that mention a given public key.
         /// </summary>
         /// <remarks>
