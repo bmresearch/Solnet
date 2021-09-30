@@ -314,18 +314,6 @@ namespace Solnet.Rpc
             sub.HandleData(result);
         }
 
-        /// <summary>
-        /// Notifies a given subscription of a new data payload.
-        /// </summary>
-        /// <param name="subscription">The subscription ID received.</param>
-        /// <param name="data">The parsed data payload to notify.</param>
-        private void NotifyData(int subscription, object data)
-        {
-            var sub = RetrieveSubscription(subscription);
-
-            sub.HandleData(data);
-        }
-
         #region AccountInfo
         /// <inheritdoc cref="IStreamingRpcClient.SubscribeAccountInfoAsync(string, Action{SubscriptionState, ResponseValue{AccountInfo}}, Commitment)"/>
         public async Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, Commitment commitment = Commitment.Finalized)
