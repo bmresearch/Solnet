@@ -78,6 +78,14 @@ namespace Solnet.Wallet
             return bytes;
         }
 
+        /// <inheritdoc cref="Equals(object)"/>
+        public override bool Equals(object obj)
+        {
+            if (obj is Account account) return account.PublicKey == this.PublicKey;
+
+            return false;
+        }
+
         /// <summary>
         /// Conversion between a <see cref="Account"/> object and the corresponding private key.
         /// </summary>

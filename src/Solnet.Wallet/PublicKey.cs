@@ -100,6 +100,14 @@ namespace Solnet.Wallet
             return Ed25519.Verify(signature, message, KeyBytes);
         }
 
+        /// <inheritdoc cref="Equals(object)"/>
+        public override bool Equals(object obj)
+        {
+            if (obj is PublicKey pk) return pk.Key == this.Key;
+
+            return false;
+        }
+
         /// <summary>
         /// Conversion between a <see cref="PublicKey"/> object and the corresponding base-58 encoded public key.
         /// </summary>
