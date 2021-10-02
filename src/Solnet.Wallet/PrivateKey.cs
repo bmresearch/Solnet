@@ -106,7 +106,7 @@ namespace Solnet.Wallet
         /// <inheritdoc cref="Equals(object)"/>
         public override bool Equals(object obj)
         {
-            if (obj is PublicKey pk) return pk.Key == this.Key;
+            if (obj is PrivateKey pk) return pk.Key == this.Key;
 
             return false;
         }
