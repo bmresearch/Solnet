@@ -103,6 +103,14 @@ namespace Solnet.Wallet
             return signature;
         }
 
+        /// <inheritdoc cref="Equals(object)"/>
+        public override bool Equals(object obj)
+        {
+            if (obj is PublicKey pk) return pk.Key == this.Key;
+
+            return false;
+        }
+
         /// <summary>
         /// Conversion between a <see cref="PrivateKey"/> object and the corresponding base-58 encoded private key.
         /// </summary>
