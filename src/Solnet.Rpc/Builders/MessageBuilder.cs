@@ -25,7 +25,7 @@ namespace Solnet.Rpc.Builders
         /// </summary>
         private MessageHeader _messageHeader;
 
-        /// <summary>with read-write accounts first and read-only accounts following.
+        /// <summary>
         /// The account keys list.
         /// </summary>
         private readonly AccountKeysList _accountKeysList;
@@ -73,9 +73,9 @@ namespace Solnet.Rpc.Builders
         }
 
         /// <summary>
-        /// 
+        /// Builds the message into the wire format.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The encoded message.</returns>
         internal byte[] Build()
         {
             if (RecentBlockHash == null && NonceInformation == null)
@@ -173,9 +173,9 @@ namespace Solnet.Rpc.Builders
         }
 
         /// <summary>
-        /// 
+        /// Gets the keys for the accounts present in the message.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The list of <see cref="AccountMeta"/>.</returns>
         private List<AccountMeta> GetAccountKeys()
         {
             List<AccountMeta> newList = new();
@@ -198,12 +198,11 @@ namespace Solnet.Rpc.Builders
         }
 
         /// <summary>
-        /// 
+        /// Finds the index of the given public key in the accounts list.
         /// </summary>
-        /// <param name="accountMetas"></param>
-        /// <param name="publicKey"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
+        /// <param name="accountMetas">The <see cref="AccountMeta"/>.</param>
+        /// <param name="publicKey">The public key.</param>
+        /// <returns>The index of the</returns>
         private static int FindAccountIndex(IList<AccountMeta> accountMetas, byte[] publicKey)
         {
             string encodedKey = Encoders.Base58.EncodeData(publicKey);
