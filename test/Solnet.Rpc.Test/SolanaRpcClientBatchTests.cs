@@ -70,13 +70,13 @@ namespace Solnet.Rpc.Test
             batch.GetBalance("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5",
                 callback: x => found_lamports = x.Value);
             batch.GetTokenAccountsByOwner("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", null, TokenProgram.ProgramIdKey,
-                callback: x =>
-                {
-                    found_balance = x.Value[0].Account.Data.Parsed.Info.TokenAmount.AmountDecimal;
-                });
-            batch.GetConfirmedSignaturesForAddress2("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", 200, null, null, callback: x => sig_callback_count++);
-            batch.GetConfirmedSignaturesForAddress2("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex", 200, null, null, callback: x => sig_callback_count++);
-            batch.GetConfirmedSignaturesForAddress2("4NSREK36nAr32vooa3L9z8tu6JWj5rY3k4KnsqTgynvm", 200, null, null, callback: x => sig_callback_count++);
+                callback: x => found_balance = x.Value[0].Account.Data.Parsed.Info.TokenAmount.AmountDecimal);
+            batch.GetConfirmedSignaturesForAddress2("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", 200, null, null,
+                callback: x => sig_callback_count++);
+            batch.GetConfirmedSignaturesForAddress2("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex", 200, null, null,
+                callback: x => sig_callback_count++);
+            batch.GetConfirmedSignaturesForAddress2("4NSREK36nAr32vooa3L9z8tu6JWj5rY3k4KnsqTgynvm", 200, null, null,
+                callback: x => sig_callback_count++);
 
             // how many requests in batch?
             Assert.AreEqual(5, batch.Count);
