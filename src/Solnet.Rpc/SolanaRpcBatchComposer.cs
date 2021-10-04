@@ -107,6 +107,12 @@ namespace Solnet.Rpc
                     resp.Result = MapJsonTypeToNativeType(resp.Result, req.ResultType);
                 }
 
+                // invoke callbacks
+                if (req.Callback != null)
+                {
+                    req.Callback.Invoke(resp);
+                }
+
             }
 
             // pass back the JSON batch innards
@@ -143,14 +149,17 @@ namespace Solnet.Rpc
         // this is a sample set of methods with different response types
         // TODO - add more methods 
 
-        public void GetBalance(string pubKey, Commitment commitment = Commitment.Finalized)
+        public void GetBalance(string pubKey, Commitment commitment = Commitment.Finalized,
+                               Action<ResponseValue<ulong>> callback = null)
         {
             var parameters = Parameters.Create(pubKey, ConfigObject.Create(HandleCommitment(commitment)));
-            var handler = BuildRequest<ResponseValue<ulong>>("getBalance", parameters);
+            var handler = BuildRequest<ResponseValue<ulong>>("getBalance", parameters, callback);
             _reqs.Add(handler);
         }
 
-        public void GetTokenAccountsByOwner(string ownerPubKey, string tokenMintPubKey = null, string tokenProgramId = null, Commitment commitment = Commitment.Finalized)
+        public void GetTokenAccountsByOwner(string ownerPubKey, string tokenMintPubKey = null,
+                                            string tokenProgramId = null, Commitment commitment = Commitment.Finalized,
+                                            Action<ResponseValue<List<TokenAccount>>> callback = null)
         {
             if (string.IsNullOrWhiteSpace(tokenMintPubKey) && string.IsNullOrWhiteSpace(tokenProgramId))
                 throw new ArgumentException("either tokenProgramId or tokenMintPubKey must be set");
@@ -164,11 +173,14 @@ namespace Solnet.Rpc
                         HandleCommitment(commitment),
                         KeyValue.Create("encoding", "jsonParsed")));
 
-            var handler = BuildRequest<ResponseValue<List<TokenAccount>>>("getTokenAccountsByOwner", parameters);
+            var handler = BuildRequest<ResponseValue<List<TokenAccount>>>("getTokenAccountsByOwner", parameters, callback);
             _reqs.Add(handler);
         }
 
-        public void GetConfirmedSignaturesForAddress2(string accountPubKey, ulong limit = 1000, string before = null, string until = null, Commitment commitment = Commitment.Finalized)
+        public void GetConfirmedSignaturesForAddress2(string accountPubKey, ulong limit = 1000,
+                                                      string before = null, string until = null,
+                                                      Commitment commitment = Commitment.Finalized,
+                                                      Action<List<SignatureStatusInfo>> callback = null)
         {
             if (commitment == Commitment.Processed)
                 throw new ArgumentException("Commitment.Processed is not supported for this method.");
@@ -181,12 +193,53 @@ namespace Solnet.Rpc
                         KeyValue.Create("until", until),
                         HandleCommitment(commitment)));
 
-            var handler = BuildRequest<List<SignatureStatusInfo>>("getConfirmedSignaturesForAddress2", parameters);
+            var handler = BuildRequest<List<SignatureStatusInfo>>("getConfirmedSignaturesForAddress2", parameters, callback);
             _reqs.Add(handler);
         }
 
-        private RpcBatchReqRespItem BuildRequest<T>(string method, IList<object> parameters)
-            => RpcBatchReqRespItem.Create<T>(_idGenerator.GetNextId(), method, parameters);
+        public void GetProgramAccounts(string pubKey, Commitment commitment = Commitment.Finalized,
+                                       int? dataSize = null, IList<MemCmp> memCmpList = null,
+                                       Action<List<AccountKeyPair>> callback = null)
+        {
+            List<object> filters = Parameters.Create(ConfigObject.Create(KeyValue.Create("dataSize", dataSize)));
+            if (memCmpList != null)
+            {
+                filters ??= new List<object>();
+                filters.AddRange(memCmpList.Select(filter => ConfigObject.Create(KeyValue.Create("memcmp",
+                    ConfigObject.Create(KeyValue.Create("offset", filter.Offset),
+                        KeyValue.Create("bytes", filter.Bytes))))));
+            }
+
+            var parameters = Parameters.Create(
+                    pubKey,
+                    ConfigObject.Create(
+                        KeyValue.Create("encoding", "base64"),
+                        KeyValue.Create("filters", filters),
+                        HandleCommitment(commitment)));
+
+            var handler = BuildRequest<List<AccountKeyPair>>("getProgramAccounts", parameters, callback);
+            _reqs.Add(handler);
+
+        }
+
+        private RpcBatchReqRespItem BuildRequest<T>(string method, IList<object> parameters, Action<T> callback)
+        {
+            var wrapped = WrapCallback<T>(callback);
+            return RpcBatchReqRespItem.Create<T>(_idGenerator.GetNextId(), method, parameters, wrapped);
+        }
+
+        private Action<JsonRpcBatchResponseItem> WrapCallback<T>(Action<T> callback)
+        {
+            if (callback == null) return null;
+
+            // wrap into common typed callback
+            Action<JsonRpcBatchResponseItem> wrapper = item =>
+                {
+                    T obj = item.ResultAs<T>();
+                    callback.Invoke(obj);
+                };
+            return wrapper;
+        }
 
         private KeyValue HandleCommitment(Commitment parameter, Commitment defaultValue = Commitment.Finalized)
             => parameter != defaultValue ? KeyValue.Create("commitment", parameter) : null;
@@ -207,11 +260,13 @@ namespace Solnet.Rpc
         /// <param name="id"></param>
         /// <param name="method"></param>
         /// <param name="parameters"></param>
+        /// <param name="callback"></param>
         /// <returns></returns>
-        internal static RpcBatchReqRespItem Create<T>(int id, string method, IList<object> parameters)
+        internal static RpcBatchReqRespItem Create<T>(int id, string method, IList<object> parameters,
+                                                        Action<JsonRpcBatchResponseItem> callback)
         {
             var req = new JsonRpcRequest(id, method, parameters);
-            return new RpcBatchReqRespItem(req, typeof(T));
+            return new RpcBatchReqRespItem(req, typeof(T), callback);
         }
 
         /// <summary>
@@ -219,14 +274,19 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="req"></param>
         /// <param name="resultType"></param>
-        private RpcBatchReqRespItem(JsonRpcRequest req, Type resultType)
+        /// <param name="callback"></param>
+        private RpcBatchReqRespItem(JsonRpcRequest req,
+                                    Type resultType,
+                                    Action<JsonRpcBatchResponseItem> callback)
         {
             this.Req = req ?? throw new ArgumentNullException(nameof(req));
             this.ResultType = resultType ?? throw new ArgumentNullException(nameof(resultType));
+            this.Callback = callback;
         }
 
         public readonly JsonRpcRequest Req;
         public readonly Type ResultType;
+        public readonly Action<JsonRpcBatchResponseItem> Callback;
 
     }
 

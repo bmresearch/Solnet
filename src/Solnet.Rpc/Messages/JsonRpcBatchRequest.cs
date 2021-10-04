@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Solnet.Rpc.Messages
 {
     /// <summary>
-    /// This class represents multiple JsonRpcRequest obejcts and is used for making 
+    /// This class represents multiple JsonRpcRequest objects and is used for making 
     /// a of batch requests in a single HTTP request.
     /// </summary>
     public class JsonRpcBatchRequest : List<JsonRpcRequest>
