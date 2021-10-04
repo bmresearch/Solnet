@@ -20,9 +20,17 @@ namespace Solnet.Rpc.Messages
         public Type ResultType { get; set; }
 
         /// <summary>
-        /// The RPC result of a given request.
+        /// The RPC result of a given request as object.
         /// </summary>
         public object Result { get; set; }
+
+        /// <summary>
+        /// The RPC result of a given request cast as T
+        /// </summary>
+        public T ResultAs<T>() 
+        { 
+            return (T) Result;
+        } 
 
     }
 }
