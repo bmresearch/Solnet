@@ -155,5 +155,106 @@ namespace Solnet.Rpc.Core.Http
 
             return result;
         }
+
+        /// <summary>
+        /// Sends a batch of messages as a POST method and returns a collection of responses.
+        /// </summary>
+        /// <param name="reqs">The message request.</param>
+        /// <returns>A task that represents the asynchronous operation that holds the request result.</returns>
+        public async Task<RequestResult<JsonRpcBatchResponse>> SendBatchRequest(JsonRpcBatchRequest reqs)
+        {
+            var requestsJson = JsonSerializer.Serialize(reqs, _serializerOptions);
+
+            try
+            {
+                // TODO - logging
+
+                // create byte buffer to avoid charset=utf-8 in content-type header
+                // as this is rejected by some RPC nodes
+                var buffer = Encoding.UTF8.GetBytes(requestsJson);
+                using var httpReq = new HttpRequestMessage(HttpMethod.Post, "/")
+                {
+                    Content = new ByteArrayContent(buffer)
+                    {
+                        Headers = {
+                            { "Content-Type", "application/json"}
+                        }
+                    }
+                };
+
+                // execute POST
+                using (var response = await _httpClient.SendAsync(httpReq).ConfigureAwait(false))
+                {
+                    var result = await HandleBatchResult(reqs, response).ConfigureAwait(false);
+                    result.RawRpcRequest = requestsJson;
+                    return result;
+                }
+
+            }
+            catch (HttpRequestException e)
+            {
+                var result = new RequestResult<JsonRpcBatchResponse>(e.StatusCode ?? System.Net.HttpStatusCode.BadRequest, e.Message);
+                result.RawRpcRequest = requestsJson;
+                // TODO - logging
+                return result;
+            }
+            catch (Exception e)
+            {
+                var result = new RequestResult<JsonRpcBatchResponse>(System.Net.HttpStatusCode.BadRequest, e.Message);
+                result.RawRpcRequest = requestsJson;
+                // TODO - logging
+                return result;
+            }
+
+        }
+
+        /// <summary>
+        /// Handles the result after sending a batch of requests.
+        /// Outcome could be a collection of failures due to a single API issue or a mixed bag of 
+        /// success and failure depending on the individual request outcomes.
+        /// </summary>
+        /// <param name="reqs">The original batch of request messages.</param>
+        /// <param name="response">The batch of responses obtained from the HTTP request.</param>
+        /// <returns>A task that represents the asynchronous operation that holds the request result.</returns>
+        private async Task<RequestResult<JsonRpcBatchResponse>> HandleBatchResult(JsonRpcBatchRequest reqs, HttpResponseMessage response)
+        {
+            RequestResult<JsonRpcBatchResponse> result = new RequestResult<JsonRpcBatchResponse>(response);
+            try
+            {
+                result.RawRpcResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                // TODO - logging - _logger?.LogInformation(new EventId(reqs.Id, reqs.Method), $"Result: {result.RawRpcResponse}");
+                var res = JsonSerializer.Deserialize<JsonRpcBatchResponse>(result.RawRpcResponse, _serializerOptions);
+
+                if (res != null)
+                {
+                    result.Result = res;
+                    result.WasRequestSuccessfullyHandled = true;
+                }
+                else
+                {
+                    var errorRes = JsonSerializer.Deserialize<JsonRpcErrorResponse>(result.RawRpcResponse, _serializerOptions);
+                    if (errorRes is { Error: { } })
+                    {
+                        result.Reason = errorRes.Error.Message;
+                        result.ServerErrorCode = errorRes.Error.Code;
+                        result.ErrorData = errorRes.Error.Data;
+                    }
+                    else
+                    {
+                        result.Reason = "Something wrong happened.";
+                    }
+                }
+            }
+            catch (JsonException e)
+            {
+                // logging - _logger?.LogDebug(new EventId(req.Id, req.Method), $"Caught exception: {e.Message}");
+                result.WasRequestSuccessfullyHandled = false;
+                result.Reason = "Unable to parse json.";
+            }
+
+            return result;
+        }
+
     }
 }
