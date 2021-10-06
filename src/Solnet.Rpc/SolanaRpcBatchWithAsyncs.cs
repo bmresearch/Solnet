@@ -103,6 +103,19 @@ namespace Solnet.Rpc
 
         }
 
+        public async Task<TransactionMetaSlotInfo> GetTransactionAsync(string signature,
+                                        Commitment commitment = Commitment.Finalized)
+        {
+            var parameters = Parameters.Create(
+                    signature,
+                    ConfigObject.Create(
+                        KeyValue.Create("encoding", "json"),
+                        HandleCommitment(commitment)));
+
+            return await _composer.AddRequest<TransactionMetaSlotInfo>("getTransaction", parameters);
+
+        }
+
         #endregion
 
         private KeyValue HandleCommitment(Commitment parameter, Commitment defaultValue = Commitment.Finalized)

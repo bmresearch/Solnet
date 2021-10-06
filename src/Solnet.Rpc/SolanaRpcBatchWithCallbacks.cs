@@ -104,6 +104,20 @@ namespace Solnet.Rpc
 
         }
 
+        public void GetTransaction(string signature,
+                                   Commitment commitment = Commitment.Finalized,
+                                   Action<TransactionMetaSlotInfo, Exception> callback = null)
+        {
+            var parameters = Parameters.Create(
+                    signature,
+                    ConfigObject.Create(
+                        KeyValue.Create("encoding", "json"),
+                        HandleCommitment(commitment)));
+
+            _composer.AddRequest<TransactionMetaSlotInfo>("getTransaction", parameters, callback);
+
+        }
+
         #endregion
 
         private KeyValue HandleCommitment(Commitment parameter, Commitment defaultValue = Commitment.Finalized)
