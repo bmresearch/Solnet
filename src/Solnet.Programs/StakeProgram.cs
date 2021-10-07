@@ -50,7 +50,7 @@ namespace Solnet.Programs
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = StakeProgramData.EncodeInitializeData()
+                Data = StakeProgramData.EncodeInitializeData(authorized,lockup)
             };
         }
         public static TransactionInstruction Split(PublicKey stake_pubkey, PublicKey authorized_pubkey, ulong lamports, PublicKey split_stake_pubkey)
@@ -63,10 +63,10 @@ namespace Solnet.Programs
             };
             return new TransactionInstruction
             {
-                ProgramId=ProgramIdKey.KeyBytes,
-                Keys=keys,
-                Data=StakeProgramData.EncodeSplitData()
-            }
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = keys,
+                Data = StakeProgramData.EncodeSplitData(lamports)
+            };
         }
     }
 }

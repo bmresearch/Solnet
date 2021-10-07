@@ -23,10 +23,16 @@ namespace Solnet.Programs
         /// </summary>
         internal static byte[] EncodeInitializeData(Authorized authorized, Lockup lockup)
         {
-            byte[] data = new byte[1];
+            byte[] data = new byte[116];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.Initialize, MethodOffset);
-            data.
+            data.WritePubKey(authorized.staker,4);
+            data.WritePubKey(authorized.withdrawer,36);
+            data.WriteS64(lockup.unix_timestamp, 68);
+            data.WriteU64(lockup.epoch, 76);
+            data.WritePubKey(lockup.custodian, 84);
+
+            return data;
         }
 
         internal static byte[] EncodeSplitData(ulong lamports)
