@@ -158,6 +158,26 @@ namespace Solnet.Rpc.Test
         }
 
         /// <summary>
+        /// Test deserialization of TransactionError
+        /// </summary>
+        [TestMethod]
+        public void TestTransactionError_1()
+        {
+            var example_fail = "{'InstructionError':[0,'InvalidAccountData']}";
+            example_fail = example_fail.Replace('\'', '"');
+
+            // from json...
+            var options = CreateJsonOptions();
+            var obj = JsonSerializer.Deserialize<TransactionError>(example_fail, options);
+            Assert.IsNotNull(obj);
+
+            // and back again
+            var json = JsonSerializer.Serialize<TransactionError>(obj, options);
+            Assert.IsNotNull(json);
+            Assert.AreEqual(example_fail, json);
+        }
+
+        /// <summary>
         /// Common JSON options
         /// </summary>
         /// <returns></returns>

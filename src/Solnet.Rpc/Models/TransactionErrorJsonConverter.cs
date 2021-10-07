@@ -133,7 +133,26 @@ namespace Solnet.Rpc.Models
         /// <param name="options">n/a</param>
         public override void Write(Utf8JsonWriter writer, TransactionError value, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            if (value.InstructionError != null)
+            {
+
+                // looking to output something like this...
+                // { 'InstructionError': [0, 'InvalidAccountData'] }
+                writer.WriteStartObject();
+                writer.WritePropertyName("InstructionError");
+
+                // innards
+                var enumName = value.InstructionError.Type.ToString();
+                writer.WriteStartArray();
+                writer.WriteNumberValue(value.InstructionError.InstructionIndex);
+                writer.WriteStringValue(enumName);
+                writer.WriteEndArray();
+
+                writer.WriteEndObject();
+
+            }
+            else
+                throw new NotImplementedException();
         }
     }
 }
