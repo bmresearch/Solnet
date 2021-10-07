@@ -77,7 +77,10 @@ namespace Solnet.Rpc
         {
             var reqs = this.CreateJsonRequests();
             var response = client.SendBatchRequestAsync(reqs).Result;
-            return ProcessBatchResponse(response.Result);
+            if (response.WasSuccessful)
+                return ProcessBatchResponse(response);
+            else
+                return ProcessBatchFailure(response);
         }
 
         /// <summary>
@@ -85,18 +88,19 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="response"></param>
         /// <returns></returns>
-        public JsonRpcBatchResponse ProcessBatchResponse(JsonRpcBatchResponse response)
+        public JsonRpcBatchResponse ProcessBatchResponse(RequestResult<JsonRpcBatchResponse> response)
         {
+            // TODO - make sure result was successful
 
             // sanity check response matches request
-            if (_reqs.Count != response.Count) throw new ApplicationException($"Batch req/resp size mismatch {_reqs.Count}/{response.Count}");
+            if (_reqs.Count != response.Result.Count) throw new ApplicationException($"Batch req/resp size mismatch {_reqs.Count}/{response.Result.Count}");
 
             // transfer expected type info to individual
             // batch response items
             for (int ix = 0; ix < _reqs.Count; ix++)
             {
                 var req = _reqs[ix];
-                var resp = response[ix];
+                var resp = response.Result[ix];
 
                 // set the runtime type
                 resp.ResultType = req.ResultType;
@@ -116,7 +120,18 @@ namespace Solnet.Rpc
             }
 
             // pass back the JSON batch innards
-            return response;
+            return response.Result;
+        }
+
+        /// <summary>
+        /// Process a failed batch response
+        /// </summary>
+        /// <param name="response">The failed batch RPC response</param>
+        /// <returns></returns>
+        public JsonRpcBatchResponse ProcessBatchFailure(RequestResult<JsonRpcBatchResponse> response)
+        {
+            // TODO - decide best approach - invoke each callback with exception?
+            return response.Result;
         }
 
         /// <summary>
@@ -143,6 +158,14 @@ namespace Solnet.Rpc
         }
 
         #endregion
+
+        /// <summary>
+        /// Clears the internal list of requests
+        /// </summary>
+        public void Clear()
+        {
+            _reqs.Clear();
+        }
 
         internal void AddRequest<T>(string method, IList<object> parameters, Action<T, Exception> callback)
         {

@@ -1,10 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Solnet.Programs;
+using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
+using Solnet.Rpc.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -89,13 +92,13 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(5, reqs.Count);
             Assert.AreEqual(expected_requests, json);
 
-            // fake response
-            var resps = JsonSerializer.Deserialize<JsonRpcBatchResponse>(expected_responses, serializerOptions);
-            Assert.IsNotNull(resps);
-            Assert.AreEqual(5, resps.Count);
+            // fake RPC response
+            var resp = CreateMockRequestResult<JsonRpcBatchResponse>(expected_requests, expected_responses, HttpStatusCode.OK);
+            Assert.IsNotNull(resp.Result);
+            Assert.AreEqual(5, resp.Result.Count);
 
             // process and invoke callbacks
-            batch.Composer.ProcessBatchResponse(resps);
+            batch.Composer.ProcessBatchResponse(resp);
             Assert.AreEqual((ulong)237543960, found_lamports);
             Assert.AreEqual(12.5M, found_balance);
             Assert.AreEqual(3, sig_callback_count);
@@ -132,13 +135,13 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(5, reqs.Count);
             Assert.AreEqual(expected_requests, json);
 
-            // fake response
-            var resps = JsonSerializer.Deserialize<JsonRpcBatchResponse>(expected_responses, serializerOptions);
-            Assert.IsNotNull(resps);
-            Assert.AreEqual(5, resps.Count);
+            // fake RPC response
+            var resp = CreateMockRequestResult<JsonRpcBatchResponse>(expected_requests, expected_responses, HttpStatusCode.OK);
+            Assert.IsNotNull(resp.Result);
+            Assert.AreEqual(5, resp.Result.Count);
 
             // process and invoke callbacks
-            batch.Composer.ProcessBatchResponse(resps);
+            batch.Composer.ProcessBatchResponse(resp);
 
             // pull task results that would otherwise haved blocked
             found_lamports = balance.Result.Value;
@@ -168,6 +171,31 @@ namespace Solnet.Rpc.Test
                     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
                 }
             };
+        }
+
+        /// <summary>
+        /// Create a mocked RequestResult
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="req"></param>
+        /// <param name="resp"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public RequestResult<T> CreateMockRequestResult<T>(string req, string resp, HttpStatusCode status)
+        {
+            var x = new RequestResult<T>();
+            x.HttpStatusCode = status;
+            x.RawRpcRequest = req;
+            x.RawRpcResponse = resp;
+
+            // deserialize resp
+            if (status == HttpStatusCode.OK)
+            {
+                var serializerOptions = CreateJsonOptions();
+                x.Result = JsonSerializer.Deserialize<T>(resp, serializerOptions);
+            }
+
+            return x;
         }
 
     }
