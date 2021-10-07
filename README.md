@@ -67,8 +67,11 @@ for a list of other commonly needed programs see below:
 
 ## Examples
 
-The [Solnet.Examples](https://github.com/bmresearch/Solnet/tree/master/src/Solnet.Examples/) project contains some code examples, but essentially we're trying very hard to
-make it intuitive and easy to use the library.
+The [Solnet.Examples](https://github.com/bmresearch/Solnet/tree/master/src/Solnet.Examples/) project contains some code examples,
+essentially we're trying very hard to make it intuitive and easy to use the library.
+When trying to run these examples they might lead to errors in cases where they create new accounts, in these cases, the response from the RPC
+contains an and the transaction simulation logs which state that `account address is ... already in use`,
+all you need to do is increment the value that is used to derive that account from the seed being used, i.e `wallet.GetAccount(value+1)`.
 
 ### Wallets
 
