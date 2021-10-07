@@ -105,15 +105,33 @@ namespace Solnet.Rpc
                 // set the runtime type
                 resp.ResultType = req.ResultType;
 
-                // translate generic JSON deserialized content into POCO runtime types
-                if (req.ResultType != null)
+                // catch any type mapping exceptions and feed into callback
+                bool callbackInvoked = false;
+                try
                 {
-                    resp.Result = MapJsonTypeToNativeType(resp.Result, req.ResultType);
+                    // translate generic JSON deserialized content into POCO runtime types
+                    if (req.ResultType != null)
+                    {
+                        resp.Result = MapJsonTypeToNativeType(resp.Result, req.ResultType);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
+                    // invoke callback with the exception
+                    if (req.Callback != null)
+                    {
+                        callbackInvoked = true;
+                        req.Callback.Invoke(null, ex);
+                    }
+
                 }
 
-                // invoke callbacks
-                if (req.Callback != null)
+                // invoke callback with safe mapped data type
+                if (!callbackInvoked && req.Callback != null)
                 {
+                    callbackInvoked = true;
                     req.Callback.Invoke(resp, null);
                 }
 
