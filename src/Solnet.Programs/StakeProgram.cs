@@ -148,7 +148,7 @@ namespace Solnet.Programs
                 Data = StakeProgramData.EncodeDeactivateData()
             };
         }
-        public static TransactionInstruction SetLockup(PublicKey stake_pubkey, LockupArgs lockup, PublicKey custodian_pubkey)
+        public static TransactionInstruction SetLockup(PublicKey stake_pubkey, Lockup lockup, PublicKey custodian_pubkey)
         {
             List<AccountMeta> keys = new()
             {

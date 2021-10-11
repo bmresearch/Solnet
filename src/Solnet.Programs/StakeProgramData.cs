@@ -82,9 +82,16 @@ namespace Solnet.Programs
             return data;
         }
 
-        internal static byte[] EncodeSetLockup(LockupArgs lockup)
+        internal static byte[] EncodeSetLockup(Lockup lockup)
         {
-            throw new NotImplementedException();
+            byte[] data = new byte[52];
+
+            data.WriteU32((uint)StakeProgramInstructions.Values.SetLockup, MethodOffset);
+            data.WriteS64(lockup.unix_timestamp, 4);
+            data.WriteU64(lockup.epoch, 12);
+            data.WritePubKey(lockup.custodian, 20);
+
+            return data;
         }
     }
 }
