@@ -151,7 +151,7 @@ namespace Solnet.Examples
                     25000000,
                     ownerAccount.PublicKey))
                 .AddInstruction(MemoProgram.NewMemo(initialAccount.PublicKey, "Hello from Sol.Net"))
-                .Build(new List<Account> { ownerAccount });
+                .Build(new List<Account> { ownerAccount, initialAccount });
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
