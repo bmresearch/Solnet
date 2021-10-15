@@ -1,4 +1,5 @@
 ﻿using Solnet.Programs.Models;
+using Solnet.Programs.Utilities;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System;
@@ -291,6 +292,35 @@ namespace Solnet.Programs
                 Keys = keys,
                 Data = StakeProgramData.EncodeSetLockupCheckedData(lockupChecked)
             };
+        }
+        /// <summary>
+        /// Decodes an instruction created by the System Program.
+        /// </summary>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        /// <returns>A decoded instruction.</returns>
+        public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            uint instruction = data.GetU32(StakeProgramData.MethodOffset);
+            StakeProgramInstructions.Values instructionValue = 
+                (StakeProgramInstructions.Values)Enum.Parse(typeof(StakeProgramInstructions.Values), instruction.ToString());
+            
+            DecodedInstruction decodedInstruction = new ()
+            {
+                PublicKey = ProgramIdKey,
+                InstructionName = StakeProgramInstructions.Names[instructionValue],
+                ProgramName = ProgramName,
+                Values = new Dictionary<string, object>(){},
+                InnerInstructions = new List<DecodedInstruction>()
+            };
+
+            switch (instructionValue)
+            {
+                case StakeProgramInstructions.Values.Initialize:
+                    StakeProgramData.DecodeInitializeData(decodedInstruction, data, keys, keyIndices);
+                    break;
+            }
         }
     }
 }

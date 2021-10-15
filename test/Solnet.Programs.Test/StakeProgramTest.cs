@@ -10,6 +10,21 @@ namespace Solnet.Programs.Test
     [TestClass]
     public class StakeProgramTest
     {
+        private static readonly byte[] StakeProgramIdBytes =
+        {
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        };
+
+        private static readonly byte[] AuthorizeInstructionBytes =
+        {
+            //
+        };
+        [TestMethod]
+        public void TestStakeProgramInitialize()
+        {
+            var wallet = new Wallet.Wallet(mnemonicWords: "");
+        }
         [TestMethod]
         public void TestStakeProgramAuthorize()
         {
@@ -20,7 +35,11 @@ namespace Solnet.Programs.Test
             var to = wallet.GetAccount(4);
             var owner = wallet.GetAccount(3);
 
-            var txInstruction = StakeProgram.Authorize(aaaa,bbbb,cccc,dddd,eeeee);
+            var txInstruction = StakeProgram.Authorize(baseAccount.PublicKey,from.PublicKey,to.PublicKey,Models.Stake.State.StakeAuthorize.Staker,owner.PublicKey);
+
+            Assert.AreEqual(3, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(AuthorizeInstructionBytes, txInstruction.Data);
+            CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }
     }
 }

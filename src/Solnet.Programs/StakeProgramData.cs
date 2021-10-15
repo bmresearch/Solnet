@@ -160,5 +160,48 @@ namespace Solnet.Programs
 
             return data;
         }
+        internal static void DecodeInitializeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Stake Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Authorized Withdraw Account", data.GetPubKey(4));
+            decodedInstruction.Values.Add("Authorized Stake Account", data.GetPubKey(36));
+            decodedInstruction.Values.Add("Lockup Timestamp", data.GetS64(68));
+            decodedInstruction.Values.Add("Lockup Epoch", data.GetU64(76));
+            decodedInstruction.Values.Add("Lockup Custodian", data.GetPubKey(84));
+        }
+        internal static void DecodeAuthorizeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Stake Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Authorized Account", keys[keyIndices[2]]);
+            decodedInstruction.Values.Add("Custodian Account", keys[keyIndices[3]]);
+            decodedInstruction.Values.Add("New Authorized Account", data.GetPubKey(4));
+            decodedInstruction.Values.Add("Stake Authorize", Enum.Parse(typeof(StakeAuthorize), data.GetU8(36).ToString()));
+        }
+        internal static void DecodeDelegateStakeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Stake Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Vote Account", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Authorized Account", keys[keyIndices[5]]);
+        }
+        internal static void DecodeSplitStakeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Stake Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Split Stake Account", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Authorized Account", keys[keyIndices[2]]);
+            decodedInstruction.Values.Add("Amount", data.GetU64(4));
+        }
+        internal static void DecodeWithdrawStakeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Stake Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("To Account", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Withdraw Account", keys[keyIndices[4]]);
+            decodedInstruction.Values.Add("Custodian Account", keys[keyIndices[5]]);
+            decodedInstruction.Values.Add("Amount", data.GetU64(4));
+        }
+        internal static void DecodeDeactivateStakeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Stake Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Authorized Account", keys[keyIndices[2]]);
+        }
     }
 }

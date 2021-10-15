@@ -39,7 +39,7 @@ namespace Solnet.Programs.Models.Stake
             public Delegation delegation { get; set; }
             public ulong credits_observed { get; set; }
         }
-        public enum StakeAuthorize
+        public enum StakeAuthorize : byte
         {
             Staker = 0,
             Withdrawer = 1

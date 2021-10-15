@@ -35,6 +35,7 @@ namespace Solnet.Programs
             InstructionDictionary.Add(AssociatedTokenAccountProgram.ProgramIdKey, AssociatedTokenAccountProgram.Decode);
             InstructionDictionary.Add(NameServiceProgram.ProgramIdKey, NameServiceProgram.Decode);
             InstructionDictionary.Add(SharedMemoryProgram.ProgramIdKey, SharedMemoryProgram.Decode);
+            InstructionDictionary.Add(StakeProgram.ProgramIdKey, StakeProgram.Decode);
         }
 
         /// <summary>
