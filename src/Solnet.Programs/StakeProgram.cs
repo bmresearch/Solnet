@@ -25,7 +25,7 @@ namespace Solnet.Programs
         /// <summary>
         /// The public key of the Stake Program.
         /// </summary>
-        public static readonly PublicKey ProgramIdKey = new("stake111111111111111111111111111");
+        public static readonly PublicKey ProgramIdKey = new("Stake11111111111111111111111111111111111111");
         /// <summary>
         /// The public key of the Recent Block Hashes System Variable. 
         /// </summary>
@@ -40,10 +40,10 @@ namespace Solnet.Programs
         /// <summary>
         /// The public key of the Clock System Variable.
         /// </summary>
-        public static readonly PublicKey SysVarClockKey = new("SysvarClock111111111111111111111111111111111");
+        public static readonly PublicKey SysVarClockKey = new("SysvarC1ock11111111111111111111111111111111");
 
-        public static readonly PublicKey SysVarStakeHistoryKey = new("SysVarStakeHistory11111111111111111111");
-        public static readonly PublicKey ConfigKey = new("Config111111111111111111111111111111111");
+        public static readonly PublicKey SysVarStakeHistoryKey = new("SysvarStakeHistory1111111111111111111111111");
+        public static readonly PublicKey ConfigKey = new("StakeConfig11111111111111111111111111111111");
         /// <summary>
         /// The program's name.
         /// </summary>
