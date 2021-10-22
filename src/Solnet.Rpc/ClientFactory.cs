@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
+using System.Net.Http;
 
 namespace Solnet.Rpc
 {
@@ -45,7 +46,19 @@ namespace Solnet.Rpc
         /// <param name="cluster">The network cluster.</param>
         /// <param name="logger">The logger.</param>
         /// <returns>The http client.</returns>
-        public static IRpcClient GetClient(Cluster cluster, ILogger logger = null)
+        public static IRpcClient GetClient(Cluster cluster, ILogger logger)
+        {
+            return GetClient(cluster, logger, null);
+        }
+
+        /// <summary>
+        /// Instantiate a http client.
+        /// </summary>
+        /// <param name="cluster">The network cluster.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="httpClient">A HttpClient instance. If null, a new instance will be created.</param>
+        /// <returns>The http client.</returns>
+        public static IRpcClient GetClient(Cluster cluster, ILogger logger = null, HttpClient httpClient = null)
         {
             var url = cluster switch
             {
@@ -68,7 +81,7 @@ namespace Solnet.Rpc
             }).CreateLogger<IRpcClient>();
 #endif
 
-            return GetClient(url, logger);
+            return GetClient(url, logger, httpClient);
         }
 
         /// <summary>
@@ -77,10 +90,21 @@ namespace Solnet.Rpc
         /// <param name="url">The network cluster url.</param>
         /// <param name="logger">The logger.</param>
         /// <returns>The http client.</returns>
-        public static IRpcClient GetClient(string url, ILogger logger = null)
+        public static IRpcClient GetClient(string url, ILogger logger)
         {
+            return GetClient(url, logger, null);
+        }
 
-            return new SolanaRpcClient(url, logger);
+        /// <summary>
+        /// Instantiate a http client.
+        /// </summary>
+        /// <param name="url">The network cluster url.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="httpClient">A HttpClient instance. If null, a new instance will be created.</param>
+        /// <returns>The http client.</returns>
+        public static IRpcClient GetClient(string url, ILogger logger = null, HttpClient httpClient = null)
+        {
+            return new SolanaRpcClient(url, logger, httpClient);
         }
 
         /// <summary>
