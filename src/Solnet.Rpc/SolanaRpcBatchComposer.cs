@@ -84,6 +84,20 @@ namespace Solnet.Rpc
         }
 
         /// <summary>
+        /// Execute a batch request and process the response into the expected native types.
+        /// </summary>
+        /// <param name="client"></param>
+        public JsonRpcBatchResponse ExecuteWithFatalFailure(IRpcClient client)
+        {
+            var reqs = this.CreateJsonRequests();
+            var response = client.SendBatchRequestAsync(reqs).Result;
+            if (response.WasSuccessful)
+                return ProcessBatchResponse(response);
+            else
+                throw new ApplicationException($"Batch was unsuccessful: {response.Reason}");
+        }
+
+        /// <summary>
         /// Handles the conversion of the generic JSON deserialized response objects to the native types.
         /// </summary>
         /// <param name="response"></param>
