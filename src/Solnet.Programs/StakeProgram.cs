@@ -320,7 +320,44 @@ namespace Solnet.Programs
                 case StakeProgramInstructions.Values.Initialize:
                     StakeProgramData.DecodeInitializeData(decodedInstruction, data, keys, keyIndices);
                     break;
+                case StakeProgramInstructions.Values.Authorize:
+                    StakeProgramData.DecodeAuthorizeData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case StakeProgramInstructions.Values.DelegateStake:
+                    StakeProgramData.DecodeDelegateStakeData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case StakeProgramInstructions.Values.Split:
+                    StakeProgramData.DecodeSplitStakeData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case StakeProgramInstructions.Values.Withdraw:
+                    StakeProgramData.DecodeWithdrawStakeData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case StakeProgramInstructions.Values.Deactivate:
+                    StakeProgramData.DecodeDeactivateStakeData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case StakeProgramInstructions.Values.SetLockup:
+                    StakeProgramData.DecodeSetLockupStakeData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case StakeProgramInstructions.Values.Merge:
+                    StakeProgramData.DecodeMergeStakeData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case StakeProgramInstructions.Values.AuthorizeWithSeed:
+                    StakeProgramData.DecodeAuthorizeWithSeedStakeData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case StakeProgramInstructions.Values.InitializeChecked:
+                    StakeProgramData.DecodeInitializeCheckedStakeData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case StakeProgramInstructions.Values.AuthorizeChecked:
+                    StakeProgramData.DecodeAuthorizeCheckedStakeData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case StakeProgramInstructions.Values.AuthorizeCheckedWithSeed:
+                    StakeProgramData.DecodeAuthorizeCheckedWithSeedStakeData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case StakeProgramInstructions.Values.SetLockupChecked:
+                    StakeProgramData.DecodeSetLockupCheckedStakeData(decodedInstruction, data, keys, keyIndices);
+                    break;
             }
+            return decodedInstruction;
         }
     }
 }

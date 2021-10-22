@@ -28,8 +28,8 @@ namespace Solnet.Programs
             byte[] data = new byte[116];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.Initialize, MethodOffset);
-            data.WritePubKey(authorized.staker,4);
-            data.WritePubKey(authorized.withdrawer,36);
+            data.WritePubKey(authorized.staker, 4);
+            data.WritePubKey(authorized.withdrawer, 36);
             data.WriteS64(lockup.unix_timestamp, 68);
             data.WriteU64(lockup.epoch, 76);
             data.WritePubKey(lockup.custodian, 84);
@@ -111,10 +111,10 @@ namespace Solnet.Programs
             byte[] data = new byte[72 + encodedSeed.Length];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.AuthorizeWithSeed, MethodOffset);
-            data.WritePubKey(authorizeWithSeed.new_authorized_pubkey,4);
-            data.WriteSpan(encodedSeed,36);
-            data.WriteU32((uint)authorizeWithSeed.stake_authorize,36+encodedSeed.Length);
-            data.WritePubKey(authorizeWithSeed.authority_owner,40+encodedSeed.Length);
+            data.WritePubKey(authorizeWithSeed.new_authorized_pubkey, 4);
+            data.WriteSpan(encodedSeed, 36);
+            data.WriteU32((uint)authorizeWithSeed.stake_authorize, 36 + encodedSeed.Length);
+            data.WritePubKey(authorizeWithSeed.authority_owner, 40 + encodedSeed.Length);
 
             return data;
         }
@@ -202,6 +202,73 @@ namespace Solnet.Programs
         {
             decodedInstruction.Values.Add("Stake Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Authorized Account", keys[keyIndices[2]]);
+        }
+        internal static void DecodeSetLockupStakeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Stake Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Custodian Account", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Lockup Timestamp", data.GetS64(4));
+            decodedInstruction.Values.Add("Lockup Epoch", data.GetU64(12));
+            decodedInstruction.Values.Add("Lockup Custodian", data.GetPubKey(20));
+        }
+        internal static void DecodeMergeStakeData(DecodedInstruction decodedInstruction,
+                                                  ReadOnlySpan<byte> data,
+                                                  IList<PublicKey> keys,
+                                                  byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Destination Stake Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Source Stake Account", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Authorized Account", keys[keyIndices[4]]);
+        }
+        internal static void DecodeAuthorizeWithSeedStakeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Stake Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Authority Base Account", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Custodian Account", keys[keyIndices[3]]);
+            decodedInstruction.Values.Add("New Authorized Account", data.GetPubKey(4));
+            decodedInstruction.Values.Add("Stake Authorize", Enum.Parse(typeof(StakeAuthorize), data.GetU8(36).ToString()));
+            (string authoritySeed, int seedLength) = data.DecodeRustString(37);
+            decodedInstruction.Values.Add("Authority Seed", authoritySeed);
+            decodedInstruction.Values.Add("Authority Owner Account", data.GetPubKey(37 + seedLength));
+        }  
+        internal static void DecodeInitializeCheckedStakeData(DecodedInstruction decodedInstruction,
+                                                  ReadOnlySpan<byte> data,
+                                                  IList<PublicKey> keys,
+                                                  byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Stake Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Authorized Staker Account", keys[keyIndices[2]]);
+            decodedInstruction.Values.Add("Authorized Withdrawer Account", keys[keyIndices[3]]);
+        }
+        internal static void DecodeAuthorizeCheckedStakeData(DecodedInstruction decodedInstruction,
+                                                  ReadOnlySpan<byte> data,
+                                                  IList<PublicKey> keys,
+                                                  byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Stake Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Authorized Account", keys[keyIndices[2]]);
+            decodedInstruction.Values.Add("Custodian Account", keys[keyIndices[4]]);
+            decodedInstruction.Values.Add("New Authorized Account", keys[keyIndices[3]]);
+            decodedInstruction.Values.Add("Stake Authorize", Enum.Parse(typeof(StakeAuthorize), data.GetU8(4).ToString()));
+        }
+        internal static void DecodeAuthorizeCheckedWithSeedStakeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Stake Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Authority Base Account", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Custodian Account", keys[keyIndices[4]]);
+            decodedInstruction.Values.Add("New Authorized Account", keys[keyIndices[3]]);
+            decodedInstruction.Values.Add("Stake Authorize", Enum.Parse(typeof(StakeAuthorize), data.GetU8(4).ToString()));
+            (string authoritySeed, int seedLength) = data.DecodeRustString(5);
+            decodedInstruction.Values.Add("Authority Seed", authoritySeed);
+            decodedInstruction.Values.Add("Authority Owner Account", data.GetPubKey(5 + seedLength));
+        }
+        internal static void DecodeSetLockupCheckedStakeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Stake Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Custodian Account", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Lockup Timestamp", data.GetS64(4));
+            decodedInstruction.Values.Add("Lockup Epoch", data.GetU64(12));
+            decodedInstruction.Values.Add("Lockup Custodian", keys[keyIndices[2]]);
         }
     }
 }
