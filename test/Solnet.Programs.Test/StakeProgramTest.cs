@@ -12,8 +12,8 @@ namespace Solnet.Programs.Test
     public class StakeProgramTest
     {
         private const string MnemonicWords =
-            "route clerk disease box emerge airport loud waste attitude film army tray " +
-            "forward deal onion eight catalog surface unit card window walnut wealth medal";
+            "hockey impact dove smoke hard garlic liberty rabbit equip fiction glue badge broken " +
+            "version pattern anchor science obtain hundred rug blanket defense mistake glove";
 
         private static readonly byte[] StakeProgramIdBytes =
         {
