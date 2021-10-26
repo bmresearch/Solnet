@@ -8,7 +8,7 @@ namespace Solnet.Wallet
     /// <summary>
     /// Implements the public key functionality.
     /// </summary>
-    [DebuggerDisplay("Key = {" + nameof(Key) + "}")]
+    [DebuggerDisplay("Key = {ToString()}")]
     public class PublicKey
     {
         /// <summary>

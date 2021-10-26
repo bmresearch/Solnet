@@ -10,7 +10,7 @@ namespace Solnet.Wallet
     /// <summary>
     /// Implements the private key functionality.
     /// </summary>
-    [DebuggerDisplay("Key = {" + nameof(Key) + "}")]
+    [DebuggerDisplay("Key = {ToString()}")]
     public class PrivateKey
     {
         /// <summary>

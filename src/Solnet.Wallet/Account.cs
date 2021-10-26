@@ -8,7 +8,7 @@ namespace Solnet.Wallet
     /// <summary>
     /// Implements account functionality.
     /// </summary>
-    [DebuggerDisplay("PubKey = {" + nameof(Account.PublicKey.Key) + "}")]
+    [DebuggerDisplay("PubKey = {ToString()}")]
     public class Account
     {
         /// <summary>
