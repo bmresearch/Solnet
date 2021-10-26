@@ -102,5 +102,8 @@ namespace Solnet.Wallet
 
         /// <inheritdoc cref="ToString"/>
         public override string ToString() => PublicKey;
+
+        /// <inheritdoc cref="GetHashCode"/>
+        public override int GetHashCode() => PublicKey.GetHashCode();
     }
 }
