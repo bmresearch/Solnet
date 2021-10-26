@@ -49,10 +49,11 @@ namespace Solnet.Rpc.Core.Sockets
         /// <param name="url">The url of the streaming RPC server.</param>
         /// <param name="logger">The possible logger instance.</param>
         /// <param name="socket">The possible websocket instance. A new instance will be created if null.</param>
-        protected StreamingRpcClient(string url, ILogger logger, IWebSocket socket = default)
+        /// <param name="clientWebSocket">The possible ClientWebSocket instance. A new instance will be created if null.</param>
+        protected StreamingRpcClient(string url, ILogger logger, IWebSocket socket = default, ClientWebSocket clientWebSocket = default)
         {
             NodeAddress = new Uri(url);
-            ClientSocket = socket ?? new WebSocketWrapper(new ClientWebSocket());
+            ClientSocket = socket ?? new WebSocketWrapper(clientWebSocket ?? new ClientWebSocket());
             _logger = logger;
             _sem = new SemaphoreSlim(1, 1);
             _connectionStats = new ConnectionStats();

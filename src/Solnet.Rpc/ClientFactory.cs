@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using System.Net.Http;
+using System.Net.WebSockets;
 
 namespace Solnet.Rpc
 {
@@ -142,10 +143,11 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="url">The network cluster url.</param>
         /// <param name="logger">The logger.</param>
+        /// <param name="clientWebSocket">A ClientWebSocket instance. If null, a new instance will be created.</param>
         /// <returns>The streaming client.</returns>
-        public static IStreamingRpcClient GetStreamingClient(string url, ILogger logger = null)
+        public static IStreamingRpcClient GetStreamingClient(string url, ILogger logger = null, ClientWebSocket clientWebSocket = null)
         {
-            return new SolanaStreamingRpcClient(url, logger);
+            return new SolanaStreamingRpcClient(url, logger, null, clientWebSocket);
         }
     }
 }
