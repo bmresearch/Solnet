@@ -37,6 +37,8 @@ namespace Solnet.Programs
         /// </summary>
         public static readonly PublicKey SysVarRentKey = new("SysvarRent111111111111111111111111111111111");
 
+        public const int StakeAccountDataSize = 200;
+
         /// <summary>
         /// The public key of the Clock System Variable.
         /// </summary>

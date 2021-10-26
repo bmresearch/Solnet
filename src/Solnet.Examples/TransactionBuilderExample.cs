@@ -66,11 +66,11 @@ namespace Solnet.Examples
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Mint Account >> {minBalanceForExemptionMint}");
 
-            Account mintAccount = wallet.GetAccount(94207);
+            Account mintAccount = wallet.GetAccount(2222);
             Console.WriteLine($"MintAccount: {mintAccount}");
             Account ownerAccount = wallet.GetAccount(10);
             Console.WriteLine($"OwnerAccount: {ownerAccount}");
-            Account initialAccount = wallet.GetAccount(74209);
+            Account initialAccount = wallet.GetAccount(3333);
             Console.WriteLine($"InitialAccount: {initialAccount}");
 
             byte[] tx = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)

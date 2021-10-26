@@ -28,21 +28,21 @@ namespace Solnet.Examples
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
             var k = rpcClient.GetEpochInfo().Result;
-            ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
+            ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
             Account fromAccount = wallet.GetAccount(10);
-            Account stakeAccount = wallet.GetAccount(2102);
+            Account stakeAccount = wallet.GetAccount(2112);
 
-            Console.WriteLine($"Wallet Account PubKey: {wallet.Account.PublicKey} - {wallet.Account.PublicKey.Key}");
-            Console.WriteLine($"From Account PubKey: {fromAccount.PublicKey} - {fromAccount.PublicKey.Key}");
-            Console.WriteLine($"Stake Account PubKey: {stakeAccount.PublicKey} - {stakeAccount.PublicKey.Key}");
-
-            Authorized authorized = new();
-            authorized.staker = fromAccount;
-            authorized.withdrawer = fromAccount;
-            Lockup lockup = new();
-            lockup.custodian = fromAccount.PublicKey;
-            lockup.epoch = k.BlockHeight;
-            lockup.unix_timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+            Authorized authorized = new()
+            {
+                staker = fromAccount,
+                withdrawer = fromAccount
+            };
+            Lockup lockup = new()
+            {
+                custodian = fromAccount.PublicKey,
+                epoch = k.BlockHeight,
+                unix_timestamp = DateTimeOffset.MinValue.ToUnixTimeSeconds()
+            };
 
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
 
@@ -52,21 +52,21 @@ namespace Solnet.Examples
                 .AddInstruction(SystemProgram.CreateAccount(
                     fromAccount.PublicKey,
                     stakeAccount,
-                    minbalanceforexception,
-                    200,
+                    minbalanceforexception+42,
+                    StakeProgram.StakeAccountDataSize,
                     StakeProgram.ProgramIdKey))
-                .AddInstruction(StakeProgram.Initialize(stakeAccount.PublicKey, authorized, lockup))
+                .AddInstruction(StakeProgram.Initialize(
+                    stakeAccount.PublicKey,
+                    authorized,
+                    lockup))
                 .Build(new List<Account> { fromAccount, stakeAccount});
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
             RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
-            //Console.WriteLine($"raw req? {txSim.RawRpcRequest}");
 
             string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
             RequestResult<string> firstSig = rpcClient.SendTransaction(tx);
             Console.WriteLine($"First Tx Result: {firstSig.Result}");
-
-            //Console.WriteLine($"Error Data: { string.Join(Environment.NewLine,firstSig.ErrorData.Select(res=>("Error log" + res.Key + ": Value = " + res.Value)))}");
         }
         static public string ToReadableByteArray(byte[] bytes)
         {
