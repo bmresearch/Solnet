@@ -84,22 +84,59 @@ namespace Solnet.Rpc
 
         #region Accounts
 
-        /// <inheritdoc cref="IRpcClient.GetAccountInfoAsync(string,Commitment)"/>
-        public async Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey,
+        /// <inheritdoc cref="IRpcClient.GetTokenMintInfoAsync(string,Commitment)"/>
+        public async Task<RequestResult<ResponseValue<TokenMintInfo>>> GetTokenMintInfoAsync(string pubKey,
             Commitment commitment = Commitment.Finalized)
+        {
+            return await SendRequestAsync<ResponseValue<TokenMintInfo>>("getAccountInfo",
+                Parameters.Create(
+                    pubKey,
+                    ConfigObject.Create(
+                        KeyValue.Create("encoding", "jsonParsed"),
+                        HandleCommitment(commitment))));
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetTokenMintInfo(string,Commitment)"/>
+        public RequestResult<ResponseValue<TokenMintInfo>> GetTokenMintInfo(string pubKey,
+            Commitment commitment = Commitment.Finalized)
+            => GetTokenMintInfoAsync(pubKey, commitment).Result;
+
+
+        /// <inheritdoc cref="IRpcClient.GetTokenAccountInfoAsync(string,Commitment)"/>
+        public async Task<RequestResult<ResponseValue<TokenAccountInfo>>> GetTokenAccountInfoAsync(string pubKey,
+            Commitment commitment = Commitment.Finalized)
+        {
+            return await SendRequestAsync<ResponseValue<TokenAccountInfo>>("getAccountInfo",
+                Parameters.Create(
+                    pubKey,
+                    ConfigObject.Create(
+                        KeyValue.Create("encoding", "jsonParsed"),
+                        HandleCommitment(commitment))));
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetTokenAccountInfo(string,Commitment)"/>
+        public RequestResult<ResponseValue<TokenAccountInfo>> GetTokenAccountInfo(string pubKey,
+            Commitment commitment = Commitment.Finalized)
+            => GetTokenAccountInfoAsync(pubKey, commitment).Result;
+
+
+
+        /// <inheritdoc cref="IRpcClient.GetAccountInfoAsync(string,Commitment,BinaryEncoding)"/>
+        public async Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey,
+            Commitment commitment = Commitment.Finalized, BinaryEncoding encoding = BinaryEncoding.Base64)
         {
             return await SendRequestAsync<ResponseValue<AccountInfo>>("getAccountInfo",
                 Parameters.Create(
                     pubKey,
                     ConfigObject.Create(
-                        KeyValue.Create("encoding", "base64"),
+                        KeyValue.Create("encoding", encoding),
                         HandleCommitment(commitment))));
         }
 
-        /// <inheritdoc cref="IRpcClient.GetAccountInfo(string,Commitment)"/>
+        /// <inheritdoc cref="IRpcClient.GetAccountInfo(string,Commitment,BinaryEncoding)"/>
         public RequestResult<ResponseValue<AccountInfo>> GetAccountInfo(string pubKey,
-            Commitment commitment = Commitment.Finalized)
-            => GetAccountInfoAsync(pubKey, commitment).Result;
+            Commitment commitment = Commitment.Finalized, BinaryEncoding encoding = BinaryEncoding.Base64)
+            => GetAccountInfoAsync(pubKey, commitment, encoding).Result;
 
 
         /// <inheritdoc cref="IRpcClient.GetProgramAccountsAsync"/>
