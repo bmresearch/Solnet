@@ -28,9 +28,9 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestTwoHitsPerSecond()
         {
-            // allow unlimited fires instantly
-            var expectedFinish = DateTime.UtcNow.AddSeconds(2);
+            // allow 2 hits per second
             var limit = RateLimiter.Create().AllowHits(2).PerSeconds(1);
+            var twoSecondsLater = DateTime.UtcNow.AddSeconds(2);
             Assert.IsTrue(limit.CanFire());
             limit.Fire();
             limit.Fire();
@@ -38,7 +38,7 @@ namespace Solnet.Rpc.Test
             limit.Fire();
             limit.Fire();
             limit.Fire();
-            Assert.IsTrue(DateTime.UtcNow >= expectedFinish);
+            Assert.IsTrue(DateTime.UtcNow >= twoSecondsLater);
         }
 
     }
