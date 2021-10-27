@@ -30,12 +30,12 @@ namespace Solnet.Wallet.Bip39
             if (mnemonic == null)
                 throw new ArgumentNullException(nameof(mnemonic));
             _mnemonic = mnemonic.Trim();
-            
+
             wordList ??= WordList.AutoDetect(mnemonic) ?? WordList.English;
-            
+
             string[] words = mnemonic.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
             _mnemonic = string.Join(wordList.Space.ToString(), words);
-            
+
             //if the sentence is not at least 12 characters or cleanly divisible by 3, it is bad!
             if (!CorrectWordCount(words.Length))
             {
@@ -77,7 +77,7 @@ namespace Solnet.Wallet.Bip39
         /// </summary>
         /// <param name="wordList">The word list.</param>
         /// <param name="wordCount">The word count.</param>
-        public Mnemonic(WordList wordList, WordCount wordCount) : this(wordList, GenerateEntropy(wordCount)) {}
+        public Mnemonic(WordList wordList, WordCount wordCount) : this(wordList, GenerateEntropy(wordCount)) { }
 
         /// <summary>
         /// Generate entropy for the given word count.
@@ -98,22 +98,22 @@ namespace Solnet.Wallet.Bip39
         /// The word count array.
         /// </summary>
         private static readonly int[] MsArray = { 12, 15, 18, 21, 24 };
-        
+
         /// <summary>
         /// The bit count array.
         /// </summary>
         private static readonly int[] CsArray = { 4, 5, 6, 7, 8 };
-        
+
         /// <summary>
         /// The entropy value array.
         /// </summary>
         private static readonly int[] EntArray = { 128, 160, 192, 224, 256 };
-        
+
         /// <summary>
         /// Whether the checksum of the mnemonic is valid.
         /// </summary>
         private bool? _isValidChecksum;
-        
+
         /// <summary>
         /// Whether the checksum of the mnemonic is valid.
         /// </summary>
@@ -130,7 +130,7 @@ namespace Solnet.Wallet.Bip39
                 int cs = CsArray[i];
                 int ent = EntArray[i];
 
-                BitWriter writer = new ();
+                BitWriter writer = new();
                 BitArray bits = WordList.ToBits(Indices);
                 writer.Write(bits, ent);
                 byte[] entropy = writer.ToBytes();
@@ -172,7 +172,7 @@ namespace Solnet.Wallet.Bip39
         /// Utf8 encoding.
         /// </summary>
         private static readonly Encoding _noBomutf8 = new UTF8Encoding(false);
-        
+
         /// <summary>
         /// Derives the mnemonic seed.
         /// </summary>
@@ -183,10 +183,10 @@ namespace Solnet.Wallet.Bip39
             passphrase ??= "";
             byte[] salt = Concat(_noBomutf8.GetBytes("mnemonic"), Normalize(passphrase));
             byte[] bytes = Normalize(_mnemonic);
-            
+
             return GenerateSeed(bytes, salt);
         }
-        
+
         /// <summary>
         /// Generate the seed using pbkdf with sha 512.
         /// </summary>
@@ -195,9 +195,9 @@ namespace Solnet.Wallet.Bip39
         /// <returns>The derived key.</returns>
         private static byte[] GenerateSeed(byte[] password, byte[] salt)
         {
-            Pkcs5S2ParametersGenerator gen = new (new Sha512Digest());
+            Pkcs5S2ParametersGenerator gen = new(new Sha512Digest());
             gen.Init(password, salt, 2048);
-            return ((KeyParameter) gen.GenerateDerivedParameters( 512)).GetKey();
+            return ((KeyParameter)gen.GenerateDerivedParameters(512)).GetKey();
         }
 
         /// <summary>
@@ -238,7 +238,7 @@ namespace Solnet.Wallet.Bip39
 
             const string notNormalized = "あおぞら";
             const string normalized = "あおぞら";
-            
+
             if (notNormalized.Equals(normalized, StringComparison.Ordinal))
             {
                 _supportOsNormalization = false;
@@ -269,12 +269,12 @@ namespace Solnet.Wallet.Bip39
 
             return buffer;
         }
-        
+
         /// <summary>
         /// The mnemonic string.
         /// </summary>
         private readonly string _mnemonic;
-        
+
         /// <summary>
         /// Gets the mnemonic string.
         /// </summary>

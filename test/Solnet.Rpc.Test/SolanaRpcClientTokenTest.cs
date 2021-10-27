@@ -16,8 +16,6 @@ namespace Solnet.Rpc.Test
     [TestClass]
     public class SolanaRpcClientTokenTest : SolanaRpcClientTestBase
     {
-
-
         [TestMethod]
         public void TestGetTokenSupply()
         {
@@ -27,10 +25,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenSupply("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
@@ -55,10 +50,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenSupply("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2", Commitment.Processed);
@@ -99,10 +91,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenAccountsByOwner(
@@ -127,10 +116,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenAccountsByOwner(
@@ -155,10 +141,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenAccountsByDelegate(
@@ -176,7 +159,11 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(1726080UL, result.Result.Value[0].Account.Lamports);
             Assert.AreEqual("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T",
                 result.Result.Value[0].Account.Data.Parsed.Info.Delegate);
-            Assert.AreEqual(1UL, result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount);
+            Assert.AreEqual("1", result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount.Amount);
+            Assert.AreEqual(1, result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount.Decimals);
+            Assert.AreEqual("0.1", result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount.UiAmountString);
+            Assert.AreEqual(0.1D, result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount.AmountDouble);
+            Assert.AreEqual(1UL, result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount.AmountUlong);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -190,10 +177,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenAccountsByDelegate(
@@ -211,7 +195,11 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(1726080UL, result.Result.Value[0].Account.Lamports);
             Assert.AreEqual("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T",
                 result.Result.Value[0].Account.Data.Parsed.Info.Delegate);
-            Assert.AreEqual(1UL, result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount);
+            Assert.AreEqual("1", result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount.Amount);
+            Assert.AreEqual(1, result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount.Decimals);
+            Assert.AreEqual("0.1", result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount.UiAmountString);
+            Assert.AreEqual(0.1D, result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount.AmountDouble);
+            Assert.AreEqual(1UL, result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount.AmountUlong);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -241,10 +229,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenAccountBalance("7247amxcSBamBSKZJrqbj373CiJSa1v21cRav56C3WfZ");
@@ -269,13 +254,11 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetTokenAccountBalance("7247amxcSBamBSKZJrqbj373CiJSa1v21cRav56C3WfZ", Commitment.Confirmed);
+            var result =
+                sut.GetTokenAccountBalance("7247amxcSBamBSKZJrqbj373CiJSa1v21cRav56C3WfZ", Commitment.Confirmed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -289,7 +272,6 @@ namespace Solnet.Rpc.Test
         }
 
 
-
         [TestMethod]
         public void TestGetTokenLargestAccounts()
         {
@@ -299,10 +281,7 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
@@ -329,13 +308,11 @@ namespace Solnet.Rpc.Test
             var messageHandlerMock = SetupTest(
                 (s => sentMessage = s), responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            var httpClient = new HttpClient(messageHandlerMock.Object) { BaseAddress = TestnetUri, };
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2", Commitment.Processed);
+            var result =
+                sut.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2", Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);

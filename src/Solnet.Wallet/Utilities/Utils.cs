@@ -93,7 +93,7 @@ namespace Solnet.Wallet.Utilities
         private static byte[] Sha256(byte[] data, int offset, int count)
         {
             byte[] i = new byte[32];
-            Sha256Digest digest = new ();
+            Sha256Digest digest = new();
             digest.BlockUpdate(data, offset, count);
             digest.DoFinal(i, 0);
             return i;

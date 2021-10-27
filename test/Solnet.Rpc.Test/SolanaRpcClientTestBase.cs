@@ -32,11 +32,22 @@ namespace Solnet.Rpc.Test
         }
 
         /// <summary>
-        /// Setup the test with the request and response data.
+        /// Setup the test with the request and response data and a 200 OK.
         /// </summary>
         /// <param name="sentPayloadCapture">Capture the sent content.</param>
         /// <param name="responseContent">The response content.</param>
         protected Mock<HttpMessageHandler> SetupTest(Action<string> sentPayloadCapture, string responseContent)
+        {
+            return SetupTest(sentPayloadCapture, responseContent, HttpStatusCode.OK);
+        }
+
+        /// <summary>
+        /// Setup the test with the request and response data and the HTTP status code.
+        /// </summary>
+        /// <param name="sentPayloadCapture">Capture the sent content.</param>
+        /// <param name="responseContent">The response content.</param>
+        /// <param name="statusCode">The HTTP Status Code to return.</param>
+        protected Mock<HttpMessageHandler> SetupTest(Action<string> sentPayloadCapture, string responseContent, HttpStatusCode statusCode)
         {
             var messageHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
             messageHandlerMock
@@ -52,7 +63,7 @@ namespace Solnet.Rpc.Test
                     sentPayloadCapture(httpRequest.Content.ReadAsStringAsync(ct).Result))
                 .ReturnsAsync(new HttpResponseMessage
                 {
-                    StatusCode = HttpStatusCode.OK,
+                    StatusCode = statusCode,
                     Content = new StringContent(responseContent),
                 })
                 .Verifiable();

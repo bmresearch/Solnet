@@ -32,6 +32,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.KeyStore.Test", "tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Programs.Test", "test\Solnet.Programs.Test\Solnet.Programs.Test.csproj", "{44B262CE-3AA3-43CE-B483-F49605E80E7B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Extensions", "src\Solnet.Extensions\Solnet.Extensions.csproj", "{676C103F-927C-42A1-A5C3-16136E50E805}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Extensions.Test", "test\Solnet.Extensions.Test\Solnet.Extensions.Test.csproj", "{2FCF8D66-C706-43EC-BC5F-1E2B08758185}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +78,14 @@ Global
 		{44B262CE-3AA3-43CE-B483-F49605E80E7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44B262CE-3AA3-43CE-B483-F49605E80E7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44B262CE-3AA3-43CE-B483-F49605E80E7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{676C103F-927C-42A1-A5C3-16136E50E805}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{676C103F-927C-42A1-A5C3-16136E50E805}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{676C103F-927C-42A1-A5C3-16136E50E805}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{676C103F-927C-42A1-A5C3-16136E50E805}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FCF8D66-C706-43EC-BC5F-1E2B08758185}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FCF8D66-C706-43EC-BC5F-1E2B08758185}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FCF8D66-C706-43EC-BC5F-1E2B08758185}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FCF8D66-C706-43EC-BC5F-1E2B08758185}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

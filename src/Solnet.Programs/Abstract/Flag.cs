@@ -18,5 +18,13 @@ namespace Solnet.Programs.Abstract
         {
             Value = mask;
         }
+
+        /// <summary>
+        /// Checks whether the Kth bit for a given number N is set.
+        /// </summary>
+        /// <param name="n">The number to check against.</param>
+        /// <param name="k">The bit to check.</param>
+        /// <returns>true if it is, otherwise false.</returns>
+        protected static bool IsKthBitSet(ulong n, int k) => (n & (1UL << (k - 1))) > 0;
     }
 }

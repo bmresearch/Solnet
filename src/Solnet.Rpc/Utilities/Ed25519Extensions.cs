@@ -10,7 +10,12 @@ namespace Solnet.Rpc.Utilities
      * Released to the public domain
      */
 
-    internal static class Ed25519Extensions
+    /// <summary>
+    /// Helper methods for ED25519 checks
+    /// Edwards-curve Digital Signature Algorithm (EdDSA)
+    /// https://en.wikipedia.org/wiki/EdDSA#Ed25519
+    /// </summary>
+    public static class Ed25519Extensions
     {
         private static BigInteger ExpMod(BigInteger number, BigInteger exponent, BigInteger modulo)
         {
@@ -56,7 +61,12 @@ namespace Solnet.Rpc.Utilities
             return (yy - xx - dxxyy - 1).Mod(Q).Equals(BigInteger.Zero);
         }
 
-        internal static bool IsOnCurve(this byte[] key)
+        /// <summary>
+        /// Checks whether the PublicKey bytes are 'On The Curve'
+        /// </summary>
+        /// <param name="key">PublicKey as byte array</param>
+        /// <returns></returns>
+        public static bool IsOnCurve(this byte[] key)
         {
             BigInteger y = new BigInteger(key) & Un;
             BigInteger x = RecoverX(y);

@@ -212,7 +212,7 @@ namespace Solnet.Wallet.Test
         }
 
         [TestMethod]
-        public void TestWalletSignEd25519Bip32()
+        public void TestAccountSignEd25519Bip32()
         {
             var wallet = SetupWalletFromMnemonicWords(SeedMode.Ed25519Bip32);
 
@@ -221,7 +221,16 @@ namespace Solnet.Wallet.Test
         }
 
         [TestMethod]
-        public void TestWalletVerifyEd25519Bip32()
+        public void TestWalletSignEd25519Bip32()
+        {
+            var wallet = SetupWalletFromMnemonicWords(SeedMode.Ed25519Bip32);
+
+            CollectionAssert.AreEqual(SerializedMessageSignature, wallet.Account.Sign(SerializedMessage));
+            CollectionAssert.AreEqual(SerializedMessageSignature, wallet.Sign(SerializedMessage));
+        }
+
+        [TestMethod]
+        public void TestAccountVerifyEd25519Bip32()
         {
             var wallet = SetupWalletFromMnemonicWords(SeedMode.Ed25519Bip32);
 
@@ -230,7 +239,27 @@ namespace Solnet.Wallet.Test
         }
 
         [TestMethod]
+        public void TestWalletVerifyEd25519Bip32()
+        {
+            var wallet = SetupWalletFromMnemonicWords(SeedMode.Ed25519Bip32);
+
+            Assert.IsTrue(wallet.Account.Verify(SerializedMessage, SerializedMessageSignature));
+            Assert.IsTrue(wallet.Verify(SerializedMessage, SerializedMessageSignature));
+        }
+
+        [TestMethod]
         public void TestWalletSignBip39()
+        {
+            var wallet = SetupWalletFromMnemonicWords(SeedMode.Bip39);
+
+            Assert.ThrowsException<Exception>(() => wallet.Sign(SerializedMessage, 1));
+            Assert.ThrowsException<Exception>(() => wallet.GetAccount(0).Sign(SerializedMessage));
+
+            CollectionAssert.AreEqual(SerializedMessageSignatureBip39, wallet.Sign(SerializedMessage));
+        }
+
+        [TestMethod]
+        public void TestAccountSignBip39()
         {
             var wallet = SetupWalletFromMnemonicWords(SeedMode.Bip39);
 

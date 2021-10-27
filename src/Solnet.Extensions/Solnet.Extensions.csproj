@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Solnet.Programs\Solnet.Programs.csproj" />
+    <ProjectReference Include="..\Solnet.Rpc\Solnet.Rpc.csproj" />
+    <ProjectReference Include="..\Solnet.Wallet\Solnet.Wallet.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\..\SharedBuildProperties.props" />
+</Project>

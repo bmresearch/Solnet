@@ -23,7 +23,7 @@ namespace Solnet.Rpc.Models
         {
             get
             {
-                List<AccountMeta> list = new (_accounts.Values);
+                List<AccountMeta> list = new(_accounts.Values);
                 list.Sort();
                 return list;
             }
@@ -48,10 +48,10 @@ namespace Solnet.Rpc.Models
             {
                 bool ok = _accounts.TryGetValue(accountMeta.PublicKey, out AccountMeta account);
                 if (!ok) throw new Exception("account meta already exists but could not overwrite");
-                if (accountMeta.Writable && !account.Writable)
-                {
-                    _accounts.Add(accountMeta.PublicKey, accountMeta);
-                }
+                if ((!accountMeta.IsWritable && account.IsWritable) || (!accountMeta.IsSigner && account.IsSigner)) return;
+
+                _accounts.Remove(account.PublicKey);
+                _accounts.Add(accountMeta.PublicKey, accountMeta);
             }
             else
             {

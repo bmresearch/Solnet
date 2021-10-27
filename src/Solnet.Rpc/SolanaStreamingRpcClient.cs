@@ -50,7 +50,7 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="StreamingRpcClient.CleanupSubscriptions"/>
         protected override void CleanupSubscriptions()
         {
-            foreach(var sub in confirmedSubscriptions)
+            foreach (var sub in confirmedSubscriptions)
             {
                 sub.Value.ChangeState(SubscriptionStatus.Unsubscribed, "Connection terminated");
             }
@@ -313,7 +313,7 @@ namespace Solnet.Rpc
             var parameters = new List<object> { pubkey };
             var configParams = new Dictionary<string, object> { { "encoding", "base64" } };
 
-            if(commitment != Commitment.Finalized)
+            if (commitment != Commitment.Finalized)
             {
                 configParams.Add("commitment", commitment);
             }
@@ -337,7 +337,7 @@ namespace Solnet.Rpc
         public async Task<SubscriptionState> SubscribeLogInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback, Commitment commitment = Commitment.Finalized)
         {
             var parameters = new List<object> { new Dictionary<string, object> { { "mentions", new List<string> { pubkey } } } };
-            
+
             if (commitment != Commitment.Finalized)
             {
                 var configParams = new Dictionary<string, Commitment> { { "commitment", commitment } };
@@ -346,7 +346,7 @@ namespace Solnet.Rpc
 
             var sub = new SubscriptionState<ResponseValue<LogInfo>>(this, SubscriptionChannel.Logs, callback, parameters);
 
-            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "logsSubscribe", parameters );
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "logsSubscribe", parameters);
             return await Subscribe(sub, msg).ConfigureAwait(false);
         }
 

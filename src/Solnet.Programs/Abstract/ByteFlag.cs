@@ -8,43 +8,43 @@ namespace Solnet.Programs.Abstract
         /// <summary>
         /// Check if the 1st bit is set.
         /// </summary>
-        public bool Bit0 => (Value & 0x01) != 0;
-        
+        public bool Bit0 => IsKthBitSet(Value, 1);
+
         /// <summary>
         /// Check if the 2nd bit is set.
         /// </summary>
-        public bool Bit1 => (Value & 0x02) != 0;
-        
+        public bool Bit1 => IsKthBitSet(Value, 2);
+
         /// <summary>
-        /// Check if the 3rc bit is set.
+        /// Check if the 3rd bit is set.
         /// </summary>
-        public bool Bit2 => (Value & 0x04) != 0;
-        
+        public bool Bit2 => IsKthBitSet(Value, 3);
+
         /// <summary>
         /// Check if the 4th bit is set.
         /// </summary>
-        public bool Bit3 => (Value & 0x08) != 0;
-        
+        public bool Bit3 => IsKthBitSet(Value, 4);
+
         /// <summary>
         /// Check if the 5th bit is set.
         /// </summary>
-        public bool Bit4 => (Value & 0x10) != 0;
-        
+        public bool Bit4 => IsKthBitSet(Value, 5);
+
         /// <summary>
         /// Check if the 6th bit is set.
         /// </summary>
-        public bool Bit5 => (Value & 0x20) != 0;
-        
+        public bool Bit5 => IsKthBitSet(Value, 6);
+
         /// <summary>
         /// Check if the 7th bit is set.
         /// </summary>
-        public bool Bit6 => (Value & 0x40) != 0;
-        
+        public bool Bit6 => IsKthBitSet(Value, 7);
+
         /// <summary>
         /// Check if the 8th bit is set.
         /// </summary>
-        public bool Bit7 => (Value & 0x80) != 0;
-        
+        public bool Bit7 => IsKthBitSet(Value, 8);
+
         /// <summary>
         /// Initialize the flags with the given byte.
         /// </summary>

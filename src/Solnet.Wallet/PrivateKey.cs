@@ -1,5 +1,6 @@
 // unset
 
+using Chaos.NaCl;
 using Solnet.Wallet.Utilities;
 using System;
 using System.Diagnostics;
@@ -15,7 +16,7 @@ namespace Solnet.Wallet
         /// <summary>
         /// Private key length.
         /// </summary>
-        private const int PrivateKeyLength = 64;
+        public const int PrivateKeyLength = 64;
 
         private string _key;
 
@@ -32,7 +33,7 @@ namespace Solnet.Wallet
                 }
                 return _key;
             }
-            set { _key = value; }
+            set => _key = value;
         }
 
 
@@ -51,7 +52,7 @@ namespace Solnet.Wallet
                 }
                 return _keyBytes;
             }
-            set { _keyBytes = value; }
+            set => _keyBytes = value;
         }
 
 
@@ -61,6 +62,8 @@ namespace Solnet.Wallet
         /// <param name="key">The public key as byte array.</param>
         public PrivateKey(byte[] key)
         {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
             if (key.Length != PrivateKeyLength)
                 throw new ArgumentException("invalid key length", nameof(key));
             KeyBytes = new byte[PrivateKeyLength];
@@ -73,7 +76,7 @@ namespace Solnet.Wallet
         /// <param name="key">The public key as base58 encoded string.</param>
         public PrivateKey(string key)
         {
-            Key = key;
+            Key = key ?? throw new ArgumentNullException(nameof(key));
         }
 
         /// <summary>
@@ -89,31 +92,46 @@ namespace Solnet.Wallet
         }
 
         /// <summary>
+        /// Sign the data.
+        /// </summary>
+        /// <param name="message">The data to sign.</param>
+        /// <returns>The signature of the data.</returns>
+        public byte[] Sign(byte[] message)
+        {
+            byte[] signature = new byte[64];
+            Ed25519.Sign(signature, message, KeyBytes);
+            return signature;
+        }
+
+        /// <summary>
         /// Conversion between a <see cref="PrivateKey"/> object and the corresponding base-58 encoded private key.
         /// </summary>
         /// <param name="privateKey">The PrivateKey object.</param>
         /// <returns>The base-58 encoded private key.</returns>
         public static implicit operator string(PrivateKey privateKey) => privateKey.Key;
-        
+
         /// <summary>
         /// Conversion between a base-58 encoded private key and the <see cref="PrivateKey"/> object.
         /// </summary>
         /// <param name="address">The base-58 encoded private key.</param>
         /// <returns>The PrivateKey object.</returns>
-        public static explicit operator PrivateKey(string address) => new (address);
-        
+        public static explicit operator PrivateKey(string address) => new(address);
+
         /// <summary>
         /// Conversion between a <see cref="PrivateKey"/> object and the private key as a byte array.
         /// </summary>
         /// <param name="privateKey">The PrivateKey object.</param>
         /// <returns>The private key as a byte array.</returns>
         public static implicit operator byte[](PrivateKey privateKey) => privateKey.KeyBytes;
-        
+
         /// <summary>
         /// Conversion between a private key as a byte array and the corresponding <see cref="PrivateKey"/> object.
         /// </summary>
         /// <param name="keyBytes">The private key as a byte array.</param>
         /// <returns>The PrivateKey object.</returns>
-        public static explicit operator PrivateKey(byte[] keyBytes) => new (keyBytes);
+        public static explicit operator PrivateKey(byte[] keyBytes) => new(keyBytes);
+
+        /// <inheritdoc cref="ToString"/>
+        public override string ToString() => Key;
     }
 }

@@ -55,12 +55,12 @@ namespace Solnet.Rpc.Core.Sockets
         /// </summary>
         /// <param name="rpcClient">The streaming rpc client reference.</param>
         /// <param name="chan">The channel of this subscription.</param>
-        /// <param name="aditionalParameters">Aditional parameters for this given subscription.</param>
-        protected SubscriptionState(IStreamingRpcClient rpcClient, SubscriptionChannel chan, IList<object> aditionalParameters = default)
+        /// <param name="additionalParameters">Additional parameters for this given subscription.</param>
+        protected SubscriptionState(IStreamingRpcClient rpcClient, SubscriptionChannel chan, IList<object> additionalParameters = default)
         {
             _rpcClient = rpcClient;
             Channel = chan;
-            AdditionalParameters = aditionalParameters?.ToImmutableList();
+            AdditionalParameters = additionalParameters?.ToImmutableList();
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Solnet.Rpc.Core.Sockets
         /// Invokes the data handler.
         /// </summary>
         /// <param name="data">The data.</param>
-        internal abstract void HandleData(object data);
+        protected internal abstract void HandleData(object data);
 
         /// <summary>
         /// Unsubscribes the current subscription.
@@ -114,14 +114,14 @@ namespace Solnet.Rpc.Core.Sockets
         /// <param name="rpcClient">The streaming rpc client reference.</param>
         /// <param name="chan">The channel of this subscription.</param>
         /// <param name="handler">The handler for the data received.</param>
-        /// <param name="aditionalParameters">Aditional parameters for this given subscription.</param>
-        internal SubscriptionState(SolanaStreamingRpcClient rpcClient, SubscriptionChannel chan, Action<SubscriptionState, T> handler, IList<object> aditionalParameters = default)
-            : base(rpcClient, chan, aditionalParameters)
+        /// <param name="additionalParameters">Additional parameters for this given subscription.</param>
+        internal SubscriptionState(SolanaStreamingRpcClient rpcClient, SubscriptionChannel chan, Action<SubscriptionState, T> handler, IList<object> additionalParameters = default)
+            : base(rpcClient, chan, additionalParameters)
         {
             DataHandler = handler;
         }
 
         /// <inheritdoc cref="SubscriptionState.HandleData(object)"/>
-        internal override void HandleData(object data) => DataHandler(this, (T)data);
+        protected internal override void HandleData(object data) => DataHandler(this, (T)data);
     }
 }

@@ -1,5 +1,4 @@
-// unset
-
+using Chaos.NaCl;
 using Solnet.Wallet.Utilities;
 using System;
 using System.Diagnostics;
@@ -15,7 +14,7 @@ namespace Solnet.Wallet
         /// <summary>
         /// Public key length.
         /// </summary>
-        private const int PublicKeyLength = 32;
+        public const int PublicKeyLength = 32;
 
         private string _key;
 
@@ -32,7 +31,7 @@ namespace Solnet.Wallet
                 }
                 return _key;
             }
-            set { _key = value; }
+            set => _key = value;
         }
 
 
@@ -51,7 +50,7 @@ namespace Solnet.Wallet
                 }
                 return _keyBytes;
             }
-            set { _keyBytes = value; }
+            set => _keyBytes = value;
         }
 
 
@@ -61,6 +60,8 @@ namespace Solnet.Wallet
         /// <param name="key">The public key as byte array.</param>
         public PublicKey(byte[] key)
         {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
             if (key.Length != PublicKeyLength)
                 throw new ArgumentException("invalid key length", nameof(key));
             KeyBytes = new byte[PublicKeyLength];
@@ -73,7 +74,7 @@ namespace Solnet.Wallet
         /// <param name="key">The public key as base58 encoded string.</param>
         public PublicKey(string key)
         {
-            Key = key;
+            Key = key ?? throw new ArgumentNullException(nameof(key));
         }
 
         /// <summary>
@@ -86,6 +87,17 @@ namespace Solnet.Wallet
                 throw new ArgumentException("invalid key length", nameof(key));
             KeyBytes = new byte[PublicKeyLength];
             key.CopyTo(KeyBytes.AsSpan());
+        }
+
+        /// <summary>
+        /// Verify the signed message.
+        /// </summary>
+        /// <param name="message">The signed message.</param>
+        /// <param name="signature">The signature of the message.</param>
+        /// <returns></returns>
+        public bool Verify(byte[] message, byte[] signature)
+        {
+            return Ed25519.Verify(signature, message, KeyBytes);
         }
 
         /// <summary>
@@ -115,5 +127,8 @@ namespace Solnet.Wallet
         /// <param name="keyBytes">The public key as a byte array.</param>
         /// <returns>The PublicKey object.</returns>
         public static explicit operator PublicKey(byte[] keyBytes) => new(keyBytes);
+
+        /// <inheritdoc cref="ToString"/>
+        public override string ToString() => Key;
     }
 }

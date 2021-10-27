@@ -1,0 +1,189 @@
+{
+  "meta": {
+    "err": null,
+    "fee": 5000,
+    "innerInstructions": [
+      {
+        "index": 0,
+        "instructions": [
+          {
+            "accounts": [
+              0,
+              1
+            ],
+            "data": "3Bxs4h24hBtQy9rw",
+            "programIdIndex": 5
+          },
+          {
+            "accounts": [
+              1
+            ],
+            "data": "9krTDU2LzCSUJuVZ",
+            "programIdIndex": 5
+          },
+          {
+            "accounts": [
+              1
+            ],
+            "data": "SYXsBSQy3GeifSEQSGvTbrPNposbSAiSoh1YA85wcvGKSnYg",
+            "programIdIndex": 5
+          },
+          {
+            "accounts": [
+              1,
+              4,
+              3,
+              7
+            ],
+            "data": "2",
+            "programIdIndex": 6
+          }
+        ]
+      }
+    ],
+    "logMessages": [
+      "Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL invoke [1]",
+      "Program log: Transfer 2039280 lamports to the associated token account",
+      "Program 11111111111111111111111111111111 invoke [2]",
+      "Program 11111111111111111111111111111111 success",
+      "Program log: Allocate space for the associated token account",
+      "Program 11111111111111111111111111111111 invoke [2]",
+      "Program 11111111111111111111111111111111 success",
+      "Program log: Assign the associated token account to the SPL Token program",
+      "Program 11111111111111111111111111111111 invoke [2]",
+      "Program 11111111111111111111111111111111 success",
+      "Program log: Initialize the associated token account",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]",
+      "Program log: Instruction: InitializeAccount",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 3957 of 179468 compute units",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success",
+      "Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL consumed 25170 of 200000 compute units",
+      "Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL success",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [1]",
+      "Program log: Instruction: Transfer",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 3401 of 200000 compute units",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success",
+      "Program Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo invoke [1]",
+      "Program Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo consumed 678 of 200000 compute units",
+      "Program Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo success"
+    ],
+    "postBalances": [
+      20710160000,
+      2039280,
+      2039280,
+      2000000000,
+      1461600,
+      1,
+      1130582400,
+      1,
+      898174080,
+      121159680
+    ],
+    "postTokenBalances": [
+      {
+        "accountIndex": 1,
+        "mint": "4NtWFCwJDebDw16pEPh9JJo9XkuufK1tvY8A2MmkrsRP",
+        "uiTokenAmount": {
+          "amount": "25000",
+          "decimals": 2,
+          "uiAmount": 250.0,
+          "uiAmountString": "250"
+        }
+      },
+      {
+        "accountIndex": 2,
+        "mint": "4NtWFCwJDebDw16pEPh9JJo9XkuufK1tvY8A2MmkrsRP",
+        "uiTokenAmount": {
+          "amount": "975000",
+          "decimals": 2,
+          "uiAmount": 9750.0,
+          "uiAmountString": "9750"
+        }
+      }
+    ],
+    "preBalances": [
+      20712204280,
+      0,
+      2039280,
+      2000000000,
+      1461600,
+      1,
+      1130582400,
+      1,
+      898174080,
+      121159680
+    ],
+    "preTokenBalances": [
+      {
+        "accountIndex": 2,
+        "mint": "4NtWFCwJDebDw16pEPh9JJo9XkuufK1tvY8A2MmkrsRP",
+        "uiTokenAmount": {
+          "amount": "1000000",
+          "decimals": 2,
+          "uiAmount": 10000.0,
+          "uiAmountString": "10000"
+        }
+      }
+    ],
+    "rewards": [],
+    "status": {
+      "Ok": null
+    }
+  },
+  "transaction": {
+    "message": {
+      "accountKeys": [
+        "5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj",
+        "BrvPSQpe6rYdvsS4idWPSKdUzyF8v3ZySVYYTuyCJnH5",
+        "DEy4VaFFqTn6MweESovsbA5mUDMD2a99qnT8YMKSrCF3",
+        "65EoWs57dkMEWbK4TJkPDM76rnbumq7r3fiZJnxggj2G",
+        "4NtWFCwJDebDw16pEPh9JJo9XkuufK1tvY8A2MmkrsRP",
+        "11111111111111111111111111111111",
+        "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+        "SysvarRent111111111111111111111111111111111",
+        "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
+        "Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo"
+      ],
+      "header": {
+        "numReadonlySignedAccounts": 0,
+        "numReadonlyUnsignedAccounts": 7,
+        "numRequiredSignatures": 1
+      },
+      "instructions": [
+        {
+          "accounts": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "data": "",
+          "programIdIndex": 8
+        },
+        {
+          "accounts": [
+            2,
+            1,
+            0
+          ],
+          "data": "3hd3odyyp3J7",
+          "programIdIndex": 6
+        },
+        {
+          "accounts": [
+            0
+          ],
+          "data": "41AM49hyuktMKJeRjL6mANNBd",
+          "programIdIndex": 9
+        }
+      ],
+      "recentBlockhash": "9yot2ZwTEnwvgF8ixEkxvK17o9nfmX75oKPCkXD4y2pZ"
+    },
+    "signatures": [
+      "NV5FQWzgkCkAYnvyP3FbkEAyDnXv9NBvW1neEa6hoU3wJNHQbFCKKbPwYpgGSUGufHZFBXwCeWep1fnYDLq5HHn"
+    ]
+  }
+}

@@ -1,5 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Solnet.Programs.Models;
 using Solnet.Wallet.Utilities;
+using System;
 
 namespace Solnet.Programs.Test
 {
@@ -11,7 +13,7 @@ namespace Solnet.Programs.Test
         private const string MnemonicWords =
             "route clerk disease box emerge airport loud waste attitude film army tray " +
             "forward deal onion eight catalog surface unit card window walnut wealth medal";
-        
+
         private static readonly byte[] SystemProgramIdBytes =
         {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -34,7 +36,7 @@ namespace Solnet.Programs.Test
 
         private static readonly byte[] AssignInstructionBytes =
         {
-            1, 0, 0, 0, 189, 31, 212, 204, 51, 65, 12, 40, 
+            1, 0, 0, 0, 189, 31, 212, 204, 51, 65, 12, 40,
             137, 113, 214, 99, 175, 9, 119, 28, 19, 10, 56, 240,
             87, 136, 148, 225, 227, 13, 181, 127, 113, 230, 10, 186
         };
@@ -50,35 +52,35 @@ namespace Solnet.Programs.Test
             189, 53, 152, 48, 38,
         };
 
-        private static readonly byte[] AdvanceNonceAccountInstructionBytes = {4, 0, 0, 0};
-        
+        private static readonly byte[] AdvanceNonceAccountInstructionBytes = { 4, 0, 0, 0 };
+
         private static readonly byte[] WithdrawNonceAccountInstructionBytes =
         {
             5, 0, 0, 0, 64, 66, 15, 0, 0, 0, 0, 0
         };
-        
+
         private static readonly byte[] InitializeNonceAccountInstructionBytes =
         {
             6, 0, 0, 0, 4, 23, 154, 206, 58, 166, 9, 125, 107, 80, 224, 57,
             235, 71, 51, 46, 27, 153, 48, 39, 162, 54, 144, 176, 6, 128, 214,
             189, 53, 152, 48, 38
         };
-        
+
         private static readonly byte[] AuthorizeNonceAccountInstructionBytes =
         {
             7, 0, 0, 0, 4, 23, 154, 206, 58, 166, 9, 125, 107, 80, 224, 57,
             235, 71, 51, 46, 27, 153, 48, 39, 162, 54, 144, 176, 6, 128, 214,
             189, 53, 152, 48, 38
         };
-        
+
         private static readonly byte[] AllocateInstructionBytes =
         {
             8, 0, 0, 0, 64, 66, 15, 0, 0, 0, 0, 0
         };
-        
+
         private static readonly byte[] AllocateWithSeedInstructionBytes =
         {
-            9, 0, 0, 0, 244, 171, 249, 196, 62, 132, 245, 193, 114, 19, 
+            9, 0, 0, 0, 244, 171, 249, 196, 62, 132, 245, 193, 114, 19,
             34, 7, 37, 207, 38, 98, 69, 136, 106, 149, 175, 110, 143,
             211, 108, 198, 5, 239, 231, 182, 7, 20, 8, 0, 0, 0, 116,
             101, 115, 116, 83, 101, 101, 100, 232, 3, 0, 0, 0, 0, 0,
@@ -86,7 +88,7 @@ namespace Solnet.Programs.Test
             71, 51, 46, 27, 153, 48, 39, 162, 54, 144, 176, 6, 128, 214,
             189, 53, 152, 48, 38
         };
-        
+
         private static readonly byte[] AssignWithSeedInstructionBytes =
         {
             10, 0, 0, 0, 244, 171, 249, 196, 62, 132, 245, 193, 114,
@@ -97,16 +99,25 @@ namespace Solnet.Programs.Test
             153, 48, 39, 162, 54, 144, 176, 6, 128, 214, 189, 53,
             152, 48, 38
         };
-        
+
         private static readonly byte[] TransferWithSeedInstructionBytes =
         {
             11, 0, 0, 0, 64, 66, 15, 0, 0, 0, 0, 0, 8, 0, 0, 0, 116, 101, 115, 116,
             83, 101, 101, 100, 4, 23, 154, 206, 58, 166, 9, 125, 107, 80,
             224, 57, 235, 71, 51, 46, 27, 153, 48, 39, 162, 54, 144, 176,
-            6, 128, 214, 189, 53, 152, 48, 38, 
+            6, 128, 214, 189, 53, 152, 48, 38,
         };
 
         private const long BalanceForRentExemption = 2039280L;
+
+        private const string NonceAccountBase64Data =
+            "AAAAAAEAAABHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbc" +
+            "XsnM+zs3rCNyHGAjze1Gvfq4gRzzrz7ggv4rYXkMo8P2DiBMAAAAAAAA=";
+
+        private const string NonceAccountInvalidBase64Data =
+            "77+977+977+977+9Ae+/ve+/ve+/vUdpwqvClyBLwqg/wrDDisOuF8O3wob" +
+            "Cjx4HTlJSFcKBIMOYwp3ClDfCncKqZcK3F8Kycz7DjsONw6sIw5zChxgIw7N" +
+            "7UcKvfsKuIEc8w6vDj8K4IMK/worDmF5DKMOww73Cg8KIE++/ve+/ve+/ve+/ve+/ve+/vQ==";
 
         [TestMethod]
         public void TestSystemProgramTransfer()
@@ -135,7 +146,7 @@ namespace Solnet.Programs.Test
                 ownerAccount,
                 mintAccount,
                 BalanceForRentExemption,
-                SystemProgram.AccountDataSize,
+                TokenProgram.TokenAccountDataSize,
                 TokenProgram.ProgramIdKey);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
@@ -157,7 +168,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(AssignInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
-        
+
         [TestMethod]
         public void TestSystemProgramCreateAccountWithSeed()
         {
@@ -169,19 +180,19 @@ namespace Solnet.Programs.Test
             var owner = wallet.GetAccount(3);
 
             var txInstruction = SystemProgram.CreateAccountWithSeed(
-                from, 
-                to.PublicKey, 
-                baseAccount, 
-                "testSeed", 
-                1_000_000, 
-                1000, 
+                from,
+                to.PublicKey,
+                baseAccount,
+                "testSeed",
+                1_000_000,
+                1000,
                 owner.PublicKey);
 
             Assert.AreEqual(3, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(CreateAccountWithSeedInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
-        
+
         [TestMethod]
         public void TestSystemProgramAdvanceNonceAccount()
         {
@@ -197,7 +208,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(AdvanceNonceAccountInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
-        
+
         [TestMethod]
         public void TestSystemProgramWithdrawNonceAccount()
         {
@@ -217,7 +228,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(WithdrawNonceAccountInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
-        
+
         [TestMethod]
         public void TestSystemProgramInitializeNonceAccount()
         {
@@ -234,7 +245,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(InitializeNonceAccountInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
-        
+
         [TestMethod]
         public void TestSystemProgramAuthorizeNonceAccount()
         {
@@ -245,14 +256,14 @@ namespace Solnet.Programs.Test
             var newAuthority = wallet.GetAccount(3);
 
             var txInstruction = SystemProgram.AuthorizeNonceAccount(
-                nonceAccount.PublicKey, 
+                nonceAccount.PublicKey,
                 owner, newAuthority.PublicKey);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(AuthorizeNonceAccountInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
-        
+
         [TestMethod]
         public void TestSystemProgramAllocate()
         {
@@ -267,7 +278,7 @@ namespace Solnet.Programs.Test
             CollectionAssert.AreEqual(AllocateInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
-        
+
         [TestMethod]
         public void TestSystemProgramAllocateWithSeed()
         {
@@ -281,14 +292,14 @@ namespace Solnet.Programs.Test
                 account.PublicKey,
                 baseAccount,
                 "testSeed",
-                1_000, 
+                1_000,
                 owner.PublicKey);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(AllocateWithSeedInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
-        
+
         [TestMethod]
         public void TestSystemProgramAssignWithSeed()
         {
@@ -299,16 +310,16 @@ namespace Solnet.Programs.Test
             var owner = wallet.GetAccount(3);
 
             var txInstruction = SystemProgram.AssignWithSeed(
-                account.PublicKey, 
-                baseAccount, 
-                "testSeed", 
+                account.PublicKey,
+                baseAccount,
+                "testSeed",
                 owner.PublicKey);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(AssignWithSeedInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
-        
+
         [TestMethod]
         public void TestSystemProgramTransferWithSeed()
         {
@@ -320,16 +331,35 @@ namespace Solnet.Programs.Test
             var owner = wallet.GetAccount(3);
 
             var txInstruction = SystemProgram.TransferWithSeed(
-                from.PublicKey, 
-                baseAccount, 
-                "testSeed", 
-                owner.PublicKey, 
-                to.PublicKey, 
+                from.PublicKey,
+                baseAccount,
+                "testSeed",
+                owner.PublicKey,
+                to.PublicKey,
                 1_000_000);
 
             Assert.AreEqual(3, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TransferWithSeedInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
+        }
+
+        [TestMethod]
+        public void TestNonceAccountDeserializationException()
+        {
+            var nonceAccount = NonceAccount.Deserialize(Convert.FromBase64String(NonceAccountInvalidBase64Data));
+            Assert.IsNull(nonceAccount);
+        }
+
+        [TestMethod]
+        public void TestNonceAccountDeserialization()
+        {
+            var nonceAccount = NonceAccount.Deserialize(Convert.FromBase64String(NonceAccountBase64Data));
+
+            Assert.AreEqual(0UL, nonceAccount.Version);
+            Assert.AreEqual(1UL, nonceAccount.State);
+            Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", nonceAccount.Authorized.Key);
+            Assert.AreEqual("8ksS6xXd7vzNrpZfBTf9gJ87Bma5AjnQ9baEcT7xH5QE", nonceAccount.Nonce.Key);
+            Assert.AreEqual(5000UL, nonceAccount.FeeCalculator.LamportsPerSignature);
         }
     }
 }
