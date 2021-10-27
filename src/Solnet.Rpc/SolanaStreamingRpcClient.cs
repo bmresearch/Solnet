@@ -43,7 +43,8 @@ namespace Solnet.Rpc
         /// <param name="url">The url of the server to connect to.</param>
         /// <param name="logger">The possible ILogger instance.</param>
         /// <param name="websocket">The possible IWebSocket instance.</param>
-        internal SolanaStreamingRpcClient(string url, ILogger logger = null, IWebSocket websocket = default) : base(url, logger, websocket)
+        /// <param name="clientWebSocket">The possible ClientWebSocket instance.</param>
+        internal SolanaStreamingRpcClient(string url, ILogger logger = null, IWebSocket websocket = default, ClientWebSocket clientWebSocket = default) : base(url, logger, websocket, clientWebSocket)
         {
         }
 
