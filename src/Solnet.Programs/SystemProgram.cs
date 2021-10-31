@@ -124,8 +124,12 @@ namespace Solnet.Programs
             {
                 AccountMeta.Writable(fromPublicKey, true),
                 AccountMeta.Writable(toPublicKey, false),
-                AccountMeta.ReadOnly(baseAccount, true)
+                //AccountMeta.ReadOnly(baseAccount, true)
             };
+            if (baseAccount != fromPublicKey)
+            {
+                keys.Add(AccountMeta.ReadOnly(baseAccount, true));
+            }
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,

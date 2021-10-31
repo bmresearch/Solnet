@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using Solnet.Programs.Utilities;
 using Solnet.Wallet;
 using System;
@@ -76,19 +77,36 @@ namespace Solnet.Programs
         internal static byte[] EncodeCreateAccountWithSeedData(
             PublicKey baseAccount, PublicKey owner, ulong lamports, ulong space, string seed)
         {
-            byte[] encodedSeed = Serialization.EncodeRustString(seed);
+            byte[] encodedSeed = Serialization.EncodeRustStringWithOffset(seed);
+            Console.WriteLine("encodedseed.length = " + encodedSeed.Length);
             byte[] data = new byte[84 + encodedSeed.Length];
-
+            Console.WriteLine("data length = " + data.Length);
             data.WriteU32((uint)SystemProgramInstructions.Values.CreateAccountWithSeed, MethodOffset);
+            var _data = new List<byte>();
+            _data = new List<byte>(data).GetRange(0,4);
+            Console.WriteLine("ToReadableByteArray offset= " + JsonConvert.SerializeObject(_data));
             data.WritePubKey(baseAccount, 4);
-            data.WriteSpan(encodedSeed, 36);
-            data.WriteU64(lamports, 36 + encodedSeed.Length);
-            data.WriteU64(space, 44 + encodedSeed.Length);
-            data.WritePubKey(owner, 52 + encodedSeed.Length);
+            _data = new List<byte>(data).GetRange(4,32);
+            Console.WriteLine("ToReadableByteArray = base key" + JsonConvert.SerializeObject(_data));
 
+            data.WriteSpan(encodedSeed, 36);
+            _data = new List<byte>(data).GetRange(36, 36+encodedSeed.Length);
+            Console.WriteLine("ToReadableByteArray = encoded seed" + JsonConvert.SerializeObject(_data));
+            data.WriteU64(lamports, 36 + encodedSeed.Length);
+            _data = new List<byte>(data).GetRange(36+encodedSeed.Length, 8);
+            Console.WriteLine("ToReadableByteArray = lamport" + JsonConvert.SerializeObject(_data));
+            data.WriteU64(space, 44 + encodedSeed.Length);
+            _data = new List<byte>(data).GetRange(36+encodedSeed.Length+8, 8);
+            Console.WriteLine("ToReadableByteArray = length" + JsonConvert.SerializeObject(_data));
+            data.WritePubKey(owner, 52 + encodedSeed.Length);
+            _data = new List<byte>(data).GetRange(36+encodedSeed.Length+8+8, 32);
+            Console.WriteLine("ToReadableByteArray = owner "+ JsonConvert.SerializeObject(_data));
             return data;
         }
-
+        static public string ToReadableByteArray(byte[] bytes)
+        {
+            return string.Join(", ", bytes);
+        }
         /// <summary>
         /// Encode transaction instruction data for the <see cref="SystemProgramInstructions.Values.AdvanceNonceAccount"/> method.
         /// </summary>

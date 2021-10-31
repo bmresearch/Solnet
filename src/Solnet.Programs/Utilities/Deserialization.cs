@@ -217,9 +217,10 @@ namespace Solnet.Programs.Utilities
                 throw new ArgumentOutOfRangeException(nameof(offset));
 
             int stringLength = (int)data.GetU32(offset);
-            byte[] stringBytes = data.GetSpan(offset + sizeof(uint), stringLength).ToArray();
+            int padding = (int)data.GetU32(offset+sizeof(uint));
+            byte[] stringBytes = data.GetSpan(offset + 2*sizeof(uint), stringLength).ToArray();
 
-            return (EncodedString: Encoding.ASCII.GetString(stringBytes), Length: stringLength + sizeof(uint));
+            return (EncodedString: Encoding.UTF8.GetString(stringBytes), Length: stringLength + 2*sizeof(uint));
         }
     }
 }
