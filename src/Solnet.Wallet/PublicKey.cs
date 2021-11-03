@@ -8,7 +8,7 @@ namespace Solnet.Wallet
     /// <summary>
     /// Implements the public key functionality.
     /// </summary>
-    [DebuggerDisplay("Key = {" + nameof(Key) + "}")]
+    [DebuggerDisplay("Key = {ToString()}")]
     public class PublicKey
     {
         /// <summary>
@@ -138,5 +138,8 @@ namespace Solnet.Wallet
 
         /// <inheritdoc cref="ToString"/>
         public override string ToString() => Key;
+
+        /// <inheritdoc cref="GetHashCode"/>
+        public override int GetHashCode() => Key.GetHashCode();
     }
 }
