@@ -51,14 +51,7 @@ namespace Solnet.Extensions
         /// <summary>
         /// Native SOL balance as decimal
         /// </summary>
-        public decimal Sol
-        {
-            get
-            {
-                const ulong LAMPORTS_PER_SOL = 1000000000;
-                return Decimal.Round((decimal)this.Lamports / (decimal)LAMPORTS_PER_SOL,9);
-            }
-        }
+        public decimal Sol => SolHelper.ConvertToSol(this.Lamports);
 
         /// <summary>
         /// List of TokenAccounts
