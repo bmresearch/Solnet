@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Solnet.Rpc.Utilities
+namespace Solnet.Programs.Utilities
 {
     /// <summary>
     /// Helper class for conversion between Sol and Lamports.
@@ -14,7 +14,7 @@ namespace Solnet.Rpc.Utilities
         /// <summary>
         /// Number of Lamports per Sol.
         /// </summary>
-        const ulong LAMPORTS_PER_SOL = 1000000000;
+        public const ulong LAMPORTS_PER_SOL = 1000000000;
 
         /// <summary>
         /// Convert Lamports value into Sol decimal value.

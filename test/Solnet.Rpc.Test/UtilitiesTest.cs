@@ -66,13 +66,5 @@ namespace Solnet.Rpc.Test
                 derivedAddress, pubKey);
         }
 
-        [TestMethod]
-        public void TestSolHelper()
-        {
-            Assert.AreEqual((ulong)168855000000, SolHelper.ConvertToLamports(168.855M));
-            Assert.AreEqual(168.855M, SolHelper.ConvertToSol((ulong)168855000000));
-            Assert.AreEqual(168.855000000M, SolHelper.ConvertToSol((ulong)168855000000));
-        }
-
     }
 }
