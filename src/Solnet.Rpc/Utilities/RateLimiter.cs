@@ -14,7 +14,7 @@ namespace Solnet.Rpc.Utilities
     {
         private int _hits;
         private int _duration_ms;
-        private List<DateTime> _hit_list;
+        private Queue<DateTime> _hit_list;
 
         /// <summary>
         /// Create a simple rate-limit tracking instance.
@@ -26,7 +26,7 @@ namespace Solnet.Rpc.Utilities
         {
             _hits = hits;
             _duration_ms = duration_ms;
-            _hit_list = new List<DateTime>();
+            _hit_list = new Queue<DateTime>();
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Solnet.Rpc.Utilities
         {
             var checkTime = DateTime.UtcNow;
             var resumeTime = NextFireAllowed(checkTime);
-            return DateTime.UtcNow >= resumeTime;
+            return checkTime >= resumeTime;
         }
 
         /// <summary>
@@ -57,11 +57,11 @@ namespace Solnet.Rpc.Utilities
 
             var checkTime = DateTime.UtcNow;
             var resumeTime = NextFireAllowed(checkTime);
-            while (DateTime.UtcNow < resumeTime)
+            while (DateTime.UtcNow <= resumeTime)
                 Thread.Sleep(50);
 
             // record this trigger
-            _hit_list.Add(DateTime.UtcNow);
+            _hit_list.Enqueue(DateTime.UtcNow);
 
         }
 
@@ -72,30 +72,26 @@ namespace Solnet.Rpc.Utilities
         /// <returns></returns>
         private DateTime NextFireAllowed(DateTime checkTime)
         {
-            var cutoff = checkTime.AddMilliseconds(-_duration_ms);
             DateTime resumeTime = checkTime;
-            
+
             // sliding window not set, allow everything through immediately
             if (_duration_ms == 0) return resumeTime;
 
-            // check sliding time window
-            var accumulated_hits = 0;
-            var index = _hit_list.Count - 1;
-            while (index >= 0)
-            {
-                if (_hit_list[index] >= cutoff)
-                {
-                    accumulated_hits++;
-                    resumeTime = _hit_list[index].AddMilliseconds(_duration_ms);
-                }
-                else
-                    break;
-                index--;
-            }
+            // empty queue
+            if (_hit_list.Count == 0) return resumeTime;
 
-            // do we need a waste some time?
-            if (accumulated_hits >= _hits)
-                return resumeTime;
+            // drop any hits before the time window
+            var cutOff = checkTime.AddMilliseconds(-_duration_ms);
+            while (_hit_list.Count > 0 && _hit_list.Peek() < cutOff)
+                _hit_list.Dequeue();
+
+            // are we left with more than we are allowed?
+            // do we need to waste some time?
+            if (_hit_list.Count >= _hits)
+            {
+                var oldestHit = _hit_list.Peek();
+                return oldestHit.AddMilliseconds(_duration_ms);
+            }
             else
                 return checkTime;
         }
