@@ -47,6 +47,122 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
+        public void TestGetTokenAccountInfo()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Accounts/GetTokenAccountInfoResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Accounts/GetTokenAccountInfoRequest.json");
+
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var result = sut.GetTokenAccountInfo("FMFMUFqRsGnKm2tQzsaeytATzSG6Evna4HEbKuS6h9uk");
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(103677806UL, result.Result.Context.Slot);
+            Assert.AreEqual(false, result.Result.Value.Executable);
+            Assert.AreEqual(2039280UL, result.Result.Value.Lamports);
+            Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", result.Result.Value.Owner);
+            Assert.AreEqual(239UL, result.Result.Value.RentEpoch);
+
+            Assert.AreEqual("spl-token", result.Result.Value.Data.Program);
+            Assert.AreEqual(165UL, result.Result.Value.Data.Space);
+
+            Assert.AreEqual("account", result.Result.Value.Data.Parsed.Type);
+
+            Assert.AreEqual("2v6JjYRt93Z1h8iTZavSdGdDufocHCFKT8gvHpg3GNko", result.Result.Value.Data.Parsed.Info.Mint);
+            Assert.AreEqual("47vp5BqxBQoMJkitajbsZRhyAR5phW28nKPvXhFDKTFH", result.Result.Value.Data.Parsed.Info.Owner);
+            Assert.AreEqual(false, result.Result.Value.Data.Parsed.Info.IsNative);
+            Assert.AreEqual("initialized", result.Result.Value.Data.Parsed.Info.State);
+
+            Assert.AreEqual("1", result.Result.Value.Data.Parsed.Info.TokenAmount.Amount);
+            Assert.AreEqual(0, result.Result.Value.Data.Parsed.Info.TokenAmount.Decimals);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetTokenMintInfo()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Accounts/GetTokenMintInfoResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Accounts/GetTokenMintInfoRequest.json");
+
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var result = sut.GetTokenMintInfo("2v6JjYRt93Z1h8iTZavSdGdDufocHCFKT8gvHpg3GNko", Commitment.Confirmed);
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(103677835UL, result.Result.Context.Slot);
+            Assert.AreEqual(false, result.Result.Value.Executable);
+            Assert.AreEqual(1461600UL, result.Result.Value.Lamports);
+            Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", result.Result.Value.Owner);
+            Assert.AreEqual(239UL, result.Result.Value.RentEpoch);
+
+            Assert.AreEqual("spl-token", result.Result.Value.Data.Program);
+            Assert.AreEqual(82UL, result.Result.Value.Data.Space);
+
+            Assert.AreEqual("mint", result.Result.Value.Data.Parsed.Type);
+
+            Assert.AreEqual("Ad35ryfDYGvwGETsvkbgFoGasxdGAEtLPv8CYG3eNaMu", result.Result.Value.Data.Parsed.Info.FreezeAuthority);
+            Assert.AreEqual("Ad35ryfDYGvwGETsvkbgFoGasxdGAEtLPv8CYG3eNaMu", result.Result.Value.Data.Parsed.Info.MintAuthority);
+            Assert.AreEqual("1", result.Result.Value.Data.Parsed.Info.Supply);
+            Assert.AreEqual(0, result.Result.Value.Data.Parsed.Info.Decimals);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetAccountInfoParsed()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Accounts/GetAccountInfoParsedResponse.json");
+            var parsedJsonDataOnly = File.ReadAllText("Resources/Http/Accounts/GetAccountInfoParsedResponseDataOnly.json");
+            var requestData = File.ReadAllText("Resources/Http/Accounts/GetAccountInfoParsedRequest.json");
+
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var result = sut.GetAccountInfo("2v6JjYRt93Z1h8iTZavSdGdDufocHCFKT8gvHpg3GNko", Commitment.Confirmed, BinaryEncoding.JsonParsed);
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(103659529UL, result.Result.Context.Slot);
+            Assert.AreEqual(parsedJsonDataOnly, result.Result.Value.Data[0]);
+            Assert.AreEqual("jsonParsed", result.Result.Value.Data[1]);
+            Assert.AreEqual(false, result.Result.Value.Executable);
+            Assert.AreEqual(1461600UL, result.Result.Value.Lamports);
+            Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", result.Result.Value.Owner);
+            Assert.AreEqual(239UL, result.Result.Value.RentEpoch);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
         public void TestGetAccountInfoConfirmed()
         {
             var responseData = File.ReadAllText("Resources/Http/Accounts/GetAccountInfoResponse.json");

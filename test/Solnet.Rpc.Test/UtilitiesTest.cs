@@ -65,5 +65,6 @@ namespace Solnet.Rpc.Test
             CollectionAssert.AreEqual(
                 derivedAddress, pubKey);
         }
+
     }
 }

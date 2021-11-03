@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Solnet.Rpc.Converters;
 using Solnet.Rpc.Messages;
 using System;
 using System.Net;
@@ -49,6 +50,7 @@ namespace Solnet.Rpc.Core.Http
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 Converters =
                 {
+                    new EncodingConverter(),
                     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
                 }
             };

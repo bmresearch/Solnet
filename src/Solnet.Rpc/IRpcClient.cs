@@ -19,27 +19,76 @@ namespace Solnet.Rpc
         Uri NodeAddress { get; }
 
         /// <summary>
-        /// Gets the account info using base64 encoding.
+        /// Gets the token mint info. This method only works if the target account is a SPL token mint.
         /// <remarks>
         /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
         /// </remarks>
         /// </summary>
-        /// <param name="pubKey">The account public key.</param>
+        /// <param name="pubKey">The token mint public key.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>A task which may return a request result holding the context and account info.</returns>
-        Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey,
+        Task<RequestResult<ResponseValue<TokenMintInfo>>> GetTokenMintInfoAsync(string pubKey,
             Commitment commitment = Commitment.Finalized);
 
         /// <summary>
-        /// Gets the account info using base64 encoding.
+        /// Gets the token mint info. This method only works if the target account is a SPL token mint.
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
+        /// </summary>
+        /// <param name="pubKey">The token mint public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<ResponseValue<TokenMintInfo>> GetTokenMintInfo(string pubKey, Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Gets the token account info.
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
+        /// </summary>
+        /// <param name="pubKey">The token account public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>A task which may return a request result holding the context and account info.</returns>
+        Task<RequestResult<ResponseValue<TokenAccountInfo>>> GetTokenAccountInfoAsync(string pubKey,
+            Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Gets the token account info.
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
+        /// </summary>
+        /// <param name="pubKey">The token account public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<ResponseValue<TokenAccountInfo>> GetTokenAccountInfo(string pubKey, Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Gets the account info.
         /// <remarks>
         /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
         /// </remarks>
         /// </summary>
         /// <param name="pubKey">The account public key.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <param name="encoding">The encoding of the account data.</param>
+        /// <returns>A task which may return a request result holding the context and account info.</returns>
+        Task<RequestResult<ResponseValue<AccountInfo>>> GetAccountInfoAsync(string pubKey,
+            Commitment commitment = Commitment.Finalized, BinaryEncoding encoding = BinaryEncoding.Base64);
+
+        /// <summary>
+        /// Gets the account info.
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
+        /// </summary>
+        /// <param name="pubKey">The account public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <param name="encoding">The encoding of the account data.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<ResponseValue<AccountInfo>> GetAccountInfo(string pubKey, Commitment commitment = Commitment.Finalized);
+        RequestResult<ResponseValue<AccountInfo>> GetAccountInfo(string pubKey, Commitment commitment = Commitment.Finalized,
+            BinaryEncoding encoding = BinaryEncoding.Base64);
 
         /// <summary>
         /// Gets the balance <b>asynchronously</b> for a certain public key.
