@@ -10,12 +10,12 @@ namespace Solnet.Rpc.Types
         /// </summary>
         JsonParsed,
         /// <summary>
-        /// Base58 encoding.
-        /// </summary>
-        Base58,
-        /// <summary>
         /// Base64 encoding.
         /// </summary>
-        Base64
+        Base64,
+        /// <summary>
+        /// Base64+Zstd encoding.
+        /// </summary>
+        Base64Zstd
     }
 }
