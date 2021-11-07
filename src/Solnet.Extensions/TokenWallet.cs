@@ -1,6 +1,7 @@
 ﻿using Solnet.Extensions.Models;
 using Solnet.Extensions.TokenMint;
 using Solnet.Programs;
+using Solnet.Programs.Utilities;
 using Solnet.Rpc;
 using Solnet.Rpc.Builders;
 using Solnet.Rpc.Core.Http;
@@ -47,6 +48,11 @@ namespace Solnet.Extensions
         /// Native SOL balance in lamports
         /// </summary>
         public ulong Lamports { get; protected set; }
+
+        /// <summary>
+        /// Native SOL balance as decimal
+        /// </summary>
+        public decimal Sol => SolHelper.ConvertToSol(this.Lamports);
 
         /// <summary>
         /// List of TokenAccounts

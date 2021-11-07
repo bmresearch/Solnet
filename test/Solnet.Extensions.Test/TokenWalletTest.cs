@@ -55,6 +55,8 @@ namespace Solnet.Extensions.Test
             Assert.IsNotNull(wallet);
             Assert.AreEqual(publicKey, wallet.PublicKey);
             Assert.AreEqual((ulong)168855000000, wallet.Lamports);
+            Assert.AreEqual(168.855M, wallet.Sol);
+            Assert.AreEqual(168.855000000M, wallet.Sol);
 
             // check accounts
             var accounts = wallet.TokenAccounts();

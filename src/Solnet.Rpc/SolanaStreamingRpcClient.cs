@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Solnet.Rpc.Converters;
 using Solnet.Rpc.Core;
 using Solnet.Rpc.Core.Sockets;
 using Solnet.Rpc.Messages;
@@ -43,7 +44,8 @@ namespace Solnet.Rpc
         /// <param name="url">The url of the server to connect to.</param>
         /// <param name="logger">The possible ILogger instance.</param>
         /// <param name="websocket">The possible IWebSocket instance.</param>
-        internal SolanaStreamingRpcClient(string url, ILogger logger = null, IWebSocket websocket = default) : base(url, logger, websocket)
+        /// <param name="clientWebSocket">The possible ClientWebSocket instance.</param>
+        internal SolanaStreamingRpcClient(string url, ILogger logger = null, IWebSocket websocket = default, ClientWebSocket clientWebSocket = default) : base(url, logger, websocket, clientWebSocket)
         {
         }
 
@@ -263,6 +265,7 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="reader">The current JsonReader being used to parse the message.</param>
         /// <param name="method">The method parameter already parsed within the message.</param>
+        /// <param name="subscriptionId">The subscriptionId for this message.</param>
         private void HandleDataMessage(ref Utf8JsonReader reader, string method, int subscriptionId)
         {
             JsonSerializerOptions opts = new JsonSerializerOptions() { MaxDepth = 64, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
@@ -363,7 +366,7 @@ namespace Solnet.Rpc
             return await Subscribe(sub, msg).ConfigureAwait(false);
         }
 
-        /// <inheritdoc cref="IStreamingRpcClient.SubscribeAccountInfo(string, Action{SubscriptionState, ResponseValue{TokenAccountInfo}}, Commitment)"/>
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeTokenAccount(string, Action{SubscriptionState, ResponseValue{TokenAccountInfo}}, Commitment)"/>
         public SubscriptionState SubscribeTokenAccount(string pubkey, Action<SubscriptionState, ResponseValue<TokenAccountInfo>> callback, Commitment commitment = Commitment.Finalized)
             => SubscribeTokenAccountAsync(pubkey, callback, commitment).Result;
         #endregion
@@ -504,6 +507,7 @@ namespace Solnet.Rpc
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 Converters =
                 {
+                    new EncodingConverter(),
                     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
                 }
             });

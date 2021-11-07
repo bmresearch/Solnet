@@ -1,0 +1,27 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "context": { "slot": 103677835 },
+    "value": {
+      "data": {
+        "parsed": {
+          "info": {
+            "decimals": 0,
+            "freezeAuthority": "Ad35ryfDYGvwGETsvkbgFoGasxdGAEtLPv8CYG3eNaMu",
+            "isInitialized": true,
+            "mintAuthority": "Ad35ryfDYGvwGETsvkbgFoGasxdGAEtLPv8CYG3eNaMu",
+            "supply": "1"
+          },
+          "type": "mint"
+        },
+        "program": "spl-token",
+        "space": 82
+      },
+      "executable": false,
+      "lamports": 1461600,
+      "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "rentEpoch": 239
+    }
+  },
+  "id": 0
+}
