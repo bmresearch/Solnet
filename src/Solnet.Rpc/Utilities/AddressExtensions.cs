@@ -44,24 +44,13 @@ namespace Solnet.Rpc.Utilities
         public static bool TryCreateWithSeed(
             PublicKey fromPublicKey, string seed, PublicKey programId, out PublicKey publicKeyOut)
         {
-            Console.WriteLine("seed = " + seed);
             var b58 = new Base58Encoder();
             MemoryStream buffer = new();
-            MemoryStream buffer2 = new();
-            MemoryStream buffer3 = new();
             buffer.Write(fromPublicKey.KeyBytes);
-            //Console.WriteLine("buffer array 1= " + Utils.ToStringByteArray(buffer.ToArray()));
             buffer.Write(EncodeRustString(seed));
-            buffer2.Write(EncodeRustString(seed));
-            //Console.WriteLine("buffer array 2= " + Utils.ToStringByteArray(buffer2.ToArray()));
             buffer.Write(programId.KeyBytes);
-            buffer3.Write(programId.KeyBytes);
-            //Console.WriteLine("buffer array 3= " + Utils.ToStringByteArray(buffer3.ToArray()));
             byte[] hash = Sha256(buffer.ToArray());
-            var b58h = b58.EncodeData(hash);
-            //Console.WriteLine("b58h=" + b58h);
             publicKeyOut = new PublicKey(hash);
-            //Console.WriteLine("pukout = " + publicKeyOut);
             return true;
         }
 

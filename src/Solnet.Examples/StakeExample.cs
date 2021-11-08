@@ -23,40 +23,16 @@ namespace Solnet.Examples
         private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
 
         private const string MnemonicWords =
-            "frame cool scissors grow gentle bag panda elegant hood creek lumber draft unhappy " +
-            "cheese album crunch humor almost always always hire eyebrow unusual quit";
+           "clerk shoe noise umbrella apple gold alien swap desert rubber truck okay twenty fiscal near talent drastic present leg put balcony leader access glimpse";
         public void Run()
         {
             var wallet = new Wallet.Wallet(new Mnemonic(MnemonicWords));
-            var seed = wallet.DeriveMnemonicSeed();
-            var b58 = new Base58Encoder();
-            string f = b58.EncodeData(seed);
-            Console.WriteLine($"Seed: {f}\nAddress: {wallet.Account.PublicKey}");
-            Console.WriteLine("Hello World!");
-            Console.WriteLine($"Mnemonic: {wallet.Mnemonic}");
-            Console.WriteLine($"PubKey: {wallet.Account.PublicKey.Key}");
-            Console.WriteLine($"PrivateKey: {wallet.Account.PrivateKey.Key}");
-
-
-            var balance = rpcClient.GetBalance(wallet.Account.PublicKey);
-            Console.WriteLine($"Balance: {balance.Result.Value}");
-
-            var transactionHash = rpcClient.RequestAirdrop(wallet.Account.PublicKey, 100_000_000);
-
-            Console.WriteLine($"TxHash: {transactionHash.Result}");
-            balance = rpcClient.GetBalance(wallet.Account.PublicKey);
-            Console.WriteLine($"Balance 2 : {balance.Result.Value}");
-
+            rpcClient.RequestAirdrop(wallet.Account.PublicKey, 100_000_000);
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
-            var k = rpcClient.GetEpochInfo().Result;
             ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
-            Console.WriteLine($"minbalance = " + minbalanceforexception);
             Account fromAccount = wallet.Account;
-            Console.WriteLine($"fromAccount pubkey = {fromAccount.PublicKey}");
-            var sA = Rpc.Utilities.AddressExtensions.TryCreateWithSeed(fromAccount.PublicKey, f, StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
+            Rpc.Utilities.AddressExtensions.TryCreateWithSeed(fromAccount.PublicKey, "dog1", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
-            Console.WriteLine("CreatedWithSeed = " + stakeAccount);
-
 
             byte[] tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
@@ -65,7 +41,7 @@ namespace Solnet.Examples
                      fromAccount,
                      stakeAccount,
                      fromAccount,
-                     f,
+                     "dog1",
                      3*minbalanceforexception,
                      200,
                      StakeProgram.ProgramIdKey))
@@ -75,12 +51,89 @@ namespace Solnet.Examples
 
             string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
-            RequestResult<string> firstSig = rpcClient.SendTransaction(tx);
+            RequestResult<string> firstSig = rpcClient.SendTransaction(tx, skipPreflight:true);
             Console.WriteLine($"First Tx Result: {firstSig.Result}");
         }
-        static public string ToReadableByteArray(byte[] bytes)
+    }
+    public class AuthorizeWithSeedExample : IExample
+    {
+        private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
+
+        private const string MnemonicWords =
+           "clerk shoe noise umbrella apple gold alien swap desert rubber truck okay twenty fiscal near talent drastic present leg put balcony leader access glimpse";
+        public void Run()
+        {  
+            var wallet = new Wallet.Wallet(new Mnemonic(MnemonicWords));
+            var seed = wallet.DeriveMnemonicSeed();
+            var b58 = new Base58Encoder();
+            string f = b58.EncodeData(seed);
+            rpcClient.RequestAirdrop(wallet.Account.PublicKey, 100_000_000);
+            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
+            Account fromAccount = wallet.Account;
+            Account toAccount = wallet.GetAccount(1);
+            rpcClient.RequestAirdrop(toAccount.PublicKey, 100_000_000);
+            Rpc.Utilities.AddressExtensions.TryCreateWithSeed(fromAccount.PublicKey, "dog5", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
+
+            Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
+
+            byte[] tx = new TransactionBuilder()
+                .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
+                .SetFeePayer(fromAccount)
+                .AddInstruction(StakeProgram.AuthorizeWithSeed(
+                    stakeAccount,
+                    fromAccount,
+                    f,
+                    fromAccount,
+                    toAccount,
+                    StakeAuthorize.Staker,
+                    fromAccount))
+                .Build(new List<Account> { fromAccount });
+            
+            Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
+            RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
+
+            string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
+            Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
+            RequestResult<string> firstSig = rpcClient.SendTransaction(tx, skipPreflight: true);
+            Console.WriteLine($"First Tx Result: {firstSig.Result}");
+        }
+    }
+    public class AuthorizeExample : IExample
+    {
+        private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
+
+        private const string MnemonicWords =
+           "clerk shoe noise umbrella apple gold alien swap desert rubber truck okay twenty fiscal near talent drastic present leg put balcony leader access glimpse";
+        public void Run()
         {
-            return string.Join(", ", bytes);
+            var wallet = new Wallet.Wallet(new Mnemonic(MnemonicWords));
+            rpcClient.RequestAirdrop(wallet.Account.PublicKey, 100_000_000);
+            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
+            Account fromAccount = wallet.Account;
+            Account toAccount = wallet.GetAccount(1);
+            Rpc.Utilities.AddressExtensions.TryCreateWithSeed(fromAccount.PublicKey, "dog1", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
+
+            Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
+
+            byte[] tx = new TransactionBuilder()
+                .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
+                .SetFeePayer(fromAccount)
+                .AddInstruction(StakeProgram.Authorize(
+                    stakeAccount,
+                    fromAccount,
+                    toAccount,
+                    StakeAuthorize.Staker,
+                    fromAccount))
+                .Build(new List<Account> { fromAccount });
+            Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
+            RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
+
+            string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
+            Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
+            RequestResult<string> firstSig = rpcClient.SendTransaction(tx, skipPreflight:true);
+            Console.WriteLine($"First Tx Result: {firstSig.Result}");
         }
     }
     public class CreateAccountWithSeedAndInitializeStakeExample : IExample
@@ -88,20 +141,15 @@ namespace Solnet.Examples
         private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
 
         private const string MnemonicWords =
-            "route clerk disease box emerge airport loud waste attitude film army tray " +
-            "forward deal onion eight catalog surface unit card window walnut wealth medal";
-
+           "clerk shoe noise umbrella apple gold alien swap desert rubber truck okay twenty fiscal near talent drastic present leg put balcony leader access glimpse";
         public void Run()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(mnemonicWords: MnemonicWords);
-
+            var wallet = new Wallet.Wallet(new Mnemonic(MnemonicWords));
+            rpcClient.RequestAirdrop(wallet.Account.PublicKey, 100_000_000);
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
-            var k = rpcClient.GetEpochInfo().Result;
             ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
-            Console.WriteLine(minbalanceforexception);
-            Account fromAccount = wallet.GetAccount(0);
-            Account stakeAccount = wallet.GetAccount(2112);
-
+            Account fromAccount = wallet.Account;
+            Rpc.Utilities.AddressExtensions.TryCreateWithSeed(fromAccount.PublicKey, "dog5", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
             Authorized authorized = new()
             {
                 staker = fromAccount,
@@ -110,8 +158,8 @@ namespace Solnet.Examples
             Lockup lockup = new()
             {
                 custodian = fromAccount.PublicKey,
-                epoch = k.BlockHeight,
-                unix_timestamp = DateTimeOffset.MinValue.ToUnixTimeSeconds()
+                epoch = 0,
+                unix_timestamp = 0
             };
 
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
@@ -123,15 +171,17 @@ namespace Solnet.Examples
                     fromAccount.PublicKey,
                     stakeAccount,
                     fromAccount.PublicKey,
-                    "test string",
-                    3*minbalanceforexception+42,
+                    "dog5",
+                    333 * minbalanceforexception + 42,
                     StakeProgram.StakeAccountDataSize,
-                    fromAccount))
+                    StakeProgram.ProgramIdKey))
                 .AddInstruction(StakeProgram.Initialize(
-                    stakeAccount.PublicKey,
+                    stakeAccount,
                     authorized,
                     lockup))
                 .Build(new List<Account> { fromAccount });
+                //.CompileMessage();
+
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
             RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
 
@@ -140,28 +190,22 @@ namespace Solnet.Examples
             RequestResult<string> firstSig = rpcClient.SendTransaction(tx);
             Console.WriteLine($"First Tx Result: {firstSig.Result}");
         }
-        static public string ToReadableByteArray(byte[] bytes)
-        {
-            return string.Join(", ", bytes);
-        }
     }
     public class CreateAccountAndInitializeStakeExample : IExample
     {
         private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
 
         private const string MnemonicWords =
-            "route clerk disease box emerge airport loud waste attitude film army tray " +
-            "forward deal onion eight catalog surface unit card window walnut wealth medal";
+           "clerk shoe noise umbrella apple gold alien swap desert rubber truck okay twenty fiscal near talent drastic present leg put balcony leader access glimpse";
 
         public void Run()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(mnemonicWords: MnemonicWords);
-
+            var wallet = new Wallet.Wallet(new Mnemonic(MnemonicWords));
+            rpcClient.RequestAirdrop(wallet.Account.PublicKey, 100_000_000);
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
-            var k = rpcClient.GetEpochInfo().Result;
             ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
-            Account fromAccount = wallet.GetAccount(10);
-            Account stakeAccount = wallet.GetAccount(2112);
+            Account fromAccount = wallet.Account;
+            Account stakeAccount = wallet.GetAccount(22);
 
             Authorized authorized = new()
             {
@@ -171,8 +215,8 @@ namespace Solnet.Examples
             Lockup lockup = new()
             {
                 custodian = fromAccount.PublicKey,
-                epoch = k.BlockHeight,
-                unix_timestamp = DateTimeOffset.MinValue.ToUnixTimeSeconds()
+                epoch = 0,
+                unix_timestamp = 0
             };
 
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
@@ -199,9 +243,82 @@ namespace Solnet.Examples
             RequestResult<string> firstSig = rpcClient.SendTransaction(tx);
             Console.WriteLine($"First Tx Result: {firstSig.Result}");
         }
-        static public string ToReadableByteArray(byte[] bytes)
+    }
+    public class MasterStakeBytesExample : IExample
+    {
+        private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
+
+        private const string MnemonicWords =
+           "clerk shoe noise umbrella apple gold alien swap desert rubber truck okay twenty fiscal near talent drastic present leg put balcony leader access glimpse";
+
+        public void Run()
         {
-            return string.Join(", ", bytes);
+            var wallet = new Wallet.Wallet(new Mnemonic(MnemonicWords));
+            rpcClient.RequestAirdrop(wallet.Account.PublicKey, 100_000_000);
+            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
+            
+            Account a6 = wallet.GetAccount(6);
+            Account a5 = wallet.GetAccount(5);
+            Account a4 = wallet.GetAccount(4);
+            Account a3 = wallet.GetAccount(3);
+            Account a2 = wallet.GetAccount(2);
+
+            Authorized authorized = new()
+            {
+                staker = a5,
+                withdrawer = a4
+            };
+            Lockup lockup = new()
+            {
+                custodian = a3.PublicKey,
+                epoch = 0,
+                unix_timestamp = 0
+            };
+
+            Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
+
+            byte[] tx = new TransactionBuilder()
+                .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
+                .SetFeePayer(a6)
+                .AddInstruction(SystemProgram.CreateAccountWithSeed(
+                    a6.PublicKey,
+                    a5,
+                    a6,
+                    "dog1",
+                    3 * minbalanceforexception + 42,
+                    StakeProgram.StakeAccountDataSize,
+                    StakeProgram.ProgramIdKey))
+                .AddInstruction(SystemProgram.Transfer(
+                    a6,
+                    a5,
+                    5
+                    ))
+                //.AddInstruction(StakeProgram.Initialize(
+                //    a6.PublicKey,
+                //    authorized,
+                //    lockup))
+                //.AddInstruction(StakeProgram.Authorize(a6.PublicKey, a5.PublicKey, a4.PublicKey, StakeAuthorize.Staker, a3.PublicKey))
+                //.AddInstruction(StakeProgram.DelegateStake(a6.PublicKey, a5.PublicKey, a4.PublicKey))
+                //.AddInstruction(StakeProgram.Split(a6.PublicKey, a4.PublicKey, 1_000_000, a5.PublicKey))
+                //.AddInstruction(StakeProgram.Withdraw(a6.PublicKey, a4.PublicKey, a3.PublicKey, 1_000_000, a2.PublicKey))
+                //.AddInstruction(StakeProgram.Deactivate(a6.PublicKey, a5.PublicKey))
+                //.AddInstruction(StakeProgram.SetLockup(a6.PublicKey,lockup, a2.PublicKey))
+                //.AddInstruction(StakeProgram.Merge(a6.PublicKey,a5.PublicKey, a4.PublicKey))
+                //.AddInstruction(StakeProgram.AuthorizeWithSeed(a6.PublicKey, a5.PublicKey,"testThisSeed", a4.PublicKey, a3.PublicKey, StakeAuthorize.Staker, a2.PublicKey))
+                //.AddInstruction(StakeProgram.InitializeChecked(a6.PublicKey, authorized))
+                //.AddInstruction(StakeProgram.AuthorizeChecked(a6.PublicKey, a5.PublicKey, a4.PublicKey, StakeAuthorize.Staker, a3.PublicKey))
+                //.AddInstruction(StakeProgram.AuthorizeCheckedWithSeed(a6.PublicKey, a5.PublicKey, "testThisSeed", a4.PublicKey, a3.PublicKey, StakeAuthorize.Staker, a2.PublicKey))
+                //.AddInstruction(StakeProgram.SetLockupChecked(a6.PublicKey, lockup, a2.PublicKey))
+                //.Build(new List<Account> { a6, a5 });
+                .CompileMessage();
+            Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
+            RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
+
+            string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
+            Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
+            RequestResult<string> firstSig = rpcClient.SendTransaction(tx);
+            Console.WriteLine($"First Tx Result: {firstSig.Result}");
         }
     }
 }

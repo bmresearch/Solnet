@@ -50,7 +50,7 @@ namespace Solnet.Programs
         /// The program's name.
         /// </summary>
         private const string ProgramName = "Stake Program";
-
+      
         public static TransactionInstruction Initialize(PublicKey stake_pubkey, Authorized authorized, Lockup lockup)
         {
             List<AccountMeta> keys = new()
@@ -192,7 +192,7 @@ namespace Solnet.Programs
                 AccountMeta.ReadOnly(authority_base, true),
                 AccountMeta.ReadOnly(SysVarClockKey, false)
             };
-            if (custodian_pubkey != null)
+            if (custodian_pubkey != null && custodian_pubkey != authority_base)
             {
                 keys.Add(AccountMeta.ReadOnly(custodian_pubkey, true));
             }

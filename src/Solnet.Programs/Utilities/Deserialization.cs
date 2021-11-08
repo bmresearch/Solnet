@@ -213,14 +213,13 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static (string EncodedString, int Length) DecodeRustString(this ReadOnlySpan<byte> data, int offset)
         {
-            if (offset + sizeof(uint) > data.Length)
+            if (offset + sizeof(ulong) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
 
-            int stringLength = (int)data.GetU32(offset);
-            int padding = (int)data.GetU32(offset+sizeof(uint));
-            byte[] stringBytes = data.GetSpan(offset + 2*sizeof(uint), stringLength).ToArray();
+            int stringLength = (int)data.GetU64(offset);
+            byte[] stringBytes = data.GetSpan(offset + sizeof(ulong), stringLength).ToArray();
 
-            return (EncodedString: Encoding.UTF8.GetString(stringBytes), Length: stringLength + 2*sizeof(uint));
+            return (EncodedString: Encoding.UTF8.GetString(stringBytes), Length: stringLength + sizeof(ulong));
         }
     }
 }

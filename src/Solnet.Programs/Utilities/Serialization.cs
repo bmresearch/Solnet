@@ -216,7 +216,7 @@ namespace Solnet.Programs.Utilities
         /// </summary>
         /// <param name="data">The data to encode.</param>
         /// <returns>The encoded data.</returns>
-        public static byte[] EncodeRustString(string data)
+        public static byte[] EncodeRustStringNoOffset(string data)
         {
             byte[] stringBytes = Encoding.UTF8.GetBytes(data);
             byte[] encoded = new byte[stringBytes.Length];
@@ -225,10 +225,10 @@ namespace Solnet.Programs.Utilities
 
             return encoded;
         }
-        public static byte[] EncodeRustStringWithOffset(string data)
+        public static byte[] EncodeRustString(string data)
         {
             byte[] stringBytes = Encoding.UTF8.GetBytes(data);
-            byte[] encoded = new byte[stringBytes.Length+8];
+            byte[] encoded = new byte[stringBytes.Length+sizeof(ulong)];
 
             encoded.WriteU64((ulong)stringBytes.Length, 0);
             encoded.WriteSpan(stringBytes, 8);

@@ -17,60 +17,59 @@ namespace Solnet.Programs.Test
 
         private static readonly byte[] StakeProgramIdBytes =
         {
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            6, 161, 216, 23, 145, 55, 84, 42, 152, 52, 55, 189, 254, 42, 122, 178, 85, 127, 83, 92, 138, 120, 114, 43, 104, 164, 157, 192, 0, 0, 0, 0
         };
         private static readonly byte[] InitializeInstructionBytes =
         {
-            //
+            0, 0, 0, 0, 76, 174, 165, 233, 163, 14, 217, 33, 70, 126, 243, 60, 190, 239, 79, 31, 224, 40, 233, 215, 221, 65, 203, 24, 160, 209, 227, 94, 135, 248, 122, 74, 248, 84, 219, 115, 8, 125, 192, 165, 16, 40, 75, 233, 213, 1, 60, 251, 227, 240, 54, 187, 56, 156, 251, 152, 129, 168, 217, 86, 76, 98, 88, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 223, 26, 29, 16, 236, 203, 38, 73, 235, 143, 32, 67, 134, 192, 95, 200, 236, 229, 110, 1, 16, 230, 255, 188, 14, 101, 132, 109, 242, 124, 105
         };
         private static readonly byte[] AuthorizeInstructionBytes =
         {
-            1, 6, 29, 129, 91, 218, 96, 191, 52, 227, 118, 199, 113, 55, 3, 29, 202, 205, 69, 103, 77, 144, 20, 137, 37, 53, 184, 83, 41, 37, 245, 0, 132, 194, 143, 36, 222, 153, 234, 195, 134, 47, 231, 100, 144, 102, 51, 115, 10, 115, 3, 82, 21, 163, 162, 246, 64, 238, 36, 135, 202, 239, 143, 150, 8, 3, 2, 2, 5, 244, 171, 249, 196, 62, 132, 245, 193, 114, 19, 34, 7, 37, 207, 38, 98, 69, 136, 106, 149, 175, 110, 143, 211, 108, 198, 5, 239, 231, 182, 7, 20, 189, 31, 212, 204, 51, 65, 12, 40, 137, 113, 214, 99, 175, 9, 119, 28, 19, 10, 56, 240, 87, 136, 148, 225, 227, 13, 181, 127, 113, 230, 10, 186, 4, 23, 154, 206, 58, 166, 9, 125, 107, 80, 224, 57, 235, 71, 51, 46, 27, 153, 48, 39, 162, 54, 144, 176, 6, 128, 214, 189, 53, 152, 48, 38, 6, 167, 213, 23, 24, 199, 116, 201, 40, 86, 99, 152, 105, 29, 94, 182, 139, 94, 184, 163, 155, 75, 109, 92, 115, 85, 91, 33, 0, 0, 0, 0, 6, 161, 216, 23, 145, 55, 84, 42, 152, 52, 55, 189, 254, 42, 122, 178, 85, 127, 83, 92, 138, 120, 114, 43, 104, 164, 157, 192, 0, 0, 0, 0, 107, 206, 16, 200, 38, 251, 189, 190, 216, 198, 3, 156, 64, 67, 64, 38, 40, 193, 135, 105, 31, 232, 28, 59, 108, 56, 194, 233, 106, 233, 106, 72, 1, 4, 4, 0, 3, 1, 2, 68, 1, 0, 0, 0, 233, 219, 240, 9, 143, 216, 128, 216, 67, 144, 130, 254, 239, 2, 3, 192, 182, 231, 253, 136, 201, 238, 30, 197, 208, 57, 73, 173, 45, 119, 235, 205, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            1, 0, 0, 0, 248, 84, 219, 115, 8, 125, 192, 165, 16, 40, 75, 233, 213, 1, 60, 251, 227, 240, 54, 187, 56, 156, 251, 152, 129, 168, 217, 86, 76, 98, 88, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         };
         private static readonly byte[] DelegateStakeInstructionBytes =
         {
-            //
+            2, 0, 0, 0
         };
         private static readonly byte[] SplitInstructionBytes =
         {
-            //
+            3, 0, 0, 0, 64, 66, 15, 0, 0, 0, 0, 0
         };
         private static readonly byte[] WithdrawInstructionBytes =
         {
-            //
+           4, 0, 0, 0, 64, 66, 15, 0, 0, 0, 0, 0
         };
         private static readonly byte[] DeactivateInstructionBytes =
         {
-            //
+            5, 0, 0, 0
         };
         private static readonly byte[] SetLockupInstructionBytes =
         {
-            //
+            6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 206, 68, 136, 104, 203, 252, 147, 24, 24, 140, 114, 18, 199, 188, 229, 248, 250, 220, 24, 172, 85, 160, 190, 232, 244, 250, 90, 60, 108, 252, 171, 144
         };
         private static readonly byte[] MergeInstructionBytes =
         {
-            //
+            7, 0, 0, 0
         };
         private static readonly byte[] AuthorizeWithSeedInstructionBytes =
         {
-            //
+            8, 0, 0, 0, 248, 84, 219, 115, 8, 125, 192, 165, 16, 40, 75, 233, 213, 1, 60, 251, 227, 240, 54, 187, 56, 156, 251, 152, 129, 168, 217, 86, 76, 98, 88, 24, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 116, 101, 115, 116, 84, 104, 105, 115, 83, 101, 101, 100, 206, 68, 136, 104, 203, 252, 147, 24, 24, 140, 114, 18, 199, 188, 229, 248, 250, 220, 24, 172, 85, 160, 190, 232, 244, 250, 90, 60, 108, 252, 171, 144
         };
         private static readonly byte[] InitializeCheckedInstructionBytes =
         {
-            //
+            9, 0, 0, 0
         };
         private static readonly byte[] AuthorizeCheckedInstructionBytes =
         {
-            //
+            1, 0, 0, 0, 0, 0, 0, 0
         };
         private static readonly byte[] AuthorizeCheckedWithSeedInstructionBytes =
         {
-            //
+            11, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 116, 101, 115, 116, 84, 104, 105, 115, 83, 101, 101, 100, 0, 0, 0, 0, 206, 68, 136, 104, 203, 252, 147, 24, 24, 140, 114, 18, 199, 188, 229, 248, 250, 220, 24, 172, 85, 160, 190, 232, 244, 250, 90, 60, 108, 252, 171, 144
         };
         private static readonly byte[] SetLockupCheckedInstructionBytes =
         {
-            //
+            6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         };
         [TestMethod]
         public void TestStakeProgramInitialize()
@@ -84,10 +83,19 @@ namespace Solnet.Programs.Test
 
             var txInstruction = StakeProgram.Initialize(
                 baseAccount.PublicKey,
-                new Authorized { staker = staker.PublicKey, withdrawer = withdrawer.PublicKey },
-                new Lockup { custodian = custodian.PublicKey, epoch = ulong.Parse(DateTime.UnixEpoch.ToString()), unix_timestamp = DateTimeOffset.Now.ToUnixTimeSeconds() });
+                new Authorized 
+                { 
+                    staker = staker, 
+                    withdrawer = withdrawer 
+                },
+                new Lockup { 
+                    custodian = custodian.PublicKey, 
+                    epoch = 0, 
+                    unix_timestamp = 0
+                });
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
+
             CollectionAssert.AreEqual(InitializeInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }
@@ -108,7 +116,8 @@ namespace Solnet.Programs.Test
                 StakeAuthorize.Staker, 
                 custodian.PublicKey);
 
-            Assert.AreEqual(3, txInstruction.Keys.Count);
+            Assert.AreEqual(4, txInstruction.Keys.Count);
+
             CollectionAssert.AreEqual(AuthorizeInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }
@@ -166,10 +175,12 @@ namespace Solnet.Programs.Test
                 1_000_000,
                 custodian.PublicKey);
 
-            Assert.AreEqual(5, txInstruction.Keys.Count);
+            Assert.AreEqual(6, txInstruction.Keys.Count);
+            
             CollectionAssert.AreEqual(WithdrawInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }
+
         [TestMethod]
         public void TestStakeProgramDeactivateStake()
         {
@@ -196,7 +207,12 @@ namespace Solnet.Programs.Test
 
             var txInstruction = StakeProgram.SetLockup(
                 baseAccount.PublicKey,
-                new Lockup { custodian = custodian.PublicKey, epoch = ulong.Parse(DateTime.UnixEpoch.ToString()), unix_timestamp = DateTimeOffset.Now.ToUnixTimeSeconds() },
+                new Lockup 
+                { 
+                    custodian = custodian.PublicKey, 
+                    epoch = 0, 
+                    unix_timestamp = 0 
+                },
                 custodian.PublicKey);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
@@ -317,7 +333,7 @@ namespace Solnet.Programs.Test
 
             var txInstruction = StakeProgram.SetLockupChecked(
                 baseAccount.PublicKey,
-                new Lockup { custodian = custodian.PublicKey, epoch = ulong.Parse(DateTime.UnixEpoch.ToString()), unix_timestamp = DateTimeOffset.Now.ToUnixTimeSeconds() },
+                new Lockup { custodian = custodian.PublicKey, epoch = 0, unix_timestamp = 0 },
                 custodian.PublicKey);
 
             Assert.AreEqual(3, txInstruction.Keys.Count);
