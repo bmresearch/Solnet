@@ -37,7 +37,7 @@ namespace Solnet.KeyStore
         /// <param name="wallet">The wallet to save to the keystore.</param>
         public void SaveKeystore(string path, Wallet.Wallet wallet)
         {
-            File.WriteAllBytes(path, Encoding.ASCII.GetBytes(wallet.DeriveMnemonicSeed().ToStringByteArray()));
+            File.WriteAllBytes(path, Encoding.ASCII.GetBytes(wallet.Account.PrivateKey.KeyBytes.ToStringByteArray()));
         }
 
         /// <summary>
