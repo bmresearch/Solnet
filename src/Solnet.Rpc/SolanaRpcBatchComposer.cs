@@ -151,6 +151,9 @@ namespace Solnet.Rpc
 
             }
 
+            // reset ready for reuse
+            Clear();
+            
             // pass back the JSON batch innards
             return response.Result;
         }
