@@ -218,11 +218,12 @@ namespace Solnet.Programs.Utilities
         public static byte[] EncodeRustString(string data)
         {
             byte[] stringBytes = Encoding.UTF8.GetBytes(data);
+          
             byte[] encoded = new byte[stringBytes.Length+sizeof(ulong)];
 
             encoded.WriteU64((ulong)stringBytes.Length, 0);
             encoded.WriteSpan(stringBytes, 8);
-
+          
             return encoded;
         }
         /// <summary>
