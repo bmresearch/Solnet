@@ -132,13 +132,11 @@ namespace Solnet.Programs.Utilities
         /// <param name="length">The desired length for the new span.</param>
         /// <returns>A <see cref="Span{T}"/> of bytes.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
-        public static Span<byte> GetSpan(this ReadOnlySpan<byte> data, int offset, int length)
+        public static ReadOnlySpan<byte> GetSpan(this ReadOnlySpan<byte> data, int offset, int length)
         {
             if (offset + length > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            byte[] buffer = new byte[length];
-            data.Slice(offset, length).CopyTo(buffer);
-            return buffer;
+            return data.Slice(offset, length);
         }
 
         /// <summary>
@@ -269,9 +267,7 @@ namespace Solnet.Programs.Utilities
         {
             if (offset + length > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            byte[] buffer = new byte[length];
-            data.Slice(offset, length).CopyTo(buffer);
-            return buffer;
+            return data.Slice(offset, length).ToArray();
         }
     }
 }

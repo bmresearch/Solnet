@@ -180,14 +180,14 @@ namespace Solnet.Programs.Test.Utilities
         public void TestReadSpanException()
         {
             ReadOnlySpan<byte> readSpan = PublicKeyBytes.AsSpan();
-            Span<byte> span = readSpan.GetSpan(1, 32);
+            ReadOnlySpan<byte> span = readSpan.GetSpan(1, 32);
         }
 
         [TestMethod]
         public void TestReadSpan()
         {
             ReadOnlySpan<byte> readSpan = PublicKeyBytes.AsSpan();
-            Span<byte> span = readSpan.GetSpan(0, 32);
+            ReadOnlySpan<byte> span = readSpan.GetSpan(0, 32);
 
             CollectionAssert.AreEqual(PublicKeyBytes, span.ToArray());
         }
