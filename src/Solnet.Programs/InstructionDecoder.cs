@@ -1,4 +1,5 @@
-﻿using Solnet.Rpc.Builders;
+﻿using Solnet.Programs.TokenSwap;
+using Solnet.Rpc.Builders;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
@@ -32,6 +33,7 @@ namespace Solnet.Programs
             InstructionDictionary.Add(MemoProgram.ProgramIdKeyV2, MemoProgram.Decode);
             InstructionDictionary.Add(SystemProgram.ProgramIdKey, SystemProgram.Decode);
             InstructionDictionary.Add(TokenProgram.ProgramIdKey, TokenProgram.Decode);
+            InstructionDictionary.Add(TokenSwapProgram.TokenSwapProgramIdKey, TokenSwapProgram.Decode);
             InstructionDictionary.Add(AssociatedTokenAccountProgram.ProgramIdKey, AssociatedTokenAccountProgram.Decode);
             InstructionDictionary.Add(NameServiceProgram.ProgramIdKey, NameServiceProgram.Decode);
             InstructionDictionary.Add(SharedMemoryProgram.ProgramIdKey, SharedMemoryProgram.Decode);

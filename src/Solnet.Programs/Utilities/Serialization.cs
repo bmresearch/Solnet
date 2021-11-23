@@ -218,7 +218,7 @@ namespace Solnet.Programs.Utilities
         /// <returns>The encoded data.</returns>
         public static byte[] EncodeRustString(string data)
         {
-            byte[] stringBytes = Encoding.ASCII.GetBytes(data);
+            byte[] stringBytes = Encoding.UTF8.GetBytes(data);
             byte[] encoded = new byte[stringBytes.Length + sizeof(uint)];
 
             encoded.WriteU32((uint)stringBytes.Length, 0);

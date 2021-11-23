@@ -8,5 +8,9 @@
     <ProjectReference Include="..\Solnet.Rpc\Solnet.Rpc.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\TokenSwap\" />
+  </ItemGroup>
+
   <Import Project="..\..\SharedBuildProperties.props" />
 </Project>
