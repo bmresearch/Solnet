@@ -31,7 +31,7 @@ namespace Solnet.Examples
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
             ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
             Account fromAccount = wallet.Account;
-            Rpc.Utilities.AddressExtensions.TryCreateWithSeed(fromAccount.PublicKey, "dog1", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
+            Serialization.TryCreateWithSeed(fromAccount.PublicKey, "dog1", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
 
             byte[] tx = new TransactionBuilder()
@@ -73,7 +73,7 @@ namespace Solnet.Examples
             Account fromAccount = wallet.Account;
             Account toAccount = wallet.GetAccount(1);
             rpcClient.RequestAirdrop(toAccount.PublicKey, 100_000_000);
-            Rpc.Utilities.AddressExtensions.TryCreateWithSeed(fromAccount.PublicKey, "dog5", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
+            Serialization.TryCreateWithSeed(fromAccount.PublicKey, "dog5", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
 
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
 
@@ -113,7 +113,7 @@ namespace Solnet.Examples
             ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
             Account fromAccount = wallet.Account;
             Account toAccount = wallet.GetAccount(1);
-            Rpc.Utilities.AddressExtensions.TryCreateWithSeed(fromAccount.PublicKey, "dog1", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
+            Serialization.TryCreateWithSeed(fromAccount.PublicKey, "dog1", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
 
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
 
@@ -149,17 +149,17 @@ namespace Solnet.Examples
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
             ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
             Account fromAccount = wallet.Account;
-            Rpc.Utilities.AddressExtensions.TryCreateWithSeed(fromAccount.PublicKey, "dog5", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
+            Serialization.TryCreateWithSeed(fromAccount.PublicKey, "dog5", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
             Authorized authorized = new()
             {
-                staker = fromAccount,
-                withdrawer = fromAccount
+                Staker = fromAccount,
+                Withdrawer = fromAccount
             };
             Lockup lockup = new()
             {
-                custodian = fromAccount.PublicKey,
-                epoch = 0,
-                unix_timestamp = 0
+                Custodian = fromAccount.PublicKey,
+                Epoch = 0,
+                UnixTimestamp = 0
             };
 
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
@@ -209,14 +209,13 @@ namespace Solnet.Examples
 
             Authorized authorized = new()
             {
-                staker = fromAccount,
-                withdrawer = fromAccount
+                Staker = fromAccount,
+                Withdrawer = fromAccount
             };
             Lockup lockup = new()
-            {
-                custodian = fromAccount.PublicKey,
-                epoch = 0,
-                unix_timestamp = 0
+            {Custodian = fromAccount.PublicKey,
+                Epoch = 0,
+                UnixTimestamp = 0
             };
 
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
@@ -266,14 +265,13 @@ namespace Solnet.Examples
 
             Authorized authorized = new()
             {
-                staker = a5,
-                withdrawer = a4
+                Staker = a5,
+                Withdrawer = a4
             };
             Lockup lockup = new()
-            {
-                custodian = a3.PublicKey,
-                epoch = 0,
-                unix_timestamp = 0
+            {Custodian = a3.PublicKey,
+                Epoch = 0,
+                UnixTimestamp = 0
             };
 
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");

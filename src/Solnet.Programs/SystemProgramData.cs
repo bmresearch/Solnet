@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using Solnet.Programs.Utilities;
 using Solnet.Wallet;
 using System;

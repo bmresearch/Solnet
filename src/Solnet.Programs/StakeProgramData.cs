@@ -1,12 +1,7 @@
-﻿using Solnet.Programs.Models;
-using Solnet.Programs.Utilities;
+﻿using Solnet.Programs.Utilities;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Solnet.Programs.Models.Stake.Instruction;
 using static Solnet.Programs.Models.Stake.State;
 
 namespace Solnet.Programs
@@ -34,23 +29,23 @@ namespace Solnet.Programs
             byte[] data = new byte[116];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.Initialize, MethodOffset);
-            data.WritePubKey(authorized.staker, 4);
-            data.WritePubKey(authorized.withdrawer, 36);
-            data.WriteS64(lockup.unix_timestamp, 68);
-            data.WriteU64(lockup.epoch, 76);
-            data.WritePubKey(lockup.custodian, 84);
+            data.WritePubKey(authorized.Staker, 4);
+            data.WritePubKey(authorized.Withdrawer, 36);
+            data.WriteS64(lockup.UnixTimestamp, 68);
+            data.WriteU64(lockup.Epoch, 76);
+            data.WritePubKey(lockup.Custodian, 84);
 
             var k = ToReadableByteArray(data);
 
             return data;
         }
-        internal static byte[] EncodeAuthorizeData(PublicKey new_authorized_pubkey, StakeAuthorize stake_authorize)
+        internal static byte[] EncodeAuthorizeData(PublicKey newAuthorizedPubkey, StakeAuthorize stakeAuthorize)
         {
             byte[] data = new byte[68];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.Authorize, MethodOffset);
-            data.WritePubKey(new_authorized_pubkey, 4);
-            data.WriteU32((uint)stake_authorize, 36);
+            data.WritePubKey(newAuthorizedPubkey, 4);
+            data.WriteU32((uint)stakeAuthorize, 36);
             Console.WriteLine("Authorize data = "+ToReadableByteArray(data));
             return data;
         }
@@ -97,9 +92,9 @@ namespace Solnet.Programs
             byte[] data = new byte[52];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.SetLockup, MethodOffset);
-            data.WriteS64(lockup.unix_timestamp, 4);
-            data.WriteU64(lockup.epoch, 12);
-            data.WritePubKey(lockup.custodian, 20);
+            data.WriteS64(lockup.UnixTimestamp, 4);
+            data.WriteU64(lockup.Epoch, 12);
+            data.WritePubKey(lockup.Custodian, 20);
             Console.WriteLine("Set lockup data = " + ToReadableByteArray(data));
             return data;
         }
@@ -113,16 +108,16 @@ namespace Solnet.Programs
             return data;
         }
 
-        internal static byte[] EncodeAuthorizeWithSeedData(AuthorizeWithSeedArgs authorizeWithSeed)
+        internal static byte[] EncodeAuthorizeWithSeedData(string authoritySeed, PublicKey newAuthorizedPubKey, StakeAuthorize stakeAuthorize, PublicKey authorityOwner)
         {
-            byte[] encodedSeed = Serialization.EncodeRustString(authorizeWithSeed.authority_seed);
+            byte[] encodedSeed = Serialization.EncodeRustString(authoritySeed);
             byte[] data = new byte[72 + encodedSeed.Length];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.AuthorizeWithSeed, MethodOffset);
-            data.WritePubKey(authorizeWithSeed.new_authorized_pubkey, 4);
-            data.WriteU32((uint)authorizeWithSeed.stake_authorize, 36);
+            data.WritePubKey(newAuthorizedPubKey, 4);
+            data.WriteU32((uint)stakeAuthorize, 36);
             data.WriteSpan(encodedSeed, 40);
-            data.WritePubKey(authorizeWithSeed.authority_owner, 40 + encodedSeed.Length);
+            data.WritePubKey(authorityOwner, 40 + encodedSeed.Length);
             Console.WriteLine("Authorize ws data = " + ToReadableByteArray(data));
             return data;
         }
@@ -136,35 +131,35 @@ namespace Solnet.Programs
             return data;
         }
 
-        internal static byte[] EncodeAuthorizeCheckedData(StakeAuthorize stake_authorize)
+        internal static byte[] EncodeAuthorizeCheckedData(StakeAuthorize stakeAuthorize)
         {
             byte[] data = new byte[8];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.Authorize, MethodOffset);
-            data.WriteU32((uint)stake_authorize, 4);
+            data.WriteU32((uint)stakeAuthorize, 4);
             Console.WriteLine("Authorize checked data = " + ToReadableByteArray(data));
             return data;
         }
 
-        internal static byte[] EncodeAuthorizeCheckedWithSeedData(AuthorizeCheckedWithSeedArgs authorizeCheckedWithSeed)
+        internal static byte[] EncodeAuthorizeCheckedWithSeedData(string authoritySeed, PublicKey authorityOwner, StakeAuthorize stakeAuthorize)
         {
-            byte[] encodedSeed = Serialization.EncodeRustString(authorizeCheckedWithSeed.authority_seed);
+            byte[] encodedSeed = Serialization.EncodeRustString(authoritySeed);
             byte[] data = new byte[40 + encodedSeed.Length];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.AuthorizeCheckedWithSeed, MethodOffset);
             data.WriteSpan(encodedSeed, 4);
-            data.WriteU32((uint)authorizeCheckedWithSeed.stake_authorize, 4 + encodedSeed.Length);
-            data.WritePubKey(authorizeCheckedWithSeed.authority_owner, 8 + encodedSeed.Length);
+            data.WriteU32((uint)stakeAuthorize, 4 + encodedSeed.Length);
+            data.WritePubKey(authorityOwner, 8 + encodedSeed.Length);
             Console.WriteLine("Authorize check seed data = " + ToReadableByteArray(data));
             return data;
         }
-        internal static byte[] EncodeSetLockupCheckedData(LockupChecked lockup)
+        internal static byte[] EncodeSetLockupCheckedData(Lockup lockup)
         {
             byte[] data = new byte[20];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.SetLockup, MethodOffset);
-            data.WriteS64(lockup.unix_timestamp, 4);
-            data.WriteU64(lockup.epoch, 12);
+            data.WriteS64(lockup.UnixTimestamp, 4);
+            data.WriteU64(lockup.Epoch, 12);
             Console.WriteLine("Set Lockup checked data = " + ToReadableByteArray(data));
             return data;
         }

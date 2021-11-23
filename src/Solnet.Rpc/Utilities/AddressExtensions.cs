@@ -19,42 +19,7 @@ namespace Solnet.Rpc.Utilities
         /// <summary>
         /// The bytes of the `ProgramDerivedAddress` string.
         /// </summary>
-        private static readonly byte[] ProgramDerivedAddressBytes = Encoding.UTF8.GetBytes("ProgramDerivedAddress");
-        private static byte[] EncodeRustString(string data)
-        {
-            byte[] stringBytes = Encoding.UTF8.GetBytes(data);
-            byte[] encoded = new byte[stringBytes.Length];
-
-            encoded.WriteSpan(stringBytes,0);
-
-            return encoded;
-        }
-        private static void WriteU32(this byte[] data, uint value, int offset)
-        {
-            if (offset + sizeof(uint) > data.Length)
-                throw new ArgumentOutOfRangeException(nameof(offset));
-            BinaryPrimitives.WriteUInt32LittleEndian(data.AsSpan(offset, sizeof(uint)), value);
-        }
-        private static void WriteSpan(this byte[] data, ReadOnlySpan<byte> span, int offset)
-        {
-            if (offset + span.Length > data.Length)
-                throw new ArgumentOutOfRangeException(nameof(offset));
-            span.CopyTo(data.AsSpan(offset, span.Length));
-        }
-        public static bool TryCreateWithSeed(
-            PublicKey fromPublicKey, string seed, PublicKey programId, out PublicKey publicKeyOut)
-        {
-            var b58 = new Base58Encoder();
-            MemoryStream buffer = new();
-            buffer.Write(fromPublicKey.KeyBytes);
-            buffer.Write(EncodeRustString(seed));
-            buffer.Write(programId.KeyBytes);
-            byte[] hash = Sha256(buffer.ToArray());
-            publicKeyOut = new PublicKey(hash);
-            return true;
-        }
-
-
+        private static readonly byte[] ProgramDerivedAddressBytes = Encoding.UTF8.GetBytes("ProgramDerivedAddress");        
         /// <summary>
         /// Derives a program address.
         /// </summary>
@@ -129,7 +94,7 @@ namespace Solnet.Rpc.Utilities
         /// </summary>
         /// <param name="data">The data to hash.</param>
         /// <returns>The hash.</returns>
-        private static byte[] Sha256(byte[] data)
+        public static byte[] Sha256(byte[] data)
         {
             byte[] i = new byte[32];
             Sha256Digest digest = new();

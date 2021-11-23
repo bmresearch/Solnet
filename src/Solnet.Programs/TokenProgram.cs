@@ -130,7 +130,7 @@ namespace Solnet.Programs
                 AccountMeta.Writable(account, false),
                 AccountMeta.ReadOnly(mint, false),
                 AccountMeta.ReadOnly(authority, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+                AccountMeta.ReadOnly(SysVars.RentKey, false)
             };
             return new TransactionInstruction
             {
@@ -152,7 +152,7 @@ namespace Solnet.Programs
             List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(multiSignature, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+                AccountMeta.ReadOnly(SysVars.RentKey, false)
             };
             keys.AddRange(signers.Select(signer => AccountMeta.ReadOnly(signer, false)));
             return new TransactionInstruction
@@ -177,7 +177,7 @@ namespace Solnet.Programs
             List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(mint, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+                AccountMeta.ReadOnly(SysVars.RentKey, false)
             };
 
             int freezeAuthorityOpt = freezeAuthority != null ? 1 : 0;

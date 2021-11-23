@@ -1,13 +1,8 @@
-﻿using Solnet.Programs.Models;
-using Solnet.Programs.Utilities;
+﻿using Solnet.Programs.Utilities;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Solnet.Programs.Models.Stake.Instruction;
 using static Solnet.Programs.Models.Stake.State;
 
 namespace Solnet.Programs
@@ -27,36 +22,30 @@ namespace Solnet.Programs
         /// </summary>
         public static readonly PublicKey ProgramIdKey = new("Stake11111111111111111111111111111111111111");
         /// <summary>
-        /// The public key of the Recent Block Hashes System Variable. 
+        /// 
         /// </summary>
-        public static readonly PublicKey
-            SysVarRecentBlockHashesKey = new("SysvarRecentB1ockHashes11111111111111111111");
-
-        /// <summary>
-        /// The public key of the Rent System Variable.
-        /// </summary>
-        public static readonly PublicKey SysVarRentKey = new("SysvarRent111111111111111111111111111111111");
-
         public const int StakeAccountDataSize = 200;
-
         /// <summary>
-        /// The public key of the Clock System Variable.
+        /// 
         /// </summary>
-        public static readonly PublicKey SysVarClockKey = new("SysvarC1ock11111111111111111111111111111111");
-
-        public static readonly PublicKey SysVarStakeHistoryKey = new("SysvarStakeHistory1111111111111111111111111");
-        public static readonly PublicKey ConfigKey = new("StakeConfig11111111111111111111111111111111");
+         public static readonly PublicKey ConfigKey = new("StakeConfig11111111111111111111111111111111");
         /// <summary>
         /// The program's name.
         /// </summary>
         private const string ProgramName = "Stake Program";
-      
-        public static TransactionInstruction Initialize(PublicKey stake_pubkey, Authorized authorized, Lockup lockup)
+        /// <summary>
+        /// Initialize a stake with lockup and authorization information
+        /// </summary>
+        /// <param name="stakePubkey"></param>
+        /// <param name="authorized"></param>
+        /// <param name="lockup"></param>
+        /// <returns></returns>
+        public static TransactionInstruction Initialize(PublicKey stakePubkey, Authorized authorized, Lockup lockup)
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(stake_pubkey, false),
-                AccountMeta.ReadOnly(SysVarRentKey,false)
+                AccountMeta.Writable(stakePubkey, false),
+                AccountMeta.ReadOnly(SysVars.RentKey,false)
             };
             return new TransactionInstruction
             {
@@ -65,35 +54,51 @@ namespace Solnet.Programs
                 Data = StakeProgramData.EncodeInitializeData(authorized,lockup)
             };
         }
-        public static TransactionInstruction Authorize(PublicKey stake_pubkey, PublicKey authorized_pubkey, PublicKey new_authorized_pubkey, StakeAuthorize stake_authorize, PublicKey custodian_pubkey)
+        /// <summary>
+        /// Authorize a key to manage stake or withdrawal
+        /// </summary>
+        /// <param name="stakePubkey"></param>
+        /// <param name="authorizedPubkey"></param>
+        /// <param name="newAuthorizedPubkey"></param>
+        /// <param name="stakeAuthorize"></param>
+        /// <param name="custodianPubkey"></param>
+        /// <returns></returns>
+        public static TransactionInstruction Authorize(PublicKey stakePubkey, PublicKey authorizedPubkey, PublicKey newAuthorizedPubkey, StakeAuthorize stakeAuthorize, PublicKey custodianPubkey)
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(stake_pubkey,false),
-                AccountMeta.ReadOnly(SysVarClockKey,false),
-                AccountMeta.ReadOnly(authorized_pubkey,true)
+                AccountMeta.Writable(stakePubkey,false),
+                AccountMeta.ReadOnly(SysVars.ClockKey,false),
+                AccountMeta.ReadOnly(authorizedPubkey,true)
             };
-            if (custodian_pubkey != null)
+            if (custodianPubkey != null)
             {
-                keys.Add(AccountMeta.ReadOnly(custodian_pubkey, true));
+                keys.Add(AccountMeta.ReadOnly(custodianPubkey, true));
             }
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = StakeProgramData.EncodeAuthorizeData(new_authorized_pubkey, stake_authorize)
+                Data = StakeProgramData.EncodeAuthorizeData(newAuthorizedPubkey, stakeAuthorize)
             };
         }
-        public static TransactionInstruction DelegateStake(PublicKey stake_pubkey, PublicKey authorized_pubkey, PublicKey vote_pubkey)
+        /// <summary>
+        /// Delegate a stake to a particular vote account
+        /// </summary>
+        /// <param name="stakePubkey"></param>
+        /// <param name="authorizedPubkey"></param>
+        /// <param name="votePubkey"></param>
+        /// <returns></returns>
+        public static TransactionInstruction DelegateStake(PublicKey stakePubkey, PublicKey authorizedPubkey, PublicKey votePubkey)
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(stake_pubkey, false),
-                AccountMeta.ReadOnly(vote_pubkey, false),
-                AccountMeta.ReadOnly(SysVarClockKey, false),
-                AccountMeta.ReadOnly(SysVarStakeHistoryKey, false),
+                AccountMeta.Writable(stakePubkey, false),
+                AccountMeta.ReadOnly(votePubkey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
+                AccountMeta.ReadOnly(SysVars.StakeHistoryKey, false),
                 AccountMeta.ReadOnly(ConfigKey, false),
-                AccountMeta.ReadOnly(authorized_pubkey, true)
+                AccountMeta.ReadOnly(authorizedPubkey, true)
             };
             return new TransactionInstruction
             {
@@ -102,13 +107,21 @@ namespace Solnet.Programs
                 Data=StakeProgramData.EncodeDelegateStakeData()
             };
         }
-        public static TransactionInstruction Split(PublicKey stake_pubkey, PublicKey authorized_pubkey, ulong lamports, PublicKey split_stake_pubkey)
+        /// <summary>
+        /// Split u64 tokens and stake off a stake account into another stake account.
+        /// </summary>
+        /// <param name="stakePubkey"></param>
+        /// <param name="authorizedPubkey"></param>
+        /// <param name="lamports"></param>
+        /// <param name="splitStakePubkey"></param>
+        /// <returns></returns>
+        public static TransactionInstruction Split(PublicKey stakePubkey, PublicKey authorizedPubkey, ulong lamports, PublicKey splitStakePubkey)
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(stake_pubkey, false),
-                AccountMeta.Writable(split_stake_pubkey, false),
-                AccountMeta.ReadOnly(authorized_pubkey, true)
+                AccountMeta.Writable(stakePubkey, false),
+                AccountMeta.Writable(splitStakePubkey, false),
+                AccountMeta.ReadOnly(authorizedPubkey, true)
             };
             return new TransactionInstruction
             {
@@ -117,19 +130,28 @@ namespace Solnet.Programs
                 Data = StakeProgramData.EncodeSplitData(lamports)
             };
         }
-        public static TransactionInstruction Withdraw(PublicKey stake_pubkey, PublicKey withdrawer_pubkey, PublicKey to_pubkey, ulong lamports, PublicKey custodian_pubkey)
+        /// <summary>
+        /// Withdraw unstaked lamports from the stake account
+        /// </summary>
+        /// <param name="stakePubkey"></param>
+        /// <param name="withdrawerPubkey"></param>
+        /// <param name="toPubkey"></param>
+        /// <param name="lamports"></param>
+        /// <param name="custodianPubkey"></param>
+        /// <returns></returns>
+        public static TransactionInstruction Withdraw(PublicKey stakePubkey, PublicKey withdrawerPubkey, PublicKey toPubkey, ulong lamports, PublicKey custodianPubkey)
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(stake_pubkey, false),
-                AccountMeta.Writable(to_pubkey, false),
-                AccountMeta.ReadOnly(SysVarClockKey, false),
-                AccountMeta.ReadOnly(SysVarStakeHistoryKey,false),
-                AccountMeta.ReadOnly(withdrawer_pubkey,true)
+                AccountMeta.Writable(stakePubkey, false),
+                AccountMeta.Writable(toPubkey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
+                AccountMeta.ReadOnly(SysVars.StakeHistoryKey,false),
+                AccountMeta.ReadOnly(withdrawerPubkey,true)
             };
-            if (custodian_pubkey != null)
+            if (custodianPubkey != null)
             {
-                keys.Add(AccountMeta.ReadOnly(custodian_pubkey, true));
+                keys.Add(AccountMeta.ReadOnly(custodianPubkey, true));
             }
             return new TransactionInstruction
             {
@@ -138,13 +160,19 @@ namespace Solnet.Programs
                 Data = StakeProgramData.EncodeWithdrawData(lamports)
             };
         }
-        public static TransactionInstruction Deactivate(PublicKey stake_pubkey, PublicKey authorized_pubkey)
+        /// <summary>
+        /// Deactivates the stake in the account
+        /// </summary>
+        /// <param name="stakePubkey"></param>
+        /// <param name="authorizedPubkey"></param>
+        /// <returns></returns>
+        public static TransactionInstruction Deactivate(PublicKey stakePubkey, PublicKey authorizedPubkey)
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(stake_pubkey, false),
-                AccountMeta.ReadOnly(SysVarClockKey, false),
-                AccountMeta.ReadOnly(authorized_pubkey, true)
+                AccountMeta.Writable(stakePubkey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
+                AccountMeta.ReadOnly(authorizedPubkey, true)
             };
             return new TransactionInstruction
             {
@@ -153,12 +181,21 @@ namespace Solnet.Programs
                 Data = StakeProgramData.EncodeDeactivateData()
             };
         }
-        public static TransactionInstruction SetLockup(PublicKey stake_pubkey, Lockup lockup, PublicKey custodian_pubkey)
+        /// <summary>
+        /// Set stake lockup
+        /// If a lockup is not active, the withdraw authority may set a new lockup
+        /// If a lockup is active, the lockup custodian may update the lockup parameters
+        /// </summary>
+        /// <param name="stakePubkey"></param>
+        /// <param name="lockup"></param>
+        /// <param name="custodianPubkey"></param>
+        /// <returns></returns>
+        public static TransactionInstruction SetLockup(PublicKey stakePubkey, Lockup lockup, PublicKey custodianPubkey)
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(stake_pubkey, false),
-                AccountMeta.ReadOnly(custodian_pubkey, true)
+                AccountMeta.Writable(stakePubkey, false),
+                AccountMeta.ReadOnly(custodianPubkey, true)
             };
             return new TransactionInstruction
             {
@@ -167,15 +204,39 @@ namespace Solnet.Programs
                 Data = StakeProgramData.EncodeSetLockupData(lockup)
             };
         }
-        public static TransactionInstruction Merge(PublicKey destination_stake_pubkey, PublicKey source_stake_pubkey, PublicKey authorized_pubkey)
+        /// <summary>
+        /// Merge two stake accounts.
+        ///
+        /// Both accounts must have identical lockup and authority keys. A merge
+        /// is possible between two stakes in the following states with no additional
+        /// conditions:
+        ///
+        /// * two deactivated stakes
+        /// * an inactive stake into an activating stake during its activation epoch
+        ///
+        /// For the following cases, the voter pubkey and vote credits observed must match:
+        ///
+        /// * two activated stakes
+        /// * two activating accounts that share an activation epoch, during the activation epoch
+        ///
+        /// All other combinations of stake states will fail to merge, including all
+        /// "transient" states, where a stake is activating or deactivating with a
+        /// non-zero effective stake.
+        ///
+        /// </summary>
+        /// <param name="destinationStakePubkey"></param>
+        /// <param name="sourceStakePubkey"></param>
+        /// <param name="authorizedPubkey"></param>
+        /// <returns></returns>
+        public static TransactionInstruction Merge(PublicKey destinationStakePubkey, PublicKey sourceStakePubkey, PublicKey authorizedPubkey)
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(destination_stake_pubkey, false),
-                AccountMeta.Writable(source_stake_pubkey, false),
-                AccountMeta.ReadOnly(SysVarClockKey, false),
-                AccountMeta.ReadOnly(SysVarStakeHistoryKey, false),
-                AccountMeta.ReadOnly(authorized_pubkey, true)
+                AccountMeta.Writable(destinationStakePubkey, false),
+                AccountMeta.Writable(sourceStakePubkey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
+                AccountMeta.ReadOnly(SysVars.StakeHistoryKey, false),
+                AccountMeta.ReadOnly(authorizedPubkey, true)
             };
             return new TransactionInstruction
             {
@@ -184,40 +245,54 @@ namespace Solnet.Programs
                 Data = StakeProgramData.EncodeMergeData()
             };
         }
-        public static TransactionInstruction AuthorizeWithSeed(PublicKey stake_pubkey, PublicKey authority_base, string authority_seed, PublicKey authority_owner, PublicKey new_authorized_pubkey, StakeAuthorize stake_authorize, PublicKey custodian_pubkey)
+        /// <summary>
+        /// Authorize a key to manage stake or withdrawal with a derived key
+        /// </summary>
+        /// <param name="stakePubkey"></param>
+        /// <param name="authorityBase"></param>
+        /// <param name="authoritySeed"></param>
+        /// <param name="authorityOwner"></param>
+        /// <param name="newAuthorizedPubkey"></param>
+        /// <param name="stakeAuthorize"></param>
+        /// <param name="custodianPubkey"></param>
+        /// <returns></returns>
+        public static TransactionInstruction AuthorizeWithSeed(PublicKey stakePubkey, PublicKey authorityBase, string authoritySeed, PublicKey authorityOwner, PublicKey newAuthorizedPubkey, StakeAuthorize stakeAuthorize, PublicKey custodianPubkey)
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(stake_pubkey, false),
-                AccountMeta.ReadOnly(authority_base, true),
-                AccountMeta.ReadOnly(SysVarClockKey, false)
+                AccountMeta.Writable(stakePubkey, false),
+                AccountMeta.ReadOnly(authorityBase, true),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false)
             };
-            if (custodian_pubkey != null && custodian_pubkey != authority_base)
+            if (custodianPubkey != null && custodianPubkey != authorityBase)
             {
-                keys.Add(AccountMeta.ReadOnly(custodian_pubkey, true));
+                keys.Add(AccountMeta.ReadOnly(custodianPubkey, true));
             }
-            AuthorizeWithSeedArgs authorizeWithSeed = new AuthorizeWithSeedArgs
-            {
-                new_authorized_pubkey = new_authorized_pubkey,
-                stake_authorize = stake_authorize,
-                authority_seed = authority_seed,
-                authority_owner = authority_owner
-            };
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = StakeProgramData.EncodeAuthorizeWithSeedData(authorizeWithSeed)
+                Data = StakeProgramData.EncodeAuthorizeWithSeedData(authoritySeed, newAuthorizedPubkey, stakeAuthorize, authorityOwner)
             };
         }
-        public static TransactionInstruction InitializeChecked(PublicKey stake_pubkey, Authorized authorized)
+        /// <summary>
+        /// Initialize a stake with authorization information
+        ///
+        /// This instruction is similar to `Initialize` except that the withdraw authority
+        /// must be a signer, and no lockup is applied to the account.
+        /// 
+        /// </summary>
+        /// <param name="stakePubkey"></param>
+        /// <param name="authorized"></param>
+        /// <returns></returns>
+        public static TransactionInstruction InitializeChecked(PublicKey stakePubkey, Authorized authorized)
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(stake_pubkey, false),
-                AccountMeta.ReadOnly(SysVarRentKey, false),
-                AccountMeta.ReadOnly(authorized.staker, false),
-                AccountMeta.ReadOnly(authorized.withdrawer,true)
+                AccountMeta.Writable(stakePubkey, false),
+                AccountMeta.ReadOnly(SysVars.RentKey, false),
+                AccountMeta.ReadOnly(authorized.Staker, false),
+                AccountMeta.ReadOnly(authorized.Withdrawer,true)
             };
             return new TransactionInstruction
             {
@@ -226,67 +301,101 @@ namespace Solnet.Programs
                 Data = StakeProgramData.EncodeInitializeCheckedData()
             };
         }
-        public static TransactionInstruction AuthorizeChecked(PublicKey stake_pubkey, PublicKey authorized_pubkey, PublicKey new_authorized_pubkey, StakeAuthorize stake_authorize, PublicKey custodian_pubkey)
+        /// <summary>
+        /// Authorize a key to manage stake or withdrawal
+        ///
+        /// This instruction behaves like `Authorize` with the additional requirement that the new
+        /// stake or withdraw authority must also be a signer.
+        ///
+        /// </summary>
+        /// <param name="stakePubkey"></param>
+        /// <param name="authorizedPubkey"></param>
+        /// <param name="newAuthorizedPubkey"></param>
+        /// <param name="stakeAuthorize"></param>
+        /// <param name="custodianPubkey"></param>
+        /// <returns></returns>
+        public static TransactionInstruction AuthorizeChecked(PublicKey stakePubkey, PublicKey authorizedPubkey, PublicKey newAuthorizedPubkey, StakeAuthorize stakeAuthorize, PublicKey custodianPubkey)
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(stake_pubkey, false),
-                AccountMeta.ReadOnly(SysVarClockKey, false),
-                AccountMeta.ReadOnly(authorized_pubkey, true),
-                AccountMeta.ReadOnly(new_authorized_pubkey,true)
+                AccountMeta.Writable(stakePubkey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
+                AccountMeta.ReadOnly(authorizedPubkey, true),
+                AccountMeta.ReadOnly(newAuthorizedPubkey,true)
             };
-            if (custodian_pubkey != null)
+            if (custodianPubkey != null)
             {
-                keys.Add(AccountMeta.ReadOnly(custodian_pubkey, true));
+                keys.Add(AccountMeta.ReadOnly(custodianPubkey, true));
             }
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = StakeProgramData.EncodeAuthorizeCheckedData(stake_authorize)
+                Data = StakeProgramData.EncodeAuthorizeCheckedData(stakeAuthorize)
             };
         }
-        public static TransactionInstruction AuthorizeCheckedWithSeed(PublicKey stake_pubkey, PublicKey authority_base, string authority_seed, PublicKey authority_owner, PublicKey new_authorized_pubkey, StakeAuthorize stake_authorize, PublicKey custodian_pubkey)
+        /// <summary>
+        /// Authorize a key to manage stake or withdrawal with a derived key
+        ///
+        /// This instruction behaves like `AuthorizeWithSeed` with the additional requirement that
+        /// the new stake or withdraw authority must also be a signer.
+        ///
+        /// </summary>
+        /// <param name="stakePubkey"></param>
+        /// <param name="authorityBase"></param>
+        /// <param name="authoritySeed"></param>
+        /// <param name="authorityOwner"></param>
+        /// <param name="newAuthoritzedPubkey"></param>
+        /// <param name="stakeAuthorize"></param>
+        /// <param name="custodianPubkey"></param>
+        /// <returns></returns>
+        public static TransactionInstruction AuthorizeCheckedWithSeed(PublicKey stakePubkey, PublicKey authorityBase, string authoritySeed, PublicKey authorityOwner, PublicKey newAuthoritzedPubkey, StakeAuthorize stakeAuthorize, PublicKey custodianPubkey)
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(stake_pubkey, false),
-                AccountMeta.ReadOnly(authority_base, true),
-                AccountMeta.ReadOnly(SysVarClockKey, false),
-                AccountMeta.ReadOnly(new_authorized_pubkey, true)
+                AccountMeta.Writable(stakePubkey, false),
+                AccountMeta.ReadOnly(authorityBase, true),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
+                AccountMeta.ReadOnly(newAuthoritzedPubkey, true)
             };
-            if (custodian_pubkey != null)
+            if (custodianPubkey != null)
             {
-                keys.Add(AccountMeta.ReadOnly(custodian_pubkey, true));
+                keys.Add(AccountMeta.ReadOnly(custodianPubkey, true));
             }
-            AuthorizeCheckedWithSeedArgs authorizeWithSeed = new AuthorizeCheckedWithSeedArgs
-            {
-                stake_authorize = stake_authorize,
-                authority_seed = authority_seed,
-                authority_owner = authority_owner
-            };
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = StakeProgramData.EncodeAuthorizeCheckedWithSeedData(authorizeWithSeed)
+                Data = StakeProgramData.EncodeAuthorizeCheckedWithSeedData(authoritySeed, authorityOwner, stakeAuthorize)
             };
         }
-        public static TransactionInstruction SetLockupChecked(PublicKey stake_pubkey, Lockup lockup, PublicKey custodian_pubkey)
+        /// <summary>
+        /// This instruction behaves like `SetLockup` with the additional requirement that
+        /// the new lockup authority also be a signer.
+        ///
+        /// If a lockup is not active, the withdraw authority may set a new lockup
+        /// If a lockup is active, the lockup custodian may update the lockup parameters
+        ///
+        /// </summary>
+        /// <param name="stakePubkey"></param>
+        /// <param name="lockup"></param>
+        /// <param name="custodianPubkey"></param>
+        /// <returns></returns>
+        public static TransactionInstruction SetLockupChecked(PublicKey stakePubkey, Lockup lockup, PublicKey custodianPubkey)
         {
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(stake_pubkey, false),
-                AccountMeta.ReadOnly(custodian_pubkey, true)
+                AccountMeta.Writable(stakePubkey, false),
+                AccountMeta.ReadOnly(custodianPubkey, true)
             };
-            if (lockup.custodian != null)
+            if (lockup.Custodian != null)
             {
-                keys.Add(AccountMeta.ReadOnly(lockup.custodian, true));
+                keys.Add(AccountMeta.ReadOnly(lockup.Custodian, true));
             }
-            LockupChecked lockupChecked = new LockupChecked
+            Lockup lockupChecked = new Lockup
             {
-                unix_timestamp = lockup.unix_timestamp,
-                epoch = lockup.epoch
+                UnixTimestamp = lockup.UnixTimestamp,
+                Epoch = lockup.Epoch
             };
             return new TransactionInstruction
             {
@@ -296,7 +405,7 @@ namespace Solnet.Programs
             };
         }
         /// <summary>
-        /// Decodes an instruction created by the System Program.
+        /// Decodes an instruction created by the Stake Program.
         /// </summary>
         /// <param name="data">The instruction data to decode.</param>
         /// <param name="keys">The account keys present in the transaction.</param>

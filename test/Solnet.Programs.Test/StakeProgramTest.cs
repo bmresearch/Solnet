@@ -85,13 +85,13 @@ namespace Solnet.Programs.Test
                 baseAccount.PublicKey,
                 new Authorized 
                 { 
-                    staker = staker, 
-                    withdrawer = withdrawer 
+                    Staker = staker, 
+                    Withdrawer = withdrawer 
                 },
                 new Lockup { 
-                    custodian = custodian.PublicKey, 
-                    epoch = 0, 
-                    unix_timestamp = 0
+                    Custodian = custodian.PublicKey, 
+                    Epoch = 0, 
+                    UnixTimestamp = 0
                 });
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
@@ -209,9 +209,9 @@ namespace Solnet.Programs.Test
                 baseAccount.PublicKey,
                 new Lockup 
                 { 
-                    custodian = custodian.PublicKey, 
-                    epoch = 0, 
-                    unix_timestamp = 0 
+                    Custodian = custodian.PublicKey, 
+                    Epoch = 0, 
+                    UnixTimestamp = 0 
                 },
                 custodian.PublicKey);
 
@@ -272,7 +272,7 @@ namespace Solnet.Programs.Test
 
             var txInstruction = StakeProgram.InitializeChecked(
                 baseAccount.PublicKey,
-                new Authorized { staker = staker.PublicKey, withdrawer = withdrawer.PublicKey });
+                new Authorized { Staker = staker.PublicKey, Withdrawer = withdrawer.PublicKey });
 
             Assert.AreEqual(4, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(InitializeCheckedInstructionBytes, txInstruction.Data);
@@ -333,7 +333,7 @@ namespace Solnet.Programs.Test
 
             var txInstruction = StakeProgram.SetLockupChecked(
                 baseAccount.PublicKey,
-                new Lockup { custodian = custodian.PublicKey, epoch = 0, unix_timestamp = 0 },
+                new Lockup {Custodian = custodian.PublicKey, Epoch = 0, UnixTimestamp = 0 },
                 custodian.PublicKey);
 
             Assert.AreEqual(3, txInstruction.Keys.Count);
