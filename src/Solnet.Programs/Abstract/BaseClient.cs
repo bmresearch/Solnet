@@ -1,15 +1,12 @@
-﻿using Solnet.Programs;
+﻿using Microsoft.Extensions.Logging;
 using Solnet.Programs.Models;
 using Solnet.Rpc;
-using Solnet.Rpc.Builders;
 using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Core.Sockets;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
-using Solnet.Wallet;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,6 +18,11 @@ namespace Solnet.Programs.Abstract
     /// </summary>
     public abstract class BaseClient
     {
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        protected ILogger Logger { get; init; }
+
         /// <summary>
         /// The RPC client.
         /// </summary>
@@ -36,10 +38,12 @@ namespace Solnet.Programs.Abstract
         /// </summary>
         /// <param name="rpcClient">The RPC client instance.</param>
         /// <param name="streamingRpcClient">The streaming RPC client instance.</param>
-        protected BaseClient(IRpcClient rpcClient, IStreamingRpcClient streamingRpcClient)
+        /// <param name="logger">The logger instance.</param>
+        protected BaseClient(IRpcClient rpcClient, IStreamingRpcClient streamingRpcClient = null, ILogger logger = null)
         {
             RpcClient = rpcClient;
             StreamingRpcClient = streamingRpcClient;
+            Logger = logger;
         }
 
         /// <summary>
