@@ -22,11 +22,11 @@ namespace Solnet.Programs
         /// </summary>
         public static readonly PublicKey ProgramIdKey = new("Stake11111111111111111111111111111111111111");
         /// <summary>
-        /// 
+        /// Stake Account Layout Size
         /// </summary>
         public const int StakeAccountDataSize = 200;
         /// <summary>
-        /// 
+        /// Stake Config ID
         /// </summary>
          public static readonly PublicKey ConfigKey = new("StakeConfig11111111111111111111111111111111");
         /// <summary>
@@ -36,10 +36,10 @@ namespace Solnet.Programs
         /// <summary>
         /// Initialize a stake with lockup and authorization information
         /// </summary>
-        /// <param name="stakePubkey"></param>
-        /// <param name="authorized"></param>
-        /// <param name="lockup"></param>
-        /// <returns></returns>
+        /// <param name="stakePubkey">Uninitialized stake account</param>
+        /// <param name="authorized">Carries pubkeys that must sign staker transactions and withdrawer transactions</param>
+        /// <param name="lockup">Carries information about withdrawal restrictions</param>
+        /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Initialize(PublicKey stakePubkey, Authorized authorized, Lockup lockup)
         {
             List<AccountMeta> keys = new()
@@ -57,12 +57,12 @@ namespace Solnet.Programs
         /// <summary>
         /// Authorize a key to manage stake or withdrawal
         /// </summary>
-        /// <param name="stakePubkey"></param>
-        /// <param name="authorizedPubkey"></param>
-        /// <param name="newAuthorizedPubkey"></param>
-        /// <param name="stakeAuthorize"></param>
-        /// <param name="custodianPubkey"></param>
-        /// <returns></returns>
+        /// <param name="stakePubkey">Stake account to be updated</param>
+        /// <param name="authorizedPubkey">Stake or withdraw authority</param>
+        /// <param name="newAuthorizedPubkey">Key to be authorized by the transaction</param>
+        /// <param name="stakeAuthorize">Type of authority</param>
+        /// <param name="custodianPubkey">Lockup authority pubkey if updated withdrawer before lockup expiration</param>
+        /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Authorize(PublicKey stakePubkey, PublicKey authorizedPubkey, PublicKey newAuthorizedPubkey, StakeAuthorize stakeAuthorize, PublicKey custodianPubkey)
         {
             List<AccountMeta> keys = new()
@@ -85,10 +85,10 @@ namespace Solnet.Programs
         /// <summary>
         /// Delegate a stake to a particular vote account
         /// </summary>
-        /// <param name="stakePubkey"></param>
-        /// <param name="authorizedPubkey"></param>
-        /// <param name="votePubkey"></param>
-        /// <returns></returns>
+        /// <param name="stakePubkey">Initialized stake account to be delegated</param>
+        /// <param name="authorizedPubkey">Stake authority</param>
+        /// <param name="votePubkey">Vote account to which this stake will be delegated</param>
+        /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction DelegateStake(PublicKey stakePubkey, PublicKey authorizedPubkey, PublicKey votePubkey)
         {
             List<AccountMeta> keys = new()
@@ -110,11 +110,11 @@ namespace Solnet.Programs
         /// <summary>
         /// Split u64 tokens and stake off a stake account into another stake account.
         /// </summary>
-        /// <param name="stakePubkey"></param>
-        /// <param name="authorizedPubkey"></param>
-        /// <param name="lamports"></param>
-        /// <param name="splitStakePubkey"></param>
-        /// <returns></returns>
+        /// <param name="stakePubkey">Stake account to be split; must be in the Initialized or Stake state</param>
+        /// <param name="authorizedPubkey">Stake authority</param>
+        /// <param name="lamports">Amount to be split</param>
+        /// <param name="splitStakePubkey">Uninitialized stake account that will take the split-off amount</param>
+        /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Split(PublicKey stakePubkey, PublicKey authorizedPubkey, ulong lamports, PublicKey splitStakePubkey)
         {
             List<AccountMeta> keys = new()
@@ -133,12 +133,12 @@ namespace Solnet.Programs
         /// <summary>
         /// Withdraw unstaked lamports from the stake account
         /// </summary>
-        /// <param name="stakePubkey"></param>
-        /// <param name="withdrawerPubkey"></param>
-        /// <param name="toPubkey"></param>
-        /// <param name="lamports"></param>
-        /// <param name="custodianPubkey"></param>
-        /// <returns></returns>
+        /// <param name="stakePubkey">Stake account from which to withdraw</param>
+        /// <param name="withdrawerPubkey">Withdraw authority</param>
+        /// <param name="toPubkey">Recipient account</param>
+        /// <param name="lamports">Amount to withdraw</param>
+        /// <param name="custodianPubkey">Lockup authority</param>
+        /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Withdraw(PublicKey stakePubkey, PublicKey withdrawerPubkey, PublicKey toPubkey, ulong lamports, PublicKey custodianPubkey)
         {
             List<AccountMeta> keys = new()
@@ -163,9 +163,9 @@ namespace Solnet.Programs
         /// <summary>
         /// Deactivates the stake in the account
         /// </summary>
-        /// <param name="stakePubkey"></param>
-        /// <param name="authorizedPubkey"></param>
-        /// <returns></returns>
+        /// <param name="stakePubkey">Delegated stake account</param>
+        /// <param name="authorizedPubkey">Stake authority</param>
+        /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Deactivate(PublicKey stakePubkey, PublicKey authorizedPubkey)
         {
             List<AccountMeta> keys = new()
@@ -186,10 +186,10 @@ namespace Solnet.Programs
         /// If a lockup is not active, the withdraw authority may set a new lockup
         /// If a lockup is active, the lockup custodian may update the lockup parameters
         /// </summary>
-        /// <param name="stakePubkey"></param>
-        /// <param name="lockup"></param>
-        /// <param name="custodianPubkey"></param>
-        /// <returns></returns>
+        /// <param name="stakePubkey">Initialized stake account</param>
+        /// <param name="lockup">Lockup information</param>
+        /// <param name="custodianPubkey">Lockup authority or withdraw authority</param>
+        /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction SetLockup(PublicKey stakePubkey, Lockup lockup, PublicKey custodianPubkey)
         {
             List<AccountMeta> keys = new()
@@ -224,10 +224,10 @@ namespace Solnet.Programs
         /// non-zero effective stake.
         ///
         /// </summary>
-        /// <param name="destinationStakePubkey"></param>
-        /// <param name="sourceStakePubkey"></param>
-        /// <param name="authorizedPubkey"></param>
-        /// <returns></returns>
+        /// <param name="destinationStakePubkey">Destination stake account for the merge</param>
+        /// <param name="sourceStakePubkey">Source stake account for merge, will be drained</param>
+        /// <param name="authorizedPubkey">Stake authority</param>
+        /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Merge(PublicKey destinationStakePubkey, PublicKey sourceStakePubkey, PublicKey authorizedPubkey)
         {
             List<AccountMeta> keys = new()
@@ -248,14 +248,14 @@ namespace Solnet.Programs
         /// <summary>
         /// Authorize a key to manage stake or withdrawal with a derived key
         /// </summary>
-        /// <param name="stakePubkey"></param>
-        /// <param name="authorityBase"></param>
-        /// <param name="authoritySeed"></param>
-        /// <param name="authorityOwner"></param>
-        /// <param name="newAuthorizedPubkey"></param>
-        /// <param name="stakeAuthorize"></param>
-        /// <param name="custodianPubkey"></param>
-        /// <returns></returns>
+        /// <param name="stakePubkey">Stake account to be updated</param>
+        /// <param name="authorityBase">Base key of stake or withdraw authority</param>
+        /// <param name="authoritySeed">Seed</param>
+        /// <param name="authorityOwner">Authority owner</param>
+        /// <param name="newAuthorizedPubkey">Pubkey authorized by the transaction</param>
+        /// <param name="stakeAuthorize">Type of stake authority</param>
+        /// <param name="custodianPubkey">Custodian pubkey</param>
+        /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction AuthorizeWithSeed(PublicKey stakePubkey, PublicKey authorityBase, string authoritySeed, PublicKey authorityOwner, PublicKey newAuthorizedPubkey, StakeAuthorize stakeAuthorize, PublicKey custodianPubkey)
         {
             List<AccountMeta> keys = new()
@@ -282,9 +282,9 @@ namespace Solnet.Programs
         /// must be a signer, and no lockup is applied to the account.
         /// 
         /// </summary>
-        /// <param name="stakePubkey"></param>
-        /// <param name="authorized"></param>
-        /// <returns></returns>
+        /// <param name="stakePubkey">Uninitialized stake account</param>
+        /// <param name="authorized">Carries pubkeys that must sign staker transactions and withdrawer transactions</param>
+        /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction InitializeChecked(PublicKey stakePubkey, Authorized authorized)
         {
             List<AccountMeta> keys = new()
@@ -308,12 +308,12 @@ namespace Solnet.Programs
         /// stake or withdraw authority must also be a signer.
         ///
         /// </summary>
-        /// <param name="stakePubkey"></param>
-        /// <param name="authorizedPubkey"></param>
-        /// <param name="newAuthorizedPubkey"></param>
-        /// <param name="stakeAuthorize"></param>
-        /// <param name="custodianPubkey"></param>
-        /// <returns></returns>
+        /// <param name="stakePubkey">Stake account to be updated</param>
+        /// <param name="authorizedPubkey">Stake or withdraw authority</param>
+        /// <param name="newAuthorizedPubkey">Key to be authorized by the transaction</param>
+        /// <param name="stakeAuthorize">Type of authority</param>
+        /// <param name="custodianPubkey">Lockup authority pubkey if updated withdrawer before lockup expiration</param>
+        /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction AuthorizeChecked(PublicKey stakePubkey, PublicKey authorizedPubkey, PublicKey newAuthorizedPubkey, StakeAuthorize stakeAuthorize, PublicKey custodianPubkey)
         {
             List<AccountMeta> keys = new()
@@ -341,22 +341,22 @@ namespace Solnet.Programs
         /// the new stake or withdraw authority must also be a signer.
         ///
         /// </summary>
-        /// <param name="stakePubkey"></param>
-        /// <param name="authorityBase"></param>
-        /// <param name="authoritySeed"></param>
-        /// <param name="authorityOwner"></param>
-        /// <param name="newAuthoritzedPubkey"></param>
-        /// <param name="stakeAuthorize"></param>
-        /// <param name="custodianPubkey"></param>
-        /// <returns></returns>
-        public static TransactionInstruction AuthorizeCheckedWithSeed(PublicKey stakePubkey, PublicKey authorityBase, string authoritySeed, PublicKey authorityOwner, PublicKey newAuthoritzedPubkey, StakeAuthorize stakeAuthorize, PublicKey custodianPubkey)
+        /// <param name="stakePubkey">Stake account to be updated</param>
+        /// <param name="authorityBase">Base key of stake or withdraw authority</param>
+        /// <param name="authoritySeed">Seed</param>
+        /// <param name="authorityOwner">Authority owner</param>
+        /// <param name="newAuthorizedPubkey">Key to be authorized by the transaction</param>
+        /// <param name="stakeAuthorize">Type of stake authority</param>
+        /// <param name="custodianPubkey">Custodian pubkey</param>
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction AuthorizeCheckedWithSeed(PublicKey stakePubkey, PublicKey authorityBase, string authoritySeed, PublicKey authorityOwner, PublicKey newAuthorizedPubkey, StakeAuthorize stakeAuthorize, PublicKey custodianPubkey)
         {
             List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(stakePubkey, false),
                 AccountMeta.ReadOnly(authorityBase, true),
                 AccountMeta.ReadOnly(SysVars.ClockKey, false),
-                AccountMeta.ReadOnly(newAuthoritzedPubkey, true)
+                AccountMeta.ReadOnly(newAuthorizedPubkey, true)
             };
             if (custodianPubkey != null)
             {
@@ -377,10 +377,10 @@ namespace Solnet.Programs
         /// If a lockup is active, the lockup custodian may update the lockup parameters
         ///
         /// </summary>
-        /// <param name="stakePubkey"></param>
-        /// <param name="lockup"></param>
-        /// <param name="custodianPubkey"></param>
-        /// <returns></returns>
+        /// <param name="stakePubkey">Initialized stake account</param>
+        /// <param name="lockup">Lockup information</param>
+        /// <param name="custodianPubkey">Lockup authority or withdraw authority</param>
+        /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction SetLockupChecked(PublicKey stakePubkey, Lockup lockup, PublicKey custodianPubkey)
         {
             List<AccountMeta> keys = new()

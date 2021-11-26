@@ -31,7 +31,7 @@ namespace Solnet.Examples
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
             ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
             Account fromAccount = wallet.Account;
-            Serialization.TryCreateWithSeed(fromAccount.PublicKey, "dog1", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
+            Serialization.TryCreateWithSeed(fromAccount.PublicKey, "yrdy1", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
 
             byte[] tx = new TransactionBuilder()
@@ -41,7 +41,7 @@ namespace Solnet.Examples
                      fromAccount,
                      stakeAccount,
                      fromAccount,
-                     "dog1",
+                     "yrdy1",
                      3*minbalanceforexception,
                      200,
                      StakeProgram.ProgramIdKey))
