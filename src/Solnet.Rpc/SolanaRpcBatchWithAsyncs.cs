@@ -28,6 +28,24 @@ namespace Solnet.Rpc
         /// </summary>
         public SolanaRpcBatchComposer Composer => _composer;
 
+        /// <summary>
+        /// Sets the auto execute mode and trigger threshold
+        /// </summary>
+        /// <param name="mode">The auto execute mode to use.</param>
+        /// <param name="client">The RPC client to use or null for manual.</param>
+        /// <param name="batchSizeTrigger">The number of requests that will trigger a batch execution.</param>
+        public void AutoExecute(BatchAutoExecuteMode mode, IRpcClient client, int batchSizeTrigger)
+        {
+            _composer.AutoExecute(mode, client, batchSizeTrigger);
+        }
+
+        /// <summary>
+        /// Used to execute any residual requests when using batches in auto execute mode.
+        /// </summary>
+        public void Flush()
+        {
+            _composer.Flush();
+        }
 
         #region RPC Methods
 

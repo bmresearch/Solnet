@@ -3,14 +3,17 @@ using Solnet.Programs;
 using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
+using Solnet.Rpc.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Solnet.Rpc.Test
@@ -157,6 +160,51 @@ namespace Solnet.Rpc.Test
 
         }
 
+        [TestMethod]
+        public void TestAutoExecuteMode()
+        {
+
+            var expected_requests = File.ReadAllText("Resources/Http/Batch/SampleBatchRequest.json");
+            var expected_responses = File.ReadAllText("Resources/Http/Batch/SampleBatchResponse.json");
+
+            ulong found_lamports = 0;
+            decimal found_balance = 0M;
+            int sig_callback_count = 0;
+
+            // setup mock RPC client
+            var baseAddress = new Uri("https://api.mainnet-beta.solana.com");
+            var mockHander = new MyMockHttpMessageHandler();
+            mockHander.Add(expected_requests, expected_responses);
+            var mockHttpClient = new HttpClient(mockHander) { BaseAddress = baseAddress };
+            var mockRpcClient = ClientFactory.GetClient(Cluster.MainNet, null, mockHttpClient);
+
+            // compose a new batch of requests
+            var batch = new SolanaRpcBatchWithAsyncs();
+            batch.AutoExecute(BatchAutoExecuteMode.ExecuteWithFatalFailure, mockRpcClient, 10);
+            var balance = batch.GetBalanceAsync("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
+            var tokensAccounts = batch.GetTokenAccountsByOwnerAsync("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", null, TokenProgram.ProgramIdKey);
+            var sigResults1 = batch.GetConfirmedSignaturesForAddress2Async("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", 200, null, null);
+            var sigResults2 = batch.GetConfirmedSignaturesForAddress2Async("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex", 200, null, null);
+            var sigResults3 = batch.GetConfirmedSignaturesForAddress2Async("4NSREK36nAr32vooa3L9z8tu6JWj5rY3k4KnsqTgynvm", 200, null, null);
+            batch.Flush();
+
+            // how many requests in batch? should be zero - already flushed/executed
+            Assert.AreEqual(0, batch.Composer.Count);
+
+            // pull task results that would otherwise haved blocked
+            found_lamports = balance.Result.Value;
+            found_balance = tokensAccounts.Result.Value[0].Account.Data.Parsed.Info.TokenAmount.AmountDecimal;
+            sig_callback_count += sigResults1.Result.Count;
+            sig_callback_count += sigResults2.Result.Count;
+            sig_callback_count += sigResults3.Result.Count;
+
+            // assertions
+            Assert.AreEqual((ulong)237543960, found_lamports);
+            Assert.AreEqual(12.5M, found_balance);
+            Assert.AreEqual(3, sig_callback_count);
+
+        }
+
         /// <summary>
         /// Test deserialization of TransactionError
         /// </summary>
@@ -219,4 +267,41 @@ namespace Solnet.Rpc.Test
         }
 
     }
+
+
+
+
+
+
+    /// <summary>
+    /// Mockery is afoot - preload with requests and responses
+    /// </summary>
+    public class MyMockHttpMessageHandler : HttpMessageHandler
+    {
+        private Queue<Tuple<string, string>> _queue;
+
+        public MyMockHttpMessageHandler()
+        {
+            _queue = new Queue<Tuple<string, string>>();
+        }
+
+        internal void Add(string expected_requests, string expected_responses)
+        {
+            _queue.Enqueue(new Tuple<string, string>(expected_requests, expected_responses));
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var item = _queue.Dequeue();
+            var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(item.Item2)
+            };
+            return await Task.FromResult(responseMessage);
+        }
+
+    }
+
 }
+
+

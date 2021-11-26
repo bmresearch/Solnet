@@ -41,6 +41,21 @@ namespace Solnet.Rpc
         public int Count => _reqs.Count;
 
         /// <summary>
+        /// Holds the auto execution mode.
+        /// </summary>
+        private BatchAutoExecuteMode _autoMode;
+
+        /// <summary>
+        /// Holds the batch size threshold for the auto batch execution mode.
+        /// </summary>
+        private int _autoBatchSize;
+
+        /// <summary>
+        /// Holds the `IRpcClient` instance to use for auto execution mode.
+        /// </summary>
+        private IRpcClient _autoRpcClient;
+
+        /// <summary>
         /// Constructs a new SolanaRpcBatchComposer instance
         /// </summary>
         public SolanaRpcBatchComposer()
@@ -57,6 +72,22 @@ namespace Solnet.Rpc
         }
 
         #region Execution
+
+
+        /// <summary>
+        /// Sets the auto execute mode and trigger threshold
+        /// </summary>
+        /// <param name="mode">The auto execute mode to use.</param>
+        /// <param name="client">The RPC client to use or null for manual.</param>
+        /// <param name="batchSizeTrigger">The number of requests that will trigger a batch execution.</param>
+        public void AutoExecute(BatchAutoExecuteMode mode, IRpcClient client, int batchSizeTrigger) 
+        {
+            if (mode != BatchAutoExecuteMode.Manual && client == null) 
+                throw new ArgumentNullException($"RPC client required for this AutoExecute mode {mode}.");
+            this._autoMode = mode;
+            this._autoRpcClient= client;
+            this._autoBatchSize = batchSizeTrigger;
+        }
 
         /// <summary>
         /// Returns a batch of JSON RPC requests
@@ -202,11 +233,31 @@ namespace Solnet.Rpc
             _reqs.Clear();
         }
 
+        /// <summary>
+        /// Executes any batch using the auto execution mode (if set) or throws an execption.
+        /// </summary>
+        public void Flush()
+        {
+            switch (_autoMode)
+            {
+                case BatchAutoExecuteMode.ExecuteWithFatalFailure:
+                    ExecuteWithFatalFailure(_autoRpcClient);
+                    break;
+
+                case BatchAutoExecuteMode.ExecuteWithCallbackFailures:
+                    Execute(_autoRpcClient);
+                    break;
+
+                default:
+                    throw new ApplicationException("BatchComposer AutoExecute mode not set");
+            }
+        }
+
         internal void AddRequest<T>(string method, IList<object> parameters, Action<T, Exception> callback)
         {
             var wrapped = WrapCallback<T>(callback);
             var handler = RpcBatchReqRespItem.Create<T>(_idGenerator.GetNextId(), method, parameters, wrapped);
-            _reqs.Add(handler);
+            Add(handler);
         }
 
         internal Task<T> AddRequest<T>(string method, IList<object> parameters)
@@ -214,8 +265,18 @@ namespace Solnet.Rpc
             var taskSource = new TaskCompletionSource<T>();
             var callback = WrapTaskSource<T>(taskSource);
             var handler = RpcBatchReqRespItem.Create<T>(_idGenerator.GetNextId(), method, parameters, callback);
-            _reqs.Add(handler);
+            Add(handler);
             return taskSource.Task;
+        }
+
+        internal void Add(RpcBatchReqRespItem task) 
+        {
+            // add to batch
+            _reqs.Add(task);
+
+            // does this trigger an auto execute?
+            if (_autoMode != BatchAutoExecuteMode.Manual && _reqs.Count >= _autoBatchSize)
+                Flush();
         }
 
         private static Action<JsonRpcBatchResponseItem, Exception> WrapCallback<T>(Action<T, Exception> callback)
