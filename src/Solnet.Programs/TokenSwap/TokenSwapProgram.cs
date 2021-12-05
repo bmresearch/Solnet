@@ -1,3 +1,4 @@
+using Solnet.Programs.Abstract;
 using Solnet.Programs.TokenSwap.Models;
 using Solnet.Programs.Utilities;
 using Solnet.Rpc.Models;
@@ -16,7 +17,7 @@ namespace Solnet.Programs.TokenSwap
     /// https://docs.rs/spl-token-swap/2.1.0/spl_token_swap/
     /// </remarks>
     /// </summary>
-    public class TokenSwapProgram
+    public class TokenSwapProgram : BaseProgram
     {
         /// <summary>
         /// SPL Token Swap Program Program ID
@@ -26,17 +27,10 @@ namespace Solnet.Programs.TokenSwap
         /// <summary>
         /// SPL Token Swap Program Program Name
         /// </summary>
-        public static readonly string TokenSwapProgramProgramName = "Token Swap Program";
+        public static readonly string TokenSwapProgramName = "Token Swap Program";
 
-        /// <summary>
-        /// The public key of the Token Swap Program.
-        /// </summary>
-        public virtual PublicKey ProgramIdKey => TokenSwapProgramIdKey;
-
-        /// <summary>
-        /// The program's name.
-        /// </summary>
-        public virtual string ProgramName => TokenSwapProgramProgramName;
+        
+        //instance vars
 
         /// <summary>
         /// The owner key required to use as the fee account owner.  
@@ -46,40 +40,27 @@ namespace Solnet.Programs.TokenSwap
         /// <summary>
         /// Token Swap account layout size.
         /// </summary>
-        public virtual ulong TokenSwapAccountDataSize => 324;
+        public static readonly ulong TokenSwapAccountDataSize = 323;
+        
+        /// <summary>
+        /// Create a token swap program instance with the standard programid and program name
+        /// </summary>
+        public TokenSwapProgram() : base(TokenSwapProgramIdKey, TokenSwapProgramName) { }
 
         /// <summary>
-        /// Exposes the computed swap authority public key. Subclasses can override CreateAuthority to change the value.
+        /// Create a token swap program instance with a custom programid 
         /// </summary>
-        public PublicKey SwapAuthority => _swapAuthority;
-
-        /// <summary>
-        /// Exposes the computed swap authority public key
-        /// </summary>
-        public byte SwapAuthorityNonce => _nonce;
-
-        private readonly PublicKey _tokenSwapAccount;
-        private readonly PublicKey _swapAuthority;
-        private readonly byte _nonce;
-
-        /// <summary>
-        /// Create a new instance to operation over the specified token swap
-        /// </summary>
-        /// <param name="tokenSwapAccount">The token swap that operations will be made over</param>
-        public TokenSwapProgram(PublicKey tokenSwapAccount)
-        {
-            _tokenSwapAccount = tokenSwapAccount;
-            (_swapAuthority, _nonce) = CreateAuthority();
-        }
+        /// <param name="programId">The program id to use</param>
+        public TokenSwapProgram(PublicKey programId) : base(programId, TokenSwapProgramName) { }
 
         /// <summary>
         /// Create the authority
         /// </summary>
         /// <returns>The swap authority</returns>
         /// <exception cref="InvalidProgramException">No program account could be found (exhausted nonces)</exception>
-        protected virtual (PublicKey, byte) CreateAuthority()
+        public virtual (PublicKey pubkey, byte nonce) CreateAuthority(PublicKey tokenSwapAccount)
         {
-            if (!AddressExtensions.TryFindProgramAddress(new[] { _tokenSwapAccount.KeyBytes }, ProgramIdKey.KeyBytes, out var addressBytes, out var nonce))
+            if (!AddressExtensions.TryFindProgramAddress(new[] { tokenSwapAccount.KeyBytes }, ProgramIdKey.KeyBytes, out var addressBytes, out var nonce))
                 throw new InvalidProgramException();
             var auth = new PublicKey(addressBytes);
             return (auth, (byte)nonce);
@@ -88,6 +69,7 @@ namespace Solnet.Programs.TokenSwap
         /// <summary>
         /// Initializes a new swap.
         /// </summary>
+        /// <param name="tokenSwapAccount">The token swap account to initialize.</param>
         /// <param name="tokenAAccount">token_a Account. Must be non zero, owned by swap authority.</param>
         /// <param name="tokenBAccount">token_b Account. Must be non zero, owned by swap authority.</param>
         /// <param name="poolTokenMint">Pool Token Mint. Must be empty, owned by swap authority.</param>
@@ -97,6 +79,7 @@ namespace Solnet.Programs.TokenSwap
         /// <param name="swapCurve">Curve to use for this token swap.</param>
         /// <returns>The transaction instruction.</returns>
         public virtual TransactionInstruction Initialize(
+            PublicKey tokenSwapAccount,
             PublicKey tokenAAccount,
             PublicKey tokenBAccount,
             PublicKey poolTokenMint,
@@ -104,10 +87,11 @@ namespace Solnet.Programs.TokenSwap
             PublicKey userPoolTokenAccount,
             Fees fees, SwapCurve swapCurve)
         {
+            var (swapAuthority, nonce) = CreateAuthority(tokenSwapAccount);
             List<AccountMeta> keys = new()
             {
-                AccountMeta.Writable(_tokenSwapAccount, true),
-                AccountMeta.ReadOnly(_swapAuthority, false),
+                AccountMeta.Writable(tokenSwapAccount, true),
+                AccountMeta.ReadOnly(swapAuthority, false),
                 AccountMeta.ReadOnly(tokenAAccount, false),
                 AccountMeta.ReadOnly(tokenBAccount, false),
                 AccountMeta.Writable(poolTokenMint, false),
@@ -119,13 +103,14 @@ namespace Solnet.Programs.TokenSwap
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = TokenSwapProgramData.EncodeInitializeData(_nonce, fees, swapCurve)
+                Data = TokenSwapProgramData.EncodeInitializeData(nonce, fees, swapCurve)
             };
         }
 
         /// <summary>
         /// Swap the tokens in the pool.
         /// </summary>
+        /// <param name="tokenSwapAccount">The token swap account to operate over.</param>
         /// <param name="userTransferAuthority">user transfer authority.</param>
         /// <param name="tokenSourceAccount">token_(A|B) SOURCE Account, amount is transferable by user transfer authority.</param>
         /// <param name="tokenBaseIntoAccount">token_(A|B) Base Account to swap INTO.  Must be the SOURCE token.</param>
@@ -138,6 +123,7 @@ namespace Solnet.Programs.TokenSwap
         /// <param name="amountOut">Minimum amount of DESTINATION token to output, prevents excessive slippage.</param>
         /// <returns>The transaction instruction.</returns>
         public virtual TransactionInstruction Swap(
+            PublicKey tokenSwapAccount,
             PublicKey userTransferAuthority,
             PublicKey tokenSourceAccount,
             PublicKey tokenBaseIntoAccount,
@@ -148,10 +134,11 @@ namespace Solnet.Programs.TokenSwap
             PublicKey poolTokenHostFeeAccount,
             ulong amountIn, ulong amountOut)
         {
+            var (swapAuthority, nonce) = CreateAuthority(tokenSwapAccount);
             List<AccountMeta> keys = new()
             {
-                AccountMeta.ReadOnly(_tokenSwapAccount, false),
-                AccountMeta.ReadOnly(_swapAuthority, false),
+                AccountMeta.ReadOnly(tokenSwapAccount, false),
+                AccountMeta.ReadOnly(swapAuthority, false),
                 AccountMeta.ReadOnly(userTransferAuthority, false),
                 AccountMeta.Writable(tokenSourceAccount, false),
                 AccountMeta.Writable(tokenBaseIntoAccount, false),
@@ -178,6 +165,7 @@ namespace Solnet.Programs.TokenSwap
         ///   token representing ownership in the pool. Inputs are converted to
         ///   the current ratio.
         /// </summary>
+        /// <param name="tokenSwapAccount">The token swap account to operate over.</param>
         /// <param name="userTransferAuthority">user transfer authority.</param>
         /// <param name="tokenAuserAccount">token_a - user transfer authority can transfer amount.</param>
         /// <param name="tokenBuserAccount">token_b - user transfer authority can transfer amount.</param>
@@ -190,6 +178,7 @@ namespace Solnet.Programs.TokenSwap
         /// <param name="maxTokenB">Maximum token B amount to deposit, prevents excessive slippage.</param>
         /// <returns>The transaction instruction.</returns>
         public virtual TransactionInstruction DepositAllTokenTypes(
+            PublicKey tokenSwapAccount,
             PublicKey userTransferAuthority,
             PublicKey tokenAuserAccount,
             PublicKey tokenBuserAccount,
@@ -199,10 +188,11 @@ namespace Solnet.Programs.TokenSwap
             PublicKey poolTokenUserAccount,
             ulong poolTokenAmount, ulong maxTokenA, ulong maxTokenB)
         {
+            var (swapAuthority, nonce) = CreateAuthority(tokenSwapAccount);
             List<AccountMeta> keys = new()
             {
-                AccountMeta.ReadOnly(_tokenSwapAccount, false),
-                AccountMeta.ReadOnly(_swapAuthority, false),
+                AccountMeta.ReadOnly(tokenSwapAccount, false),
+                AccountMeta.ReadOnly(swapAuthority, false),
                 AccountMeta.ReadOnly(userTransferAuthority, false),
                 AccountMeta.Writable(tokenAuserAccount, false),
                 AccountMeta.Writable(tokenBuserAccount, false),
@@ -225,6 +215,7 @@ namespace Solnet.Programs.TokenSwap
         ///   pool tokens.  The pool tokens are burned in exchange for an equivalent
         ///   amount of token A and B.
         /// </summary>
+        /// <param name="tokenSwapAccount">The token swap account to operate over.</param>
         /// <param name="userTransferAuthority">user transfer authority.</param>
         /// <param name="poolTokenMint">Pool MINT account, swap authority is the owner.</param>
         /// <param name="sourcePoolAccount">SOURCE Pool account, amount is transferable by user transfer authority.</param>
@@ -238,6 +229,7 @@ namespace Solnet.Programs.TokenSwap
         /// <param name="minTokenB">Minimum amount of token B to receive, prevents excessive slippage.</param>
         /// <returns>The transaction instruction.</returns>
         public virtual TransactionInstruction WithdrawAllTokenTypes(
+            PublicKey tokenSwapAccount,
             PublicKey userTransferAuthority,
             PublicKey poolTokenMint,
             PublicKey sourcePoolAccount,
@@ -248,10 +240,11 @@ namespace Solnet.Programs.TokenSwap
             PublicKey feeAccount,
             ulong poolTokenAmount, ulong minTokenA, ulong minTokenB)
         {
+            var (swapAuthority, nonce) = CreateAuthority(tokenSwapAccount);
             List<AccountMeta> keys = new()
             {
-                AccountMeta.ReadOnly(_tokenSwapAccount, false),
-                AccountMeta.ReadOnly(_swapAuthority, false),
+                AccountMeta.ReadOnly(tokenSwapAccount, false),
+                AccountMeta.ReadOnly(swapAuthority, false),
                 AccountMeta.ReadOnly(userTransferAuthority, false),
                 AccountMeta.Writable(poolTokenMint, false),
                 AccountMeta.Writable(sourcePoolAccount, false),
@@ -275,6 +268,7 @@ namespace Solnet.Programs.TokenSwap
         ///   representing ownership into the pool. Input token is converted as if
         ///   a swap and deposit all token types were performed.
         /// </summary>
+        /// <param name="tokenSwapAccount">The token swap account to operate over.</param>
         /// <param name="userTransferAuthority">user transfer authority.</param>
         /// <param name="sourceAccount">token_(A|B) SOURCE Account, amount is transferable by user transfer authority.</param>
         /// <param name="destinationTokenAAccount">token_a Swap Account, may deposit INTO.</param>
@@ -285,6 +279,7 @@ namespace Solnet.Programs.TokenSwap
         /// <param name="minPoolTokenAmount">Pool token amount to receive in exchange. The amount is set by the current exchange rate and size of the pool.</param>
         /// <returns>The transaction instruction.</returns>
         public virtual TransactionInstruction DepositSingleTokenTypeExactAmountIn(
+            PublicKey tokenSwapAccount,
             PublicKey userTransferAuthority,
             PublicKey sourceAccount,
             PublicKey destinationTokenAAccount,
@@ -293,10 +288,11 @@ namespace Solnet.Programs.TokenSwap
             PublicKey poolTokenUserAccount,
             ulong sourceTokenAmount, ulong minPoolTokenAmount)
         {
+            var (swapAuthority, nonce) = CreateAuthority(tokenSwapAccount);
             List<AccountMeta> keys = new()
             {
-                AccountMeta.ReadOnly(_tokenSwapAccount, false),
-                AccountMeta.ReadOnly(_swapAuthority, false),
+                AccountMeta.ReadOnly(tokenSwapAccount, false),
+                AccountMeta.ReadOnly(swapAuthority, false),
                 AccountMeta.ReadOnly(userTransferAuthority, false),
                 AccountMeta.Writable(sourceAccount, false),
                 AccountMeta.Writable(destinationTokenAAccount, false),
@@ -317,6 +313,7 @@ namespace Solnet.Programs.TokenSwap
         /// Withdraw one token type from the pool at the current ratio given the
         ///   exact amount out expected.
         /// </summary>
+        /// <param name="tokenSwapAccount">The token swap account to operate over.</param>
         /// <param name="userTransferAuthority">user transfer authority.</param>
         /// <param name="poolMintAccount">Pool mint account, swap authority is the owner.</param>
         /// <param name="sourceUserAccount">SOURCE Pool account, amount is transferable by user transfer authority.</param>
@@ -328,6 +325,7 @@ namespace Solnet.Programs.TokenSwap
         /// <param name="maxPoolTokenAmount">Maximum amount of pool tokens to burn. User receives an output of token A or B based on the percentage of the pool tokens that are returned.</param>
         /// <returns>The transaction instruction.</returns>
         public virtual TransactionInstruction WithdrawSingleTokenTypeExactAmountOut(
+            PublicKey tokenSwapAccount,
             PublicKey userTransferAuthority,
             PublicKey poolMintAccount,
             PublicKey sourceUserAccount,
@@ -337,10 +335,11 @@ namespace Solnet.Programs.TokenSwap
             PublicKey feeAccount,
             ulong destTokenAmount, ulong maxPoolTokenAmount)
         {
+            var (swapAuthority, nonce) = CreateAuthority(tokenSwapAccount);
             List<AccountMeta> keys = new()
             {
-                AccountMeta.ReadOnly(_tokenSwapAccount, false),
-                AccountMeta.ReadOnly(_swapAuthority, false),
+                AccountMeta.ReadOnly(tokenSwapAccount, false),
+                AccountMeta.ReadOnly(swapAuthority, false),
                 AccountMeta.ReadOnly(userTransferAuthority, false),
                 AccountMeta.Writable(poolMintAccount, false),
                 AccountMeta.Writable(sourceUserAccount, false),
@@ -375,7 +374,7 @@ namespace Solnet.Programs.TokenSwap
             {
                 PublicKey = TokenSwapProgram.TokenSwapProgramIdKey,
                 InstructionName = TokenSwapProgramInstructions.Names[instructionValue],
-                ProgramName = TokenSwapProgram.TokenSwapProgramProgramName,
+                ProgramName = TokenSwapProgram.TokenSwapProgramName,
                 Values = new Dictionary<string, object>(),
                 InnerInstructions = new List<DecodedInstruction>()
             };

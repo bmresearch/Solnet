@@ -1,5 +1,6 @@
 ﻿using Solnet.Programs.Utilities;
 using System;
+using System.Buffers.Binary;
 
 namespace Solnet.Programs.TokenSwap.Models
 {
@@ -8,6 +9,11 @@ namespace Solnet.Programs.TokenSwap.Models
     /// </summary>
     public class SwapCurve
     {
+        /// <summary>
+        /// The constant procuct curve
+        /// </summary>
+        public static SwapCurve ConstantProduct => new SwapCurve() { CurveType = CurveType.ConstantProduct, Calculator = new ConstantProductCurve() };
+
         /// <summary>
         /// The curve type.
         /// </summary>
@@ -35,9 +41,19 @@ namespace Solnet.Programs.TokenSwap.Models
             return new Span<byte>(ret);
         }
 
-        /// <summary>
-        /// The constant procuct curve
-        /// </summary>
-        public static SwapCurve ConstantProduct => new SwapCurve() { CurveType = CurveType.ConstantProduct, Calculator = new ConstantProductCurve() };
+        public static SwapCurve Deserialize(byte[] bytes)
+        {
+            var s = new SwapCurve()
+            {
+                CurveType = (CurveType)bytes[0],
+                //todo other curves
+                Calculator = new ConstantProductCurve()
+            };
+            if (s.CurveType != CurveType.ConstantProduct)
+            {
+                throw new NotSupportedException("Only constant product curves are supported by Solnet currently");
+            }
+            return s;
+        }
     }
 }
