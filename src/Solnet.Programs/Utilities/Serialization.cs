@@ -242,7 +242,7 @@ namespace Solnet.Programs.Utilities
             buffer.Write(fromPublicKey.KeyBytes);
             buffer.Write(EncodeRustString(seed));
             buffer.Write(programId.KeyBytes);
-            byte[] hash = AddressExtensions.Sha256(buffer.ToArray());
+            byte[] hash = Hashing.Sha256(buffer.ToArray());
             publicKeyOut = new PublicKey(hash);
             return true;
         }

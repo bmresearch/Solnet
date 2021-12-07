@@ -292,23 +292,6 @@ namespace Solnet.Examples
                     a5,
                     5
                     ))
-                //.AddInstruction(StakeProgram.Initialize(
-                //    a6.PublicKey,
-                //    authorized,
-                //    lockup))
-                //.AddInstruction(StakeProgram.Authorize(a6.PublicKey, a5.PublicKey, a4.PublicKey, StakeAuthorize.Staker, a3.PublicKey))
-                //.AddInstruction(StakeProgram.DelegateStake(a6.PublicKey, a5.PublicKey, a4.PublicKey))
-                //.AddInstruction(StakeProgram.Split(a6.PublicKey, a4.PublicKey, 1_000_000, a5.PublicKey))
-                //.AddInstruction(StakeProgram.Withdraw(a6.PublicKey, a4.PublicKey, a3.PublicKey, 1_000_000, a2.PublicKey))
-                //.AddInstruction(StakeProgram.Deactivate(a6.PublicKey, a5.PublicKey))
-                //.AddInstruction(StakeProgram.SetLockup(a6.PublicKey,lockup, a2.PublicKey))
-                //.AddInstruction(StakeProgram.Merge(a6.PublicKey,a5.PublicKey, a4.PublicKey))
-                //.AddInstruction(StakeProgram.AuthorizeWithSeed(a6.PublicKey, a5.PublicKey,"testThisSeed", a4.PublicKey, a3.PublicKey, StakeAuthorize.Staker, a2.PublicKey))
-                //.AddInstruction(StakeProgram.InitializeChecked(a6.PublicKey, authorized))
-                //.AddInstruction(StakeProgram.AuthorizeChecked(a6.PublicKey, a5.PublicKey, a4.PublicKey, StakeAuthorize.Staker, a3.PublicKey))
-                //.AddInstruction(StakeProgram.AuthorizeCheckedWithSeed(a6.PublicKey, a5.PublicKey, "testThisSeed", a4.PublicKey, a3.PublicKey, StakeAuthorize.Staker, a2.PublicKey))
-                //.AddInstruction(StakeProgram.SetLockupChecked(a6.PublicKey, lockup, a2.PublicKey))
-                //.Build(new List<Account> { a6, a5 });
                 .CompileMessage();
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
             RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);

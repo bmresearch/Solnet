@@ -270,8 +270,9 @@ namespace Solnet.Programs.Test.Utilities
         [TestMethod]
         public void TestReadRustString()
         {
-            const string expected = "this is a test string"; // 21 chars
-            const int expectedLength = 29; // 21 chars + sizeof(u64) which is the encoding length padding
+            //DOESNT WORK FOR ALL CHARACTERS DUE TO UTF-8 ENCODING
+            const string expected = "this is a test string";
+            int expectedLength = expected.Length + sizeof(ulong);
 
             (string actual, int length) = Deserialization.DecodeRustString(EncodedStringBytes, 0);
 

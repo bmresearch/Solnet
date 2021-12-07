@@ -46,7 +46,7 @@ namespace Solnet.Programs
             data.WriteU32((uint)StakeProgramInstructions.Values.Authorize, MethodOffset);
             data.WritePubKey(newAuthorizedPubkey, 4);
             data.WriteU32((uint)stakeAuthorize, 36);
-            Console.WriteLine("Authorize data = "+ToReadableByteArray(data));
+            
             return data;
         }
 
@@ -55,7 +55,6 @@ namespace Solnet.Programs
             byte[] data = new byte[4];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.DelegateStake, MethodOffset);
-            Console.WriteLine("Delegate data = " + ToReadableByteArray(data));
             return data;
         }
         internal static byte[] EncodeSplitData(ulong lamports)
@@ -64,7 +63,6 @@ namespace Solnet.Programs
 
             data.WriteU32((uint)StakeProgramInstructions.Values.Split, MethodOffset);
             data.WriteU64(lamports, 4);
-            Console.WriteLine("Split data = " + ToReadableByteArray(data));
             return data;
         }
 
@@ -74,7 +72,6 @@ namespace Solnet.Programs
 
             data.WriteU32((uint)StakeProgramInstructions.Values.Withdraw, MethodOffset);
             data.WriteU64(lamports, 4);
-            Console.WriteLine("Withdraw data = " + ToReadableByteArray(data));
             return data;
         }
 
@@ -83,7 +80,6 @@ namespace Solnet.Programs
             byte[] data = new byte[4];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.Deactivate, MethodOffset);
-            Console.WriteLine("Deactivate data = " + ToReadableByteArray(data));
             return data;
         }
 
@@ -95,7 +91,6 @@ namespace Solnet.Programs
             data.WriteS64(lockup.UnixTimestamp, 4);
             data.WriteU64(lockup.Epoch, 12);
             data.WritePubKey(lockup.Custodian, 20);
-            Console.WriteLine("Set lockup data = " + ToReadableByteArray(data));
             return data;
         }
 
@@ -104,7 +99,6 @@ namespace Solnet.Programs
             byte[] data = new byte[4];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.Merge, MethodOffset);
-            Console.WriteLine("Merge data = " + ToReadableByteArray(data));
             return data;
         }
 
@@ -118,7 +112,6 @@ namespace Solnet.Programs
             data.WriteU32((uint)stakeAuthorize, 36);
             data.WriteSpan(encodedSeed, 40);
             data.WritePubKey(authorityOwner, 40 + encodedSeed.Length);
-            Console.WriteLine("Authorize ws data = " + ToReadableByteArray(data));
             return data;
         }
 
@@ -127,7 +120,6 @@ namespace Solnet.Programs
             byte[] data = new byte[4];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.InitializeChecked, MethodOffset);
-            Console.WriteLine("Init Chec data = " + ToReadableByteArray(data));
             return data;
         }
 
@@ -137,7 +129,6 @@ namespace Solnet.Programs
 
             data.WriteU32((uint)StakeProgramInstructions.Values.Authorize, MethodOffset);
             data.WriteU32((uint)stakeAuthorize, 4);
-            Console.WriteLine("Authorize checked data = " + ToReadableByteArray(data));
             return data;
         }
 
@@ -150,7 +141,6 @@ namespace Solnet.Programs
             data.WriteSpan(encodedSeed, 4);
             data.WriteU32((uint)stakeAuthorize, 4 + encodedSeed.Length);
             data.WritePubKey(authorityOwner, 8 + encodedSeed.Length);
-            Console.WriteLine("Authorize check seed data = " + ToReadableByteArray(data));
             return data;
         }
         internal static byte[] EncodeSetLockupCheckedData(Lockup lockup)
@@ -160,7 +150,6 @@ namespace Solnet.Programs
             data.WriteU32((uint)StakeProgramInstructions.Values.SetLockup, MethodOffset);
             data.WriteS64(lockup.UnixTimestamp, 4);
             data.WriteU64(lockup.Epoch, 12);
-            Console.WriteLine("Set Lockup checked data = " + ToReadableByteArray(data));
             return data;
         }
         internal static void DecodeInitializeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)

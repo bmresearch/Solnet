@@ -11,8 +11,8 @@ namespace Solnet.Programs
     /// Implements the Stake Program methods.
     /// <remarks>
     /// For more information see:
-    /// LINK HERE
-    /// LINK HERE
+    /// https://docs.rs/solana-program/latest/src/solana_program/stake/instruction.rs.html
+    /// https://github.com/solana-labs/solana/blob/master/sdk/program/src/stake/instruction.rs
     /// </remarks>
     /// </summary>
     public static class StakeProgram
