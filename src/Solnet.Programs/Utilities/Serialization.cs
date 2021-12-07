@@ -1,7 +1,10 @@
+using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
+using Solnet.Wallet.Utilities;
 using System;
 using System.Buffers.Binary;
 using System.Diagnostics;
+using System.IO;
 using System.Numerics;
 using System.Text;
 
@@ -207,23 +210,43 @@ namespace Solnet.Programs.Utilities
 
             BinaryPrimitives.WriteSingleLittleEndian(data.AsSpan(offset, sizeof(float)), value);
         }
-
         /// <summary>
-        /// Encodes a string for transaction instruction.
-        /// <remarks>
-        /// Example taken from here: https://github.com/michaelhly/solana-py/blob/c595b7bedb9574dbf3da7243175de3ab72810226/solana/_layouts/shared.py
-        /// </remarks>
+        /// Encodes a string for a transaction
         /// </summary>
-        /// <param name="data">The data to encode.</param>
-        /// <returns>The encoded data.</returns>
+        /// <param name="data"> the string to be encoded</param>
+        /// <returns></returns>
         public static byte[] EncodeRustString(string data)
         {
             byte[] stringBytes = Encoding.UTF8.GetBytes(data);
-            byte[] encoded = new byte[stringBytes.Length + sizeof(uint)];
+          
+            byte[] encoded = new byte[stringBytes.Length+sizeof(ulong)];
 
-            encoded.WriteU32((uint)stringBytes.Length, 0);
-            encoded.WriteSpan(stringBytes, sizeof(uint));
+            encoded.WriteU64((ulong)stringBytes.Length, 0);
+            encoded.WriteSpan(stringBytes, 8);
+          
             return encoded;
         }
+        /// <summary>
+        /// Derives a new public key from an existing public key and seed
+        /// </summary>
+        /// <param name="fromPublicKey">The extant pubkey</param>
+        /// <param name="seed">The seed</param>
+        /// <param name="programId">The programid</param>
+        /// <param name="publicKeyOut">The derived public key</param>
+        /// <returns></returns>
+        public static bool TryCreateWithSeed(
+            PublicKey fromPublicKey, string seed, PublicKey programId, out PublicKey publicKeyOut)
+        {
+            var b58 = new Base58Encoder();
+            MemoryStream buffer = new();
+            buffer.Write(fromPublicKey.KeyBytes);
+            buffer.Write(EncodeRustString(seed));
+            buffer.Write(programId.KeyBytes);
+            byte[] hash = Hashing.Sha256(buffer.ToArray());
+            publicKeyOut = new PublicKey(hash);
+            return true;
+        }
+
+
     }
 }

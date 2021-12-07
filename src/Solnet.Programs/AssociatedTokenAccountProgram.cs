@@ -52,7 +52,7 @@ namespace Solnet.Programs
                 AccountMeta.ReadOnly(mint, false),
                 AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+                AccountMeta.ReadOnly(SysVars.RentKey, false)
             };
 
             return new TransactionInstruction
