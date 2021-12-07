@@ -22,6 +22,12 @@ namespace Solnet.Examples
 
         public void Run()
         {
+            //how to load current state
+            IRpcClient mainnetRpc = ClientFactory.GetClient(Cluster.MainNet);
+            var resp = mainnetRpc.GetAccountInfo("GAM8dQkm4LwYJgPZbML61mKPUCQX7uAquxu67p9oifSK");
+            var obj = TokenSwapAccount.Deserialize(Convert.FromBase64String(resp.Result.Value.Data[0]));
+            Console.WriteLine($"Pool Mint: {obj.PoolMint}");
+
             Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
             var tokenAMint = new Account();
@@ -99,7 +105,8 @@ namespace Solnet.Examples
             Examples.PollConfirmedTx(txSig);
 
             var swap = new Account();
-            var program = new TokenSwapProgram(swap);
+            var program = new TokenSwapProgram();
+            var swapAuthority = program.CreateAuthority(swap).pubkey;
 
             var swapTokenAAccount= new Account();
             var swapTokenBAccount = new Account();
@@ -119,7 +126,7 @@ namespace Solnet.Examples
                 .AddInstruction(TokenProgram.InitializeAccount(
                     swapTokenAAccount,
                     tokenAMint,
-                    program.SwapAuthority
+                    swapAuthority
                 ))
                 .AddInstruction(TokenProgram.Transfer(
                     tokenAUserAccount,
@@ -137,7 +144,7 @@ namespace Solnet.Examples
                 .AddInstruction(TokenProgram.InitializeAccount(
                     swapTokenBAccount,
                     tokenBMint,
-                    program.SwapAuthority
+                    swapAuthority
                 ))
                 .AddInstruction(TokenProgram.Transfer(
                     tokenBUserAccount,
@@ -168,7 +175,7 @@ namespace Solnet.Examples
                 .AddInstruction(TokenProgram.InitializeMint(
                     poolMint,
                     9,
-                    program.SwapAuthority
+                    swapAuthority
                 ))
                 .AddInstruction(SystemProgram.CreateAccount(
                     wallet.Account,
@@ -206,11 +213,12 @@ namespace Solnet.Examples
                 .AddInstruction(SystemProgram.CreateAccount(
                     wallet.Account,
                     swap,
-                    RpcClient.GetMinimumBalanceForRentExemption((long)program.TokenSwapAccountDataSize).Result,
-                    program.TokenSwapAccountDataSize,
+                    RpcClient.GetMinimumBalanceForRentExemption((long)TokenSwapProgram.TokenSwapAccountDataSize).Result,
+                    TokenSwapProgram.TokenSwapAccountDataSize,
                     program.ProgramIdKey
                 ))
                 .AddInstruction(program.Initialize(
+                    swap,
                     swapTokenAAccount,
                     swapTokenBAccount,
                     poolMint,
@@ -231,7 +239,7 @@ namespace Solnet.Examples
                 ))
                 .Build(new Account[] { wallet.Account, swap });
             Console.WriteLine($"Swap Account: {swap}");
-            Console.WriteLine($"Swap Auth Account: {program.SwapAuthority}");
+            Console.WriteLine($"Swap Auth Account: {swapAuthority}");
             Console.WriteLine($"Pool Mint Account: {poolMint}");
             Console.WriteLine($"Pool User Account: {poolUserAccount}");
             Console.WriteLine($"Pool Fee Account: {poolFeeAccount}");
@@ -244,6 +252,7 @@ namespace Solnet.Examples
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(wallet.Account)
                 .AddInstruction(program.Swap(
+                    swap,
                     wallet.Account,
                     tokenAUserAccount,
                     swapTokenAAccount,
@@ -264,6 +273,7 @@ namespace Solnet.Examples
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(wallet.Account)
                 .AddInstruction(program.DepositAllTokenTypes(
+                    swap,
                     wallet.Account,
                     tokenAUserAccount,
                     tokenBUserAccount,
@@ -284,6 +294,7 @@ namespace Solnet.Examples
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(wallet.Account)
                 .AddInstruction(program.WithdrawAllTokenTypes(
+                    swap,
                     wallet.Account,
                     poolMint,
                     poolUserAccount,
@@ -305,6 +316,7 @@ namespace Solnet.Examples
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(wallet.Account)
                 .AddInstruction(program.DepositSingleTokenTypeExactAmountIn(
+                    swap,
                     wallet.Account,
                     tokenAUserAccount,
                     swapTokenAAccount,
@@ -323,6 +335,7 @@ namespace Solnet.Examples
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(wallet.Account)
                 .AddInstruction(program.WithdrawSingleTokenTypeExactAmountOut(
+                    swap,
                     wallet.Account,
                     poolMint,
                     poolUserAccount,
