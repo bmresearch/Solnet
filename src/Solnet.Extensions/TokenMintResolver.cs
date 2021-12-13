@@ -28,7 +28,9 @@ namespace Solnet.Extensions
         /// </summary>
         private Dictionary<string, TokenDef> _tokens;
 
-
+        /// <summary>
+        /// Map of known tokens.
+        /// </summary>
         public IReadOnlyDictionary<string, TokenDef> KnownTokens => _tokens;
 
         /// <summary>
