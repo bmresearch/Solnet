@@ -9,8 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Governance\Enums\" />
-    <Folder Include="Governance\Models\" />
     <Folder Include="Models\TokenSwap\" />
   </ItemGroup>
 
