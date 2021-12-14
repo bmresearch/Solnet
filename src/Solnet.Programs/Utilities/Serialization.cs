@@ -210,6 +210,27 @@ namespace Solnet.Programs.Utilities
 
             BinaryPrimitives.WriteSingleLittleEndian(data.AsSpan(offset, sizeof(float)), value);
         }
+
+        /// <summary>
+        /// Write a UTF8 string value to the byte array at the given offset.
+        /// </summary>
+        /// <param name="data">The byte array to write data to.</param>
+        /// <param name="value">The <see cref="string"/> to write.</param>
+        /// <param name="offset">The offset at which to write the <see cref="string"/>.</param>
+        /// <returns>Returns the number of bytes written.</returns>
+        public static int WriteString(this byte[] data, string value, int offset)
+        {
+            byte[] stringBytes = Encoding.UTF8.GetBytes(value);
+
+            if(offset + sizeof(uint) + stringBytes.Length > data.Length)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+
+            data.WriteU32((uint)stringBytes.Length, 0);
+            data.WriteSpan(stringBytes, sizeof(uint));
+
+            return stringBytes.Length + sizeof(uint);
+        }
+
         /// <summary>
         /// Encodes a string for a transaction
         /// </summary>
