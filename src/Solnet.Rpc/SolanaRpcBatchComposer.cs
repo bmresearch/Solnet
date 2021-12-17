@@ -102,12 +102,23 @@ namespace Solnet.Rpc
 
         /// <summary>
         /// Execute a batch request and process the response into the expected native types.
+        /// Batch failure execption will invoke callbacks with an exception.
         /// </summary>
         /// <param name="client"></param>
         public JsonRpcBatchResponse Execute(IRpcClient client)
         {
+            return ExecuteAsync(client).Result;
+        }
+
+        /// <summary>
+        /// Execute a batch request and process the response into the expected native types.
+        /// Batch failure execption will invoke callbacks with an exception.
+        /// </summary>
+        /// <param name="client"></param>
+        public async Task<JsonRpcBatchResponse> ExecuteAsync(IRpcClient client)
+        {
             var reqs = this.CreateJsonRequests();
-            var response = client.SendBatchRequestAsync(reqs).Result;
+            var response = await client.SendBatchRequestAsync(reqs);
             if (response.WasSuccessful)
                 return ProcessBatchResponse(response);
             else
@@ -116,12 +127,23 @@ namespace Solnet.Rpc
 
         /// <summary>
         /// Execute a batch request and process the response into the expected native types.
+        /// Batch failure execption will throw an Exception and bypass callbacks.
         /// </summary>
         /// <param name="client"></param>
         public JsonRpcBatchResponse ExecuteWithFatalFailure(IRpcClient client)
         {
+            return ExecuteWithFatalFailureAsync(client).Result;
+        }
+
+        /// <summary>
+        /// Execute a batch request and process the response into the expected native types.
+        /// Batch failure execption will throw an Exception and bypass callbacks.
+        /// </summary>
+        /// <param name="client"></param>
+        public async Task<JsonRpcBatchResponse> ExecuteWithFatalFailureAsync(IRpcClient client)
+        {
             var reqs = this.CreateJsonRequests();
-            var response = client.SendBatchRequestAsync(reqs).Result;
+            var response = await client.SendBatchRequestAsync(reqs);
             if (response.WasSuccessful)
                 return ProcessBatchResponse(response);
             else
