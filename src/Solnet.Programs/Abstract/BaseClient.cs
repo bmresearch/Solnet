@@ -54,6 +54,11 @@ namespace Solnet.Programs.Abstract
                 System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static,
                 null, new[] { typeof(byte[]) }, null);
 
+            if (m.IsGenericMethod)
+            {
+                m = m.MakeGenericMethod(typeof(T).GetGenericArguments());
+            }
+
             if (m == null)
                 return null;
             return (T)m.Invoke(null, new object[] { data });
