@@ -1,4 +1,6 @@
-﻿using Solnet.Wallet;
+﻿using Solnet.Programs.Governance.Enums;
+using Solnet.Programs.Utilities;
+using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,52 @@ namespace Solnet.Programs.Governance.Models
     /// </summary>
     public class TokenOwnerRecord : GovernanceProgramAccount
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public static class ExtraLayout
+        {
+            /// <summary>
+            /// 
+            /// </summary>
+            public const int RealmOffset = 1;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const int GoverningTokenMintOffset = 33;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const int GoverningTokenOwnerOffset = 65;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const int GoverningTokenDepositAmountOffset = 97;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const int UnrelinquishedVotesCountOffset = 105;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const int TotalVotesCountOffset = 109;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const int OutstandingProposalCountOffset = 113;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const int GovernanceDelegateOffset = 121;
+        }
+
         /// <summary>
         /// The Realm the TokenOwnerRecord belongs to
         /// </summary>
@@ -60,5 +108,30 @@ namespace Solnet.Programs.Governance.Models
         /// It can be delegated to by the governing_token_owner or current governance_delegate
         /// </summary>
         public PublicKey GovernanceDelegate;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static TokenOwnerRecord Deserialize(byte[] data)
+        {
+            ReadOnlySpan<byte> span = data.AsSpan();
+
+            bool governanceDelegateExists = span.GetBool(ExtraLayout.GovernanceDelegateOffset);
+
+            return new TokenOwnerRecord
+            {
+                AccountType = (GovernanceAccountType)Enum.Parse(typeof(GovernanceAccountType), span.GetU8(Layout.AccountTypeOffset).ToString()),
+                Realm = span.GetPubKey(ExtraLayout.RealmOffset),
+                GoverningTokenMint = span.GetPubKey(ExtraLayout.GoverningTokenMintOffset),
+                GoverningTokenOwner = span.GetPubKey(ExtraLayout.GoverningTokenOwnerOffset),
+                GoverningTokenDepositAmount = span.GetU64(ExtraLayout.GoverningTokenDepositAmountOffset),
+                UnrelinquishedVotesCount = span.GetU32(ExtraLayout.UnrelinquishedVotesCountOffset),
+                TotalVotesCount = span.GetU32(ExtraLayout.TotalVotesCountOffset),
+                OutstandingProposalCount = span.GetU8(ExtraLayout.OutstandingProposalCountOffset),
+                GovernanceDelegate = governanceDelegateExists ? span.GetPubKey(ExtraLayout.GovernanceDelegateOffset + 1) : null
+            };
+        }
     }
 }

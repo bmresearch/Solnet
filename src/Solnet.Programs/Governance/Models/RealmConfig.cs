@@ -1,5 +1,7 @@
 ﻿using Solnet.Programs.Governance.Enums;
+using Solnet.Programs.Utilities;
 using Solnet.Wallet;
+using System;
 
 namespace Solnet.Programs.Governance.Models
 {
@@ -17,7 +19,7 @@ namespace Solnet.Programs.Governance.Models
             /// <summary>
             /// 
             /// </summary>
-            public const int Length = 55;
+            public const int Length = 58;
 
             /// <summary>
             /// 
@@ -27,17 +29,22 @@ namespace Solnet.Programs.Governance.Models
             /// <summary>
             /// 
             /// </summary>
-            public const int MinCommunityTokensOffset = 8;
+            public const int MinCommunityTokensToCreateGovernanceOffset = 8;
 
             /// <summary>
             /// 
             /// </summary>
-            public const int CommunityMintMaxVoteOffset = 16;
+            public const int CommunityMintMaxVoteWeightSourceOffset = 16;
 
             /// <summary>
             /// 
             /// </summary>
-            public const int CouncilMintOffset = 23;
+            public const int CommunityMintMaxVoteWeightOffset = 17;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const int CouncilMintOffset = 25;
         }
 
         /// <summary>
@@ -64,5 +71,27 @@ namespace Solnet.Programs.Governance.Models
         /// Optional council mint.
         /// </summary>
         public PublicKey CouncilMint;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static RealmConfig Deserialize(ReadOnlySpan<byte> data)
+        {
+            if (data.Length != Layout.Length)
+                throw new Exception("data length is invalid");
+
+            bool councilMintExists = data.GetBool(Layout.CouncilMintOffset);
+
+            return new RealmConfig
+            {
+                UseCommunityVoterWeightAddin = data.GetBool(Layout.UseCommunityVoterWeightAddinOffset),
+                MinCommunityTokensToCreateGovernance = data.GetU64(Layout.MinCommunityTokensToCreateGovernanceOffset),
+                CommunityMintMaxVoteWeightSource = (MintMaxVoteWeightSource)Enum.Parse(typeof(MintMaxVoteWeightSource), data.GetU8(Layout.CommunityMintMaxVoteWeightSourceOffset).ToString()),
+                CommunityMintMaxVoteWeight = data.GetU64(Layout.CommunityMintMaxVoteWeightOffset),
+                CouncilMint = councilMintExists ? data.GetPubKey(Layout.CouncilMintOffset + 1) : null,
+            };
+        }
     }
 }
