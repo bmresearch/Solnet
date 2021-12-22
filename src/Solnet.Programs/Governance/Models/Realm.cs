@@ -21,22 +21,22 @@ namespace Solnet.Programs.Governance.Models
         public static class ExtraLayout
         {
             /// <summary>
-            /// 
+            /// The offset at which the community mint public key begins.
             /// </summary>
             public const int CommunityMintOffset = 1;
 
             /// <summary>
-            /// 
+            /// The offset at which the <see cref="RealmConfig"/> structure begins.
             /// </summary>
             public const int ConfigOffset = 33;
 
             /// <summary>
-            /// 
+            /// The offset at which the authority public key begins.
             /// </summary>
             public const int AuthorityOffset = 99;
 
             /// <summary>
-            /// 
+            /// The offset at which the name string begins.
             /// </summary>
             public const int NameOffset = 132;
         }
@@ -63,10 +63,10 @@ namespace Solnet.Programs.Governance.Models
         public string Name;
 
         /// <summary>
-        /// 
+        /// Deserialize the data into the <see cref="Realm"/> structure.
         /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        /// <param name="data">The data to deserialize.</param>
+        /// <returns>The <see cref="Realm"/> structure.</returns>
         public static Realm Deserialize(byte[] data)
         {
             ReadOnlySpan<byte> span = data.AsSpan();

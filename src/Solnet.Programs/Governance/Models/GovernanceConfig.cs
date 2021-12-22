@@ -19,91 +19,91 @@ namespace Solnet.Programs.Governance.Models
         public static class Layout
         {
             /// <summary>
-            /// 
+            /// The length of the <see cref="GovernanceConfig"/> structure.
             /// </summary>
             public const int Length = 31;
 
             /// <summary>
-            /// 
+            /// The offset at which the vote threshold percentage enum begins.
             /// </summary>
             public const int VoteThresholdPercentageOffset = 0;
 
             /// <summary>
-            /// 
+            /// The offset at which the minimum community tokens to create proposal value begins.
             /// </summary>
             public const int MinCommunityTokensToCreateProposalOffset = 2;
 
             /// <summary>
-            /// 
+            /// The offset at which the minimum instruction hold up time value begins.
             /// </summary>
             public const int MinInstructionHoldUpTimeOffset = 10;
 
             /// <summary>
-            /// 
+            /// The offset at which the maximum voting time value begins.
             /// </summary>
             public const int MaxVotingTimeOffset = 14;
 
             /// <summary>
-            /// 
+            /// The offset at which the vote weight source enum begins.
             /// </summary>
             public const int VoteWeightSourceOffset = 18;
 
             /// <summary>
-            /// 
+            /// The offset at which the proposal cool off value begins.
             /// </summary>
             public const int ProposalCoolOffset = 19;
 
             /// <summary>
-            /// 
+            /// The offset at which the minimum council tokens to create proposal value begins.
             /// </summary>
             public const int MinCouncilTokensToCreateProposalOffset = 23;
         }
 
         /// <summary>
-        /// 
+        /// The type of the vote threshold percentage.
         /// </summary>
         public VoteThresholdPercentage VoteThresholdPercentageType;
 
         /// <summary>
-        /// 
+        /// The vote threshold percentage.
         /// </summary>
         public byte VoteThresholdPercentage;
 
         /// <summary>
-        /// 
+        /// The minimum amount of community tokens needed to create a proposal.
         /// </summary>
         public ulong MinCommunityTokensToCreateProposal;
 
         /// <summary>
-        /// 
+        /// The minimum instruction hold up time.
         /// </summary>
         public uint MinInstructionHoldUpTime;
 
         /// <summary>
-        /// 
+        /// The maximum voting time.
         /// </summary>
         public uint MaxVotingTime;
 
         /// <summary>
-        /// 
+        /// The vote weight source.
         /// </summary>
         public VoteWeightSource VoteWeightSource;
 
         /// <summary>
-        /// 
+        /// The proposal cool off time.
         /// </summary>
         public uint ProposalCoolOffTime;
 
         /// <summary>
-        /// 
+        /// The minimum amount of council tokens needed to create a proposal.
         /// </summary>
         public ulong MinCouncilTokensToCreateProposal;
 
         /// <summary>
-        /// 
+        /// Deserialize the data into the <see cref="GovernanceConfig"/> structure.
         /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        /// <param name="data">The data to deserialize.</param>
+        /// <returns>The <see cref="GovernanceConfig"/> structure.</returns>
         public static GovernanceConfig Deserialize(ReadOnlySpan<byte> data)
         {
             return new GovernanceConfig

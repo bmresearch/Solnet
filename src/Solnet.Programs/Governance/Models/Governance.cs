@@ -20,56 +20,56 @@ namespace Solnet.Programs.Governance.Models
         public static class ExtraLayout
         {
             /// <summary>
-            /// 
+            /// The length of the <see cref="GovernanceAccount"/> structure.
             /// </summary>
             public const int Length = 101;
 
             /// <summary>
-            /// 
+            /// The offset at which the realm public key begins.
             /// </summary>
             public const int RealmOffset = 1;
 
             /// <summary>
-            /// 
+            /// The offset at which the governed account public key begins.
             /// </summary>
             public const int GovernedAccountOffset = 33;
 
             /// <summary>
-            /// 
+            /// The offset at which the proposals count value begins.
             /// </summary>
             public const int ProposalsCountOffset = 65;
 
             /// <summary>
-            /// 
+            /// The offset at which the <see cref="GovernanceConfig"/> structure begins.
             /// </summary>
             public const int ConfigOffset = 69;
         }
 
         /// <summary>
-        /// 
+        /// The realm this governance belongs to.
         /// </summary>
         public PublicKey Realm;
 
         /// <summary>
-        /// 
+        /// The governed account.
         /// </summary>
         public PublicKey GovernedAccount;
 
         /// <summary>
-        /// 
+        /// The amount of proposals.
         /// </summary>
         public uint ProposalsCount;
 
         /// <summary>
-        /// 
+        /// The governance config.
         /// </summary>
         public GovernanceConfig Config;
 
         /// <summary>
-        /// 
+        /// Deserialize the data into the <see cref="GovernanceAccount"/> structure.
         /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        /// <param name="data">The data to deserialize.</param>
+        /// <returns>The <see cref="GovernanceAccount"/> structure.</returns>
         public static GovernanceAccount Deserialize(byte[] data)
         {
             ReadOnlySpan<byte> span = data.AsSpan();

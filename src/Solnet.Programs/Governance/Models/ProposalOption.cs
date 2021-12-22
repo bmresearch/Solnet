@@ -14,9 +14,30 @@ namespace Solnet.Programs.Governance.Models
     public class ProposalOption
     {
         /// <summary>
+        /// The layout of the structure.
+        /// </summary>
+        public static class Layout
+        {
+            /// <summary>
+            /// The length of the structure without taking into account the label string.
+            /// </summary>
+            public const int LengthWithoutLabel = 23;
+
+            /// <summary>
+            /// The offset at which the label string begins.
+            /// </summary>
+            public const int LabelOffset = 0;
+        }
+
+        /// <summary>
         /// Option label
         /// </summary>
         public string Label;
+
+        /// <summary>
+        /// The length of the label. This value is used for deserialization purposes.
+        /// </summary>
+        internal int LabelLength;
 
         /// <summary>
         /// Vote weight for the option
@@ -44,22 +65,23 @@ namespace Solnet.Programs.Governance.Models
         public ushort InstructionsNextIndex;
 
         /// <summary>
-        /// 
+        /// Deserialize the data into the <see cref="ProposalOption"/> structure.
         /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        /// <param name="data">The data to deserialize.</param>
+        /// <returns>The <see cref="ProposalOption"/> structure.</returns>
         public static ProposalOption Deserialize(ReadOnlySpan<byte> data)
         {
-            int labelLength = data.GetString(0, out string label);
-            ulong voteWeight = data.GetU64(0 + labelLength);
-            OptionVoteResult voteResult = (OptionVoteResult)Enum.Parse(typeof(OptionVoteResult), data.GetU8(sizeof(ulong) + labelLength).ToString());
+            int labelLength = data.GetString(Layout.LabelOffset, out string label);
 
             return new ProposalOption
             {
                 Label = label,
-                VoteWeight = voteWeight,
-                VoteResult = voteResult,
-
+                LabelLength = labelLength,
+                VoteWeight = data.GetU64(labelLength),
+                VoteResult = (OptionVoteResult)Enum.Parse(typeof(OptionVoteResult), data.GetU8(sizeof(ulong) + labelLength).ToString()),
+                InstructionsExecutedCount = data.GetU16(sizeof(byte) + sizeof(ulong) + labelLength),
+                InstructionsCount = data.GetU16(sizeof(byte) + sizeof(ulong) + sizeof(ushort) + labelLength),
+                InstructionsNextIndex = data.GetU16(sizeof(byte) + sizeof(ulong) + (sizeof(ushort) * 2) + labelLength),
             };
         }
     }

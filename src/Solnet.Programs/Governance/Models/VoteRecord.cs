@@ -15,32 +15,32 @@ namespace Solnet.Programs.Governance.Models
     public class VoteRecord : GovernanceProgramAccount
     {
         /// <summary>
-        /// 
+        /// The layout of the <see cref="VoteRecord"/> structure.
         /// </summary>
         public static class ExtraLayout
         {
             /// <summary>
-            /// 
+            /// The offset at which the proposal public key begins.
             /// </summary>
             public const int ProposalOffset = 1;
 
             /// <summary>
-            /// 
+            /// The offset at which the governing token owner public key begins.
             /// </summary>
             public const int GoverningTokenOwnerOffset = 33;
 
             /// <summary>
-            /// 
+            /// The offset at which the is relinquished value begins.
             /// </summary>
             public const int IsRelinquishedOffset = 65;
 
             /// <summary>
-            /// 
+            /// The offset at which the voter weight value begins.
             /// </summary>
             public const int VoterWeightOffset = 66;
 
             /// <summary>
-            /// 
+            /// The offset at which the vote begins.
             /// </summary>
             public const int VoteOffset = 74;
         }
@@ -72,15 +72,15 @@ namespace Solnet.Programs.Governance.Models
         public Vote Vote;
 
         /// <summary>
-        /// 
+        /// The choices for this vote.
         /// </summary>
         public List<VoteChoice> Choices;
 
         /// <summary>
-        /// 
+        /// Deserialize the data into the <see cref="VoteRecord"/> structure.
         /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        /// <param name="data">The data to deserialize.</param>
+        /// <returns>The <see cref="VoteRecord"/> structure.</returns>
         public static VoteRecord Deserialize(byte[] data)
         {
             ReadOnlySpan<byte> span = data.AsSpan();

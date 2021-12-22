@@ -12,37 +12,37 @@ namespace Solnet.Programs.Governance.Models
     public class RealmConfig
     {
         /// <summary>
-        /// 
+        /// The layout of the <see cref="RealmConfig"/> structure.
         /// </summary>
         public static class Layout
         {
             /// <summary>
-            /// 
+            /// The length of the <see cref="RealmConfig"/> structure.
             /// </summary>
             public const int Length = 58;
 
             /// <summary>
-            /// 
+            /// The offset at which the use community voter weight addin value begins.
             /// </summary>
             public const int UseCommunityVoterWeightAddinOffset = 0;
 
             /// <summary>
-            /// 
+            /// The offset at which the min community tokens to create governance value begins.
             /// </summary>
             public const int MinCommunityTokensToCreateGovernanceOffset = 8;
 
             /// <summary>
-            /// 
+            /// The offset at which the community mint max vote weight source enum begins.
             /// </summary>
             public const int CommunityMintMaxVoteWeightSourceOffset = 16;
 
             /// <summary>
-            /// 
+            /// The offset at which the community mint max vote weight value begins.
             /// </summary>
             public const int CommunityMintMaxVoteWeightOffset = 17;
 
             /// <summary>
-            /// 
+            /// The offset at which the council mint public key begins.
             /// </summary>
             public const int CouncilMintOffset = 25;
         }
@@ -73,10 +73,10 @@ namespace Solnet.Programs.Governance.Models
         public PublicKey CouncilMint;
 
         /// <summary>
-        /// 
+        /// Deserialize the data into the <see cref="RealmConfig"/> structure.
         /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        /// <param name="data">The data to deserialize.</param>
+        /// <returns>The <see cref="RealmConfig"/> structure.</returns>
         public static RealmConfig Deserialize(ReadOnlySpan<byte> data)
         {
             if (data.Length != Layout.Length)

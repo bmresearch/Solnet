@@ -22,7 +22,22 @@ namespace Solnet.Programs.Governance
         /// <summary>
         /// The program's public key.
         /// </summary>
-        public static readonly PublicKey MainNetProgramIdKey = new("GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw");
+        public static readonly PublicKey MainNetProgramIdKey = new("GqTPL6qRf5aUuqscLh8Rg2HTxPUXfhhAXDptTLhp1t2J");
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static readonly PublicKey MangoGovernanceProgramIdKey = new ("GqTPL6qRf5aUuqscLh8Rg2HTxPUXfhhAXDptTLhp1t2J");
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static readonly PublicKey SerumGovernanceProgramIdKey = new ("AVoAYTs36yB5izAaBkxRG67wL1AMwG3vo41hKtUSb8is");
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static readonly PublicKey SoceanGovernanceProgramIdKey = new ("5hAykmD4YGcQ7Am3N7nC9kyELq6CThAkU82nhNKDJiCy");
 
         /// <summary>
         /// 

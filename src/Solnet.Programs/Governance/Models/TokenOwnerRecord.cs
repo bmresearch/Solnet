@@ -16,47 +16,47 @@ namespace Solnet.Programs.Governance.Models
     public class TokenOwnerRecord : GovernanceProgramAccount
     {
         /// <summary>
-        /// 
+        /// The layout of the <see cref="TokenOwnerRecord"/> structure.
         /// </summary>
         public static class ExtraLayout
         {
             /// <summary>
-            /// 
+            /// The offset at which the realm public key begins.
             /// </summary>
             public const int RealmOffset = 1;
 
             /// <summary>
-            /// 
+            /// The offset at which the governing token mint public key begins.
             /// </summary>
             public const int GoverningTokenMintOffset = 33;
 
             /// <summary>
-            /// 
+            /// The offset at which the governing token owner public key begins.
             /// </summary>
             public const int GoverningTokenOwnerOffset = 65;
 
             /// <summary>
-            /// 
+            ///  The offset at which the governing token deposit amount begins.
             /// </summary>
             public const int GoverningTokenDepositAmountOffset = 97;
 
             /// <summary>
-            /// 
+            /// The offset at which the unrelinquished votes count value begins.
             /// </summary>
             public const int UnrelinquishedVotesCountOffset = 105;
 
             /// <summary>
-            /// 
+            /// The offset at which the total votes count value begins.
             /// </summary>
             public const int TotalVotesCountOffset = 109;
 
             /// <summary>
-            /// 
+            /// The offset at which the outstanding proposal count value begins.
             /// </summary>
             public const int OutstandingProposalCountOffset = 113;
 
             /// <summary>
-            /// 
+            /// The offset at which the governance delegate public key begins.
             /// </summary>
             public const int GovernanceDelegateOffset = 121;
         }
@@ -110,10 +110,10 @@ namespace Solnet.Programs.Governance.Models
         public PublicKey GovernanceDelegate;
 
         /// <summary>
-        /// 
+        /// Deserialize the data into the <see cref="TokenOwnerRecord"/> structure.
         /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        /// <param name="data">The data to deserialize.</param>
+        /// <returns>The <see cref="TokenOwnerRecord"/> structure.</returns>
         public static TokenOwnerRecord Deserialize(byte[] data)
         {
             ReadOnlySpan<byte> span = data.AsSpan();

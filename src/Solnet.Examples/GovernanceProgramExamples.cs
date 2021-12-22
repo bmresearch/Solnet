@@ -16,7 +16,7 @@ namespace Solnet.Examples
 
         public GovernanceProgramExamples()
         {
-            governanceClient = new GovernanceClient(mRpcClient, null);
+            governanceClient = new GovernanceClient(mRpcClient, GovernanceProgram.MainNetProgramIdKey);
         }
 
         public void Run()
@@ -31,9 +31,27 @@ namespace Solnet.Examples
                     $"Authority: {realms.ParsedResult[i]?.Authority}\n" +
                     $"Council Mint: {realms.ParsedResult[i].Config?.CouncilMint}\n" +
                     $"Vote Weight Source: {realms.ParsedResult[i].Config.CommunityMintMaxVoteWeightSource}\n");
-                var governances = governanceClient.GetGovernanceAccounts(realms.OriginalRequest.Result[i].PublicKey);
-                Console.WriteLine($"Governance Accounts: {governances?.ParsedResult.Count}\n" +
-                    $"--------------------------------------\n");
+
+                var progGovernances = governanceClient.GetProgramGovernanceAccounts(realms.OriginalRequest.Result[i].PublicKey);
+                var mintGovernances = governanceClient.GetMintGovernanceAccounts(realms.OriginalRequest.Result[i].PublicKey);
+                var tokenGovernances = governanceClient.GetTokenGovernanceAccounts(realms.OriginalRequest.Result[i].PublicKey);
+                var genericGovernances = governanceClient.GetGenericGovernanceAccounts(realms.OriginalRequest.Result[i].PublicKey);
+                Console.WriteLine($"Program Governance Accounts: {progGovernances.ParsedResult?.Count}\n" +
+                    $"Mint Governance Accounts: {mintGovernances.ParsedResult?.Count}\n" + 
+                    $"Token Governance Accounts: {tokenGovernances.ParsedResult?.Count}\n" +
+                    $"Generic Governance Accounts: {genericGovernances.ParsedResult?.Count}\n");
+
+                for(int j = 0; j < progGovernances.ParsedResult?.Count; j++)
+                {
+                    var proposals = governanceClient.GetProposalsV1(progGovernances.OriginalRequest.Result[j].PublicKey);
+                    Console.WriteLine($"Program Governance: {progGovernances.OriginalRequest.Result[j].PublicKey}\n" +
+                        $"Proposals: {proposals.OriginalRequest.Result.Count}");
+                    for(int k = 0; k < proposals.ParsedResult?.Count; k++)
+                    {
+                        Console.WriteLine($"Proposal: {proposals.ParsedResult[k].Name}\n" +
+                            $"Link: {proposals.ParsedResult[k].DescriptionLink}");
+                    }
+                }
             }
 
         }
