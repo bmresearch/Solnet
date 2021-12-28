@@ -64,7 +64,7 @@ namespace Solnet.Programs.Clients
         public async Task<List<RecordBase>> GetAllNamesByOwnerAsync(string address)
         {
             var res = await RpcClient.GetProgramAccountsAsync(ProgramID, Rpc.Types.Commitment.Confirmed, null,
-                new List<MemCmp>() { new MemCmp() { Bytes = address, Offset = 32 }/*, new MemCmp() { Bytes = ReverseSolTLD, Offset = 64 }*/ });
+                new List<MemCmp>() { new MemCmp() { Bytes = address, Offset = 32 } });
 
             List<RecordBase> result = new();
 
@@ -278,7 +278,7 @@ namespace Solnet.Programs.Clients
         {
 
             var res = await RpcClient.GetProgramAccountsAsync(ProgramID, Rpc.Types.Commitment.Confirmed, null,
-                new List<MemCmp>() { new MemCmp() { Bytes = SolTLD, Offset = 0 }, new MemCmp() { Bytes = address, Offset = 32 }/*, new MemCmp() { Bytes = ReverseSolTLD, Offset = 64 }*/ });
+                new List<MemCmp>() { new MemCmp() { Bytes = SolTLD, Offset = 0 }, new MemCmp() { Bytes = address, Offset = 32 } });
 
 
             Dictionary<string, NameRecord> nameToRecordMap = new Dictionary<string, NameRecord>();
