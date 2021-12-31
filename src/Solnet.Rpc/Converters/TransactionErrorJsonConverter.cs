@@ -105,7 +105,7 @@ namespace Solnet.Rpc.Converters
 
             if (reader.TokenType == JsonTokenType.Number)
             {
-                err.InstructionError.CustomError = reader.GetInt64();
+                err.InstructionError.CustomError = reader.GetUInt32();
                 reader.Read(); //number
                 reader.Read(); //endobj
                 reader.Read(); //endarray

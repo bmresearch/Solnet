@@ -18,7 +18,7 @@
         /// <summary>
         /// Possible custom error id from a program.
         /// </summary>
-        public long? CustomError { get; set; }
+        public uint? CustomError { get; set; }
 
         /// <summary>
         /// Possible string from borsh error.
