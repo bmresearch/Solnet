@@ -45,9 +45,11 @@ namespace Solnet.Rpc.Builders
         /// <summary>
         /// Serializes the message into a byte array.
         /// </summary>
-        private byte[] Serialize()
+        public byte[] Serialize()
         {
             byte[] signaturesLength = ShortVectorEncoding.EncodeLength(_signatures.Count);
+            if (_serializedMessage == null)
+                _serializedMessage = _messageBuilder.Build();
             MemoryStream buffer = new(signaturesLength.Length + _signatures.Count * SignatureLength + _serializedMessage.Length);
 
             buffer.Write(signaturesLength);
@@ -79,6 +81,23 @@ namespace Solnet.Rpc.Builders
                 byte[] signatureBytes = signer.Sign(_serializedMessage);
                 _signatures.Add(Encoders.Base58.EncodeData(signatureBytes));
             }
+        }
+
+        /// <summary>
+        /// Adds a signature to the current transaction.
+        /// </summary>
+        /// <param name="signature">The signature.</param>
+        public TransactionBuilder AddSignature(byte[] signature)
+            => AddSignature(Encoders.Base58.EncodeData(signature));
+
+        /// <summary>
+        /// Adds a signature to the current transaction.
+        /// </summary>
+        /// <param name="signature">The signature.</param>
+        public TransactionBuilder AddSignature(string signature)
+        {
+            _signatures.Add(signature);
+            return this;
         }
 
         /// <summary>
