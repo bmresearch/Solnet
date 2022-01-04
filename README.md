@@ -45,6 +45,7 @@ Solnet is Solana's .NET SDK to integrate with the .NET ecosystem. Wherever you a
 - Programs
     - Native Programs
       - System Program
+      - Stake Program
     - Solana Program Library (SPL)
       - Memo Program
       - Token Program
