@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Solnet.Programs.Models;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System;
@@ -220,6 +221,15 @@ namespace Solnet.Programs.Test
             "tkGF4Er7PSNNJpXv/iFEjgEy3WsK0DUo2VDAjvOSz/g9hpBt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/" +
             "AKkFSlNQ+F3IgtYUpVZyeIopbd8eq6vQpgZ4iEky9O72oBsCrLfKwExmcW/hntBXRIKAe6vTrQDRoyz2ZvGtaL" +
             "7sAwcGBAUGAQIDCg/gnyZ3AAAAAAoHBgQABgECAwEJCAEAEkhlbGxvIGZyb20gU29sLk5ldA==";
+
+        private const string MultiSignatureAccountBase64Data =
+            "AwUBWM8dG26h12WDYbEd7sD1a0xQDEwtI8e9q6oVqCKB5sBp6kQNrCn8mBZqa417ZDd6Nqx1cIFeDdEbQal0JhI" +
+            "K6ENGzSoCrq8zjWkLr7j6eNDY9ksF0JtCJBIRRUkQzsD+rq/O6gag1j7CDsONdF6cGtgzee/vw3I1Ld78u6n8Hz" +
+            "XqSQFQFFq2MzZJ+APbduagMeovWpJoxRmd6QoIz1n72gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
+
 
         [TestMethod]
         public void TestTransfer()
@@ -1414,6 +1424,22 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("6yg3tZM1szHj752RDxQ1GxwvkzR3GyuvAcH498ew1t2T", (PublicKey)signer1);
             Assert.AreEqual("88SzfLipgVTvi8hQwYfq21DgQFcABx6yAwgJH5shfqVZ", (PublicKey)signer2);
             Assert.AreEqual("5Xcw7EQb6msgpVdGB8Hf8kpCqVyacTChgFBUphpuUeBo", (PublicKey)signer3);
+        }
+
+        [TestMethod]
+        public void TestMultiSignatureAccountDeserialization()
+        {
+            var multiSigAccount = MultiSignatureAccount.Deserialize(Convert.FromBase64String(MultiSignatureAccountBase64Data));
+
+            Assert.AreEqual(3, multiSigAccount.MinimumSigners);
+            Assert.AreEqual(5, multiSigAccount.NumberSigners);
+            Assert.IsTrue(multiSigAccount.IsInitialized);
+            Assert.AreEqual(5, multiSigAccount.Signers.Count);
+            Assert.AreEqual("6yg3tZM1szHj752RDxQ1GxwvkzR3GyuvAcH498ew1t2T", multiSigAccount.Signers[0].Key);
+            Assert.AreEqual("88SzfLipgVTvi8hQwYfq21DgQFcABx6yAwgJH5shfqVZ", multiSigAccount.Signers[1].Key);
+            Assert.AreEqual("5Xcw7EQb6msgpVdGB8Hf8kpCqVyacTChgFBUphpuUeBo", multiSigAccount.Signers[2].Key);
+            Assert.AreEqual("CkuRf85gy9Q2733Hi5bFFuznpWjn19XzhJQQyz8LTaMi", multiSigAccount.Signers[3].Key);
+            Assert.AreEqual("GmYy7Gkhkz4DWsA4RpCZoLS8UXpv8iZzTAESziYgRBEq", multiSigAccount.Signers[4].Key);
         }
     }
 }
