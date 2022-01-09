@@ -1431,10 +1431,9 @@ namespace Solnet.Programs.Test
         {
             var multiSigAccount = MultiSignatureAccount.Deserialize(Convert.FromBase64String(MultiSignatureAccountBase64Data));
 
-            Assert.AreEqual(3, multiSigAccount.M);
-            Assert.AreEqual(5, multiSigAccount.N);
+            Assert.AreEqual(3, multiSigAccount.MinimumSigners);
+            Assert.AreEqual(5, multiSigAccount.NumberSigners);
             Assert.IsTrue(multiSigAccount.IsInitialized);
-            Assert.AreEqual(5, multiSigAccount.N);
             Assert.AreEqual(5, multiSigAccount.Signers.Count);
             Assert.AreEqual("6yg3tZM1szHj752RDxQ1GxwvkzR3GyuvAcH498ew1t2T", multiSigAccount.Signers[0].Key);
             Assert.AreEqual("88SzfLipgVTvi8hQwYfq21DgQFcABx6yAwgJH5shfqVZ", multiSigAccount.Signers[1].Key);

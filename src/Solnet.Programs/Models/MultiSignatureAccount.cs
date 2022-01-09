@@ -28,12 +28,12 @@ namespace Solnet.Programs.Models
             /// <summary>
             /// The offset at which the number of signers required value begins.
             /// </summary>
-            public const int MOffset = 0;
+            public const int MinimumSignersOffset = 0;
 
             /// <summary>
             /// The offset at which the number of valid signers value begins.
             /// </summary>
-            public const int NOffset = 1;
+            public const int NumberSignersOffset = 1;
 
             /// <summary>
             /// The offset at which the is initialized value begins.
@@ -49,12 +49,12 @@ namespace Solnet.Programs.Models
         /// <summary>
         /// Number of signers required
         /// </summary>
-        public byte M;
+        public byte MinimumSigners;
 
         /// <summary>
         /// Number of valid signers
         /// </summary>
-        public byte N;
+        public byte NumberSigners;
 
         /// <summary>
         /// Whether the account has been initialized
@@ -84,8 +84,8 @@ namespace Solnet.Programs.Models
 
             return new MultiSignatureAccount
             {
-                M = data.GetU8(Layout.MOffset),
-                N = data.GetU8(Layout.NOffset),
+                MinimumSigners = data.GetU8(Layout.MinimumSignersOffset),
+                NumberSigners = data.GetU8(Layout.NumberSignersOffset),
                 IsInitialized = data.GetBool(Layout.IsInitializedOffset),
                 Signers = signers
             };
