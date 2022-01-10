@@ -230,6 +230,9 @@ namespace Solnet.Programs.Test
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
 
+        private const string TokenAccountBase64Data = "xvp6877brTo9ZfNqq8l0MbG75MLS9uDkfKYCA0UvXWHNJBL0P4e2HX6CpWl/KIRDlySyNa+DGj4ekBShq/bWrwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
+        private const string TokenMintAccountBase64Data = "AQAAABzjWe1aAS4E+hQrnHUaHF6Hz9CgFhuchf/TG3jN/Nj2du5fou7/EAAGAQEAAAAqnl7btTwEZ5CY/3sSZRcUQ0/AjFYqmjuGEQXmctQicw==";
 
         [TestMethod]
         public void TestTransfer()
@@ -1440,6 +1443,33 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("5Xcw7EQb6msgpVdGB8Hf8kpCqVyacTChgFBUphpuUeBo", multiSigAccount.Signers[2].Key);
             Assert.AreEqual("CkuRf85gy9Q2733Hi5bFFuznpWjn19XzhJQQyz8LTaMi", multiSigAccount.Signers[3].Key);
             Assert.AreEqual("GmYy7Gkhkz4DWsA4RpCZoLS8UXpv8iZzTAESziYgRBEq", multiSigAccount.Signers[4].Key);
+        }
+
+        [TestMethod]
+        public void TokenAccountDeserialization()
+        {
+            var tokenAcc = Models.TokenProgram.TokenAccount.Deserialize(Convert.FromBase64String(TokenAccountBase64Data));
+
+            Assert.AreEqual(0UL, tokenAcc.Amount);
+            Assert.AreEqual(0UL, tokenAcc.DelegatedAmount);
+            Assert.AreEqual(null, tokenAcc.CloseAuthority);
+            Assert.AreEqual(null, tokenAcc.Delegate);
+            Assert.AreEqual(null, tokenAcc.IsNative);
+            Assert.AreEqual("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", tokenAcc.Mint);
+            Assert.AreEqual("EonUxoMY3tjMnnES8yeKu5sx8LocsEM8mb4Y38cMJQuc", tokenAcc.Owner);
+            Assert.AreEqual(Models.TokenProgram.TokenAccount.AccountState.Initialized, tokenAcc.State);
+        }
+
+        [TestMethod]
+        public void TokenMintAccountDeserialization()
+        {
+            var tokenAcc = Models.TokenProgram.TokenMint.Deserialize(Convert.FromBase64String(TokenMintAccountBase64Data));
+
+            Assert.AreEqual(6, tokenAcc.Decimals);
+            Assert.AreEqual(4785000018865782UL, tokenAcc.Supply);
+            Assert.AreEqual(true, tokenAcc.IsInitialized);
+            Assert.AreEqual("4uQeWAWUy4x6GCUnNvd25nPybRCHAYggWK88UyjUNXF", tokenAcc.FreezeAuthority);
+            Assert.AreEqual("2wmVCSfPxGPjrnMMn7rchp4uaeoTqN39mXFC2zhPdri9", tokenAcc.MintAuthority);
         }
     }
 }

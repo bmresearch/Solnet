@@ -29,7 +29,7 @@ namespace Solnet.Examples
             var wallet = new Wallet.Wallet(new Mnemonic(MnemonicWords));
             rpcClient.RequestAirdrop(wallet.Account.PublicKey, 100_000_000);
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
-            ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
+            ulong minBalance = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
             Account fromAccount = wallet.Account;
             Serialization.TryCreateWithSeed(fromAccount.PublicKey, "yrdy1", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
@@ -42,7 +42,7 @@ namespace Solnet.Examples
                      stakeAccount,
                      fromAccount,
                      "yrdy1",
-                     3*minbalanceforexception,
+                     3 * minBalance,
                      200,
                      StakeProgram.ProgramIdKey))
                 .Build(new List<Account> { fromAccount });
@@ -51,7 +51,7 @@ namespace Solnet.Examples
 
             string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
-            RequestResult<string> firstSig = rpcClient.SendTransaction(tx, skipPreflight:true);
+            RequestResult<string> firstSig = rpcClient.SendTransaction(tx, skipPreflight: true);
             Console.WriteLine($"First Tx Result: {firstSig.Result}");
         }
     }
@@ -62,7 +62,7 @@ namespace Solnet.Examples
         private const string MnemonicWords =
            "clerk shoe noise umbrella apple gold alien swap desert rubber truck okay twenty fiscal near talent drastic present leg put balcony leader access glimpse";
         public void Run()
-        {  
+        {
             var wallet = new Wallet.Wallet(new Mnemonic(MnemonicWords));
             var seed = wallet.DeriveMnemonicSeed();
             var b58 = new Base58Encoder();
@@ -89,7 +89,7 @@ namespace Solnet.Examples
                     StakeAuthorize.Staker,
                     fromAccount))
                 .Build(new List<Account> { fromAccount });
-            
+
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
             RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
 
@@ -110,7 +110,7 @@ namespace Solnet.Examples
             var wallet = new Wallet.Wallet(new Mnemonic(MnemonicWords));
             rpcClient.RequestAirdrop(wallet.Account.PublicKey, 100_000_000);
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
-            ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
+
             Account fromAccount = wallet.Account;
             Account toAccount = wallet.GetAccount(1);
             Serialization.TryCreateWithSeed(fromAccount.PublicKey, "dog1", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
@@ -132,7 +132,7 @@ namespace Solnet.Examples
 
             string logs = Examples.PrettyPrintTransactionSimulationLogs(txSim.Result.Value.Logs);
             Console.WriteLine($"Transaction Simulation:\n\tError: {txSim.Result.Value.Error}\n\tLogs: \n" + logs);
-            RequestResult<string> firstSig = rpcClient.SendTransaction(tx, skipPreflight:true);
+            RequestResult<string> firstSig = rpcClient.SendTransaction(tx, skipPreflight: true);
             Console.WriteLine($"First Tx Result: {firstSig.Result}");
         }
     }
@@ -180,7 +180,6 @@ namespace Solnet.Examples
                     authorized,
                     lockup))
                 .Build(new List<Account> { fromAccount });
-                //.CompileMessage();
 
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
             RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
@@ -213,7 +212,8 @@ namespace Solnet.Examples
                 Withdrawer = fromAccount
             };
             Lockup lockup = new()
-            {Custodian = fromAccount.PublicKey,
+            {
+                Custodian = fromAccount.PublicKey,
                 Epoch = 0,
                 UnixTimestamp = 0
             };
@@ -226,14 +226,14 @@ namespace Solnet.Examples
                 .AddInstruction(SystemProgram.CreateAccount(
                     fromAccount.PublicKey,
                     stakeAccount,
-                    minbalanceforexception+42,
+                    minbalanceforexception + 42,
                     StakeProgram.StakeAccountDataSize,
                     StakeProgram.ProgramIdKey))
                 .AddInstruction(StakeProgram.Initialize(
                     stakeAccount.PublicKey,
                     authorized,
                     lockup))
-                .Build(new List<Account> { fromAccount, stakeAccount});
+                .Build(new List<Account> { fromAccount, stakeAccount });
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
             RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
 
@@ -255,24 +255,12 @@ namespace Solnet.Examples
             var wallet = new Wallet.Wallet(new Mnemonic(MnemonicWords));
             rpcClient.RequestAirdrop(wallet.Account.PublicKey, 100_000_000);
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
-            ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
-            
+            ulong minBalance = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
+
             Account a6 = wallet.GetAccount(6);
             Account a5 = wallet.GetAccount(5);
             Account a4 = wallet.GetAccount(4);
             Account a3 = wallet.GetAccount(3);
-            Account a2 = wallet.GetAccount(2);
-
-            Authorized authorized = new()
-            {
-                Staker = a5,
-                Withdrawer = a4
-            };
-            Lockup lockup = new()
-            {Custodian = a3.PublicKey,
-                Epoch = 0,
-                UnixTimestamp = 0
-            };
 
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
 
@@ -284,7 +272,7 @@ namespace Solnet.Examples
                     a5,
                     a6,
                     "dog1",
-                    3 * minbalanceforexception + 42,
+                    3 * minBalance + 42,
                     StakeProgram.StakeAccountDataSize,
                     StakeProgram.ProgramIdKey))
                 .AddInstruction(SystemProgram.Transfer(
