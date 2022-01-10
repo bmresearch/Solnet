@@ -29,7 +29,7 @@ namespace Solnet.Examples
             var wallet = new Wallet.Wallet(new Mnemonic(MnemonicWords));
             rpcClient.RequestAirdrop(wallet.Account.PublicKey, 100_000_000);
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
-            ulong mintBalance = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
+            ulong minBalance = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
             Account fromAccount = wallet.Account;
             Serialization.TryCreateWithSeed(fromAccount.PublicKey, "yrdy1", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
@@ -42,7 +42,7 @@ namespace Solnet.Examples
                      stakeAccount,
                      fromAccount,
                      "yrdy1",
-                     3 * mintBalance,
+                     3 * minBalance,
                      200,
                      StakeProgram.ProgramIdKey))
                 .Build(new List<Account> { fromAccount });
