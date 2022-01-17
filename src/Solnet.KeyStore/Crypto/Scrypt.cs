@@ -2,6 +2,7 @@ using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
+using System;
 
 namespace Solnet.KeyStore.Crypto
 {
@@ -17,10 +18,10 @@ namespace Solnet.KeyStore.Crypto
 
         public static unsafe byte[] CryptoScrypt(byte[] password, byte[] salt, int n, int r, int p, int dkLen)
         {
-            var ba = new byte[128 * r * p + 63];
-            var xYa = new byte[256 * r + 63];
-            var va = new byte[128 * r * n + 63];
-            var buf = new byte[32];
+            Span<byte> ba = stackalloc byte[128 * r * p + 63];
+            Span<byte> xYa = stackalloc byte[256 * r + 63];
+            Span<byte> va = stackalloc byte[128 * r * n + 63];
+            Span<byte> buf = stackalloc byte[32];
 
             ba = SingleIterationPbkdf2(password, salt, p * 128 * r);
 
@@ -37,7 +38,7 @@ namespace Solnet.KeyStore.Crypto
             }
 
             /* 5: DK <-- PBKDF2(P, B, 1, dkLen) */
-            return SingleIterationPbkdf2(password, ba, dkLen);
+            return SingleIterationPbkdf2(password, ba.ToArray(), dkLen);
         }
 
 

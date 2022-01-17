@@ -73,7 +73,7 @@ namespace Solnet.Wallet.Utilities
 
             // Allocate enough space in big-endian base58 representation.
             int size = (count - offset) * 138 / 100 + 1; // log(256) / log(58), rounded up.
-            byte[] b58 = new byte[size];
+            Span<byte> b58 = stackalloc byte[size];
 
             // Process the bytes.
             while (offset != count)
@@ -135,7 +135,7 @@ namespace Solnet.Wallet.Utilities
 
             // Allocate enough space in big-endian base256 representation.
             int size = (encoded.Length - psz) * 733 / 1000 + 1; // log(58) / log(256), rounded up.
-            byte[] b256 = new byte[size];
+            Span<byte> b256 = stackalloc byte[size];
 
             // Process the characters.
             while (psz < encoded.Length && !IsSpace(encoded[psz]))
@@ -163,12 +163,12 @@ namespace Solnet.Wallet.Utilities
             // Skip leading zeroes in b256.
             int it2 = size - length;
             // Copy result into output vector.
-            byte[] vch = new byte[zeroes + size - it2];
-            Array.Fill<byte>(vch, 0, 0, zeroes);
+            Span<byte> vch = stackalloc byte[zeroes + size - it2];
+            vch.Fill(0);
             int i2 = zeroes;
             while (it2 != size)
                 vch[i2++] = b256[it2++];
-            return vch;
+            return vch.ToArray();
         }
     }
 }

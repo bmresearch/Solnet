@@ -2,7 +2,6 @@ using Chaos.NaCl;
 using Solnet.Wallet.Bip39;
 using Solnet.Wallet.Utilities;
 using System;
-using System.Linq;
 
 namespace Solnet.Wallet
 {
@@ -147,9 +146,7 @@ namespace Solnet.Wallet
                 throw new Exception("cannot compute bip39 signature using ed25519 based bip32 keys ");
 
             Account account = GetAccount(accountIndex);
-            byte[] signature = account.Sign(message);
-
-            return signature.ToArray();
+            return account.Sign(message);
         }
 
         /// <summary>
@@ -159,8 +156,7 @@ namespace Solnet.Wallet
         /// <returns>The signature of the data.</returns>
         public byte[] Sign(byte[] message)
         {
-            byte[] signature = Account.Sign(message);
-            return signature.ToArray();
+           return Account.Sign(message);
         }
 
         /// <summary>

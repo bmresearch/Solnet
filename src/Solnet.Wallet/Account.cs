@@ -1,5 +1,4 @@
 using Chaos.NaCl;
-using Org.BouncyCastle.Security;
 using Solnet.Wallet.Utilities;
 using System.Diagnostics;
 

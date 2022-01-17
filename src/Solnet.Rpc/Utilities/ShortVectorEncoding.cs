@@ -24,7 +24,7 @@ namespace Solnet.Rpc.Utilities
         /// <returns>The short vector encoded data.</returns>
         internal static byte[] EncodeLength(int len)
         {
-            byte[] output = new byte[10];
+            Span<byte> output = stackalloc byte[10];
             int remLen = len;
             int cursor = 0;
 
@@ -41,9 +41,8 @@ namespace Solnet.Rpc.Utilities
                 output[cursor] = (byte)elem;
                 cursor += 1;
             }
-
             byte[] bytes = new byte[cursor + 1];
-            Array.Copy(output, 0, bytes, 0, cursor + 1);
+            Array.Copy(output.ToArray(), 0, bytes, 0, cursor + 1);
 
             return bytes;
         }

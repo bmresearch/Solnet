@@ -1,4 +1,4 @@
-using Solnet.Wallet.Bip39;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,7 +75,7 @@ namespace Solnet.Wallet.Utilities
             int arrayLength = bits.Length / 8;
             if (bits.Length % 8 != 0)
                 arrayLength++;
-            byte[] array = new byte[arrayLength];
+            Span<byte> array = stackalloc byte[arrayLength];
 
             for (int i = 0; i < bits.Length; i++)
             {
@@ -83,7 +83,7 @@ namespace Solnet.Wallet.Utilities
                 int offset = i % 8;
                 array[b] |= bits.Get(i) ? (byte)(1 << offset) : (byte)0;
             }
-            return array;
+            return array.ToArray();
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Solnet.Wallet.Utilities
         /// <returns>The swapped byte array.</returns>
         private static byte[] SwapEndianBytes(IReadOnlyList<byte> bytes)
         {
-            byte[] output = new byte[bytes.Count];
+            Span<byte> output = stackalloc byte[bytes.Count];
             for (int i = 0; i < output.Length; i++)
             {
                 byte newByte = 0;
@@ -122,7 +122,7 @@ namespace Solnet.Wallet.Utilities
                 }
                 output[i] = newByte;
             }
-            return output;
+            return output.ToArray();
         }
 
         /// <summary>

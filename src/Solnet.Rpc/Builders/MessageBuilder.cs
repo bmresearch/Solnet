@@ -5,7 +5,6 @@ using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Solnet.Rpc.Builders
 {
@@ -105,7 +104,7 @@ namespace Solnet.Rpc.Builders
             foreach (TransactionInstruction instruction in Instructions)
             {
                 int keyCount = instruction.Keys.Count;
-                byte[] keyIndices = new byte[keyCount];
+                Span<byte> keyIndices = stackalloc byte[keyCount];
 
                 for (int i = 0; i < keyCount; i++)
                 {
@@ -116,7 +115,7 @@ namespace Solnet.Rpc.Builders
                 {
                     ProgramIdIndex = (byte)FindAccountIndex(keysList, instruction.ProgramId),
                     KeyIndicesCount = ShortVectorEncoding.EncodeLength(keyCount),
-                    KeyIndices = keyIndices,
+                    KeyIndices = keyIndices.ToArray(),
                     DataLength = ShortVectorEncoding.EncodeLength(instruction.Data.Length),
                     Data = instruction.Data
                 };

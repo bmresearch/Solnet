@@ -251,7 +251,7 @@ namespace Solnet.Rpc.Test
                 (x) => resultNotification = x,
                 (x) => result = x,
                 subConfirmContent,
-                new byte[0]);
+                Array.Empty<byte>());
 
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
@@ -281,7 +281,7 @@ namespace Solnet.Rpc.Test
                 (x) => resultNotification = x,
                 (x) => result = x,
                 subConfirmContent,
-                new byte[0]);
+                Array.Empty<byte>());
 
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
@@ -700,7 +700,7 @@ namespace Solnet.Rpc.Test
                 _ => { },
                 (x) => result = x,
                 subConfirmContent,
-                new byte[0]);
+                Array.Empty<byte>());
 
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 

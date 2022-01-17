@@ -1,4 +1,5 @@
 using Org.BouncyCastle.Security;
+using System;
 
 namespace Solnet.KeyStore.Crypto
 {
@@ -18,9 +19,9 @@ namespace Solnet.KeyStore.Crypto
 
         private static byte[] GenerateRandomBytes(int size)
         {
-            var bytes = new byte[size];
+            Span<byte> bytes = stackalloc byte[size];
             Random.NextBytes(bytes);
-            return bytes;
+            return bytes.ToArray();
         }
     }
 }

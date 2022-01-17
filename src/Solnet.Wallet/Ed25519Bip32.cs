@@ -64,13 +64,12 @@ namespace Solnet.Wallet
         private static (byte[] Key, byte[] ChainCode) GetChildKeyDerivation(byte[] key, byte[] chainCode, uint index)
         {
             MemoryStream buffer = new();
-
-            buffer.Write(new byte[] { 0 });
+            Span<byte> zeroByte = stackalloc byte[1] {0};
+            buffer.Write(zeroByte);
             buffer.Write(key);
-            byte[] indexBytes = new byte[4];
+            Span<byte> indexBytes = stackalloc byte[4];
             BinaryPrimitives.WriteUInt32BigEndian(indexBytes, index);
             buffer.Write(indexBytes);
-
             return HmacSha512(chainCode, buffer.ToArray());
         }
 
