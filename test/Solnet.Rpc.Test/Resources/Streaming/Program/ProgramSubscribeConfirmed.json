@@ -1,1 +1,12 @@
-{"method":"programSubscribe","params":["11111111111111111111111111111111",{"encoding":"base64","commitment":"confirmed"}],"jsonrpc":"2.0","id":0}
+{
+  "method": "programSubscribe",
+  "params": [
+    "11111111111111111111111111111111",
+    {
+      "encoding": "base64",
+      "commitment": "confirmed"
+    }
+  ],
+  "jsonrpc": "2.0",
+  "id": 0
+}

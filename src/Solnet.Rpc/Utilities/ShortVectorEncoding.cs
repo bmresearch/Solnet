@@ -1,74 +1,79 @@
 using Solnet.Rpc.Models;
 using System;
 
-namespace Solnet.Rpc.Utilities
+namespace Solnet.Rpc.Utilities;
+
+/// <summary>
+///     Implements the short vector encoding used in Solana transaction <see cref="Message" />s.
+/// </summary>
+internal static class ShortVectorEncoding
 {
     /// <summary>
-    /// Implements the short vector encoding used in Solana transaction <see cref="Message"/>s.
+    ///     The length of the compact-u16 multi-byte encoding.
     /// </summary>
-    internal static class ShortVectorEncoding
+    internal const int SpanLength = 3;
+
+    /// <summary>
+    ///     Encodes the number of account keys present in the transaction as a short vector, see remarks.
+    ///     <remarks>
+    ///         See the documentation for more information on this encoding:
+    ///         https://docs.solana.com/developing/programming-model/transactions#compact-array-format
+    ///     </remarks>
+    /// </summary>
+    /// <param name="len">The number of account keys present in the transaction.</param>
+    /// <returns>The short vector encoded data.</returns>
+    internal static byte[] EncodeLength(int len)
     {
-        /// <summary>
-        /// The length of the compact-u16 multi-byte encoding.
-        /// </summary>
-        internal const int SpanLength = 3;
+        Span<byte> output = stackalloc byte[10];
+        int remLen = len;
+        int cursor = 0;
 
-        /// <summary>
-        /// Encodes the number of account keys present in the transaction as a short vector, see remarks.
-        /// <remarks>
-        /// See the documentation for more information on this encoding:
-        /// https://docs.solana.com/developing/programming-model/transactions#compact-array-format
-        /// </remarks>
-        /// </summary>
-        /// <param name="len">The number of account keys present in the transaction.</param>
-        /// <returns>The short vector encoded data.</returns>
-        internal static byte[] EncodeLength(int len)
+        for (;;)
         {
-            Span<byte> output = stackalloc byte[10];
-            int remLen = len;
-            int cursor = 0;
-
-            for (; ; )
+            int elem = remLen & 0x7f;
+            remLen >>= 7;
+            if (remLen == 0)
             {
-                int elem = remLen & 0x7f;
-                remLen >>= 7;
-                if (remLen == 0)
-                {
-                    output[cursor] = (byte)elem;
-                    break;
-                }
-                elem |= 0x80;
                 output[cursor] = (byte)elem;
-                cursor += 1;
+                break;
             }
-            byte[] bytes = new byte[cursor + 1];
-            Array.Copy(output.ToArray(), 0, bytes, 0, cursor + 1);
 
-            return bytes;
+            elem |= 0x80;
+            output[cursor] = (byte)elem;
+            cursor += 1;
         }
 
-        /// <summary>
-        /// Decodes the number of account keys present in the transaction following a specific format.
-        /// <remarks>
-        /// See the documentation for more information on this encoding:
-        /// https://docs.solana.com/developing/programming-model/transactions#compact-array-format
-        /// </remarks>
-        /// </summary>
-        /// <param name="data">The short vector encoded data.</param>
-        /// <returns>The number of account keys present in the transaction.</returns>
-        internal static (int Value, int Length) DecodeLength(ReadOnlySpan<byte> data)
+        byte[] bytes = new byte[cursor + 1];
+        Array.Copy(output.ToArray(), 0, bytes, 0, cursor + 1);
+
+        return bytes;
+    }
+
+    /// <summary>
+    ///     Decodes the number of account keys present in the transaction following a specific format.
+    ///     <remarks>
+    ///         See the documentation for more information on this encoding:
+    ///         https://docs.solana.com/developing/programming-model/transactions#compact-array-format
+    ///     </remarks>
+    /// </summary>
+    /// <param name="data">The short vector encoded data.</param>
+    /// <returns>The number of account keys present in the transaction.</returns>
+    internal static (int Value, int Length) DecodeLength(ReadOnlySpan<byte> data)
+    {
+        int len = 0;
+        int size = 0;
+
+        foreach (byte elem in data)
         {
-            int len = 0;
-            int size = 0;
+            len |= (elem & 0x7f) << (size * 7);
+            size += 1;
 
-            foreach (byte elem in data)
+            if ((elem & 0x80) == 0)
             {
-                len |= (elem & 0x7f) << (size * 7);
-                size += 1;
-
-                if ((elem & 0x80) == 0) break;
+                break;
             }
-            return (len, size);
         }
+
+        return (len, size);
     }
 }

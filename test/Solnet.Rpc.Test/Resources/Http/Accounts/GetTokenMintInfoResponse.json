@@ -1,7 +1,9 @@
 {
   "jsonrpc": "2.0",
   "result": {
-    "context": { "slot": 103677835 },
+    "context": {
+      "slot": 103677835
+    },
     "value": {
       "data": {
         "parsed": {

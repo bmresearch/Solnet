@@ -1,1 +1,5 @@
-{"method":"getIdentity","jsonrpc":"2.0","id":0}
+{
+  "method": "getIdentity",
+  "jsonrpc": "2.0",
+  "id": 0
+}

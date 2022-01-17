@@ -1,1 +1,11 @@
-{"method":"getTokenLargestAccounts","params":["7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2",{"commitment":"processed"}],"jsonrpc":"2.0","id":0}
+{
+  "method": "getTokenLargestAccounts",
+  "params": [
+    "7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2",
+    {
+      "commitment": "processed"
+    }
+  ],
+  "jsonrpc": "2.0",
+  "id": 0
+}

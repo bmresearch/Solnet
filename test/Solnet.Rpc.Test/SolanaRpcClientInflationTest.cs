@@ -1,37 +1,30 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Moq.Protected;
+using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Models;
-using System;
+using Solnet.Rpc.Types;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Solnet.Rpc.Test
 {
     [TestClass]
     public class SolanaRpcClientInflationTest : SolanaRpcClientTestBase
     {
-
         [TestMethod]
         public void TestGetInflationGovernor()
         {
-            var responseData = File.ReadAllText("Resources/Http/Inflation/GetInflationGovernorResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Inflation/GetInflationGovernorRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/Inflation/GetInflationGovernorResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Inflation/GetInflationGovernorRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetInflationGovernor();
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<InflationGovernor> result = sut.GetInflationGovernor();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -48,19 +41,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetInflationGovernorConfirmed()
         {
-            var responseData = File.ReadAllText("Resources/Http/Inflation/GetInflationGovernorResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Inflation/GetInflationGovernorConfirmedRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/Inflation/GetInflationGovernorResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Inflation/GetInflationGovernorConfirmedRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetInflationGovernor(Types.Commitment.Confirmed);
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<InflationGovernor> result = sut.GetInflationGovernor(Commitment.Confirmed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -77,19 +67,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetInflationRate()
         {
-            var responseData = File.ReadAllText("Resources/Http/Inflation/GetInflationRateResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Inflation/GetInflationRateRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/Inflation/GetInflationRateResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Inflation/GetInflationRateRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetInflationRate();
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<InflationRate> result = sut.GetInflationRate();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -105,23 +92,19 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetInflationReward()
         {
-            var responseData = File.ReadAllText("Resources/Http/Inflation/GetInflationRewardResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Inflation/GetInflationRewardRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/Inflation/GetInflationRewardResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Inflation/GetInflationRewardRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetInflationReward(
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<List<InflationReward>> result = sut.GetInflationReward(
                 new List<string>
                 {
-                    "6dmNQ5jwLeLk5REvio1JcMshcbvkYMwy26sJ8pbkvStu",
-                    "BGsqMegLpV6n6Ve146sSX2dTjUMj3M92HnU8BbNRMhF2"
+                    "6dmNQ5jwLeLk5REvio1JcMshcbvkYMwy26sJ8pbkvStu", "BGsqMegLpV6n6Ve146sSX2dTjUMj3M92HnU8BbNRMhF2"
                 }, 2);
 
             Assert.AreEqual(requestData, sentMessage);
@@ -140,24 +123,20 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetInflationRewardProcessed()
         {
-            var responseData = File.ReadAllText("Resources/Http/Inflation/GetInflationRewardResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Inflation/GetInflationRewardProcessedRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/Inflation/GetInflationRewardResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Inflation/GetInflationRewardProcessedRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetInflationReward(
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<List<InflationReward>> result = sut.GetInflationReward(
                 new List<string>
                 {
-                    "6dmNQ5jwLeLk5REvio1JcMshcbvkYMwy26sJ8pbkvStu",
-                    "BGsqMegLpV6n6Ve146sSX2dTjUMj3M92HnU8BbNRMhF2"
-                }, 2, Types.Commitment.Processed);
+                    "6dmNQ5jwLeLk5REvio1JcMshcbvkYMwy26sJ8pbkvStu", "BGsqMegLpV6n6Ve146sSX2dTjUMj3M92HnU8BbNRMhF2"
+                }, 2, Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -175,23 +154,19 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetInflationRewardNoEpoch()
         {
-            var responseData = File.ReadAllText("Resources/Http/Inflation/GetInflationRewardNoEpochResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Inflation/GetInflationRewardNoEpochRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/Inflation/GetInflationRewardNoEpochResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Inflation/GetInflationRewardNoEpochRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetInflationReward(
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<List<InflationReward>> result = sut.GetInflationReward(
                 new List<string>
                 {
-                    "25xzEf8cqLLEm2wyZTEBtCDchsUFm3SVESjs6eEFHJWe",
-                    "GPQdoUUDQXM1gWgRVwBbYmDqAgxoZN3bhVeKr1P8jd4c"
+                    "25xzEf8cqLLEm2wyZTEBtCDchsUFm3SVESjs6eEFHJWe", "GPQdoUUDQXM1gWgRVwBbYmDqAgxoZN3bhVeKr1P8jd4c"
                 });
 
             Assert.AreEqual(requestData, sentMessage);

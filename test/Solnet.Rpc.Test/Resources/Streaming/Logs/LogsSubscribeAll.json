@@ -1,1 +1,8 @@
-{"method":"logsSubscribe","params":["all"],"jsonrpc":"2.0","id":0}
+{
+  "method": "logsSubscribe",
+  "params": [
+    "all"
+  ],
+  "jsonrpc": "2.0",
+  "id": 0
+}

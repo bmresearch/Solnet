@@ -1,1 +1,11 @@
-{"method":"getLargestAccounts","params":[{"commitment":"processed","filter":"nonCirculating"}],"jsonrpc":"2.0","id":0}
+{
+  "method": "getLargestAccounts",
+  "params": [
+    {
+      "commitment": "processed",
+      "filter": "nonCirculating"
+    }
+  ],
+  "jsonrpc": "2.0",
+  "id": 0
+}

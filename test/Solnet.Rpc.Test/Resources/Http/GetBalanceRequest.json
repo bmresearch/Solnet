@@ -1,1 +1,8 @@
-{"method":"getBalance","params":["hoakwpFB8UoLnPpLC56gsjpY7XbVwaCuRQRMQzN5TVh"],"jsonrpc":"2.0","id":0}
+{
+  "method": "getBalance",
+  "params": [
+    "hoakwpFB8UoLnPpLC56gsjpY7XbVwaCuRQRMQzN5TVh"
+  ],
+  "jsonrpc": "2.0",
+  "id": 0
+}

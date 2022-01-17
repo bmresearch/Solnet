@@ -1,1 +1,8 @@
-{"method":"getTokenAccountBalance","params":["7247amxcSBamBSKZJrqbj373CiJSa1v21cRav56C3WfZ"],"jsonrpc":"2.0","id":0}
+{
+  "method": "getTokenAccountBalance",
+  "params": [
+    "7247amxcSBamBSKZJrqbj373CiJSa1v21cRav56C3WfZ"
+  ],
+  "jsonrpc": "2.0",
+  "id": 0
+}

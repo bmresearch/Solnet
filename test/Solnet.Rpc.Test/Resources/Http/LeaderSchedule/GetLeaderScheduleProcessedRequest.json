@@ -1,1 +1,10 @@
-{"method":"getLeaderSchedule","params":[{"commitment":"processed"}],"jsonrpc":"2.0","id":0}
+{
+  "method": "getLeaderSchedule",
+  "params": [
+    {
+      "commitment": "processed"
+    }
+  ],
+  "jsonrpc": "2.0",
+  "id": 0
+}

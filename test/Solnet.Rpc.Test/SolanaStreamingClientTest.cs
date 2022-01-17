@@ -3,6 +3,7 @@ using Moq;
 using Solnet.Rpc.Core.Sockets;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
+using Solnet.Rpc.Types;
 using System;
 using System.IO;
 using System.Net.WebSockets;
@@ -15,43 +16,47 @@ namespace Solnet.Rpc.Test
     [TestClass]
     public class SolanaStreamingClientTest
     {
-        private Mock<IWebSocket> _socketMock;
-        private ManualResetEvent _notificationEvent;
-        private ManualResetEvent _subConfirmEvent;
-        private bool _isSubConfirmed;
-        private bool _hasNotified;
         private bool _hasEnded;
+        private bool _hasNotified;
+        private bool _isSubConfirmed;
+        private ManualResetEvent _notificationEvent;
+        private Mock<IWebSocket> _socketMock;
+        private ManualResetEvent _subConfirmEvent;
         private ValueTask<ValueWebSocketReceiveResult> _valueTaskConfirmation;
-        private ValueTask<ValueWebSocketReceiveResult> _valueTaskNotification;
         private ValueTask<ValueWebSocketReceiveResult> _valueTaskEnd;
+        private ValueTask<ValueWebSocketReceiveResult> _valueTaskNotification;
 
-        private void SetupAction<T>(out Action<SubscriptionState, T> action, Action<T> resultCaptureCallback, Action<ReadOnlyMemory<byte>> sentPayloadCaptureCallback, byte[] subConfirmContent, byte[] notificationContents)
+        private void SetupAction<T>(out Action<SubscriptionState, T> action, Action<T> resultCaptureCallback,
+            Action<ReadOnlyMemory<byte>> sentPayloadCaptureCallback, byte[] subConfirmContent,
+            byte[] notificationContents)
         {
-
-            var actionMock = new Mock<Action<SubscriptionState, T>>();
-            actionMock.Setup(_ => _(It.IsAny<SubscriptionState>(), It.IsAny<T>())).Callback<SubscriptionState, T>((_, notifValue) =>
-            {
-                resultCaptureCallback(notifValue);
-                _notificationEvent.Set();
-            });
+            Mock<Action<SubscriptionState, T>> actionMock = new();
+            actionMock.Setup(_ => _(It.IsAny<SubscriptionState>(), It.IsAny<T>())).Callback<SubscriptionState, T>(
+                (_, notifValue) =>
+                {
+                    resultCaptureCallback(notifValue);
+                    _notificationEvent.Set();
+                });
             action = actionMock.Object;
 
             _valueTaskConfirmation = new ValueTask<ValueWebSocketReceiveResult>(
-                                            new ValueWebSocketReceiveResult(subConfirmContent.Length, WebSocketMessageType.Text, true));
+                new ValueWebSocketReceiveResult(subConfirmContent.Length, WebSocketMessageType.Text, true));
             _valueTaskNotification = new ValueTask<ValueWebSocketReceiveResult>(
-                                                        new ValueWebSocketReceiveResult(notificationContents.Length, WebSocketMessageType.Text, true));
+                new ValueWebSocketReceiveResult(notificationContents.Length, WebSocketMessageType.Text, true));
 
             _valueTaskEnd = new ValueTask<ValueWebSocketReceiveResult>(
-                                                        new ValueWebSocketReceiveResult(0, WebSocketMessageType.Close, true));
+                new ValueWebSocketReceiveResult(0, WebSocketMessageType.Close, true));
 
             _socketMock.Setup(_ => _.ConnectAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
                 .Callback(() => _socketMock.SetupGet(s => s.State).Returns(WebSocketState.Open));
 
-            _socketMock.Setup(_ => _.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(), WebSocketMessageType.Text, true, It.IsAny<CancellationToken>()))
-                .Callback<ReadOnlyMemory<byte>, WebSocketMessageType, bool, CancellationToken>((mem, _, _, _) => sentPayloadCaptureCallback(mem));
+            _socketMock.Setup(_ => _.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(), WebSocketMessageType.Text, true,
+                    It.IsAny<CancellationToken>()))
+                .Callback<ReadOnlyMemory<byte>, WebSocketMessageType, bool, CancellationToken>((mem, _, _, _) =>
+                    sentPayloadCaptureCallback(mem));
 
-            _socketMock.Setup(_ => _.ReceiveAsync(It.IsAny<Memory<byte>>(), It.IsAny<CancellationToken>())).
-                Callback<Memory<byte>, CancellationToken>((mem, _) =>
+            _socketMock.Setup(_ => _.ReceiveAsync(It.IsAny<Memory<byte>>(), It.IsAny<CancellationToken>()))
+                .Callback<Memory<byte>, CancellationToken>((mem, _) =>
                 {
                     if (!_isSubConfirmed)
                     {
@@ -70,9 +75,8 @@ namespace Solnet.Rpc.Test
                     {
                         _hasEnded = true;
                     }
-
-                }).Returns(() => _hasEnded ? _valueTaskEnd : _hasNotified ? _valueTaskNotification : _valueTaskConfirmation);
-
+                }).Returns(() =>
+                    _hasEnded ? _valueTaskEnd : _hasNotified ? _valueTaskNotification : _valueTaskConfirmation);
         }
 
         [TestInitialize]
@@ -89,19 +93,20 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void SubscribeAccountInfoTest()
         {
-            var expected = File.ReadAllText("Resources/Streaming/Account/AccountSubscribe.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
-            var notificationContents = File.ReadAllBytes("Resources/Streaming/Account/AccountSubscribeNotification.json");
+            string expected = File.ReadAllText("Resources/Streaming/Account/AccountSubscribe.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            byte[] notificationContents =
+                File.ReadAllBytes("Resources/Streaming/Account/AccountSubscribeNotification.json");
             ResponseValue<AccountInfo> resultNotification = null;
-            var result = new ReadOnlyMemory<byte>();
+            ReadOnlyMemory<byte> result = new();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<AccountInfo>> action,
-                (x) => resultNotification = x,
-                (x) => result = x,
+                x => resultNotification = x,
+                x => result = x,
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             const string pubKey = "CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12";
 
@@ -113,7 +118,7 @@ namespace Solnet.Rpc.Test
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
@@ -127,19 +132,20 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void SubscribeTokenAccountTest()
         {
-            var expected = File.ReadAllText("Resources/Streaming/Account/TokenAccountSubscribe.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
-            var notificationContents = File.ReadAllBytes("Resources/Streaming/Account/TokenAccountSubscribeNotification.json");
+            string expected = File.ReadAllText("Resources/Streaming/Account/TokenAccountSubscribe.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            byte[] notificationContents =
+                File.ReadAllBytes("Resources/Streaming/Account/TokenAccountSubscribeNotification.json");
             ResponseValue<TokenAccountInfo> resultNotification = null;
-            var result = new ReadOnlyMemory<byte>();
+            ReadOnlyMemory<byte> result = new();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<TokenAccountInfo>> action,
-                (x) => resultNotification = x,
-                (x) => result = x,
+                x => resultNotification = x,
+                x => result = x,
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             const string pubKey = "CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12";
 
@@ -151,13 +157,14 @@ namespace Solnet.Rpc.Test
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
             Assert.AreEqual(99118135UL, resultNotification.Context.Slot);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", resultNotification.Value.Owner);
-            Assert.AreEqual("F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV", resultNotification.Value.Data.Parsed.Info.Owner);
+            Assert.AreEqual("F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV",
+                resultNotification.Value.Data.Parsed.Info.Owner);
             Assert.AreEqual("9830001302037", resultNotification.Value.Data.Parsed.Info.TokenAmount.Amount);
             Assert.AreEqual("9830001.302037", resultNotification.Value.Data.Parsed.Info.TokenAmount.UiAmountString);
             Assert.AreEqual(6, resultNotification.Value.Data.Parsed.Info.TokenAmount.Decimals);
@@ -167,31 +174,32 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void SubscribeAccountInfoTestProcessed()
         {
-            var expected = File.ReadAllText("Resources/Streaming/Account/AccountSubscribeProcessed.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
-            var notificationContents = File.ReadAllBytes("Resources/Streaming/Account/AccountSubscribeNotification.json");
+            string expected = File.ReadAllText("Resources/Streaming/Account/AccountSubscribeProcessed.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            byte[] notificationContents =
+                File.ReadAllBytes("Resources/Streaming/Account/AccountSubscribeNotification.json");
             ResponseValue<AccountInfo> resultNotification = null;
-            var result = new ReadOnlyMemory<byte>();
+            ReadOnlyMemory<byte> result = new();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<AccountInfo>> action,
-                (x) => resultNotification = x,
-                (x) => result = x,
+                x => resultNotification = x,
+                x => result = x,
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             const string pubKey = "CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12";
 
             sut.ConnectAsync().Wait();
-            _ = sut.SubscribeAccountInfo(pubKey, action, Types.Commitment.Processed);
+            _ = sut.SubscribeAccountInfo(pubKey, action, Commitment.Processed);
             _subConfirmEvent.Set();
 
             _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
@@ -206,9 +214,9 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void UnsubscribeTest()
         {
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
-            var unsubContents = File.ReadAllBytes("Resources/Streaming/Account/AccountSubUnsubscription.json");
-            var unsubscribed = false;
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            byte[] unsubContents = File.ReadAllBytes("Resources/Streaming/Account/AccountSubUnsubscription.json");
+            bool unsubscribed = false;
 
             SetupAction(out Action<SubscriptionState, ResponseValue<AccountInfo>> action,
                 _ => { },
@@ -216,12 +224,12 @@ namespace Solnet.Rpc.Test
                 subConfirmContent,
                 unsubContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             const string pubKey = "CM78CPUeXjn8o3yroDHxUtKsZZgoy4GPkPPXfouKNH12";
 
             sut.ConnectAsync().Wait();
-            var sub = sut.SubscribeAccountInfo(pubKey, action);
+            SubscriptionState sub = sut.SubscribeAccountInfo(pubKey, action);
             sub.SubscriptionChanged += (_, e) =>
             {
                 if (e.Status == SubscriptionStatus.Unsubscribed)
@@ -242,18 +250,18 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void SubscribeLogsMentionTest()
         {
-            var expected = File.ReadAllText("Resources/Streaming/Logs/LogsSubscribeMention.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            string expected = File.ReadAllText("Resources/Streaming/Logs/LogsSubscribeMention.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
             ResponseValue<LogInfo> resultNotification = null;
-            var result = new ReadOnlyMemory<byte>();
+            ReadOnlyMemory<byte> result = new();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<LogInfo>> action,
-                (x) => resultNotification = x,
-                (x) => result = x,
+                x => resultNotification = x,
+                x => result = x,
                 subConfirmContent,
                 Array.Empty<byte>());
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             const string pubKey = "11111111111111111111111111111111";
 
@@ -264,137 +272,140 @@ namespace Solnet.Rpc.Test
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
-
         }
 
         [TestMethod]
         public void SubscribeLogsMentionConfirmed()
         {
-            var expected = File.ReadAllText("Resources/Streaming/Logs/LogsSubscribeMentionConfirmed.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            string expected = File.ReadAllText("Resources/Streaming/Logs/LogsSubscribeMentionConfirmed.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
             ResponseValue<LogInfo> resultNotification = null;
-            var result = new ReadOnlyMemory<byte>();
+            ReadOnlyMemory<byte> result = new();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<LogInfo>> action,
-                (x) => resultNotification = x,
-                (x) => result = x,
+                x => resultNotification = x,
+                x => result = x,
                 subConfirmContent,
                 Array.Empty<byte>());
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             const string pubKey = "11111111111111111111111111111111";
 
             sut.ConnectAsync().Wait();
-            _ = sut.SubscribeLogInfo(pubKey, action, Types.Commitment.Confirmed);
+            _ = sut.SubscribeLogInfo(pubKey, action, Commitment.Confirmed);
 
             _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
-
         }
 
         [TestMethod]
         public void SubscribeLogsAllTest()
         {
-            var expected = File.ReadAllText("Resources/Streaming/Logs/LogsSubscribeAll.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
-            var notificationContents = File.ReadAllBytes("Resources/Streaming/Logs/LogsSubscribeNotification.json");
+            string expected = File.ReadAllText("Resources/Streaming/Logs/LogsSubscribeAll.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            byte[] notificationContents = File.ReadAllBytes("Resources/Streaming/Logs/LogsSubscribeNotification.json");
             ResponseValue<LogInfo> resultNotification = null;
-            var result = new ReadOnlyMemory<byte>();
+            ReadOnlyMemory<byte> result = new();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<LogInfo>> action,
-                (x) => resultNotification = x,
-                (x) => result = x,
+                x => resultNotification = x,
+                x => result = x,
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.ConnectAsync().Wait();
-            _ = sut.SubscribeLogInfo(Types.LogsSubscriptionType.All, action);
+            _ = sut.SubscribeLogInfo(LogsSubscriptionType.All, action);
             _subConfirmEvent.Set();
 
             _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
             Assert.AreEqual(5208469UL, resultNotification.Context.Slot);
-            Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", resultNotification.Value.Signature);
+            Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv",
+                resultNotification.Value.Signature);
             Assert.IsNull(resultNotification.Value.Error);
-            Assert.AreEqual("BPF program 83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri success", resultNotification.Value.Logs[0]);
+            Assert.AreEqual("BPF program 83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri success",
+                resultNotification.Value.Logs[0]);
         }
 
         [TestMethod]
         public void SubscribeLogsAllProcessed()
         {
-            var expected = File.ReadAllText("Resources/Streaming/Logs/LogsSubscribeAllProcessed.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
-            var notificationContents = File.ReadAllBytes("Resources/Streaming/Logs/LogsSubscribeNotification.json");
+            string expected = File.ReadAllText("Resources/Streaming/Logs/LogsSubscribeAllProcessed.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            byte[] notificationContents = File.ReadAllBytes("Resources/Streaming/Logs/LogsSubscribeNotification.json");
             ResponseValue<LogInfo> resultNotification = null;
-            var result = new ReadOnlyMemory<byte>();
+            ReadOnlyMemory<byte> result = new();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<LogInfo>> action,
-                (x) => resultNotification = x,
-                (x) => result = x,
+                x => resultNotification = x,
+                x => result = x,
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.ConnectAsync().Wait();
-            _ = sut.SubscribeLogInfo(Types.LogsSubscriptionType.All, action, Types.Commitment.Processed);
+            _ = sut.SubscribeLogInfo(LogsSubscriptionType.All, action, Commitment.Processed);
             _subConfirmEvent.Set();
 
             _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
             Assert.AreEqual(5208469UL, resultNotification.Context.Slot);
-            Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", resultNotification.Value.Signature);
+            Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv",
+                resultNotification.Value.Signature);
             Assert.IsNull(resultNotification.Value.Error);
-            Assert.AreEqual("BPF program 83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri success", resultNotification.Value.Logs[0]);
+            Assert.AreEqual("BPF program 83astBRguLMdt2h5U1Tpdq5tjFoJ6noeGwaY3mDLVcri success",
+                resultNotification.Value.Logs[0]);
         }
 
         [TestMethod]
         public void SubscribeLogsWithErrors()
         {
-            var expected = File.ReadAllText("Resources/Streaming/Logs/LogsSubscribeAllProcessed.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
-            var notificationContents = File.ReadAllBytes("Resources/Streaming/Logs/LogsSubscribeNotificationWithError.json");
+            string expected = File.ReadAllText("Resources/Streaming/Logs/LogsSubscribeAllProcessed.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            byte[] notificationContents =
+                File.ReadAllBytes("Resources/Streaming/Logs/LogsSubscribeNotificationWithError.json");
             ResponseValue<LogInfo> resultNotification = null;
-            var result = new ReadOnlyMemory<byte>();
+            ReadOnlyMemory<byte> result = new();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<LogInfo>> action,
-                (x) => resultNotification = x,
-                (x) => result = x,
+                x => resultNotification = x,
+                x => result = x,
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.ConnectAsync().Wait();
-            _ = sut.SubscribeLogInfo(Types.LogsSubscriptionType.All, action, Types.Commitment.Processed);
+            _ = sut.SubscribeLogInfo(LogsSubscriptionType.All, action, Commitment.Processed);
             _subConfirmEvent.Set();
 
             _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
@@ -402,25 +413,27 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(InstructionErrorType.Custom, resultNotification.Value.Error.InstructionError.Type);
             Assert.AreEqual(41u, resultNotification.Value.Error.InstructionError.CustomError);
 
-            Assert.AreEqual("bGNVGCa1WFchzJStauKFVk7anzuFvA7hkMcx8Zi2o4euJaivzpwz8346yJ4Xn8H7XzMp44coTxdcDRd9d4yzj4m", resultNotification.Value.Signature);
+            Assert.AreEqual("bGNVGCa1WFchzJStauKFVk7anzuFvA7hkMcx8Zi2o4euJaivzpwz8346yJ4Xn8H7XzMp44coTxdcDRd9d4yzj4m",
+                resultNotification.Value.Signature);
         }
 
         [TestMethod]
         public void SubscribeProgramTest()
         {
-            var expected = File.ReadAllText("Resources/Streaming/Program/ProgramSubscribe.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
-            var notificationContents = File.ReadAllBytes("Resources/Streaming/Program/ProgramSubscribeNotification.json");
+            string expected = File.ReadAllText("Resources/Streaming/Program/ProgramSubscribe.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            byte[] notificationContents =
+                File.ReadAllBytes("Resources/Streaming/Program/ProgramSubscribeNotification.json");
             ResponseValue<AccountKeyPair> resultNotification = null;
-            var result = new ReadOnlyMemory<byte>();
+            ReadOnlyMemory<byte> result = new();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<AccountKeyPair>> action,
-                (x) => resultNotification = x,
-                (x) => result = x,
+                x => resultNotification = x,
+                x => result = x,
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.ConnectAsync().Wait();
             _ = sut.SubscribeProgram("11111111111111111111111111111111", action);
@@ -430,7 +443,7 @@ namespace Solnet.Rpc.Test
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
@@ -445,29 +458,30 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void SubscribeProgramConfirmed()
         {
-            var expected = File.ReadAllText("Resources/Streaming/Program/ProgramSubscribeConfirmed.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
-            var notificationContents = File.ReadAllBytes("Resources/Streaming/Program/ProgramSubscribeNotification.json");
+            string expected = File.ReadAllText("Resources/Streaming/Program/ProgramSubscribeConfirmed.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            byte[] notificationContents =
+                File.ReadAllBytes("Resources/Streaming/Program/ProgramSubscribeNotification.json");
             ResponseValue<AccountKeyPair> resultNotification = null;
-            var result = new ReadOnlyMemory<byte>();
+            ReadOnlyMemory<byte> result = new();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<AccountKeyPair>> action,
-                (x) => resultNotification = x,
-                (x) => result = x,
+                x => resultNotification = x,
+                x => result = x,
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.ConnectAsync().Wait();
-            _ = sut.SubscribeProgram("11111111111111111111111111111111", action, Types.Commitment.Confirmed);
+            _ = sut.SubscribeProgram("11111111111111111111111111111111", action, Commitment.Confirmed);
             _subConfirmEvent.Set();
 
             _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
@@ -482,19 +496,19 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void SubscribeSlotTest()
         {
-            var expected = File.ReadAllText("Resources/Streaming/SlotSubscribe.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
-            var notificationContents = File.ReadAllBytes("Resources/Streaming/SlotSubscribeNotification.json");
+            string expected = File.ReadAllText("Resources/Streaming/SlotSubscribe.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            byte[] notificationContents = File.ReadAllBytes("Resources/Streaming/SlotSubscribeNotification.json");
             SlotInfo resultNotification = null;
-            var result = new ReadOnlyMemory<byte>();
+            ReadOnlyMemory<byte> result = new();
 
             SetupAction(out Action<SubscriptionState, SlotInfo> action,
-                (x) => resultNotification = x,
-                (x) => result = x,
+                x => resultNotification = x,
+                x => result = x,
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.ConnectAsync().Wait();
             _ = sut.SubscribeSlotInfo(action);
@@ -504,7 +518,7 @@ namespace Solnet.Rpc.Test
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
@@ -517,29 +531,29 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void SubscribeRootTest()
         {
-            var expected = File.ReadAllText("Resources/Streaming/RootSubscribe.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
-            var notificationContents = File.ReadAllBytes("Resources/Streaming/RootSubscribeNotification.json");
+            string expected = File.ReadAllText("Resources/Streaming/RootSubscribe.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            byte[] notificationContents = File.ReadAllBytes("Resources/Streaming/RootSubscribeNotification.json");
             int resultNotification = 0;
-            var result = new ReadOnlyMemory<byte>();
+            ReadOnlyMemory<byte> result = new();
 
             SetupAction(out Action<SubscriptionState, int> action,
-                (x) => resultNotification = x,
-                (x) => result = x,
+                x => resultNotification = x,
+                x => result = x,
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.ConnectAsync().Wait();
-            var sub = sut.SubscribeRoot(action);
+            SubscriptionState sub = sut.SubscribeRoot(action);
             _subConfirmEvent.Set();
 
             _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
@@ -549,31 +563,35 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void SubscribeSignatureTest()
         {
-            var expected = File.ReadAllText("Resources/Streaming/Signature/SignatureSubscribe.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
-            var notificationContents = File.ReadAllBytes("Resources/Streaming/Signature/SignatureSubscribeNotification.json");
+            string expected = File.ReadAllText("Resources/Streaming/Signature/SignatureSubscribe.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            byte[] notificationContents =
+                File.ReadAllBytes("Resources/Streaming/Signature/SignatureSubscribeNotification.json");
             ResponseValue<ErrorResult> resultNotification = null;
-            AutoResetEvent subscriptionEvent = new AutoResetEvent(false);
-            var result = new ReadOnlyMemory<byte>();
+            AutoResetEvent subscriptionEvent = new(false);
+            ReadOnlyMemory<byte> result = new();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<ErrorResult>> action,
-                (x) => resultNotification = x,
-                (x) => result = x,
+                x => resultNotification = x,
+                x => result = x,
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             SubscriptionEvent evt = null;
 
 
             sut.ConnectAsync().Wait();
-            var sub = sut.SubscribeSignature("4orRpuqStpJDvcpBy3vDSV4TDTGNbefmqYUnG2yVnKwjnLFqCwY4h5cBTAKakKek4inuxHF71LuscBS1vwSLtWcx", action);
+            SubscriptionState sub = sut.SubscribeSignature(
+                "4orRpuqStpJDvcpBy3vDSV4TDTGNbefmqYUnG2yVnKwjnLFqCwY4h5cBTAKakKek4inuxHF71LuscBS1vwSLtWcx", action);
             sub.SubscriptionChanged += (s, e) =>
             {
                 evt = e;
                 if (e.Status == SubscriptionStatus.Unsubscribed)
+                {
                     subscriptionEvent.Set();
+                }
             };
             _subConfirmEvent.Set();
 
@@ -581,7 +599,7 @@ namespace Solnet.Rpc.Test
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
@@ -595,31 +613,35 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void SubscribeSignature_ErrorNotificationTest()
         {
-            var expected = File.ReadAllText("Resources/Streaming/Signature/SignatureSubscribe.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
-            var notificationContents = File.ReadAllBytes("Resources/Streaming/Signature/SignatureSubscribeErrorNotification.json");
+            string expected = File.ReadAllText("Resources/Streaming/Signature/SignatureSubscribe.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            byte[] notificationContents =
+                File.ReadAllBytes("Resources/Streaming/Signature/SignatureSubscribeErrorNotification.json");
             ResponseValue<ErrorResult> resultNotification = null;
-            AutoResetEvent subscriptionEvent = new AutoResetEvent(false);
-            var result = new ReadOnlyMemory<byte>();
+            AutoResetEvent subscriptionEvent = new(false);
+            ReadOnlyMemory<byte> result = new();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<ErrorResult>> action,
-                (x) => resultNotification = x,
-                (x) => result = x,
+                x => resultNotification = x,
+                x => result = x,
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             SubscriptionEvent evt = null;
 
 
             sut.ConnectAsync().Wait();
-            var sub = sut.SubscribeSignature("4orRpuqStpJDvcpBy3vDSV4TDTGNbefmqYUnG2yVnKwjnLFqCwY4h5cBTAKakKek4inuxHF71LuscBS1vwSLtWcx", action);
+            SubscriptionState sub = sut.SubscribeSignature(
+                "4orRpuqStpJDvcpBy3vDSV4TDTGNbefmqYUnG2yVnKwjnLFqCwY4h5cBTAKakKek4inuxHF71LuscBS1vwSLtWcx", action);
             sub.SubscriptionChanged += (s, e) =>
             {
                 evt = e;
                 if (e.Status == SubscriptionStatus.Unsubscribed)
+                {
                     subscriptionEvent.Set();
+                }
             };
             _subConfirmEvent.Set();
 
@@ -627,7 +649,7 @@ namespace Solnet.Rpc.Test
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
@@ -645,31 +667,36 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void SubscribeSignatureProcessed()
         {
-            var expected = File.ReadAllText("Resources/Streaming/Signature/SignatureSubscribeProcessed.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
-            var notificationContents = File.ReadAllBytes("Resources/Streaming/Signature/SignatureSubscribeNotification.json");
+            string expected = File.ReadAllText("Resources/Streaming/Signature/SignatureSubscribeProcessed.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            byte[] notificationContents =
+                File.ReadAllBytes("Resources/Streaming/Signature/SignatureSubscribeNotification.json");
             ResponseValue<ErrorResult> resultNotification = null;
-            AutoResetEvent subscriptionEvent = new AutoResetEvent(false);
-            var result = new ReadOnlyMemory<byte>();
+            AutoResetEvent subscriptionEvent = new(false);
+            ReadOnlyMemory<byte> result = new();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<ErrorResult>> action,
-                (x) => resultNotification = x,
-                (x) => result = x,
+                x => resultNotification = x,
+                x => result = x,
                 subConfirmContent,
                 notificationContents);
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             SubscriptionEvent evt = null;
 
 
             sut.ConnectAsync().Wait();
-            var sub = sut.SubscribeSignature("4orRpuqStpJDvcpBy3vDSV4TDTGNbefmqYUnG2yVnKwjnLFqCwY4h5cBTAKakKek4inuxHF71LuscBS1vwSLtWcx", action, Types.Commitment.Processed);
+            SubscriptionState sub = sut.SubscribeSignature(
+                "4orRpuqStpJDvcpBy3vDSV4TDTGNbefmqYUnG2yVnKwjnLFqCwY4h5cBTAKakKek4inuxHF71LuscBS1vwSLtWcx", action,
+                Commitment.Processed);
             sub.SubscriptionChanged += (s, e) =>
             {
                 evt = e;
                 if (e.Status == SubscriptionStatus.Unsubscribed)
+                {
                     subscriptionEvent.Set();
+                }
             };
             _subConfirmEvent.Set();
 
@@ -677,7 +704,7 @@ namespace Solnet.Rpc.Test
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(_notificationEvent.WaitOne());
@@ -692,22 +719,22 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void SubscribeBadAccountTest()
         {
-            var expected = File.ReadAllText("Resources/Streaming/Account/BadAccountSubscribe.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/Account/BadAccountSubscribeResult.json");
-            var result = new ReadOnlyMemory<byte>();
-            AutoResetEvent subscriptionEvent = new AutoResetEvent(false);
+            string expected = File.ReadAllText("Resources/Streaming/Account/BadAccountSubscribe.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/Account/BadAccountSubscribeResult.json");
+            ReadOnlyMemory<byte> result = new();
+            AutoResetEvent subscriptionEvent = new(false);
             SetupAction(out Action<SubscriptionState, ResponseValue<AccountInfo>> action,
                 _ => { },
-                (x) => result = x,
+                x => result = x,
                 subConfirmContent,
                 Array.Empty<byte>());
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             const string pubKey = "invalidkey1";
 
             sut.ConnectAsync().Wait();
-            var sub = sut.SubscribeAccountInfo(pubKey, action);
+            SubscriptionState sub = sut.SubscribeAccountInfo(pubKey, action);
             SubscriptionEvent subEvent = null;
             sub.SubscriptionChanged += (sub, evt) =>
             {
@@ -721,7 +748,7 @@ namespace Solnet.Rpc.Test
                 WebSocketMessageType.Text,
                 true,
                 It.IsAny<CancellationToken>()));
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(subscriptionEvent.WaitOne());
@@ -733,62 +760,67 @@ namespace Solnet.Rpc.Test
         }
 
 
-
         [TestMethod]
         public void SubscribeAccountBigPayloadTest()
         {
-            var expected = File.ReadAllText("Resources/Streaming/Account/BigAccountSubscribe.json");
-            var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
-            var notifContent = File.ReadAllBytes("Resources/Streaming/Account/BigAccountNotificationPayload.json");
-            var expectedDataContent = File.ReadAllText("Resources/Streaming/Account/BigAccountNotificationPayloadData.txt");
-            var result = new ReadOnlyMemory<byte>();
+            string expected = File.ReadAllText("Resources/Streaming/Account/BigAccountSubscribe.json");
+            byte[] subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            byte[] notifContent = File.ReadAllBytes("Resources/Streaming/Account/BigAccountNotificationPayload.json");
+            string expectedDataContent =
+                File.ReadAllText("Resources/Streaming/Account/BigAccountNotificationPayloadData.txt");
+            ReadOnlyMemory<byte> result = new();
 
-            AutoResetEvent signal = new AutoResetEvent(false);
+            AutoResetEvent signal = new(false);
             int currentMessageIdx = 0;
             //confirm + bigpayload divided in two read steps + empty payload
-            var payloads = new Memory<byte>[]
+            Memory<byte>[] payloads = new[]
             {
-                new Memory<byte>(subConfirmContent),
-                new Memory<byte>(notifContent, 0, 32768),
-                new Memory<byte>(notifContent, 32768, notifContent.Length - 32768),
-                Memory<byte>.Empty
-
+                new(subConfirmContent), new Memory<byte>(notifContent, 0, 32768),
+                new Memory<byte>(notifContent, 32768, notifContent.Length - 32768), Memory<byte>.Empty
             };
 
-            AutoResetEvent subscriptionEvent = new AutoResetEvent(false);
+            AutoResetEvent subscriptionEvent = new(false);
             ResponseValue<AccountInfo> notificationValue = null;
 
-            var actionMock = new Mock<Action<SubscriptionState, ResponseValue<AccountInfo>>>();
-            actionMock.Setup(_ => _(It.IsAny<SubscriptionState>(), It.IsAny<ResponseValue<AccountInfo>>())).Callback<SubscriptionState, ResponseValue<AccountInfo>>((_, notifValue) =>
-            {
-                notificationValue = notifValue;
-                _notificationEvent.Set();
-            });
+            Mock<Action<SubscriptionState, ResponseValue<AccountInfo>>> actionMock = new();
+            actionMock.Setup(_ => _(It.IsAny<SubscriptionState>(), It.IsAny<ResponseValue<AccountInfo>>()))
+                .Callback<SubscriptionState, ResponseValue<AccountInfo>>((_, notifValue) =>
+                {
+                    notificationValue = notifValue;
+                    _notificationEvent.Set();
+                });
 
             _socketMock.Setup(_ => _.ConnectAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
                 .Callback(() => _socketMock.SetupGet(s => s.State).Returns(WebSocketState.Open));
 
-            _socketMock.Setup(_ => _.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(), WebSocketMessageType.Text, true, It.IsAny<CancellationToken>()))
-                .Callback<ReadOnlyMemory<byte>, WebSocketMessageType, bool, CancellationToken>((mem, _, _, _) => result = mem);
+            _socketMock.Setup(_ => _.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(), WebSocketMessageType.Text, true,
+                    It.IsAny<CancellationToken>()))
+                .Callback<ReadOnlyMemory<byte>, WebSocketMessageType, bool, CancellationToken>((mem, _, _, _) =>
+                    result = mem);
 
-            _ = _socketMock.Setup(_ => _.ReceiveAsync(It.IsAny<Memory<byte>>(), It.IsAny<CancellationToken>())).
-                Callback<Memory<byte>, CancellationToken>((mem, _) =>
+            _ = _socketMock.Setup(_ => _.ReceiveAsync(It.IsAny<Memory<byte>>(), It.IsAny<CancellationToken>()))
+                .Callback<Memory<byte>, CancellationToken>((mem, _) =>
                 {
                     if (currentMessageIdx == 0)
+                    {
                         signal.WaitOne();
+                    }
+
                     payloads[currentMessageIdx++].CopyTo(mem);
                 }).Returns(() => new ValueTask<ValueWebSocketReceiveResult>(
                     new ValueWebSocketReceiveResult(
                         payloads[currentMessageIdx - 1].Length,
-                        payloads[currentMessageIdx - 1].Length == 0 ? WebSocketMessageType.Close : WebSocketMessageType.Text,
+                        payloads[currentMessageIdx - 1].Length == 0
+                            ? WebSocketMessageType.Close
+                            : WebSocketMessageType.Text,
                         currentMessageIdx == 2 ? false : true)));
 
-            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            SolanaStreamingRpcClient sut = new("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             const string pubKey = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
 
             sut.ConnectAsync().Wait();
-            var sub = sut.SubscribeAccountInfo(pubKey, actionMock.Object);
+            SubscriptionState sub = sut.SubscribeAccountInfo(pubKey, actionMock.Object);
             SubscriptionEvent subEvent = null;
             sub.SubscriptionChanged += (sub, evt) =>
             {
@@ -803,7 +835,7 @@ namespace Solnet.Rpc.Test
                 true,
                 It.IsAny<CancellationToken>()));
 
-            var res = Encoding.UTF8.GetString(result.Span);
+            string res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
             Assert.IsTrue(subscriptionEvent.WaitOne());

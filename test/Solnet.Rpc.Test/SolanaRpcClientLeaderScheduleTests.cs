@@ -1,36 +1,30 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Types;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Solnet.Rpc.Test
 {
     [TestClass]
     public class SolanaRpcClientLeaderScheduleTest : SolanaRpcClientTestBase
     {
-
         [TestMethod]
         public void TestGetLeaderSchedule_SlotArgsRequest()
         {
+            string responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
+            string requestData =
+                File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleSlotArgsRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleSlotArgsRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri
-            };
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-
-            var res = sut.GetLeaderSchedule(79700000);
+            RequestResult<Dictionary<string, List<ulong>>> res = sut.GetLeaderSchedule(79700000);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(res.Result);
@@ -48,20 +42,18 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetLeaderSchedule_IdentityArgsRequest()
         {
+            string responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
+            string requestData =
+                File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleIdentityArgsRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleIdentityArgsRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri
-            };
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-
-            var res = sut.GetLeaderSchedule(identity: "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu");
+            RequestResult<Dictionary<string, List<ulong>>> res =
+                sut.GetLeaderSchedule(identity: "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu");
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(res.Result);
@@ -79,20 +71,18 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetLeaderSchedule_SlotIdentityArgsRequest()
         {
+            string responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
+            string requestData =
+                File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleSlotIdentityArgsRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleSlotIdentityArgsRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri
-            };
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-
-            var res = sut.GetLeaderSchedule(79700000, "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu");
+            RequestResult<Dictionary<string, List<ulong>>> res =
+                sut.GetLeaderSchedule(79700000, "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu");
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(res.Result);
@@ -110,20 +100,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetLeaderSchedule_NoArgsRequest()
         {
+            string responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleNoArgsRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleNoArgsRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri
-            };
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-
-            var res = sut.GetLeaderSchedule();
+            RequestResult<Dictionary<string, List<ulong>>> res = sut.GetLeaderSchedule();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(res.Result);
@@ -141,20 +127,17 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetLeaderSchedule_CommitmentFinalizedRequest()
         {
+            string responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleNoArgsRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleNoArgsRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri
-            };
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-
-            var res = sut.GetLeaderSchedule(commitment: Types.Commitment.Finalized);
+            RequestResult<Dictionary<string, List<ulong>>>
+                res = sut.GetLeaderSchedule(commitment: Commitment.Finalized);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(res.Result);
@@ -172,20 +155,18 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetLeaderSchedule_CommitmentProcessedRequest()
         {
+            string responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
+            string requestData =
+                File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleProcessedRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var responseData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/LeaderSchedule/GetLeaderScheduleProcessedRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri
-            };
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-
-            var res = sut.GetLeaderSchedule(commitment: Types.Commitment.Processed);
+            RequestResult<Dictionary<string, List<ulong>>>
+                res = sut.GetLeaderSchedule(commitment: Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(res.Result);

@@ -1,26 +1,24 @@
-﻿namespace Solnet.Rpc.Core
+﻿namespace Solnet.Rpc.Core;
+
+/// <summary>
+///     Id generator.
+/// </summary>
+internal class IdGenerator
 {
     /// <summary>
-    /// Id generator.
+    ///     The id of the last request performed
     /// </summary>
-    internal class IdGenerator
+    private int _id;
+
+    /// <summary>
+    ///     Gets the id of the next request.
+    /// </summary>
+    /// <returns>The id.</returns>
+    internal int GetNextId()
     {
-
-        /// <summary>
-        /// The id of the last request performed
-        /// </summary>
-        private int _id;
-
-        /// <summary>
-        /// Gets the id of the next request.
-        /// </summary>
-        /// <returns>The id.</returns>
-        internal int GetNextId()
+        lock (this)
         {
-            lock (this)
-            {
-                return _id++;
-            }
+            return _id++;
         }
     }
 }

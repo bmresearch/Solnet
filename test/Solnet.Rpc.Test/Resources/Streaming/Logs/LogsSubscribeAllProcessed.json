@@ -1,1 +1,11 @@
-{"method":"logsSubscribe","params":["all",{"commitment":"processed"}],"jsonrpc":"2.0","id":0}
+{
+  "method": "logsSubscribe",
+  "params": [
+    "all",
+    {
+      "commitment": "processed"
+    }
+  ],
+  "jsonrpc": "2.0",
+  "id": 0
+}

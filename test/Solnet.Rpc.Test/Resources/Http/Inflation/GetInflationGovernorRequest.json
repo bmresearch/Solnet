@@ -1,1 +1,5 @@
-{"method":"getInflationGovernor","jsonrpc":"2.0","id":0}
+{
+  "method": "getInflationGovernor",
+  "jsonrpc": "2.0",
+  "id": 0
+}

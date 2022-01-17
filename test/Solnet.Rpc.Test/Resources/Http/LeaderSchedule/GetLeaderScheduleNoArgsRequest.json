@@ -1,1 +1,5 @@
-{"method":"getLeaderSchedule","jsonrpc":"2.0","id":0}
+{
+  "method": "getLeaderSchedule",
+  "jsonrpc": "2.0",
+  "id": 0
+}

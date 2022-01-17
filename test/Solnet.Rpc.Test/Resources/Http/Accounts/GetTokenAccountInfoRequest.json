@@ -1,1 +1,11 @@
-{"method":"getAccountInfo","params":["FMFMUFqRsGnKm2tQzsaeytATzSG6Evna4HEbKuS6h9uk",{"encoding":"jsonParsed"}],"jsonrpc":"2.0","id":0}
+{
+  "method": "getAccountInfo",
+  "params": [
+    "FMFMUFqRsGnKm2tQzsaeytATzSG6Evna4HEbKuS6h9uk",
+    {
+      "encoding": "jsonParsed"
+    }
+  ],
+  "jsonrpc": "2.0",
+  "id": 0
+}

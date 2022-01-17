@@ -3,138 +3,141 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Solnet.Rpc.Converters
+namespace Solnet.Rpc.Converters;
+
+/// <summary>
+///     Converts a TransactionError from json into its model representation.
+/// </summary>
+public class TransactionErrorJsonConverter : JsonConverter<TransactionError>
 {
     /// <summary>
-    /// Converts a TransactionError from json into its model representation.
+    ///     Reads and converts the JSON to type <c>TransactionError</c>.
     /// </summary>
-    public class TransactionErrorJsonConverter : JsonConverter<TransactionError>
+    /// <param name="reader">The reader.</param>
+    /// <param name="typeToConvert"> The type to convert.</param>
+    /// <param name="options">An object that specifies serialization options to use.</param>
+    /// <returns>The converted value.</returns>
+    public override TransactionError Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        /// <summary>
-        /// Reads and converts the JSON to type <c>TransactionError</c>.
-        /// </summary>
-        /// <param name="reader">The reader.</param>
-        /// <param name="typeToConvert"> The type to convert.</param>
-        /// <param name="options">An object that specifies serialization options to use.</param>
-        /// <returns>The converted value.</returns>
-        public override TransactionError Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        if (reader.TokenType == JsonTokenType.Null)
         {
-            if (reader.TokenType == JsonTokenType.Null) return null;
+            return null;
+        }
 
-            var err = new TransactionError();
+        TransactionError err = new TransactionError();
 
-            if (reader.TokenType == JsonTokenType.String)
-            {
-                var enumValue = reader.GetString();
+        if (reader.TokenType == JsonTokenType.String)
+        {
+            string enumValue = reader.GetString();
 
-                Enum.TryParse(enumValue, ignoreCase: false, out TransactionErrorType errorType);
-                err.Type = errorType;
-                reader.Read();
-                return err;
-            }
-
-            if (reader.TokenType != JsonTokenType.StartObject)
-            {
-                throw new JsonException("Unexpected error value.");
-            }
-
+            Enum.TryParse(enumValue, false, out TransactionErrorType errorType);
+            err.Type = errorType;
             reader.Read();
+            return err;
+        }
 
-            if (reader.TokenType != JsonTokenType.PropertyName)
-            {
-                throw new JsonException("Unexpected error value.");
-            }
+        if (reader.TokenType != JsonTokenType.StartObject)
+        {
+            throw new JsonException("Unexpected error value.");
+        }
 
+        reader.Read();
 
-            {
-                var enumValue = reader.GetString();
-                Enum.TryParse(enumValue, ignoreCase: false, out TransactionErrorType errorType);
-                err.Type = errorType;
-            }
-
-            reader.Read();
-            err.InstructionError = new InstructionError();
-
-            if (reader.TokenType != JsonTokenType.StartArray)
-            {
-                throw new JsonException("Unexpected error value.");
-            }
-
-            reader.Read();
-
-            if (reader.TokenType != JsonTokenType.Number)
-            {
-                throw new JsonException("Unexpected error value.");
-            }
-
-            err.InstructionError.InstructionIndex = reader.GetInt32();
-
-            reader.Read();
-
-            if (reader.TokenType == JsonTokenType.String)
-            {
-                var enumValue = reader.GetString();
-
-                Enum.TryParse(enumValue, ignoreCase: false, out InstructionErrorType errorType);
-                err.InstructionError.Type = errorType;
-                reader.Read(); //string
-
-                reader.Read(); //endarray
-                return err;
-            }
-
-            if (reader.TokenType != JsonTokenType.StartObject)
-            {
-                throw new JsonException("Unexpected error value.");
-            }
-
-            reader.Read();
+        if (reader.TokenType != JsonTokenType.PropertyName)
+        {
+            throw new JsonException("Unexpected error value.");
+        }
 
 
-            if (reader.TokenType != JsonTokenType.PropertyName)
-            {
-                throw new JsonException("Unexpected error value.");
-            }
-            {
-                var enumValue = reader.GetString();
-                Enum.TryParse(enumValue, ignoreCase: false, out InstructionErrorType errorType);
-                err.InstructionError.Type = errorType;
-            }
+        {
+            string enumValue = reader.GetString();
+            Enum.TryParse(enumValue, false, out TransactionErrorType errorType);
+            err.Type = errorType;
+        }
 
-            reader.Read();
+        reader.Read();
+        err.InstructionError = new InstructionError();
 
-            if (reader.TokenType == JsonTokenType.Number)
-            {
-                err.InstructionError.CustomError = reader.GetUInt32();
-                reader.Read(); //number
-                reader.Read(); //endobj
-                reader.Read(); //endarray
+        if (reader.TokenType != JsonTokenType.StartArray)
+        {
+            throw new JsonException("Unexpected error value.");
+        }
 
-                return err;
-            }
+        reader.Read();
 
-            if (reader.TokenType != JsonTokenType.String)
-            {
-                throw new JsonException("Unexpected error value.");
-            }
+        if (reader.TokenType != JsonTokenType.Number)
+        {
+            throw new JsonException("Unexpected error value.");
+        }
 
-            err.InstructionError.BorshIoError = reader.GetString();
+        err.InstructionError.InstructionIndex = reader.GetInt32();
+
+        reader.Read();
+
+        if (reader.TokenType == JsonTokenType.String)
+        {
+            string enumValue = reader.GetString();
+
+            Enum.TryParse(enumValue, false, out InstructionErrorType errorType);
+            err.InstructionError.Type = errorType;
             reader.Read(); //string
+
+            reader.Read(); //endarray
+            return err;
+        }
+
+        if (reader.TokenType != JsonTokenType.StartObject)
+        {
+            throw new JsonException("Unexpected error value.");
+        }
+
+        reader.Read();
+
+
+        if (reader.TokenType != JsonTokenType.PropertyName)
+        {
+            throw new JsonException("Unexpected error value.");
+        }
+
+        {
+            string enumValue = reader.GetString();
+            Enum.TryParse(enumValue, false, out InstructionErrorType errorType);
+            err.InstructionError.Type = errorType;
+        }
+
+        reader.Read();
+
+        if (reader.TokenType == JsonTokenType.Number)
+        {
+            err.InstructionError.CustomError = reader.GetUInt32();
+            reader.Read(); //number
             reader.Read(); //endobj
             reader.Read(); //endarray
 
             return err;
         }
 
-        /// <summary>
-        /// Not implemented.
-        /// </summary>
-        /// <param name="writer">n/a</param>
-        /// <param name="value">n/a</param>
-        /// <param name="options">n/a</param>
-        public override void Write(Utf8JsonWriter writer, TransactionError value, JsonSerializerOptions options)
+        if (reader.TokenType != JsonTokenType.String)
         {
-            throw new NotImplementedException();
+            throw new JsonException("Unexpected error value.");
         }
+
+        err.InstructionError.BorshIoError = reader.GetString();
+        reader.Read(); //string
+        reader.Read(); //endobj
+        reader.Read(); //endarray
+
+        return err;
+    }
+
+    /// <summary>
+    ///     Not implemented.
+    /// </summary>
+    /// <param name="writer">n/a</param>
+    /// <param name="value">n/a</param>
+    /// <param name="options">n/a</param>
+    public override void Write(Utf8JsonWriter writer, TransactionError value, JsonSerializerOptions options)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -1,1 +1,10 @@
-{"method":"getSlot","params":[{"commitment":"processed"}],"jsonrpc":"2.0","id":0}
+{
+  "method": "getSlot",
+  "params": [
+    {
+      "commitment": "processed"
+    }
+  ],
+  "jsonrpc": "2.0",
+  "id": 0
+}

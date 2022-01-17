@@ -1,17 +1,16 @@
 using System.Threading.Tasks;
 
-namespace Solnet.Wallet.Bip39
+namespace Solnet.Wallet.Bip39;
+
+/// <summary>
+///     Specifies functionality for the wordlist source.
+/// </summary>
+internal interface IWordlistSource
 {
     /// <summary>
-    /// Specifies functionality for the wordlist source.
+    ///     Load the wordlist.
     /// </summary>
-    internal interface IWordlistSource
-    {
-        /// <summary>
-        /// Load the wordlist.
-        /// </summary>
-        /// <param name="name">The name of the wordlist.</param>
-        /// <returns>A task that returns the wordlist.</returns>
-        Task<WordList> LoadAsync(string name);
-    }
+    /// <param name="name">The name of the wordlist.</param>
+    /// <returns>A task that returns the wordlist.</returns>
+    Task<WordList> LoadAsync(string name);
 }

@@ -1,1 +1,5 @@
-{"method":"getEpochSchedule","jsonrpc":"2.0","id":0}
+{
+  "method": "getEpochSchedule",
+  "jsonrpc": "2.0",
+  "id": 0
+}

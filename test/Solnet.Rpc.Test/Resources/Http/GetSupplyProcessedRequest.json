@@ -1,1 +1,10 @@
-{"method":"getSupply","params":[{"commitment":"processed"}],"jsonrpc":"2.0","id":0}
+{
+  "method": "getSupply",
+  "params": [
+    {
+      "commitment": "processed"
+    }
+  ],
+  "jsonrpc": "2.0",
+  "id": 0
+}

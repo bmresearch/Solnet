@@ -1,6 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Solnet.Programs;
-using Solnet.Rpc.Builders;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
@@ -16,7 +15,39 @@ namespace Solnet.Rpc.Test
             "route clerk disease box emerge airport loud waste attitude film army tray " +
             "forward deal onion eight catalog surface unit card window walnut wealth medal";
 
-        private static byte[] CompiledMessageBytes =
+        private const string InvalidBase64Transaction =
+            "AQ0S4USBAYBAAIFR2mrlyBLqD+wyu4X94aPHgdOUhWBoNidlDedqmW3F7KE3M6r5DRwldquwlqOuXDDOWZagXmbHnAU3w5Dg44kot" +
+            "/05ThW8wBKVjo4jhGCcZM9AYh+8xbirWxK1GhRx3i0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGp9UXGSxWjuCKhF9" +
+            "z0peIzwNcMUWyGrNE2AYuqUAAABVED1IAMQCS8bANVPk3JwnUUDkIwVnTMaKQLYx1FS5TAgMDAgQABAQAAAADAgABDAIAAAAAypo7AAAAAA==";
+
+        private const string Base64Transaction =
+            "AQ0S4USw/redah1XmLNo9IuXwd0mY+iYOzoSNquuuym6g1S517bAJkjlusN3Xj/SoLBPwmXg3QZ/mdof3x92BAYBAAIFR2mrlyBL" +
+            "qD+wyu4X94aPHgdOUhWBoNidlDedqmW3F7KE3M6r5DRwldquwlqOuXDDOWZagXmbHnAU3w5Dg44kot/05ThW8wBKVjo4jhGCcZM9A" +
+            "Yh+8xbirWxK1GhRx3i0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGp9UXGSxWjuCKhF9z0peIzwNcMUWyGrNE2AYuqU" +
+            "AAABVED1IAMQCS8bANVPk3JwnUUDkIwVnTMaKQLYx1FS5TAgMDAgQABAQAAAADAgABDAIAAAAAypo7AAAAAA==";
+
+        private const string Base64Message =
+            "AwAEB0dpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxey14nYa8i1fJi+SQ22zC6NCH/e4U/Hh5g1ge+YUo2PYoXN+w3TZpSp" +
+            "kz6ceiNiFJ1YljgbSt+oGaN4XwsDKrjvOwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABqfVFxksXFEhjMlMPUrxf1j" +
+            "a7gibof1E49vZigAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQVKU1D4XciC1hSlVnJ4iilt3x6rq9CmBniIST" +
+            "L07vag08KSJSZSZjfxTEKmUU+9fVdZry+IheZu/BJgfwylBe0GAwIAATQAAAAAYE0WAAAAAABSAAAAAAAAAAbd9uHXZaGT2cvh" +
+            "Rs7reawctIXtX1s3kTqM9YV+/wCpBQIBBEMAAkdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyAUdpq5cgS6g/sMruF/" +
+            "eGjx4HTlIVgaDYnZQ3napltxeyAwIAAjQAAAAA8B0fAAAAAAClAAAAAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+" +
+            "/wCpBQQCAQAEAQEFAwECAAkHQEIPAAAAAAAGAQISSGVsbG8gZnJvbSBTb2wuTmV0";
+
+        private const string PopulatedBase64MessageTx =
+            "AywGaWtisQ1ssPzJjYz4MfsQYxFabAmqBN5ikzhLIVyI/78SFuYDjqcppmaVXUT7e5G0ibfcw566OrktXauH+wjrzZ7AK9Ct0hm" +
+            "vDtESVp9qVGpmG0oVW2cRvdcHRifjLEAq+5SbQkIYKQ3oQqGXAii4YS5axTU0IjpaSM0E8isLcXjSX5ImjZkRIAKASKelgvYBdV" +
+            "IdCFfw0rOqiQU4+YJaXDLL58bSlYU6KCknhqcgBJ280w2Mo1ftFgE7UzI1CQMABAdHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN5" +
+            "2qZbcXsteJ2GvItXyYvkkNtswujQh/3uFPx4eYNYHvmFKNj2KFzfsN02aUqZM+nHojYhSdWJY4G0rfqBmjeF8LAyq47zsAAAAAAA" +
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAan1RcZLFxRIYzJTD1K8X9Y2u4Im6H9ROPb2YoAAAAABt324ddloZPZy+FGzut5rB" +
+            "y0he1fWzeROoz1hX7/AKkFSlNQ+F3IgtYUpVZyeIopbd8eq6vQpgZ4iEky9O72oNPCkiUmUmY38UxCplFPvX1XWa8viIXmbvwSYH" +
+            "8MpQXtBgMCAAE0AAAAAGBNFgAAAAAAUgAAAAAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQUCAQRDAAJHaauXIE" +
+            "uoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgFHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgMCAAI0AAAAAPAdHwAAAA" +
+            "AApQAAAAAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQUEAgEABAEBBQMBAgAJB0BCDwAAAAAABgECEkhlbGxvIG" +
+            "Zyb20gU29sLk5ldA==";
+
+        private static readonly byte[] CompiledMessageBytes =
         {
             1, 0, 2, 5, 71, 105, 171, 151, 32, 75, 168, 63, 176, 202, 238, 23, 247, 134, 143, 30, 7, 78, 82, 21,
             129, 160, 216, 157, 148, 55, 157, 170, 101, 183, 23, 178, 132, 220, 206, 171, 228, 52, 112, 149, 218,
@@ -29,7 +60,7 @@ namespace Solnet.Rpc.Test
             83, 2, 3, 3, 2, 4, 0, 4, 4, 0, 0, 0, 3, 2, 0, 1, 12, 2, 0, 0, 0, 0, 202, 154, 59, 0, 0, 0, 0
         };
 
-        private static byte[] CompiledAndSignedBytes =
+        private static readonly byte[] CompiledAndSignedBytes =
         {
             1, 13, 18, 225, 68, 176, 254, 183, 157, 106, 29, 87, 152, 179, 104, 244, 139, 151, 193, 221, 38, 99,
             232, 152, 59, 58, 18, 54, 171, 174, 187, 41, 186, 131, 84, 185, 215, 182, 192, 38, 72, 229, 186, 195,
@@ -45,7 +76,7 @@ namespace Solnet.Rpc.Test
             3, 2, 4, 0, 4, 4, 0, 0, 0, 3, 2, 0, 1, 12, 2, 0, 0, 0, 0, 202, 154, 59, 0, 0, 0, 0
         };
 
-        private static byte[] CraftTransactionBytes =
+        private static readonly byte[] CraftTransactionBytes =
         {
             3, 39, 133, 112, 132, 32, 126, 228, 126, 162, 203, 140, 203, 161, 134, 191, 186, 195, 40, 66, 175, 125,
             129, 149, 141, 94, 83, 223, 88, 37, 237, 88, 160, 147, 101, 191, 50, 230, 58, 245, 82, 5, 23, 44, 122,
@@ -94,38 +125,6 @@ namespace Solnet.Rpc.Test
             235, 121, 172, 28, 180, 133, 237, 95, 91, 55, 145, 58, 140, 245, 133, 126, 255, 0, 169, 5, 4, 1, 2, 0,
             3, 1, 1
         };
-
-        private const string InvalidBase64Transaction =
-            "AQ0S4USBAYBAAIFR2mrlyBLqD+wyu4X94aPHgdOUhWBoNidlDedqmW3F7KE3M6r5DRwldquwlqOuXDDOWZagXmbHnAU3w5Dg44kot" +
-            "/05ThW8wBKVjo4jhGCcZM9AYh+8xbirWxK1GhRx3i0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGp9UXGSxWjuCKhF9" +
-            "z0peIzwNcMUWyGrNE2AYuqUAAABVED1IAMQCS8bANVPk3JwnUUDkIwVnTMaKQLYx1FS5TAgMDAgQABAQAAAADAgABDAIAAAAAypo7AAAAAA==";
-
-        private const string Base64Transaction =
-            "AQ0S4USw/redah1XmLNo9IuXwd0mY+iYOzoSNquuuym6g1S517bAJkjlusN3Xj/SoLBPwmXg3QZ/mdof3x92BAYBAAIFR2mrlyBL" +
-            "qD+wyu4X94aPHgdOUhWBoNidlDedqmW3F7KE3M6r5DRwldquwlqOuXDDOWZagXmbHnAU3w5Dg44kot/05ThW8wBKVjo4jhGCcZM9A" +
-            "Yh+8xbirWxK1GhRx3i0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGp9UXGSxWjuCKhF9z0peIzwNcMUWyGrNE2AYuqU" +
-            "AAABVED1IAMQCS8bANVPk3JwnUUDkIwVnTMaKQLYx1FS5TAgMDAgQABAQAAAADAgABDAIAAAAAypo7AAAAAA==";
-
-        private const string Base64Message =
-            "AwAEB0dpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxey14nYa8i1fJi+SQ22zC6NCH/e4U/Hh5g1ge+YUo2PYoXN+w3TZpSp" +
-            "kz6ceiNiFJ1YljgbSt+oGaN4XwsDKrjvOwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABqfVFxksXFEhjMlMPUrxf1j" +
-            "a7gibof1E49vZigAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQVKU1D4XciC1hSlVnJ4iilt3x6rq9CmBniIST" +
-            "L07vag08KSJSZSZjfxTEKmUU+9fVdZry+IheZu/BJgfwylBe0GAwIAATQAAAAAYE0WAAAAAABSAAAAAAAAAAbd9uHXZaGT2cvh" +
-            "Rs7reawctIXtX1s3kTqM9YV+/wCpBQIBBEMAAkdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyAUdpq5cgS6g/sMruF/" +
-            "eGjx4HTlIVgaDYnZQ3napltxeyAwIAAjQAAAAA8B0fAAAAAAClAAAAAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+" +
-            "/wCpBQQCAQAEAQEFAwECAAkHQEIPAAAAAAAGAQISSGVsbG8gZnJvbSBTb2wuTmV0";
-
-        private const string PopulatedBase64MessageTx =
-            "AywGaWtisQ1ssPzJjYz4MfsQYxFabAmqBN5ikzhLIVyI/78SFuYDjqcppmaVXUT7e5G0ibfcw566OrktXauH+wjrzZ7AK9Ct0hm" +
-            "vDtESVp9qVGpmG0oVW2cRvdcHRifjLEAq+5SbQkIYKQ3oQqGXAii4YS5axTU0IjpaSM0E8isLcXjSX5ImjZkRIAKASKelgvYBdV" +
-            "IdCFfw0rOqiQU4+YJaXDLL58bSlYU6KCknhqcgBJ280w2Mo1ftFgE7UzI1CQMABAdHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN5" +
-            "2qZbcXsteJ2GvItXyYvkkNtswujQh/3uFPx4eYNYHvmFKNj2KFzfsN02aUqZM+nHojYhSdWJY4G0rfqBmjeF8LAyq47zsAAAAAAA" +
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAan1RcZLFxRIYzJTD1K8X9Y2u4Im6H9ROPb2YoAAAAABt324ddloZPZy+FGzut5rB" +
-            "y0he1fWzeROoz1hX7/AKkFSlNQ+F3IgtYUpVZyeIopbd8eq6vQpgZ4iEky9O72oNPCkiUmUmY38UxCplFPvX1XWa8viIXmbvwSYH" +
-            "8MpQXtBgMCAAE0AAAAAGBNFgAAAAAAUgAAAAAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQUCAQRDAAJHaauXIE" +
-            "uoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgFHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgMCAAI0AAAAAPAdHwAAAA" +
-            "AApQAAAAAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQUEAgEABAEBBQMBAgAJB0BCDwAAAAAABgECEkhlbGxvIG" +
-            "Zyb20gU29sLk5ldA==";
 
         [TestMethod]
         [ExpectedException(typeof(Exception))]
@@ -193,12 +192,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void PopulateTest()
         {
-            Transaction tx = Transaction.Populate(Base64Message, new List<byte[]>()
-            {
-                Encoders.Base58.DecodeData("t3zuom7qpa4XQ2WxDTZPFcWjhPuB3uKJDzKSsnawyoHohFrgmfGWWPwB8VkZSMexTVWPQLd4fWLmRdt8CAW49yH"),
-                Encoders.Base58.DecodeData("5iSSyXbaYgBB1QUuHip6M3syLz4kg8PYmX6233XbJz7VJoTeTgRWThKvoXrTr638eXK4kEYo7ejMT1axmW8PvRnr"),
-                Encoders.Base58.DecodeData("3GaoLXHf563Si8jypoBYhNP7Mx8winbcgHcNxByuK6tnndKVGUQ4ByqTnM5Y3thsmgX87W16Yw5cb6cobwDW7ucC"),
-            });
+            Transaction tx = Transaction.Populate(Base64Message,
+                new List<byte[]>
+                {
+                    Encoders.Base58.DecodeData(
+                        "t3zuom7qpa4XQ2WxDTZPFcWjhPuB3uKJDzKSsnawyoHohFrgmfGWWPwB8VkZSMexTVWPQLd4fWLmRdt8CAW49yH"),
+                    Encoders.Base58.DecodeData(
+                        "5iSSyXbaYgBB1QUuHip6M3syLz4kg8PYmX6233XbJz7VJoTeTgRWThKvoXrTr638eXK4kEYo7ejMT1axmW8PvRnr"),
+                    Encoders.Base58.DecodeData(
+                        "3GaoLXHf563Si8jypoBYhNP7Mx8winbcgHcNxByuK6tnndKVGUQ4ByqTnM5Y3thsmgX87W16Yw5cb6cobwDW7ucC")
+                });
 
             byte[] txBytes = tx.Serialize();
 
@@ -274,8 +277,7 @@ namespace Solnet.Rpc.Test
 
             Transaction tx = new()
             {
-                FeePayer = ownerAccount,
-                RecentBlockHash = "EtLZEUfN1sSsaHRzTtrGW6N62hagTXjc5jokiWqZ9qQ3"
+                FeePayer = ownerAccount, RecentBlockHash = "EtLZEUfN1sSsaHRzTtrGW6N62hagTXjc5jokiWqZ9qQ3"
             };
 
             byte[] txBytes = tx
@@ -321,8 +323,7 @@ namespace Solnet.Rpc.Test
 
             Transaction tx = new()
             {
-                FeePayer = ownerAccount,
-                RecentBlockHash = "EtLZEUfN1sSsaHRzTtrGW6N62hagTXjc5jokiWqZ9qQ3"
+                FeePayer = ownerAccount, RecentBlockHash = "EtLZEUfN1sSsaHRzTtrGW6N62hagTXjc5jokiWqZ9qQ3"
             };
 
             byte[] txBytes = tx
@@ -355,7 +356,7 @@ namespace Solnet.Rpc.Test
                 .Add(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net"))
                 .CompileMessage();
 
-            tx.PartialSign(new List<Account> { ownerAccount, ownerAccount });
+            tx.PartialSign(new List<Account> {ownerAccount, ownerAccount});
             tx.PartialSign(mintAccount);
 
             tx.AddSignature(initialAccount.PublicKey, initialAccount.Sign(txBytes));

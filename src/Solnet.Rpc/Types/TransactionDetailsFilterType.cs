@@ -1,23 +1,22 @@
-namespace Solnet.Rpc.Types
+namespace Solnet.Rpc.Types;
+
+/// <summary>
+///     Represents the filter type for block data.
+/// </summary>
+public enum TransactionDetailsFilterType
 {
     /// <summary>
-    /// Represents the filter type for block data.
+    ///     Returns no transaction details.
     /// </summary>
-    public enum TransactionDetailsFilterType
-    {
-        /// <summary>
-        /// Returns no transaction details.
-        /// </summary>
-        None,
+    None,
 
-        /// <summary>
-        /// Returns only transaction signatures.
-        /// </summary>
-        Signatures,
+    /// <summary>
+    ///     Returns only transaction signatures.
+    /// </summary>
+    Signatures,
 
-        /// <summary>
-        /// Returns full transaction details.
-        /// </summary>
-        Full
-    }
+    /// <summary>
+    ///     Returns full transaction details.
+    /// </summary>
+    Full
 }

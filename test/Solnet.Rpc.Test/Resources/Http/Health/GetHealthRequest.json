@@ -1,1 +1,5 @@
-{"method":"getHealth","jsonrpc":"2.0","id":0}
+{
+  "method": "getHealth",
+  "jsonrpc": "2.0",
+  "id": 0
+}

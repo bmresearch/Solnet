@@ -1,15 +1,15 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Moq.Protected;
+using Solnet.Rpc.Core.Http;
+using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Solnet.Rpc.Test
 {
@@ -19,20 +19,17 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestEmptyPayloadRequest()
         {
-            var responseData = File.ReadAllText("Resources/Http/EmptyPayloadResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/EmptyPayloadRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/EmptyPayloadResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/EmptyPayloadRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var result = sut.GetBalance("");
+            RequestResult<ResponseValue<ulong>> result = sut.GetBalance("");
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result);
@@ -46,33 +43,29 @@ namespace Solnet.Rpc.Test
             Assert.IsNotNull(result.RawRpcResponse);
             Assert.AreEqual(requestData, result.RawRpcRequest);
             Assert.AreEqual(responseData, result.RawRpcResponse);
-
         }
 
         [TestMethod]
         public void TestBadAddressExceptionRequest()
         {
-            var msg = "something bad happenned";
-            var responseData = File.ReadAllText("Resources/Http/EmptyPayloadResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/EmptyPayloadRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string msg = "something bad happenned";
+            string responseData = File.ReadAllText("Resources/Http/EmptyPayloadResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/EmptyPayloadRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
             messageHandlerMock.Protected().Setup(
-                    "SendAsync",
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>()
-                ).Throws(new HttpRequestException(msg));
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
+            ).Throws(new HttpRequestException(msg));
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient("https://non.existing.adddress.com", null, httpClient);
+            SolanaRpcClient sut = new SolanaRpcClient("https://non.existing.adddress.com", null, httpClient);
 
-            var result = sut.GetBalance("");
+            RequestResult<ResponseValue<ulong>> result = sut.GetBalance("");
             Assert.AreEqual(HttpStatusCode.BadRequest, result.HttpStatusCode);
             Assert.AreEqual(msg, result.Reason);
             Assert.IsFalse(result.WasHttpRequestSuccessful);
@@ -85,27 +78,25 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestBadAddress2ExceptionRequest()
         {
-            var msg = "not found bro";
-            var responseData = File.ReadAllText("Resources/Http/EmptyPayloadResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/EmptyPayloadRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string msg = "not found bro";
+            string responseData = File.ReadAllText("Resources/Http/EmptyPayloadResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/EmptyPayloadRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
             messageHandlerMock.Protected().Setup(
-                    "SendAsync",
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>()
-                ).Throws(new HttpRequestException(msg, null, HttpStatusCode.NotFound));
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
+            ).Throws(new HttpRequestException(msg, null, HttpStatusCode.NotFound));
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient("https://valid.server.but.invalid.endpoint.com", null, httpClient);
+            SolanaRpcClient sut =
+                new SolanaRpcClient("https://valid.server.but.invalid.endpoint.com", null, httpClient);
 
-            var result = sut.GetBalance("");
+            RequestResult<ResponseValue<ulong>> result = sut.GetBalance("");
             Assert.AreEqual(HttpStatusCode.NotFound, result.HttpStatusCode);
             Assert.AreEqual(msg, result.Reason);
             Assert.IsFalse(result.WasHttpRequestSuccessful);
@@ -113,25 +104,21 @@ namespace Solnet.Rpc.Test
             Assert.IsNotNull(result.RawRpcRequest);
             Assert.IsNull(result.RawRpcResponse);
             Assert.AreEqual(requestData, result.RawRpcRequest);
-
         }
 
         [TestMethod]
         public void TestGetBalance()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetBalanceResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetBalanceRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetBalanceResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetBalanceRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetBalance("hoakwpFB8UoLnPpLC56gsjpY7XbVwaCuRQRMQzN5TVh");
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<ResponseValue<ulong>> result = sut.GetBalance("hoakwpFB8UoLnPpLC56gsjpY7XbVwaCuRQRMQzN5TVh");
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
             Assert.IsTrue(result.WasSuccessful);
@@ -148,19 +135,17 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetBalanceConfirmed()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetBalanceResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetBalanceConfirmedRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetBalanceResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetBalanceConfirmedRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetBalance("hoakwpFB8UoLnPpLC56gsjpY7XbVwaCuRQRMQzN5TVh", Types.Commitment.Confirmed);
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<ResponseValue<ulong>> result =
+                sut.GetBalance("hoakwpFB8UoLnPpLC56gsjpY7XbVwaCuRQRMQzN5TVh", Commitment.Confirmed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -174,19 +159,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetClusterNodes()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetClusterNodesResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetClusterNodesRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetClusterNodesResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetClusterNodesRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetClusterNodes();
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<List<ClusterNode>> result = sut.GetClusterNodes();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -206,19 +188,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetEpochInfo()
         {
-            var responseData = File.ReadAllText("Resources/Http/Epoch/GetEpochInfoResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Epoch/GetEpochInfoRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/Epoch/GetEpochInfoResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Epoch/GetEpochInfoRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetEpochInfo();
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<EpochInfo> result = sut.GetEpochInfo();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -235,19 +214,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetEpochInfoProcessed()
         {
-            var responseData = File.ReadAllText("Resources/Http/Epoch/GetEpochInfoResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Epoch/GetEpochInfoProcessedRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/Epoch/GetEpochInfoResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Epoch/GetEpochInfoProcessedRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetEpochInfo(Types.Commitment.Processed);
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<EpochInfo> result = sut.GetEpochInfo(Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -264,19 +240,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetEpochSchedule()
         {
-            var responseData = File.ReadAllText("Resources/Http/Epoch/GetEpochScheduleResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Epoch/GetEpochScheduleRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/Epoch/GetEpochScheduleResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Epoch/GetEpochScheduleRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetEpochSchedule();
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<EpochScheduleInfo> result = sut.GetEpochSchedule();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -293,19 +266,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetGenesisHash()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetGenesisHashResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetGenesisHashRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetGenesisHashResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetGenesisHashRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetGenesisHash();
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<string> result = sut.GetGenesisHash();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -318,20 +288,17 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetIdentity()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetIdentityResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetIdentityRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetIdentityResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetIdentityRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var result = sut.GetIdentity();
+            RequestResult<NodeIdentity> result = sut.GetIdentity();
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
             Assert.IsTrue(result.WasSuccessful);
@@ -343,19 +310,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetMaxRetransmitSlot()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetMaxRetransmitSlotResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetMaxRetransmitSlotRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetMaxRetransmitSlotResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetMaxRetransmitSlotRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetMaxRetransmitSlot();
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<ulong> result = sut.GetMaxRetransmitSlot();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -368,19 +332,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetShredInsertSlot()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetMaxShredInsertSlotResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetMaxShredInsertSlotRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetMaxShredInsertSlotResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetMaxShredInsertSlotRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetMaxShredInsertSlot();
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<ulong> result = sut.GetMaxShredInsertSlot();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -393,19 +354,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetSlotLeadersEmpty()
         {
-            var responseData = File.ReadAllText("Resources/Http/Slot/GetSlotLeadersEmptyResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Slot/GetSlotLeadersEmptyRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/Slot/GetSlotLeadersEmptyResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Slot/GetSlotLeadersEmptyRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetSlotLeaders(0, 0);
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<List<string>> result = sut.GetSlotLeaders(0, 0);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -417,19 +375,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetSlotLeaders()
         {
-            var responseData = File.ReadAllText("Resources/Http/Slot/GetSlotLeadersResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Slot/GetSlotLeadersRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/Slot/GetSlotLeadersResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Slot/GetSlotLeadersRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetSlotLeaders(100, 10);
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<List<string>> result = sut.GetSlotLeaders(100, 10);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -445,19 +400,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetSlotLeader()
         {
-            var responseData = File.ReadAllText("Resources/Http/Slot/GetSlotLeaderResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Slot/GetSlotLeaderRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/Slot/GetSlotLeaderResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Slot/GetSlotLeaderRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetSlotLeader();
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<string> result = sut.GetSlotLeader();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -470,19 +422,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetSlotLeaderConfirmed()
         {
-            var responseData = File.ReadAllText("Resources/Http/Slot/GetSlotLeaderResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Slot/GetSlotLeaderConfirmedRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/Slot/GetSlotLeaderResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Slot/GetSlotLeaderConfirmedRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetSlotLeader(Commitment.Confirmed);
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<string> result = sut.GetSlotLeader(Commitment.Confirmed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -495,19 +444,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetSlot()
         {
-            var responseData = File.ReadAllText("Resources/Http/Slot/GetSlotResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Slot/GetSlotRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/Slot/GetSlotResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Slot/GetSlotRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetSlot();
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<ulong> result = sut.GetSlot();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -520,19 +466,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetSlotProcessed()
         {
-            var responseData = File.ReadAllText("Resources/Http/Slot/GetSlotResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Slot/GetSlotProcessedRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/Slot/GetSlotResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Slot/GetSlotProcessedRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetSlot(Types.Commitment.Processed);
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<ulong> result = sut.GetSlot(Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -545,19 +488,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetRecentPerformanceSamples()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetRecentPerformanceSamplesResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetRecentPerformanceSamplesRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetRecentPerformanceSamplesResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetRecentPerformanceSamplesRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetRecentPerformanceSamples(4);
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<List<PerformanceSample>> result = sut.GetRecentPerformanceSamples(4);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -574,19 +514,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetSnapshotSlot()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetSnapshotSlotResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetSnapshotSlotRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetSnapshotSlotResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetSnapshotSlotRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetSnapshotSlot();
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<ulong> result = sut.GetSnapshotSlot();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -599,19 +536,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetSupply()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetSupplyResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetSupplyRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetSupplyResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetSupplyRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetSupply();
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<ResponseValue<Supply>> result = sut.GetSupply();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -627,19 +561,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetSupplyProcessed()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetSupplyResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetSupplyProcessedRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetSupplyResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetSupplyProcessedRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetSupply(Commitment.Processed);
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<ResponseValue<Supply>> result = sut.GetSupply(Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -655,19 +586,17 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetStakeActivation()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetStakeActivationResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetStakeActivationRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetStakeActivationResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetStakeActivationRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetStakeActivation("CYRJWqiSjLitBAcRxPvWpgX3s5TvmN2SuRY3eEYypFvT");
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<StakeActivationInfo> result =
+                sut.GetStakeActivation("CYRJWqiSjLitBAcRxPvWpgX3s5TvmN2SuRY3eEYypFvT");
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -682,19 +611,17 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetStakeActivationWithEpoch()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetStakeActivationWithEpochResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetStakeActivationWithEpochRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetStakeActivationWithEpochResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetStakeActivationWithEpochRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetStakeActivation("CYRJWqiSjLitBAcRxPvWpgX3s5TvmN2SuRY3eEYypFvT", 4);
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<StakeActivationInfo> result =
+                sut.GetStakeActivation("CYRJWqiSjLitBAcRxPvWpgX3s5TvmN2SuRY3eEYypFvT", 4);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -709,19 +636,17 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetStakeActivationWithEpochProcessed()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetStakeActivationWithEpochResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetStakeActivationWithEpochProcessedRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetStakeActivationWithEpochResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetStakeActivationWithEpochProcessedRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetStakeActivation("CYRJWqiSjLitBAcRxPvWpgX3s5TvmN2SuRY3eEYypFvT", 4, Commitment.Processed);
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<StakeActivationInfo> result =
+                sut.GetStakeActivation("CYRJWqiSjLitBAcRxPvWpgX3s5TvmN2SuRY3eEYypFvT", 4, Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -737,19 +662,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetMinimumLedgerSlot()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetMinimumLedgerSlotResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetMinimumLedgerSlotRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetMinimumLedgerSlotResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetMinimumLedgerSlotRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetMinimumLedgerSlot();
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<ulong> result = sut.GetMinimumLedgerSlot();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -762,19 +684,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetVersion()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetVersionResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetVersionRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetVersionResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetVersionRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetVersion();
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<NodeVersion> result = sut.GetVersion();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -789,20 +708,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetHealth_HealthyResponse()
         {
+            string responseData = File.ReadAllText("Resources/Http/Health/GetHealthHealthyResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Health/GetHealthRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var responseData = File.ReadAllText("Resources/Http/Health/GetHealthHealthyResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Health/GetHealthRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri
-            };
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-
-            var res = sut.GetHealth();
+            RequestResult<string> res = sut.GetHealth();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.AreEqual("ok", res.Result);
@@ -813,20 +728,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetHealth_UnhealthyResponse()
         {
+            string responseData = File.ReadAllText("Resources/Http/Health/GetHealthUnhealthyResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/Health/GetHealthRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var responseData = File.ReadAllText("Resources/Http/Health/GetHealthUnhealthyResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/Health/GetHealthRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri
-            };
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-
-            var res = sut.GetHealth();
+            RequestResult<string> res = sut.GetHealth();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNull(res.Result);
@@ -842,20 +753,16 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetMinimumBalanceForRentExemption()
         {
+            string responseData = File.ReadAllText("Resources/Http/GetMinimumBalanceForRateExemptionResponse.json");
+            string requestData = File.ReadAllText("Resources/Http/GetMinimumBalanceForRateExemptionRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var responseData = File.ReadAllText("Resources/Http/GetMinimumBalanceForRateExemptionResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetMinimumBalanceForRateExemptionRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri
-            };
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-
-            var res = sut.GetMinimumBalanceForRentExemption(50);
+            RequestResult<ulong> res = sut.GetMinimumBalanceForRentExemption(50);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsTrue(res.WasSuccessful);
@@ -867,19 +774,17 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetMinimumBalanceForRentExemptionConfirmed()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetMinimumBalanceForRateExemptionResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetMinimumBalanceForRateExemptionConfirmedRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/GetMinimumBalanceForRateExemptionResponse.json");
+            string requestData =
+                File.ReadAllText("Resources/Http/GetMinimumBalanceForRateExemptionConfirmedRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri
-            };
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var res = sut.GetMinimumBalanceForRentExemption(50, Types.Commitment.Confirmed);
+            RequestResult<ulong> res = sut.GetMinimumBalanceForRentExemption(50, Commitment.Confirmed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsTrue(res.WasSuccessful);
@@ -891,55 +796,51 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestRequestAirdrop()
         {
-            var responseData = File.ReadAllText("Resources/Http/RequestAirdropResult.json");
-            var requestData = File.ReadAllText("Resources/Http/RequestAirdropRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
+            string responseData = File.ReadAllText("Resources/Http/RequestAirdropResult.json");
+            string requestData = File.ReadAllText("Resources/Http/RequestAirdropRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri
-            };
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var res = sut.RequestAirdrop("6bhhceZToGG9RsTe1nfNFXEMjavhj6CV55EsvearAt2z", 100000000000);
+            RequestResult<string> res =
+                sut.RequestAirdrop("6bhhceZToGG9RsTe1nfNFXEMjavhj6CV55EsvearAt2z", 100000000000);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsTrue(res.WasSuccessful);
-            Assert.AreEqual("2iyRQZmksTfkmyH9Fnho61x4Y7TeSN8g3GRZCHmQjzzFB1e3DwKEVrYfR7AnKjiE5LiDEfCowtzoE2Pau646g1Vf", res.Result);
+            Assert.AreEqual("2iyRQZmksTfkmyH9Fnho61x4Y7TeSN8g3GRZCHmQjzzFB1e3DwKEVrYfR7AnKjiE5LiDEfCowtzoE2Pau646g1Vf",
+                res.Result);
 
             FinishTest(messageHandlerMock, TestnetUri);
-
         }
 
         /// <summary>
-        /// Backstory - public RPC nodes no longer support GetProgramAccount requests for the Serum program-id
-        /// These are dealt with a HTTP 410 "GONE" response.
-        /// Make sure that the JsonRpc gives an practical response under these circumstances.
+        ///     Backstory - public RPC nodes no longer support GetProgramAccount requests for the Serum program-id
+        ///     These are dealt with a HTTP 410 "GONE" response.
+        ///     Make sure that the JsonRpc gives an practical response under these circumstances.
         /// </summary>
         [TestMethod]
         public void TestFailHttp410Gone()
         {
-            var responseData = File.ReadAllText("Resources/Http/GetProgramAccountsResponse-Fail-410.json");
-            var requestData = File.ReadAllText("Resources/Http/GetProgramAccountsRequest-Fail-410.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData, HttpStatusCode.Gone);
+            string responseData = File.ReadAllText("Resources/Http/GetProgramAccountsResponse-Fail-410.json");
+            string requestData = File.ReadAllText("Resources/Http/GetProgramAccountsRequest-Fail-410.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData, HttpStatusCode.Gone);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
             List<MemCmp> filters = new()
             {
-                new MemCmp { Offset = 45, Bytes = "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5" },
+                new MemCmp {Offset = 45, Bytes = "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5"}
             };
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetProgramAccounts("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", // serum program-id
-                dataSize:3228, memCmpList:filters ); 
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<List<AccountKeyPair>> result = sut.GetProgramAccounts(
+                "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", // serum program-id
+                dataSize: 3228, memCmpList: filters);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result);
@@ -952,26 +853,23 @@ namespace Solnet.Rpc.Test
         }
 
         /// <summary>
-        /// Backstory - when hopping from public RPC node to Serum RPC node there was a difference in their configuration
-        /// Solnet was sending Content-Type header of `application/json; charset=utf-8` which is rejected by Serum RPC cluster.
-        /// This was dealt with by a HTTP 415 response which was not accessible in the Solnet Result.
+        ///     Backstory - when hopping from public RPC node to Serum RPC node there was a difference in their configuration
+        ///     Solnet was sending Content-Type header of `application/json; charset=utf-8` which is rejected by Serum RPC cluster.
+        ///     This was dealt with by a HTTP 415 response which was not accessible in the Solnet Result.
         /// </summary>
         [TestMethod]
         public void TestFailHttp415UnsupportedMediaType()
         {
-            var responseData = "Supplied content type is not allowed. Content-Type: application/json is required";
-            var requestData = File.ReadAllText("Resources/Http/GetBalanceRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData, HttpStatusCode.UnsupportedMediaType);
+            string responseData = "Supplied content type is not allowed. Content-Type: application/json is required";
+            string requestData = File.ReadAllText("Resources/Http/GetBalanceRequest.json");
+            string sentMessage = string.Empty;
+            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
+                s => sentMessage = s, responseData, HttpStatusCode.UnsupportedMediaType);
 
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
+            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
 
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetBalance("hoakwpFB8UoLnPpLC56gsjpY7XbVwaCuRQRMQzN5TVh");
+            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            RequestResult<ResponseValue<ulong>> result = sut.GetBalance("hoakwpFB8UoLnPpLC56gsjpY7XbVwaCuRQRMQzN5TVh");
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result);
@@ -982,7 +880,5 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
-
-
     }
 }

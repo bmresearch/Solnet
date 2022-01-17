@@ -1,1 +1,8 @@
-{"method":"signatureSubscribe","params":["4orRpuqStpJDvcpBy3vDSV4TDTGNbefmqYUnG2yVnKwjnLFqCwY4h5cBTAKakKek4inuxHF71LuscBS1vwSLtWcx"],"jsonrpc":"2.0","id":0}
+{
+  "method": "signatureSubscribe",
+  "params": [
+    "4orRpuqStpJDvcpBy3vDSV4TDTGNbefmqYUnG2yVnKwjnLFqCwY4h5cBTAKakKek4inuxHF71LuscBS1vwSLtWcx"
+  ],
+  "jsonrpc": "2.0",
+  "id": 0
+}
