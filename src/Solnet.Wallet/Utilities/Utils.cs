@@ -1,7 +1,7 @@
 using Chaos.NaCl;
-using Org.BouncyCastle.Crypto.Digests;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 namespace Solnet.Wallet.Utilities
 {
@@ -92,11 +92,8 @@ namespace Solnet.Wallet.Utilities
         /// <returns>The hash.</returns>
         private static byte[] Sha256(byte[] data, int offset, int count)
         {
-            byte[] i = new byte[32];
-            Sha256Digest digest = new();
-            digest.BlockUpdate(data, offset, count);
-            digest.DoFinal(i, 0);
-            return i;
+            var SHA256CHECKSUM = SHA256.Create();
+            return SHA256CHECKSUM.ComputeHash(data.AsSpan(offset,count).ToArray());
         }
 
         /// <summary>
