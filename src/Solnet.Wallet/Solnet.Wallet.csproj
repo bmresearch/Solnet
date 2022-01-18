@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <Description>
-            Solnet.Wallet uses BIP32 and BIP39 to generate an HD tree of Solana compatible addresses from a randomly generated word seed.
-        </Description>
-        <TargetFramework>net5.0</TargetFramework>
-    </PropertyGroup>
+  <PropertyGroup>
+    <Description>
+      Solnet.Wallet uses BIP32 and BIP39 to generate an HD tree of Solana compatible addresses from a randomly generated word seed.
+    </Description>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-            <_Parameter1>Solnet.Wallet.Test</_Parameter1>
-        </AssemblyAttribute>
-        <PackageReference Include="Chaos.NaCl.Standard" Version="1.0.0"/>
-        <PackageReference Include="Portable.BouncyCastle" Version="1.8.2"/>
-    </ItemGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>Solnet.Wallet.Test</_Parameter1>
+    </AssemblyAttribute>
+    <PackageReference Include="Chaos.NaCl.Standard" Version="1.0.0" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.2" />
+  </ItemGroup>
 
-    <Import Project="..\..\SharedBuildProperties.props"/>
+  <Import Project="..\..\SharedBuildProperties.props" />
 </Project>

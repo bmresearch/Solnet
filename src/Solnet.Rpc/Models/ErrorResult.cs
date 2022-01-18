@@ -1,15 +1,16 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Solnet.Rpc.Models;
-
-/// <summary>
-///     Holds an error result.
-/// </summary>
-public class ErrorResult
+namespace Solnet.Rpc.Models
 {
     /// <summary>
-    ///     The error string.
+    /// Holds an error result.
     /// </summary>
-    [JsonPropertyName("err")]
-    public TransactionError Error { get; set; }
+    public class ErrorResult
+    {
+        /// <summary>
+        /// The error string.
+        /// </summary>
+        [JsonPropertyName("err")]
+        public TransactionError Error { get; set; }
+    }
 }

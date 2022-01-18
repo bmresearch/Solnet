@@ -1,8 +1,1 @@
-{
-  "method": "getLeaderSchedule",
-  "params": [
-    79700000
-  ],
-  "jsonrpc": "2.0",
-  "id": 0
-}
+{"method":"getLeaderSchedule","params":[79700000],"jsonrpc":"2.0","id":0}

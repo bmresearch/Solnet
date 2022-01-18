@@ -19,15 +19,12 @@ namespace Solnet.Rpc.Test
         private const string Blockhash = "5cZja93sopRB9Bkhckj5WzCxCaVyriv2Uh5fFDPDFFfj";
 
         private const string AddSignatureBlockHash = "F2EzHpSp2WYRDA1roBN2Q4Wzw7ePxU2z1zWfh8ejUEyh";
-
         private const string AddSignatureTransaction = "AThRcCA7YPqwXF1JrA3lTHKU0OTZdSbh1jn1oEUkOXh" +
-                                                       "lZlNfUZnJyC5I3h6ldRGY444BBKpjRNTYO2n5x8t9swABAAIER2mrlyBLqD+wyu4X94aPHgdOUhWBoNidlDedq" +
-                                                       "mW3F7J7rHLZwOnCKOnqrRmjOO1w2JcV0XhPLlWiw5thiFgQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
-                                                       "AAAAABUpTUPhdyILWFKVWcniKKW3fHqur0KYGeIhJMvTu9qDQVQOHggZl4ubetKawWVznB6EGcsLPkeO3Skl7n" +
-                                                       "XGaZAICAgABDAIAAACAlpgAAAAAAAMBABVIZWxsbyBmcm9tIFNvbC5OZXQgOik=";
-
-        private const string AddSignatureSignature =
-            "28Jo82xATR1U2u1PfhEjhdn3m3ciXEbxi7SocxVaj9YvyxJHkZb3yyn9QYtAubqrTcXRqTvG8DKRLGnjs5mTi5yy";
+            "lZlNfUZnJyC5I3h6ldRGY444BBKpjRNTYO2n5x8t9swABAAIER2mrlyBLqD+wyu4X94aPHgdOUhWBoNidlDedq" +
+            "mW3F7J7rHLZwOnCKOnqrRmjOO1w2JcV0XhPLlWiw5thiFgQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+            "AAAAABUpTUPhdyILWFKVWcniKKW3fHqur0KYGeIhJMvTu9qDQVQOHggZl4ubetKawWVznB6EGcsLPkeO3Skl7n" +
+            "XGaZAICAgABDAIAAACAlpgAAAAAAAMBABVIZWxsbyBmcm9tIFNvbC5OZXQgOik=";
+        private const string AddSignatureSignature = "28Jo82xATR1U2u1PfhEjhdn3m3ciXEbxi7SocxVaj9YvyxJHkZb3yyn9QYtAubqrTcXRqTvG8DKRLGnjs5mTi5yy";
 
         private const string ExpectedTransactionHashWithTransferAndMemo =
             "AV9Xyi1t5dscb5+097PVDAP8fq/6HDRoNTQx9ZD2picvZNDUy9seCEKgsTNKgeTXtQ+pNEYB" +
@@ -52,7 +49,7 @@ namespace Solnet.Rpc.Test
 
         private const string Nonce = "2S1kjspXLPs6jpNVXQfNMqZzzSrKLbGdr9Fxap5h1DLN";
 
-        private static readonly byte[] CompiledMessageBytes =
+        private static byte[] CompiledMessageBytes =
         {
             1, 0, 2, 5, 71, 105, 171, 151, 32, 75, 168, 63, 176, 202, 238, 23, 247, 134, 143, 30, 7, 78, 82, 21,
             129, 160, 216, 157, 148, 55, 157, 170, 101, 183, 23, 178, 132, 220, 206, 171, 228, 52, 112, 149, 218,
@@ -68,10 +65,10 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestTransactionBuilderBuild()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
-            Account fromAccount = wallet.GetAccount(0);
-            Account toAccount = wallet.GetAccount(1);
-            byte[] tx = new TransactionBuilder()
+            var wallet = new Wallet.Wallet(MnemonicWords);
+            var fromAccount = wallet.GetAccount(0);
+            var toAccount = wallet.GetAccount(1);
+            var tx = new TransactionBuilder()
                 .SetRecentBlockHash(Blockhash)
                 .SetFeePayer(fromAccount)
                 .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
@@ -85,9 +82,9 @@ namespace Solnet.Rpc.Test
         [ExpectedException(typeof(Exception))]
         public void TestTransactionBuilderBuildNullBlockhashException()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
-            Account fromAccount = wallet.GetAccount(0);
-            Account toAccount = wallet.GetAccount(1);
+            var wallet = new Wallet.Wallet(MnemonicWords);
+            var fromAccount = wallet.GetAccount(0);
+            var toAccount = wallet.GetAccount(1);
             _ = new TransactionBuilder().SetFeePayer(fromAccount)
                 .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
                 .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)"))
@@ -98,9 +95,9 @@ namespace Solnet.Rpc.Test
         [ExpectedException(typeof(Exception))]
         public void TestTransactionBuilderBuildNullFeePayerException()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
-            Account fromAccount = wallet.GetAccount(0);
-            Account toAccount = wallet.GetAccount(1);
+            var wallet = new Wallet.Wallet(MnemonicWords);
+            var fromAccount = wallet.GetAccount(0);
+            var toAccount = wallet.GetAccount(1);
             _ = new TransactionBuilder()
                 .SetRecentBlockHash(Blockhash)
                 .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
@@ -112,9 +109,9 @@ namespace Solnet.Rpc.Test
         [ExpectedException(typeof(Exception))]
         public void TestTransactionBuilderBuildEmptySignersException()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
-            Account fromAccount = wallet.GetAccount(0);
-            Account toAccount = wallet.GetAccount(1);
+            var wallet = new Wallet.Wallet(MnemonicWords);
+            var fromAccount = wallet.GetAccount(0);
+            var toAccount = wallet.GetAccount(1);
             _ = new TransactionBuilder()
                 .SetRecentBlockHash(Blockhash)
                 .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
@@ -126,8 +123,8 @@ namespace Solnet.Rpc.Test
         [ExpectedException(typeof(Exception))]
         public void TestTransactionBuilderBuildNullInstructionsException()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
-            Account fromAccount = wallet.GetAccount(0);
+            var wallet = new Wallet.Wallet(MnemonicWords);
+            var fromAccount = wallet.GetAccount(0);
             _ = new TransactionBuilder().SetRecentBlockHash(Blockhash)
                 .Build(fromAccount);
         }
@@ -135,52 +132,52 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void CreateInitializeAndMintToTest()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
+            var wallet = new Wallet.Wallet(MnemonicWords);
 
-            string blockHash = "G9JC6E7LfG6ayxARq5zDV5RdDr6P8NJEdzTUJ8ttrSKs";
-            ulong minBalanceForAccount = 2039280UL;
-            ulong minBalanceForMintAccount = 1461600UL;
+            var blockHash = "G9JC6E7LfG6ayxARq5zDV5RdDr6P8NJEdzTUJ8ttrSKs";
+            var minBalanceForAccount = 2039280UL;
+            var minBalanceForMintAccount = 1461600UL;
 
-            Account mintAccount = wallet.GetAccount(17);
-            Account ownerAccount = wallet.GetAccount(10);
-            Account initialAccount = wallet.GetAccount(18);
+            var mintAccount = wallet.GetAccount(17);
+            var ownerAccount = wallet.GetAccount(10);
+            var initialAccount = wallet.GetAccount(18);
 
-            byte[] tx = new TransactionBuilder()
+            var tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash)
                 .SetFeePayer(ownerAccount)
                 .AddInstruction(
                     SystemProgram.CreateAccount(
-                        ownerAccount,
-                        mintAccount,
-                        minBalanceForMintAccount,
-                        TokenProgram.MintAccountDataSize,
-                        TokenProgram.ProgramIdKey))
+                    ownerAccount,
+                    mintAccount,
+                    minBalanceForMintAccount,
+                    TokenProgram.MintAccountDataSize,
+                    TokenProgram.ProgramIdKey))
                 .AddInstruction(
                     TokenProgram.InitializeMint(
-                        mintAccount.PublicKey,
-                        2,
-                        ownerAccount.PublicKey,
-                        ownerAccount.PublicKey))
+                    mintAccount.PublicKey,
+                    2,
+                    ownerAccount.PublicKey,
+                    ownerAccount.PublicKey))
                 .AddInstruction(
                     SystemProgram.CreateAccount(
-                        ownerAccount,
-                        initialAccount,
-                        minBalanceForAccount,
-                        TokenProgram.TokenAccountDataSize,
-                        TokenProgram.ProgramIdKey))
+                    ownerAccount,
+                    initialAccount,
+                    minBalanceForAccount,
+                    TokenProgram.TokenAccountDataSize,
+                    TokenProgram.ProgramIdKey))
                 .AddInstruction(
                     TokenProgram.InitializeAccount(
-                        initialAccount.PublicKey,
-                        mintAccount.PublicKey,
-                        ownerAccount.PublicKey))
+                    initialAccount.PublicKey,
+                    mintAccount.PublicKey,
+                    ownerAccount.PublicKey))
                 .AddInstruction(
                     TokenProgram.MintTo(
-                        mintAccount.PublicKey,
-                        initialAccount.PublicKey,
-                        25000,
-                        ownerAccount))
+                    mintAccount.PublicKey,
+                    initialAccount.PublicKey,
+                    25000,
+                    ownerAccount))
                 .AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net"))
-                .Build(new List<Account> {ownerAccount, mintAccount, initialAccount});
+                .Build(new List<Account> { ownerAccount, mintAccount, initialAccount });
 
             Assert.AreEqual(ExpectedTransactionHashCreateInitializeAndMintTo, Convert.ToBase64String(tx));
         }
@@ -223,13 +220,13 @@ namespace Solnet.Rpc.Test
             Wallet.Wallet wallet = new(MnemonicWords);
 
             Account ownerAccount = wallet.GetAccount(10);
-            TransactionInstruction memo = MemoProgram.NewMemo(ownerAccount, "Hello");
-            TransactionInstruction created =
-                TransactionInstructionFactory.Create(new PublicKey(memo.ProgramId), memo.Keys, memo.Data);
+            var memo = MemoProgram.NewMemo(ownerAccount, "Hello");
+            var created = TransactionInstructionFactory.Create(new PublicKey(memo.ProgramId), memo.Keys, memo.Data);
 
             Assert.AreEqual(Convert.ToBase64String(memo.ProgramId), Convert.ToBase64String(created.ProgramId));
             Assert.AreSame(memo.Keys, created.Keys);
             Assert.AreEqual(Convert.ToBase64String(memo.Data), Convert.ToBase64String(created.Data));
+
         }
 
         [TestMethod]

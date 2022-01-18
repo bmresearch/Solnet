@@ -1,8 +1,1 @@
-{
-  "method": "getMinimumBalanceForRentExemption",
-  "params": [
-    50
-  ],
-  "jsonrpc": "2.0",
-  "id": 0
-}
+{"method":"getMinimumBalanceForRentExemption","params":[50],"jsonrpc":"2.0","id":0}

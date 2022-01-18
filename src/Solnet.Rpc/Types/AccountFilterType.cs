@@ -1,17 +1,17 @@
-﻿namespace Solnet.Rpc.Types;
-
-/// <summary>
-///     Represents the filter account type.
-/// </summary>
-public enum AccountFilterType
+﻿namespace Solnet.Rpc.Types
 {
     /// <summary>
-    ///     Circulating accounts.
+    /// Represents the filter account type.
     /// </summary>
-    Circulating,
-
-    /// <summary>
-    ///     Non circulating accounts.
-    /// </summary>
-    NonCirculating
+    public enum AccountFilterType
+    {
+        /// <summary>
+        /// Circulating accounts.
+        /// </summary>
+        Circulating,
+        /// <summary>
+        /// Non circulating accounts.
+        /// </summary>
+        NonCirculating
+    }
 }

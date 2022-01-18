@@ -8,7 +8,7 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void BuilRpcClient()
         {
-            IRpcClient c = ClientFactory.GetClient(Cluster.DevNet);
+            var c = ClientFactory.GetClient(Cluster.DevNet);
 
             Assert.IsInstanceOfType(c, typeof(SolanaRpcClient));
         }
@@ -16,7 +16,7 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void BuilStreamingRpcClient()
         {
-            IStreamingRpcClient c = ClientFactory.GetStreamingClient(Cluster.DevNet);
+            var c = ClientFactory.GetStreamingClient(Cluster.DevNet);
 
             Assert.IsInstanceOfType(c, typeof(SolanaStreamingRpcClient));
         }
@@ -25,7 +25,7 @@ namespace Solnet.Rpc.Test
         public void BuilRpcClientFromString()
         {
             string url = "https://testnet.solana.com";
-            IRpcClient c = ClientFactory.GetClient(url);
+            var c = ClientFactory.GetClient(url);
 
             Assert.IsInstanceOfType(c, typeof(SolanaRpcClient));
             Assert.AreEqual(url, c.NodeAddress.OriginalString);
@@ -35,7 +35,7 @@ namespace Solnet.Rpc.Test
         public void BuilStreamingRpcClientFromString()
         {
             string url = "wss://api.testnet.solana.com";
-            IStreamingRpcClient c = ClientFactory.GetStreamingClient(url);
+            var c = ClientFactory.GetStreamingClient(url);
 
             Assert.IsInstanceOfType(c, typeof(SolanaStreamingRpcClient));
             Assert.AreEqual(url, c.NodeAddress.OriginalString);

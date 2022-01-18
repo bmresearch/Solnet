@@ -3,9 +3,7 @@
   "method": "accountNotification",
   "params": {
     "result": {
-      "context": {
-        "slot": 99118135
-      },
+      "context": { "slot": 99118135 },
       "value": {
         "lamports": 2039280,
         "data": {

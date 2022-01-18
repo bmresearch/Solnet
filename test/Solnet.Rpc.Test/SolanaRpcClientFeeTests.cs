@@ -1,30 +1,36 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Solnet.Rpc.Core.Http;
-using Solnet.Rpc.Messages;
-using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Solnet.Rpc.Test
 {
     [TestClass]
     public class SolanaRpcClientFeeTest : SolanaRpcClientTestBase
     {
+
+
         [TestMethod]
         public void TestGetFeeRateGovernor()
         {
-            string responseData = File.ReadAllText("Resources/Http/Fees/GetFeeRateGovernorResponse.json");
-            string requestData = File.ReadAllText("Resources/Http/Fees/GetFeeRateGovernorRequest.json");
-            string sentMessage = string.Empty;
-            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
-                s => sentMessage = s, responseData);
+            var responseData = File.ReadAllText("Resources/Http/Fees/GetFeeRateGovernorResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Fees/GetFeeRateGovernorRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
 
-            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
 
-            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            RequestResult<ResponseValue<FeeRateGovernorInfo>> result = sut.GetFeeRateGovernor();
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetFeeRateGovernor();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -42,16 +48,19 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetFees()
         {
-            string responseData = File.ReadAllText("Resources/Http/Fees/GetFeesResponse.json");
-            string requestData = File.ReadAllText("Resources/Http/Fees/GetFeesRequest.json");
-            string sentMessage = string.Empty;
-            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
-                s => sentMessage = s, responseData);
+            var responseData = File.ReadAllText("Resources/Http/Fees/GetFeesResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Fees/GetFeesRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
 
-            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
 
-            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            RequestResult<ResponseValue<FeesInfo>> result = sut.GetFees();
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetFees();
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -68,16 +77,19 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetFeesConfirmed()
         {
-            string responseData = File.ReadAllText("Resources/Http/Fees/GetFeesResponse.json");
-            string requestData = File.ReadAllText("Resources/Http/Fees/GetFeesConfirmedRequest.json");
-            string sentMessage = string.Empty;
-            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
-                s => sentMessage = s, responseData);
+            var responseData = File.ReadAllText("Resources/Http/Fees/GetFeesResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Fees/GetFeesConfirmedRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
 
-            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
 
-            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            RequestResult<ResponseValue<FeesInfo>> result = sut.GetFees(Commitment.Confirmed);
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetFees(Commitment.Confirmed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -94,17 +106,19 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetFeeCalculatorForBlockhash()
         {
-            string responseData = File.ReadAllText("Resources/Http/Fees/GetFeeCalculatorForBlockhashResponse.json");
-            string requestData = File.ReadAllText("Resources/Http/Fees/GetFeeCalculatorForBlockhashRequest.json");
-            string sentMessage = string.Empty;
-            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
-                s => sentMessage = s, responseData);
+            var responseData = File.ReadAllText("Resources/Http/Fees/GetFeeCalculatorForBlockhashResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Fees/GetFeeCalculatorForBlockhashRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
 
-            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
 
-            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            RequestResult<ResponseValue<FeeCalculatorInfo>> result =
-                sut.GetFeeCalculatorForBlockhash("GJxqhuxcgfn5Tcj6y3f8X4FeCDd2RQ6SnEMo1AAxrPRZ");
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetFeeCalculatorForBlockhash("GJxqhuxcgfn5Tcj6y3f8X4FeCDd2RQ6SnEMo1AAxrPRZ");
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -118,18 +132,19 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void TestGetFeeCalculatorForBlockhashConfirmed()
         {
-            string responseData = File.ReadAllText("Resources/Http/Fees/GetFeeCalculatorForBlockhashResponse.json");
-            string requestData =
-                File.ReadAllText("Resources/Http/Fees/GetFeeCalculatorForBlockhashConfirmedRequest.json");
-            string sentMessage = string.Empty;
-            Mock<HttpMessageHandler> messageHandlerMock = SetupTest(
-                s => sentMessage = s, responseData);
+            var responseData = File.ReadAllText("Resources/Http/Fees/GetFeeCalculatorForBlockhashResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Fees/GetFeeCalculatorForBlockhashConfirmedRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
 
-            HttpClient httpClient = new HttpClient(messageHandlerMock.Object) {BaseAddress = TestnetUri};
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
 
-            SolanaRpcClient sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            RequestResult<ResponseValue<FeeCalculatorInfo>> result =
-                sut.GetFeeCalculatorForBlockhash("GJxqhuxcgfn5Tcj6y3f8X4FeCDd2RQ6SnEMo1AAxrPRZ", Commitment.Confirmed);
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetFeeCalculatorForBlockhash("GJxqhuxcgfn5Tcj6y3f8X4FeCDd2RQ6SnEMo1AAxrPRZ", Commitment.Confirmed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -139,5 +154,6 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
+
     }
 }

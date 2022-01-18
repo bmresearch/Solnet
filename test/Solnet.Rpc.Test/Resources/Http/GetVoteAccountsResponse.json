@@ -6,16 +6,8 @@
         "commission": 0,
         "epochVoteAccount": true,
         "epochCredits": [
-          [
-            1,
-            64,
-            0
-          ],
-          [
-            2,
-            192,
-            64
-          ]
+          [ 1, 64, 0 ],
+          [ 2, 192, 64 ]
         ],
         "rootSlot": 81274518,
         "nodePubkey": "B97CCUW3AEZFGy6uUg6zUdnNYvnVq5VG8PUtb2HayTDD",

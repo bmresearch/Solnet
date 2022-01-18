@@ -7,10 +7,7 @@
     "value": {
       "accounts": [
         {
-          "data": [
-            "",
-            "base64"
-          ],
+          "data": [ "", "base64" ],
           "executable": false,
           "lamports": 2551360,
           "owner": "11111111111111111111111111111111",

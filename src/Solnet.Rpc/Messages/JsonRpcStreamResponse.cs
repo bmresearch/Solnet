@@ -1,18 +1,19 @@
-﻿namespace Solnet.Rpc.Messages;
-
-/// <summary>
-///     Holds a json rpc message from a streaming socket.
-/// </summary>
-/// <typeparam name="T">The type of the result.</typeparam>
-public class JsonRpcStreamResponse<T>
+﻿namespace Solnet.Rpc.Messages
 {
     /// <summary>
-    ///     The message received.
+    /// Holds a json rpc message from a streaming socket.
     /// </summary>
-    public T Result { get; set; }
+    /// <typeparam name="T">The type of the result.</typeparam>
+    public class JsonRpcStreamResponse<T>
+    {
+        /// <summary>
+        /// The message received.
+        /// </summary>
+        public T Result { get; set; }
 
-    /// <summary>
-    ///     The subscription id that the message belongs to.
-    /// </summary>
-    public int Subscription { get; set; }
+        /// <summary>
+        /// The subscription id that the message belongs to.
+        /// </summary>
+        public int Subscription { get; set; }
+    }
 }

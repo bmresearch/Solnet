@@ -1,10 +1,1 @@
-{
-  "method": "getLeaderSchedule",
-  "params": [
-    {
-      "identity": "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu"
-    }
-  ],
-  "jsonrpc": "2.0",
-  "id": 0
-}
+{"method":"getLeaderSchedule","params":[{"identity":"Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu"}],"jsonrpc":"2.0","id":0}

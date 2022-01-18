@@ -3,16 +3,12 @@
   "method": "signatureNotification",
   "params": {
     "result": {
-      "context": {
-        "slot": 81888950
-      },
+      "context": { "slot": 81888950 },
       "value": {
         "err": {
           "InstructionError": [
             0,
-            {
-              "Custom": 0
-            }
+            { "Custom": 0 }
           ]
         }
       }
