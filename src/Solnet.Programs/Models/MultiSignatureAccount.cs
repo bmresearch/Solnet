@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Solnet.Programs.Models
 {
     /// <summary>
-    /// Represents a <see cref="Programs.TokenProgram"/> Multi Signature Account in Solana.
+    /// Represents a <see cref="TokenProgram"/> Multi Signature Account in Solana.
     /// </summary>
     public class MultiSignatureAccount
     {
