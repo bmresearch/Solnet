@@ -503,6 +503,25 @@ namespace Solnet.Programs
         }
 
         /// <summary>
+        /// Initialize an instruction to sync native tokens.
+        /// </summary>
+        /// <param name="account">The public key of the token account.</param>
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction SyncNative(PublicKey account)
+        {
+            List<AccountMeta> keys = new()
+            {
+                AccountMeta.Writable(account, false)
+            };
+            return new TransactionInstruction
+            {
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = keys,
+                Data = TokenProgramData.EncodeSyncNativeData()
+            };
+        }
+
+        /// <summary>
         /// Adds the list of signers to the list of keys.
         /// </summary>
         /// <param name="keys">The instruction's list of keys.</param>
@@ -596,6 +615,9 @@ namespace Solnet.Programs
                     break;
                 case TokenProgramInstructions.Values.BurnChecked:
                     TokenProgramData.DecodeBurnCheckedData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case TokenProgramInstructions.Values.SyncNative:
+                    TokenProgramData.DecodeSyncNativeData(decodedInstruction, keys, keyIndices);
                     break;
             }
             return decodedInstruction;

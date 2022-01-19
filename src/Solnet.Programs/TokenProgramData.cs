@@ -171,6 +171,13 @@ namespace Solnet.Programs
             => EncodeAmountCheckedLayout((byte)TokenProgramInstructions.Values.BurnChecked, amount, (byte)decimals);
 
         /// <summary>
+        /// Encodes the transaction instruction data for the <see cref="TokenProgramInstructions.Values.SyncNative"/> method.
+        /// </summary>
+        /// <returns>The byte array with the encoded data.</returns>
+        internal static byte[] EncodeSyncNativeData() =>
+            new[] { (byte) TokenProgramInstructions.Values.SyncNative };
+
+        /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="TokenProgramInstructions.Values.InitializeMint"/> method
         /// </summary>
         /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
