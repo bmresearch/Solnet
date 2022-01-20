@@ -1,10 +1,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Solnet.Programs.Models;
+using Solnet.Programs.Models.TokenProgram;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Solnet.Programs.Test
 {
