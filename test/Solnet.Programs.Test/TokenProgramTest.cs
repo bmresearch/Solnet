@@ -94,6 +94,7 @@ namespace Solnet.Programs.Test
         private static readonly byte[] ExpectedCloseAccountData = { 9 };
         private static readonly byte[] ExpectedFreezeAccountData = { 10 };
         private static readonly byte[] ExpectedThawAccountData = { 11 };
+        private static readonly byte[] ExpectedSyncNativeData = { 17 };
 
         private const string InitializeMultisigMessage =
             "AwAJDEdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyeLALNX+Hq5QvYpjBUrxcE6c1OPFtuOsWTs" +
@@ -931,6 +932,21 @@ namespace Solnet.Programs.Test
             Assert.AreEqual(8, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedThawAccountData, txInstruction.Data);
+        }
+
+        [TestMethod]
+        public void TestSyncNative()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+
+            var account = wallet.GetAccount(212);
+
+            var txInstruction =
+                TokenProgram.SyncNative(account.PublicKey);
+
+            Assert.AreEqual(1, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
+            CollectionAssert.AreEqual(ExpectedSyncNativeData, txInstruction.Data);
         }
 
         [TestMethod]

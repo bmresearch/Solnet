@@ -486,6 +486,18 @@ namespace Solnet.Programs
         }
 
         /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenProgramInstructions.Values.SyncNative"/> method
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeSyncNativeData(DecodedInstruction decodedInstruction, IList<PublicKey> keys,
+            byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
+        }
+
+        /// <summary>
         /// Encodes the transaction instruction data for the methods which only require the amount.
         /// </summary>
         /// <param name="method">The method identifier.</param>
