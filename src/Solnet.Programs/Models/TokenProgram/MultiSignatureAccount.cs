@@ -3,7 +3,7 @@ using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
 
-namespace Solnet.Programs.Models
+namespace Solnet.Programs.Models.TokenProgram
 {
     /// <summary>
     /// Represents a <see cref="Programs.TokenProgram"/> Multi Signature Account in Solana.
@@ -73,6 +73,9 @@ namespace Solnet.Programs.Models
         /// <returns>The <see cref="MultiSignatureAccount"/> structure.</returns>
         public static MultiSignatureAccount Deserialize(ReadOnlySpan<byte> data)
         {
+            if (data.Length != Layout.Length)
+                throw new ArgumentException($"{nameof(data)} has wrong size. Expected {Layout.Length} bytes, actual {data.Length} bytes.");
+
             List<PublicKey> signers = new();
 
             for(int i= 0; i < MaxSigners; i++)

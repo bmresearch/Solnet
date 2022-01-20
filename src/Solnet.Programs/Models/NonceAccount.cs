@@ -85,7 +85,7 @@ namespace Solnet.Programs.Models
         public static NonceAccount Deserialize(ReadOnlySpan<byte> data)
         {
             if (data.Length != AccountDataSize)
-                return null;
+                throw new ArgumentException($"{nameof(data)} has wrong size. Expected {AccountDataSize} bytes, actual {data.Length} bytes.");
 
             return new()
             {
