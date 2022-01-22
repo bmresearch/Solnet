@@ -190,8 +190,12 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Decimals", data.GetU8(1));
             decodedInstruction.Values.Add("Mint Authority", data.GetPubKey(2));
-            decodedInstruction.Values.Add("Freeze Authority Option", data.GetU8(34));
-            decodedInstruction.Values.Add("Freeze Authority", data.GetPubKey(35));
+
+            var hasFreezeAuthority = data.GetBool(34);
+            
+            decodedInstruction.Values.Add("Freeze Authority Option", hasFreezeAuthority);
+            if(hasFreezeAuthority)
+                decodedInstruction.Values.Add("Freeze Authority", data.GetPubKey(35));
         }
 
         /// <summary>

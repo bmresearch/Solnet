@@ -261,13 +261,11 @@ namespace Solnet.Programs.Utilities
             var b58 = new Base58Encoder();
             MemoryStream buffer = new();
             buffer.Write(fromPublicKey.KeyBytes);
-            buffer.Write(EncodeRustString(seed));
+            buffer.Write(Encoding.UTF8.GetBytes(seed));
             buffer.Write(programId.KeyBytes);
             byte[] hash = Hashing.Sha256(buffer.ToArray());
             publicKeyOut = new PublicKey(hash);
             return true;
         }
-
-
     }
 }

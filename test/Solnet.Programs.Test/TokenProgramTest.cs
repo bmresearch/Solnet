@@ -998,14 +998,13 @@ namespace Solnet.Programs.Test
             Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Account", out account));
             Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Decimals", out object decimals));
             Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Mint Authority", out object mintAuthority));
-            Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Freeze Authority", out object freezeAuthority));
             Assert.IsTrue(decodedInstructions[3].Values
                 .TryGetValue("Freeze Authority Option", out object freezeAuthorityOpt));
+            Assert.IsFalse(decodedInstructions[3].Values.TryGetValue("Freeze Authority", out object freezeAuthority));
             Assert.AreEqual("HUATcRqk8qaNHTfRjBePt9mUZ16dDN1cbpWQDk7QFUGm", (PublicKey)account);
             Assert.AreEqual(10, (byte)decimals);
             Assert.AreEqual("987cq6uofpTKzTyQywsyqNNyAKHAkJkBvY6ggqPnS8gJ", (PublicKey)mintAuthority);
-            Assert.AreEqual(0, (byte)freezeAuthorityOpt);
-            Assert.AreEqual("6eeL1Wb4ufcnxjTtvEStVGHPHeAWexLAFcJ6Kq9pUsXJ", (PublicKey)freezeAuthority);
+            Assert.AreEqual(false, freezeAuthorityOpt);
         }
 
         [TestMethod]
