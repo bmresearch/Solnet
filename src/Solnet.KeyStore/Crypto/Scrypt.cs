@@ -22,7 +22,7 @@ namespace Solnet.KeyStore.Crypto
             int r1 = 128 * r * p + 63;
             int r2 = 256 * r + 63;
             int r3 = 128 * r * n + 63;
-            Span<byte> ba = r1 <= MaxStackLimit ? stackalloc byte[r2] : new byte[r1];
+            Span<byte> ba = r1 <= MaxStackLimit ? stackalloc byte[r1] : new byte[r1];
             Span<byte> xYa = r2 <= MaxStackLimit ? stackalloc byte[r2] : new byte[r2];
             Span<byte> va =  r3 <= MaxStackLimit ? stackalloc byte[r3] : new byte[r3];
             Span<byte> buf = stackalloc byte[32];
