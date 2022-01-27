@@ -8,6 +8,7 @@ namespace Solnet.KeyStore.Crypto
 {
     public class Scrypt
     {
+        private  const uint MaxStackLimit = 1024 -1;
         private static byte[] SingleIterationPbkdf2(byte[] p, byte[] s, int dkLen)
         {
             PbeParametersGenerator pGen = new Pkcs5S2ParametersGenerator(new Sha256Digest());
@@ -18,9 +19,12 @@ namespace Solnet.KeyStore.Crypto
 
         public static unsafe byte[] CryptoScrypt(byte[] password, byte[] salt, int n, int r, int p, int dkLen)
         {
-            Span<byte> ba = stackalloc byte[128 * r * p + 63];
-            Span<byte> xYa = stackalloc byte[256 * r + 63];
-            Span<byte> va = stackalloc byte[128 * r * n + 63];
+            int r1 = 128 * r * p + 63;
+            int r2 = 256 * r + 63;
+            int r3 = 128 * r * n + 63;
+            Span<byte> ba = r1 <= MaxStackLimit ? stackalloc byte[r2] : new byte[r1];
+            Span<byte> xYa = r2 <= MaxStackLimit ? stackalloc byte[r2] : new byte[r2];
+            Span<byte> va =  r3 <= MaxStackLimit ? stackalloc byte[r3] : new byte[r3];
             Span<byte> buf = stackalloc byte[32];
 
             ba = SingleIterationPbkdf2(password, salt, p * 128 * r);
