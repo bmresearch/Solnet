@@ -1,10 +1,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Solnet.Programs.Models;
+using Solnet.Programs.Models.TokenProgram;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Solnet.Programs.Test
 {
@@ -94,6 +93,7 @@ namespace Solnet.Programs.Test
         private static readonly byte[] ExpectedCloseAccountData = { 9 };
         private static readonly byte[] ExpectedFreezeAccountData = { 10 };
         private static readonly byte[] ExpectedThawAccountData = { 11 };
+        private static readonly byte[] ExpectedSyncNativeData = { 17 };
 
         private const string InitializeMultisigMessage =
             "AwAJDEdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyeLALNX+Hq5QvYpjBUrxcE6c1OPFtuOsWTs" +
@@ -934,6 +934,21 @@ namespace Solnet.Programs.Test
         }
 
         [TestMethod]
+        public void TestSyncNative()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+
+            var account = wallet.GetAccount(212);
+
+            var txInstruction =
+                TokenProgram.SyncNative(account.PublicKey);
+
+            Assert.AreEqual(1, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
+            CollectionAssert.AreEqual(ExpectedSyncNativeData, txInstruction.Data);
+        }
+
+        [TestMethod]
         public void InitializeMultisigDecodeTest()
         {
             Message msg = Message.Deserialize(InitializeMultisigMessage);
@@ -983,14 +998,13 @@ namespace Solnet.Programs.Test
             Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Account", out account));
             Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Decimals", out object decimals));
             Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Mint Authority", out object mintAuthority));
-            Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Freeze Authority", out object freezeAuthority));
             Assert.IsTrue(decodedInstructions[3].Values
                 .TryGetValue("Freeze Authority Option", out object freezeAuthorityOpt));
+            Assert.IsFalse(decodedInstructions[3].Values.TryGetValue("Freeze Authority", out object freezeAuthority));
             Assert.AreEqual("HUATcRqk8qaNHTfRjBePt9mUZ16dDN1cbpWQDk7QFUGm", (PublicKey)account);
             Assert.AreEqual(10, (byte)decimals);
             Assert.AreEqual("987cq6uofpTKzTyQywsyqNNyAKHAkJkBvY6ggqPnS8gJ", (PublicKey)mintAuthority);
-            Assert.AreEqual(0, (byte)freezeAuthorityOpt);
-            Assert.AreEqual("6eeL1Wb4ufcnxjTtvEStVGHPHeAWexLAFcJ6Kq9pUsXJ", (PublicKey)freezeAuthority);
+            Assert.AreEqual(false, freezeAuthorityOpt);
         }
 
         [TestMethod]

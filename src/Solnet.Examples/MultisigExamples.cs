@@ -1,5 +1,5 @@
 using Solnet.Programs;
-using Solnet.Programs.Models;
+using Solnet.Programs.Models.TokenProgram;
 using Solnet.Rpc;
 using Solnet.Rpc.Builders;
 using Solnet.Rpc.Core.Http;

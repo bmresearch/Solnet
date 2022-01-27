@@ -139,7 +139,7 @@ namespace Solnet.Programs.Clients
                     addressesCopy.Clear();
                 }
 
-                var multipleAccs = await RpcClient.GetMultipleAccountsAsync(addressesCopy.Take(100).ToList(), Rpc.Types.Commitment.Confirmed);
+                var multipleAccs = await RpcClient.GetMultipleAccountsAsync(currentReq.Take(100).ToList(), Rpc.Types.Commitment.Confirmed);
 
                 if (!multipleAccs.WasSuccessful)
                 {
