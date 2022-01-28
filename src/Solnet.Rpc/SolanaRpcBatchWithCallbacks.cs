@@ -10,12 +10,22 @@ using System.Threading.Tasks;
 
 namespace Solnet.Rpc
 {
+    /// <summary>
+    /// This object is used to create a batch of RPC requests that can be executed as a single call to the RPC endpoint.
+    /// Use of batches can have give a significant performance improvement instead of making multiple requests.
+    /// The execution of batches can be controlled manually via the Flush method, or can be invoked automatically using auto-execute mode.
+    /// Auto-execute mode is useful when iterating through large worksets.
+    /// </summary>
     public class SolanaRpcBatchWithCallbacks
     {
 
-        public SolanaRpcBatchWithCallbacks()
+        /// <summary>
+        /// Constructs a new SolanaRpcBatchWithCallbacks instance
+        /// </summary>
+        /// <param name="rpcClient">An RPC client</param>
+        public SolanaRpcBatchWithCallbacks(IRpcClient rpcClient)
         {
-            _composer = new SolanaRpcBatchComposer();
+            _composer = new SolanaRpcBatchComposer(rpcClient);
         }
 
         /// <summary>
@@ -32,15 +42,14 @@ namespace Solnet.Rpc
         /// Sets the auto execute mode and trigger threshold
         /// </summary>
         /// <param name="mode">The auto execute mode to use.</param>
-        /// <param name="client">The RPC client to use or null for manual.</param>
         /// <param name="batchSizeTrigger">The number of requests that will trigger a batch execution.</param>
-        public void AutoExecute(BatchAutoExecuteMode mode, IRpcClient client, int batchSizeTrigger)
+        public void AutoExecute(BatchAutoExecuteMode mode, int batchSizeTrigger)
         {
-            _composer.AutoExecute(mode, client, batchSizeTrigger);
+            _composer.AutoExecute(mode, batchSizeTrigger);
         }
 
         /// <summary>
-        /// Used to execute any residual requests when using batches in auto execute mode.
+        /// Used to execute any requests remaining in the batch.
         /// </summary>
         public void Flush()
         {
@@ -50,7 +59,6 @@ namespace Solnet.Rpc
         #region RPC Methods
 
         // this is a sample set of methods with different response types
-        // TODO - add more methods 
 
         public void GetBalance(string pubKey, Commitment commitment = Commitment.Finalized,
                                Action<ResponseValue<ulong>, Exception> callback = null)

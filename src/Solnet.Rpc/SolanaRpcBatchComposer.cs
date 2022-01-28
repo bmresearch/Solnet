@@ -21,14 +21,14 @@ namespace Solnet.Rpc
     {
 
         /// <summary>
+        /// The `IRpcClient` instance to use
+        /// </summary>
+        private IRpcClient _rpcClient;
+
+        /// <summary>
         /// Batch of requests and their handlers
         /// </summary>
         private List<RpcBatchReqRespItem> _reqs;
-
-        /// <summary>
-        /// Message Id generator.
-        /// </summary>
-        private readonly IdGenerator _idGenerator = new IdGenerator();
 
         /// <summary>
         /// JSON serializer options
@@ -51,15 +51,12 @@ namespace Solnet.Rpc
         private int _autoBatchSize;
 
         /// <summary>
-        /// Holds the `IRpcClient` instance to use for auto execution mode.
-        /// </summary>
-        private IRpcClient _autoRpcClient;
-
-        /// <summary>
         /// Constructs a new SolanaRpcBatchComposer instance
         /// </summary>
-        public SolanaRpcBatchComposer()
+        /// <param name="rpcClient">An RPC client</param>
+        public SolanaRpcBatchComposer(IRpcClient rpcClient)
         {
+            _rpcClient = rpcClient ?? throw new ArgumentNullException(nameof(rpcClient));
             _reqs = new List<RpcBatchReqRespItem>();
             _jsonOptions = new JsonSerializerOptions
             {
@@ -78,14 +75,10 @@ namespace Solnet.Rpc
         /// Sets the auto execute mode and trigger threshold
         /// </summary>
         /// <param name="mode">The auto execute mode to use.</param>
-        /// <param name="client">The RPC client to use or null for manual.</param>
         /// <param name="batchSizeTrigger">The number of requests that will trigger a batch execution.</param>
-        public void AutoExecute(BatchAutoExecuteMode mode, IRpcClient client, int batchSizeTrigger) 
+        public void AutoExecute(BatchAutoExecuteMode mode, int batchSizeTrigger) 
         {
-            if (mode != BatchAutoExecuteMode.Manual && client == null) 
-                throw new ArgumentNullException($"RPC client required for this AutoExecute mode {mode}.");
             this._autoMode = mode;
-            this._autoRpcClient= client;
             this._autoBatchSize = batchSizeTrigger;
         }
 
@@ -104,17 +97,34 @@ namespace Solnet.Rpc
         /// Execute a batch request and process the response into the expected native types.
         /// Batch failure execption will invoke callbacks with an exception.
         /// </summary>
-        /// <param name="client"></param>
-        public JsonRpcBatchResponse Execute(IRpcClient client)
+        public JsonRpcBatchResponse Execute()
         {
-            return ExecuteAsync(client).Result;
+            return ExecuteAsync(_rpcClient).Result;
         }
 
         /// <summary>
         /// Execute a batch request and process the response into the expected native types.
         /// Batch failure execption will invoke callbacks with an exception.
         /// </summary>
-        /// <param name="client"></param>
+        /// <param name="client">The RPC client to execute this batch with</param>
+        public JsonRpcBatchResponse Execute(IRpcClient client)
+        {
+            return ExecuteAsync(client).Result;
+        }
+        /// <summary>
+        /// Execute a batch request and process the response into the expected native types.
+        /// Batch failure execption will invoke callbacks with an exception.
+        /// </summary>
+        public async Task<JsonRpcBatchResponse> ExecuteAsync()
+        { 
+            return await ExecuteAsync(_rpcClient);
+        }
+
+        /// <summary>
+        /// Execute a batch request and process the response into the expected native types.
+        /// Batch failure execption will invoke callbacks with an exception.
+        /// </summary>
+        /// <param name="client">The RPC client to execute this batch with</param>
         public async Task<JsonRpcBatchResponse> ExecuteAsync(IRpcClient client)
         {
             var reqs = this.CreateJsonRequests();
@@ -129,10 +139,28 @@ namespace Solnet.Rpc
         /// Execute a batch request and process the response into the expected native types.
         /// Batch failure execption will throw an Exception and bypass callbacks.
         /// </summary>
-        /// <param name="client"></param>
+        public JsonRpcBatchResponse ExecuteWithFatalFailure()
+        {
+            return ExecuteWithFatalFailureAsync(_rpcClient).Result;
+        }
+
+        /// <summary>
+        /// Execute a batch request and process the response into the expected native types.
+        /// Batch failure execption will throw an Exception and bypass callbacks.
+        /// </summary>
+        /// <param name="client">The RPC client to execute this batch with</param>
         public JsonRpcBatchResponse ExecuteWithFatalFailure(IRpcClient client)
         {
             return ExecuteWithFatalFailureAsync(client).Result;
+        }
+
+        /// <summary>
+        /// Execute a batch request and process the response into the expected native types.
+        /// Batch failure execption will throw an Exception and bypass callbacks.
+        /// </summary>
+        public async Task<JsonRpcBatchResponse> ExecuteWithFatalFailureAsync()
+        {
+            return await ExecuteWithFatalFailureAsync(_rpcClient);
         }
 
         /// <summary>
@@ -155,11 +183,10 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="response"></param>
         /// <returns></returns>
-        public JsonRpcBatchResponse ProcessBatchResponse(RequestResult<JsonRpcBatchResponse> response)
+        internal JsonRpcBatchResponse ProcessBatchResponse(RequestResult<JsonRpcBatchResponse> response)
         {
-            // TODO - make sure result was successful
-
             // sanity check response matches request
+            if (response == null) throw new ArgumentNullException(nameof(response));
             if (_reqs.Count != response.Result.Count) throw new ApplicationException($"Batch req/resp size mismatch {_reqs.Count}/{response.Result.Count}");
 
             // transfer expected type info to individual
@@ -263,11 +290,11 @@ namespace Solnet.Rpc
             switch (_autoMode)
             {
                 case BatchAutoExecuteMode.ExecuteWithFatalFailure:
-                    ExecuteWithFatalFailure(_autoRpcClient);
+                    ExecuteWithFatalFailure(_rpcClient);
                     break;
 
                 case BatchAutoExecuteMode.ExecuteWithCallbackFailures:
-                    Execute(_autoRpcClient);
+                    Execute(_rpcClient);
                     break;
 
                 default:
@@ -278,7 +305,7 @@ namespace Solnet.Rpc
         internal void AddRequest<T>(string method, IList<object> parameters, Action<T, Exception> callback)
         {
             var wrapped = WrapCallback<T>(callback);
-            var handler = RpcBatchReqRespItem.Create<T>(_idGenerator.GetNextId(), method, parameters, wrapped);
+            var handler = RpcBatchReqRespItem.Create<T>(_rpcClient.GetNextIdForReq(), method, parameters, wrapped);
             Add(handler);
         }
 
@@ -286,7 +313,7 @@ namespace Solnet.Rpc
         {
             var taskSource = new TaskCompletionSource<T>();
             var callback = WrapTaskSource<T>(taskSource);
-            var handler = RpcBatchReqRespItem.Create<T>(_idGenerator.GetNextId(), method, parameters, callback);
+            var handler = RpcBatchReqRespItem.Create<T>(_rpcClient.GetNextIdForReq(), method, parameters, callback);
             Add(handler);
             return taskSource.Task;
         }

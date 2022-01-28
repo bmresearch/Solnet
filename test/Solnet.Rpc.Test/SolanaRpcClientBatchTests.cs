@@ -27,7 +27,8 @@ namespace Solnet.Rpc.Test
         {
 
             // compose a new batch of requests
-            var batch = new SolanaRpcBatchWithCallbacks();
+            var unusedRpcClient = ClientFactory.GetClient(Cluster.MainNet);
+            var batch = new SolanaRpcBatchWithCallbacks(unusedRpcClient);
             batch.GetBalance("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
             batch.GetTokenAccountsByOwner("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", null, TokenProgram.ProgramIdKey);
             batch.GetConfirmedSignaturesForAddress2("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", 200, null, null);
@@ -72,7 +73,8 @@ namespace Solnet.Rpc.Test
             int sig_callback_count = 0;
 
             // compose a new batch of requests
-            var batch = new SolanaRpcBatchWithCallbacks();
+            var unusedRpcClient = ClientFactory.GetClient(Cluster.MainNet);
+            var batch = new SolanaRpcBatchWithCallbacks(unusedRpcClient);
             batch.GetBalance("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5",
                 callback: (x, ex) => found_lamports = x.Value);
             batch.GetTokenAccountsByOwner("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", null, TokenProgram.ProgramIdKey,
@@ -127,8 +129,8 @@ namespace Solnet.Rpc.Test
             var mockRpcClient = ClientFactory.GetClient(Cluster.MainNet, null, mockHttpClient);
 
             // compose a new batch of requests
-            var batch = new SolanaRpcBatchWithCallbacks();
-            batch.AutoExecute(BatchAutoExecuteMode.ExecuteWithFatalFailure, mockRpcClient, 10);
+            var batch = new SolanaRpcBatchWithCallbacks(mockRpcClient);
+            batch.AutoExecute(BatchAutoExecuteMode.ExecuteWithFatalFailure, 10);
             batch.GetBalance("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5",
                 callback: (x, ex) => found_lamports = x.Value);
             batch.GetTokenAccountsByOwner("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", null, TokenProgram.ProgramIdKey,
