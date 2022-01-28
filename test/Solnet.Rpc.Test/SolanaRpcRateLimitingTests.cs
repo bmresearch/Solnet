@@ -46,8 +46,9 @@ namespace Solnet.Rpc.Test
         public void TestTwoHitsPerSecond()
         {
             // allow 2 hits per second
+            var timeCheck = DateTime.UtcNow;
             var limit = RateLimiter.Create().AllowHits(2).PerSeconds(1);
-            var twoSecondsLater = DateTime.UtcNow.AddSeconds(2);
+            var twoSecondsLater = timeCheck.AddSeconds(2);
             Assert.IsTrue(limit.CanFire());
             limit.Fire();
             limit.Fire();
@@ -55,7 +56,10 @@ namespace Solnet.Rpc.Test
             limit.Fire();
             limit.Fire();
             limit.Fire();
-            Assert.IsTrue(DateTime.UtcNow >= twoSecondsLater);
+
+            // observe why this may break the build
+            var finalTimeCheck= DateTime.UtcNow;
+            Assert.IsTrue(finalTimeCheck >= twoSecondsLater, $"TimeCheck diff {twoSecondsLater.Subtract(finalTimeCheck).TotalMilliseconds}");
         }
 
     }
