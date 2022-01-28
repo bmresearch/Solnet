@@ -57,8 +57,8 @@ namespace Solnet.Rpc.Utilities
 
             var checkTime = DateTime.UtcNow;
             var resumeTime = NextFireAllowed(checkTime);
-            var snoozeMs = (int)resumeTime.Subtract(checkTime).TotalMilliseconds;
-            if (snoozeMs>0) Thread.Sleep(snoozeMs);
+            var snoozeMs = resumeTime.Subtract(checkTime).TotalMilliseconds;
+            if (snoozeMs>0) Thread.Sleep((int)snoozeMs);
 
             // record this trigger
             if (_duration_ms > 0)
@@ -83,7 +83,7 @@ namespace Solnet.Rpc.Utilities
 
             // drop any hits before the time window
             var cutOff = checkTime.AddMilliseconds(-_duration_ms);
-            while (_hit_list.Count > 0 && _hit_list.Peek() < cutOff)
+            while (_hit_list.Count > 0 && _hit_list.Peek().Subtract(cutOff).TotalMilliseconds < 0)
                 _hit_list.Dequeue();
 
             // are we left with more than we are allowed?
