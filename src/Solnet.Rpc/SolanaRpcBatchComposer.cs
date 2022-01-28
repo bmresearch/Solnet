@@ -239,15 +239,32 @@ namespace Solnet.Rpc
         }
 
         /// <summary>
-        /// Process a failed batch response
+        /// Process a failed batch response by notifying all callbacks with the exception
         /// </summary>
         /// <param name="response">The failed batch RPC response</param>
         /// <returns></returns>
-        public JsonRpcBatchResponse ProcessBatchFailure(RequestResult<JsonRpcBatchResponse> response)
+        internal JsonRpcBatchResponse ProcessBatchFailure(RequestResult<JsonRpcBatchResponse> response)
         {
-            // TODO - decide best approach - invoke each callback with exception?
+            // create failed batch exception
+            var ex = new BatchRequestException(response);
+
+            // transfer expected type info to individual
+            // batch response items
+            for (int ix = 0; ix < _reqs.Count; ix++)
+            {
+                // no response for each request as whole batch failed
+                var req = _reqs[ix];
+                req.Callback.Invoke(null, ex);
+            }
+
+            // reset ready for reuse
+            Clear();
+
+            // return the result
             return response.Result;
+
         }
+
 
         /// <summary>
         /// Convert a possible JsonElement type into desired response native type.
@@ -335,7 +352,8 @@ namespace Solnet.Rpc
             // wrap into common typed callback
             Action<JsonRpcBatchResponseItem, Exception> wrapper = (item, ex) =>
             {
-                T obj = item.ResultAs<T>();
+                T obj = default(T);
+                if (item != null) obj = item.ResultAs<T>();
                 callback.Invoke(obj, ex);
             };
             return wrapper;

@@ -141,7 +141,7 @@ namespace Solnet.Rpc.Test
                 callback: (x, ex) => sig_callback_count += x.Count);
             batch.GetConfirmedSignaturesForAddress2("4NSREK36nAr32vooa3L9z8tu6JWj5rY3k4KnsqTgynvm", 200, null, null,
                 callback: (x, ex) => sig_callback_count += x.Count);
-            
+
             // run through any remaining requests in batch
             batch.Flush();
 
@@ -214,6 +214,54 @@ namespace Solnet.Rpc.Test
             }
 
             return x;
+        }
+
+        [TestMethod]
+        public void TestBatchFailed()
+        {
+            // we're going to simulate an RPC failure
+            var expected_requests = File.ReadAllText("Resources/Http/Batch/SampleBatchRequest.json");
+            var expected_responses = "BAD REQUEST";
+            var exceptions_encountered = 0;
+
+            // compose a new batch of requests
+            var unusedRpcClient = ClientFactory.GetClient(Cluster.MainNet);
+            var batch = new SolanaRpcBatchWithCallbacks(unusedRpcClient);
+            BatchRequestException catch_for_assert = null;
+            batch.GetBalance("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5",
+                callback: (x, ex) => exceptions_encountered += ex != null ? 1 : 0);
+            batch.GetTokenAccountsByOwner("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", null, TokenProgram.ProgramIdKey,
+                callback: (x, ex) => exceptions_encountered += ex != null ? 1 : 0);
+            batch.GetConfirmedSignaturesForAddress2("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", 200, null, null,
+                callback: (x, ex) => exceptions_encountered += ex != null ? 1 : 0);
+            batch.GetConfirmedSignaturesForAddress2("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex", 200, null, null,
+                callback: (x, ex) => exceptions_encountered += ex != null ? 1 : 0);
+            batch.GetConfirmedSignaturesForAddress2("4NSREK36nAr32vooa3L9z8tu6JWj5rY3k4KnsqTgynvm", 200, null, null,
+                callback: (x, ex) =>
+                {
+                    Assert.IsInstanceOfType(ex, typeof(BatchRequestException));
+                    catch_for_assert = (BatchRequestException)ex;
+                    exceptions_encountered += ex != null ? 1 : 0;
+                });
+
+            // how many requests in batch?
+            Assert.AreEqual(5, batch.Composer.Count);
+
+            // fake RPC response
+            var resp = CreateMockRequestResult<JsonRpcBatchResponse>(expected_requests, expected_responses, HttpStatusCode.BadRequest);
+            Assert.IsNotNull(resp);
+            Assert.IsNull(resp.Result);
+            Assert.AreEqual(expected_responses, resp.RawRpcResponse);
+
+            // process and invoked callbacks?
+            batch.Composer.ProcessBatchFailure(resp);
+            Assert.AreEqual(5, exceptions_encountered);
+
+            // exception good?
+            Assert.IsNotNull(catch_for_assert);
+            Assert.IsNotNull(catch_for_assert.RpcResult);
+            Assert.AreEqual(expected_responses, catch_for_assert.RpcResult.RawRpcResponse);
+
         }
 
     }
