@@ -4,6 +4,7 @@ using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
+using Solnet.Rpc.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,8 +31,9 @@ namespace Solnet.Rpc
         /// <param name="url">The url of the node exposing the JSON RPC API.</param>
         /// <param name="logger">The logger to use.</param>
         /// <param name="httpClient">An http client.</param>
-        internal SolanaRpcClient(string url, ILogger logger, HttpClient httpClient = default) : base(url, logger,
-            httpClient)
+        /// <param name="rateLimiter">A rate limiting strategy or null.</param>
+        internal SolanaRpcClient(string url, ILogger logger, HttpClient httpClient = default, IRateLimiter rateLimiter = null) 
+            : base(url, logger, httpClient, rateLimiter)
         {
         }
 
@@ -56,6 +58,7 @@ namespace Solnet.Rpc
         private async Task<RequestResult<T>> SendRequestAsync<T>(string method)
         {
             JsonRpcRequest req = BuildRequest<T>(method, null);
+
             return await SendRequest<T>(req);
         }
 

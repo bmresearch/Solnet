@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Solnet.Rpc.Converters;
 using Solnet.Rpc.Messages;
+using Solnet.Rpc.Utilities;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -31,6 +32,11 @@ namespace Solnet.Rpc.Core.Http
         /// </summary>
         private readonly ILogger _logger;
 
+        /// <summary>
+        /// Rate limiting strategy
+        /// </summary>
+        private IRateLimiter _rateLimiter;
+
         /// <inheritdoc cref="IRpcClient.NodeAddress"/>
         public Uri NodeAddress { get; }
 
@@ -40,11 +46,13 @@ namespace Solnet.Rpc.Core.Http
         /// <param name="url">The url of the RPC server.</param>
         /// <param name="logger">The possible logger instance.</param>
         /// <param name="httpClient">The possible HttpClient instance. If null, a new instance will be created.</param>
-        protected JsonRpcClient(string url, ILogger logger = default, HttpClient httpClient = default)
+        /// <param name="rateLimiter">An IRateLimiter instance or null for no rate limiting.</param>
+        protected JsonRpcClient(string url, ILogger logger = default, HttpClient httpClient = default, IRateLimiter rateLimiter = null)
         {
             _logger = logger;
             NodeAddress = new Uri(url);
             _httpClient = httpClient ?? new HttpClient { BaseAddress = NodeAddress };
+            _rateLimiter = rateLimiter;
             _serializerOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -68,6 +76,10 @@ namespace Solnet.Rpc.Core.Http
 
             try
             {
+                // pre-flight check with rate limiter if set
+                _rateLimiter?.Fire(); 
+                
+                // logging
                 _logger?.LogInformation(new EventId(req.Id, req.Method), $"Sending request: {requestJson}");
 
                 // create byte buffer to avoid charset=utf-8 in content-type header
@@ -157,5 +169,7 @@ namespace Solnet.Rpc.Core.Http
 
             return result;
         }
+
     }
+
 }
