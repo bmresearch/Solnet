@@ -99,11 +99,23 @@ namespace Solnet.Rpc.Utilities
         /// <summary>
         /// Modify a rate limit
         /// </summary>
-        /// <param name="seconds"></param>
+        /// <param name="seconds">Number of seconds</param>
         /// <returns></returns>
         public RateLimiter PerSeconds(int seconds)
         {
-            return new RateLimiter(this._hits, seconds * 1000);
+            this._duration_ms = seconds * 1000;
+            return this;
+        }
+
+        /// <summary>
+        /// Modify a rate limit
+        /// </summary>
+        /// <param name="ms">Number of milliseconds</param>
+        /// <returns></returns>
+        public RateLimiter PerMs(int ms)
+        {
+            this._duration_ms = ms;
+            return this;
         }
 
         /// <summary>
@@ -113,7 +125,8 @@ namespace Solnet.Rpc.Utilities
         /// <returns>An instance of the rate limiter with a sliding time window.</returns>
         public RateLimiter AllowHits(int hits)
         {
-            return new RateLimiter(hits, this._duration_ms);
+            this._hits = hits;
+            return this;
         }
 
     }
