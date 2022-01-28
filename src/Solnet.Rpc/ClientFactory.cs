@@ -68,7 +68,7 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="cluster">The network cluster.</param>
         /// <param name="logger">The logger.</param>
-        /// <param name="rateLimiter">An IRateLimiter instance. If null, a new instance will be created.</param>
+        /// <param name="rateLimiter">An IRateLimiter instance or null.</param>
         /// <returns>The http client.</returns>
         public static IRpcClient GetClient(
             Cluster cluster,
@@ -84,7 +84,7 @@ namespace Solnet.Rpc
         /// <param name="cluster">The network cluster.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="httpClient">A HttpClient instance. If null, a new instance will be created.</param>
-        /// <param name="rateLimiter">An IRateLimiter instance. If null, a new instance will be created.</param>
+        /// <param name="rateLimiter">An IRateLimiter instance or null.</param>
         /// <returns>The http client.</returns>
         public static IRpcClient GetClient(Cluster cluster, ILogger logger = null,
                 HttpClient httpClient = null, IRateLimiter rateLimiter = null)
@@ -128,7 +128,7 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="url">The network cluster url.</param>
         /// <param name="logger">The logger.</param>
-        /// <param name="rateLimiter">An IRateLimiter instance. If null, a new instance will be created.</param>
+        /// <param name="rateLimiter">An IRateLimiter instance or null.</param>
         /// <returns>The http client.</returns>
         public static IRpcClient GetClient(string url, ILogger logger, IRateLimiter rateLimiter)
         {
@@ -141,7 +141,7 @@ namespace Solnet.Rpc
         /// <param name="url">The network cluster url.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="httpClient">A HttpClient instance. If null, a new instance will be created.</param>
-        /// <param name="rateLimiter">An IRateLimiter instance. If null, a new instance will be created.</param>
+        /// <param name="rateLimiter">An IRateLimiter instance or null.</param>
         /// <returns>The http client.</returns>
         public static IRpcClient GetClient(string url, ILogger logger = null, HttpClient httpClient = null, IRateLimiter rateLimiter = null)
         {
