@@ -45,13 +45,13 @@ namespace Solnet.Rpc.Core.Http
         /// <param name="url">The url of the RPC server.</param>
         /// <param name="logger">The possible logger instance.</param>
         /// <param name="httpClient">The possible HttpClient instance. If null, a new instance will be created.</param>
-        /// <param name="rateLimiter">An IRateLimiter instance. If null, a new instance will be created.</param>
+        /// <param name="rateLimiter">An IRateLimiter instance or null for no rate limiting.</param>
         protected JsonRpcClient(string url, ILogger logger = default, HttpClient httpClient = default, IRateLimiter rateLimiter = null)
         {
             _logger = logger;
             NodeAddress = new Uri(url);
             _httpClient = httpClient ?? new HttpClient { BaseAddress = NodeAddress };
-            _rateLimiter = rateLimiter ?? RateLimiter.Create();
+            _rateLimiter = rateLimiter;
             _serializerOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -74,8 +74,8 @@ namespace Solnet.Rpc.Core.Http
 
             try
             {
-                // pre-flight check with rate limiter
-                _rateLimiter.Fire();
+                // pre-flight check with rate limiter if set
+                _rateLimiter?.Fire(); 
                 
                 // logging
                 _logger?.LogInformation(new EventId(req.Id, req.Method), $"Sending request: {requestJson}");
