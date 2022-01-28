@@ -59,7 +59,9 @@ namespace Solnet.Rpc.Test
 
             // observe why this may break the build
             var finalTimeCheck= DateTime.UtcNow;
-            Assert.IsTrue(finalTimeCheck >= twoSecondsLater, $"TimeCheck diff {twoSecondsLater.Subtract(finalTimeCheck).TotalMilliseconds}");
+            Console.WriteLine($" ExecTime diff {finalTimeCheck.Subtract(timeCheck).TotalMilliseconds}ms");
+            Console.WriteLine($"TimeCheck diff {finalTimeCheck.Subtract(twoSecondsLater).TotalMilliseconds}ms");
+            Assert.IsTrue(finalTimeCheck.Subtract(timeCheck).TotalMilliseconds>2000, $"ExecTime diff {finalTimeCheck.Subtract(timeCheck).TotalMilliseconds}ms");
         }
 
     }
