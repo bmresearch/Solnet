@@ -29,6 +29,11 @@ namespace Solnet.Extensions
         private Dictionary<string, TokenDef> _tokens;
 
         /// <summary>
+        /// Map of known tokens.
+        /// </summary>
+        public IReadOnlyDictionary<string, TokenDef> KnownTokens => _tokens;
+
+        /// <summary>
         /// Constructs an empty TokenMintResolver object.
         /// </summary>
         public TokenMintResolver()
@@ -155,11 +160,11 @@ namespace Solnet.Extensions
 
             // pick out the coingecko identifier if available
             string coingeckoId = null;
-            if (tokenItem.Extensions.ContainsKey("coingeckoId")) coingeckoId = ((JsonElement) tokenItem.Extensions["coingeckoId"]).GetString();
+            if (tokenItem.Extensions?.ContainsKey("coingeckoId") ?? false) coingeckoId = ((JsonElement) tokenItem.Extensions["coingeckoId"]).GetString();
 
             // pick out the project website if available
             string projectUrl = null;
-            if (tokenItem.Extensions.ContainsKey("website")) projectUrl = ((JsonElement)tokenItem.Extensions["website"]).GetString();
+            if (tokenItem.Extensions?.ContainsKey("website") ?? false) projectUrl = ((JsonElement)tokenItem.Extensions["website"]).GetString();
 
             // construct the TokenDef instance
             var token = new TokenDef(tokenItem.Address, tokenItem.Name, tokenItem.Symbol, tokenItem.Decimals)

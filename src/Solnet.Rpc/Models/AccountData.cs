@@ -16,6 +16,90 @@ namespace Solnet.Rpc.Models
     }
 
     /// <summary>
+    /// Represents the account info for a given token account.
+    /// </summary>
+    public class TokenMintInfo : AccountInfoBase
+    {
+        /// <summary>
+        /// The parsed token account data field.
+        /// </summary>
+        public TokenMintData Data { get; set; }
+    }
+
+    /// <summary>
+    /// Represents a Token Mint account data.
+    /// </summary>
+    public class TokenMintData
+    {
+        /// <summary>
+        /// The program responsible for the account data.
+        /// </summary>
+        public string Program { get; set; }
+
+        /// <summary>
+        /// Account data space.
+        /// </summary>
+        public ulong Space { get; set; }
+
+        /// <summary>
+        /// The parsed token mint data.
+        /// </summary>
+        public ParsedTokenMintData Parsed { get; set; }
+    }
+
+    /// <summary>
+    /// Represents the Token Mint parsed data, as formatted per SPL token program.
+    /// </summary>
+    public class ParsedTokenMintData
+    {
+        /// <summary>
+        /// Contains the details of the token mint.
+        /// </summary>
+        public TokenMintInfoDetails Info { get; set; }
+
+        /// <summary>
+        /// The type of the account managed by the SPL token program.
+        /// </summary>
+        public string Type { get; set; }
+    }
+
+    /// <summary>
+    /// Represents a Token Mint account info as formatted per the SPL token program.
+    /// </summary>
+    public class TokenMintInfoDetails
+    {
+        /// <summary>
+        /// The freeze authority.
+        /// </summary>
+        public string FreezeAuthority { get; set; }
+
+        /// <summary>
+        /// The mint authority.
+        /// </summary>
+        public string MintAuthority { get; set; }
+
+        /// <summary>
+        /// The decimals cases to consider when converter to human readable token amounts.
+        /// </summary>
+        public byte Decimals { get; set; }
+
+        /// <summary>
+        /// Is the mint account initialized?
+        /// </summary>
+        public bool IsInitialized { get; set; }
+
+        /// <summary>
+        /// The current token supply.
+        /// </summary>
+        public string Supply { get; set; }
+
+        /// <summary>
+        /// The current token supply parsed as ulong.
+        /// </summary>
+        public ulong SupplyUlong => ulong.Parse(Supply);
+    }
+
+    /// <summary>
     /// Represents the details of the info field of a token account.
     /// </summary>
     public class TokenAccountInfoDetails
@@ -81,6 +165,11 @@ namespace Solnet.Rpc.Models
         /// The program responsible for the account data.
         /// </summary>
         public string Program { get; set; }
+
+        /// <summary>
+        /// Account data space.
+        /// </summary>
+        public ulong Space { get; set; }
 
         /// <summary>
         /// The parsed account data, as available by the program-specific state parser.

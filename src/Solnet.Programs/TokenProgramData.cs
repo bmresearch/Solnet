@@ -171,6 +171,13 @@ namespace Solnet.Programs
             => EncodeAmountCheckedLayout((byte)TokenProgramInstructions.Values.BurnChecked, amount, (byte)decimals);
 
         /// <summary>
+        /// Encodes the transaction instruction data for the <see cref="TokenProgramInstructions.Values.SyncNative"/> method.
+        /// </summary>
+        /// <returns>The byte array with the encoded data.</returns>
+        internal static byte[] EncodeSyncNativeData() =>
+            new[] { (byte) TokenProgramInstructions.Values.SyncNative };
+
+        /// <summary>
         /// Decodes the instruction instruction data  for the <see cref="TokenProgramInstructions.Values.InitializeMint"/> method
         /// </summary>
         /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
@@ -183,8 +190,12 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Decimals", data.GetU8(1));
             decodedInstruction.Values.Add("Mint Authority", data.GetPubKey(2));
-            decodedInstruction.Values.Add("Freeze Authority Option", data.GetU8(34));
-            decodedInstruction.Values.Add("Freeze Authority", data.GetPubKey(35));
+
+            var hasFreezeAuthority = data.GetBool(34);
+            
+            decodedInstruction.Values.Add("Freeze Authority Option", hasFreezeAuthority);
+            if(hasFreezeAuthority)
+                decodedInstruction.Values.Add("Freeze Authority", data.GetPubKey(35));
         }
 
         /// <summary>
@@ -476,6 +487,18 @@ namespace Solnet.Programs
             {
                 decodedInstruction.Values.Add($"Signer {i - 2}", keys[keyIndices[i]]);
             }
+        }
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenProgramInstructions.Values.SyncNative"/> method
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeSyncNativeData(DecodedInstruction decodedInstruction, IList<PublicKey> keys,
+            byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
         }
 
         /// <summary>

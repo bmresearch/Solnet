@@ -45,23 +45,24 @@ namespace Solnet.Examples
             byte[] msgData = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
-                .AddInstruction(SystemProgram.CreateAccount(
-                    ownerAccount,
-                    mintAccount,
-                    minBalanceForExemptionMint,
-                    TokenProgram.MintAccountDataSize,
-                    TokenProgram.ProgramIdKey))
                 .AddInstruction(TokenProgram.InitializeMint(
                     mintAccount.PublicKey,
                     2,
                     ownerAccount.PublicKey,
                     ownerAccount.PublicKey))
-                .AddInstruction(SystemProgram.CreateAccount(
-                    ownerAccount,
-                    initialAccount,
-                    minBalanceForExemptionAcc,
-                    TokenProgram.TokenAccountDataSize,
-                    TokenProgram.ProgramIdKey))
+                .AddInstruction(SystemProgram.AllocateWithSeed(
+                    new PublicKey("EME9GxLahsC1mjopepKMJg9RtbUu37aeLaQyHVdEd7vZ"),
+                    new PublicKey("Gg12mmahG97PDACxKiBta7ch2kkqDkXUzjn5oAcbPZct"),
+                    "Some Seed",
+                    165UL,
+                    new PublicKey("J6WZY5nuYGJmfFtBGZaXgwZSRVuLWxNR6gd4d3XTHqTk")))
+                .AddInstruction(SystemProgram.TransferWithSeed(
+                    new PublicKey("Gg12mmahG97PDACxKiBta7ch2kkqDkXUzjn5oAcbPZct"),
+                    new PublicKey("EME9GxLahsC1mjopepKMJg9RtbUu37aeLaQyHVdEd7vZ"),
+                    "Some Seed",
+                    new PublicKey("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj"),
+                    new PublicKey("EME9GxLahsC1mjopepKMJg9RtbUu37aeLaQyHVdEd7vZ"),
+                    25000UL))
                 .AddInstruction(TokenProgram.InitializeAccount(
                     initialAccount.PublicKey,
                     mintAccount.PublicKey,

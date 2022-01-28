@@ -132,13 +132,11 @@ namespace Solnet.Programs.Utilities
         /// <param name="length">The desired length for the new span.</param>
         /// <returns>A <see cref="Span{T}"/> of bytes.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
-        public static Span<byte> GetSpan(this ReadOnlySpan<byte> data, int offset, int length)
+        public static ReadOnlySpan<byte> GetSpan(this ReadOnlySpan<byte> data, int offset, int length)
         {
             if (offset + length > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            byte[] buffer = new byte[length];
-            data.Slice(offset, length).CopyTo(buffer);
-            return buffer;
+            return data.Slice(offset, length);
         }
 
         /// <summary>
@@ -204,6 +202,20 @@ namespace Solnet.Programs.Utilities
             return BinaryPrimitives.ReadSingleLittleEndian(data.Slice(offset, sizeof(float)));
         }
 
+
+        /// <summary>
+        /// Get a boolean value from the span at the given offset.
+        /// </summary>
+        /// <param name="data">The span to get data from.</param>
+        /// <param name="offset">The offset at which the boolean value is located.</param>
+        /// <returns>The <see cref="bool"/> instance that represents the value.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
+        public static bool GetBool(this ReadOnlySpan<byte> data, int offset)
+        {
+            return GetU8(data, offset) == 1;
+        }
+
+
         /// <summary>
         /// Decodes a string from a transaction instruction.
         /// </summary>
@@ -213,13 +225,49 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static (string EncodedString, int Length) DecodeRustString(this ReadOnlySpan<byte> data, int offset)
         {
+            if (offset + sizeof(ulong) > data.Length)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+
+            int stringLength = (int)data.GetU64(offset);
+            byte[] stringBytes = data.GetSpan(offset + sizeof(ulong), stringLength).ToArray();
+
+            return (EncodedString: Encoding.UTF8.GetString(stringBytes), Length: stringLength + sizeof(ulong));
+        }
+
+        /// <summary>
+        /// Decodes a string from a transaction instruction.
+        /// </summary>
+        /// <param name="data">The data to decode.</param>
+        /// <param name="offset">The offset at which the string begins.</param>
+        /// <param name="result">The decoded data./>.</param>
+        /// <returns>The length in bytes that was read from the original buffer, including the</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
+        public static int GetString(this ReadOnlySpan<byte> data, int offset, out string result)
+        {
             if (offset + sizeof(uint) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
 
             int stringLength = (int)data.GetU32(offset);
             byte[] stringBytes = data.GetSpan(offset + sizeof(uint), stringLength).ToArray();
+            result = Encoding.UTF8.GetString(stringBytes);
 
-            return (EncodedString: Encoding.ASCII.GetString(stringBytes), Length: stringLength + sizeof(uint));
+            return stringLength + sizeof(uint);
+        }
+
+
+        /// <summary>
+        /// Get a span from the read-only span at the given offset with the given length.
+        /// </summary>
+        /// <param name="data">The span to get data from.</param>
+        /// <param name="offset">The offset at which the desired <c>byte[]</c> begins.</param>
+        /// <param name="length">The desired length for the new <c>byte[]</c>.</param>
+        /// <returns>A <c>byte[]</c> of bytes.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
+        public static byte[] GetBytes(this ReadOnlySpan<byte> data, int offset, int length)
+        {
+            if (offset + length > data.Length)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            return data.Slice(offset, length).ToArray();
         }
     }
 }

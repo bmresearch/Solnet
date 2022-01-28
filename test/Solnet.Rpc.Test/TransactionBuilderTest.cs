@@ -3,6 +3,7 @@ using Solnet.Programs;
 using Solnet.Rpc.Builders;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
+using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -16,6 +17,14 @@ namespace Solnet.Rpc.Test
             " forward deal onion eight catalog surface unit card window walnut wealth medal";
 
         private const string Blockhash = "5cZja93sopRB9Bkhckj5WzCxCaVyriv2Uh5fFDPDFFfj";
+
+        private const string AddSignatureBlockHash = "F2EzHpSp2WYRDA1roBN2Q4Wzw7ePxU2z1zWfh8ejUEyh";
+        private const string AddSignatureTransaction = "AThRcCA7YPqwXF1JrA3lTHKU0OTZdSbh1jn1oEUkOXh" +
+            "lZlNfUZnJyC5I3h6ldRGY444BBKpjRNTYO2n5x8t9swABAAIER2mrlyBLqD+wyu4X94aPHgdOUhWBoNidlDedq" +
+            "mW3F7J7rHLZwOnCKOnqrRmjOO1w2JcV0XhPLlWiw5thiFgQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+            "AAAAABUpTUPhdyILWFKVWcniKKW3fHqur0KYGeIhJMvTu9qDQVQOHggZl4ubetKawWVznB6EGcsLPkeO3Skl7n" +
+            "XGaZAICAgABDAIAAACAlpgAAAAAAAMBABVIZWxsbyBmcm9tIFNvbC5OZXQgOik=";
+        private const string AddSignatureSignature = "28Jo82xATR1U2u1PfhEjhdn3m3ciXEbxi7SocxVaj9YvyxJHkZb3yyn9QYtAubqrTcXRqTvG8DKRLGnjs5mTi5yy";
 
         private const string ExpectedTransactionHashWithTransferAndMemo =
             "AV9Xyi1t5dscb5+097PVDAP8fq/6HDRoNTQx9ZD2picvZNDUy9seCEKgsTNKgeTXtQ+pNEYB" +
@@ -218,6 +227,31 @@ namespace Solnet.Rpc.Test
             Assert.AreSame(memo.Keys, created.Keys);
             Assert.AreEqual(Convert.ToBase64String(memo.Data), Convert.ToBase64String(created.Data));
 
+        }
+
+        [TestMethod]
+        public void TransactionBuilderAddSignatureTest()
+        {
+            Wallet.Wallet wallet = new(MnemonicWords);
+
+            Account fromAccount = wallet.GetAccount(10);
+            Account toAccount = wallet.GetAccount(8);
+
+            TransactionBuilder txBuilder = new TransactionBuilder()
+                .SetRecentBlockHash(AddSignatureBlockHash)
+                .SetFeePayer(fromAccount)
+                .AddInstruction(SystemProgram.Transfer(fromAccount.PublicKey, toAccount.PublicKey, 10000000))
+                .AddInstruction(MemoProgram.NewMemo(fromAccount.PublicKey, "Hello from Sol.Net :)"));
+
+            byte[] msgBytes = txBuilder.CompileMessage();
+            byte[] signature = fromAccount.Sign(msgBytes);
+
+            Assert.AreEqual(AddSignatureSignature, Encoders.Base58.EncodeData(signature));
+
+            byte[] tx = txBuilder.AddSignature(signature)
+                .Serialize();
+
+            Assert.AreEqual(AddSignatureTransaction, Convert.ToBase64String(tx));
         }
     }
 }

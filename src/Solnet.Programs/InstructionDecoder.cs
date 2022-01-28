@@ -1,4 +1,5 @@
-﻿using Solnet.Rpc.Builders;
+﻿using Solnet.Programs.TokenSwap;
+using Solnet.Rpc.Builders;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
@@ -32,9 +33,11 @@ namespace Solnet.Programs
             InstructionDictionary.Add(MemoProgram.ProgramIdKeyV2, MemoProgram.Decode);
             InstructionDictionary.Add(SystemProgram.ProgramIdKey, SystemProgram.Decode);
             InstructionDictionary.Add(TokenProgram.ProgramIdKey, TokenProgram.Decode);
+            InstructionDictionary.Add(TokenSwapProgram.TokenSwapProgramIdKey, TokenSwapProgram.Decode);
             InstructionDictionary.Add(AssociatedTokenAccountProgram.ProgramIdKey, AssociatedTokenAccountProgram.Decode);
             InstructionDictionary.Add(NameServiceProgram.ProgramIdKey, NameServiceProgram.Decode);
             InstructionDictionary.Add(SharedMemoryProgram.ProgramIdKey, SharedMemoryProgram.Decode);
+            InstructionDictionary.Add(StakeProgram.ProgramIdKey, StakeProgram.Decode);
         }
 
         /// <summary>
@@ -125,7 +128,7 @@ namespace Solnet.Programs
         }
 
         /// <summary>
-        /// Decodes the instructions present in the given transaction and it's metadata information.
+        /// Decodes the instructions present in the given transaction and its metadata information.
         /// </summary>
         /// <param name="message">The message object.</param>
         /// <returns>The decoded instructions data.</returns>

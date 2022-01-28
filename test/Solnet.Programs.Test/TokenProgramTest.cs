@@ -1,9 +1,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Solnet.Programs.Models.TokenProgram;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Solnet.Programs.Test
 {
@@ -93,6 +93,7 @@ namespace Solnet.Programs.Test
         private static readonly byte[] ExpectedCloseAccountData = { 9 };
         private static readonly byte[] ExpectedFreezeAccountData = { 10 };
         private static readonly byte[] ExpectedThawAccountData = { 11 };
+        private static readonly byte[] ExpectedSyncNativeData = { 17 };
 
         private const string InitializeMultisigMessage =
             "AwAJDEdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyeLALNX+Hq5QvYpjBUrxcE6c1OPFtuOsWTs" +
@@ -220,6 +221,18 @@ namespace Solnet.Programs.Test
             "tkGF4Er7PSNNJpXv/iFEjgEy3WsK0DUo2VDAjvOSz/g9hpBt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/" +
             "AKkFSlNQ+F3IgtYUpVZyeIopbd8eq6vQpgZ4iEky9O72oBsCrLfKwExmcW/hntBXRIKAe6vTrQDRoyz2ZvGtaL" +
             "7sAwcGBAUGAQIDCg/gnyZ3AAAAAAoHBgQABgECAwEJCAEAEkhlbGxvIGZyb20gU29sLk5ldA==";
+
+        private const string MultiSignatureAccountBase64Data =
+            "AwUBWM8dG26h12WDYbEd7sD1a0xQDEwtI8e9q6oVqCKB5sBp6kQNrCn8mBZqa417ZDd6Nqx1cIFeDdEbQal0JhI" +
+            "K6ENGzSoCrq8zjWkLr7j6eNDY9ksF0JtCJBIRRUkQzsD+rq/O6gag1j7CDsONdF6cGtgzee/vw3I1Ld78u6n8Hz" +
+            "XqSQFQFFq2MzZJ+APbduagMeovWpJoxRmd6QoIz1n72gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
+
+        private const string TokenAccountBase64Data = "xvp6877brTo9ZfNqq8l0MbG75MLS9uDkfKYCA0UvXWHNJBL0P4e2HX6CpWl/KIRDlySyNa+DGj4ekBShq/bWrwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
+        private const string TokenMintAccountBase64Data = "AQAAABzjWe1aAS4E+hQrnHUaHF6Hz9CgFhuchf/TG3jN/Nj2du5fou7/EAAGAQEAAAAqnl7btTwEZ5CY/3sSZRcUQ0/AjFYqmjuGEQXmctQicw==";
 
         [TestMethod]
         public void TestTransfer()
@@ -921,6 +934,21 @@ namespace Solnet.Programs.Test
         }
 
         [TestMethod]
+        public void TestSyncNative()
+        {
+            var wallet = new Wallet.Wallet(MnemonicWords);
+
+            var account = wallet.GetAccount(212);
+
+            var txInstruction =
+                TokenProgram.SyncNative(account.PublicKey);
+
+            Assert.AreEqual(1, txInstruction.Keys.Count);
+            CollectionAssert.AreEqual(TokenProgramIdBytes, txInstruction.ProgramId);
+            CollectionAssert.AreEqual(ExpectedSyncNativeData, txInstruction.Data);
+        }
+
+        [TestMethod]
         public void InitializeMultisigDecodeTest()
         {
             Message msg = Message.Deserialize(InitializeMultisigMessage);
@@ -970,14 +998,13 @@ namespace Solnet.Programs.Test
             Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Account", out account));
             Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Decimals", out object decimals));
             Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Mint Authority", out object mintAuthority));
-            Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Freeze Authority", out object freezeAuthority));
             Assert.IsTrue(decodedInstructions[3].Values
                 .TryGetValue("Freeze Authority Option", out object freezeAuthorityOpt));
+            Assert.IsFalse(decodedInstructions[3].Values.TryGetValue("Freeze Authority", out object freezeAuthority));
             Assert.AreEqual("HUATcRqk8qaNHTfRjBePt9mUZ16dDN1cbpWQDk7QFUGm", (PublicKey)account);
             Assert.AreEqual(10, (byte)decimals);
             Assert.AreEqual("987cq6uofpTKzTyQywsyqNNyAKHAkJkBvY6ggqPnS8gJ", (PublicKey)mintAuthority);
-            Assert.AreEqual(0, (byte)freezeAuthorityOpt);
-            Assert.AreEqual("6eeL1Wb4ufcnxjTtvEStVGHPHeAWexLAFcJ6Kq9pUsXJ", (PublicKey)freezeAuthority);
+            Assert.AreEqual(false, freezeAuthorityOpt);
         }
 
         [TestMethod]
@@ -1414,6 +1441,49 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("6yg3tZM1szHj752RDxQ1GxwvkzR3GyuvAcH498ew1t2T", (PublicKey)signer1);
             Assert.AreEqual("88SzfLipgVTvi8hQwYfq21DgQFcABx6yAwgJH5shfqVZ", (PublicKey)signer2);
             Assert.AreEqual("5Xcw7EQb6msgpVdGB8Hf8kpCqVyacTChgFBUphpuUeBo", (PublicKey)signer3);
+        }
+
+        [TestMethod]
+        public void TestMultiSignatureAccountDeserialization()
+        {
+            var multiSigAccount = MultiSignatureAccount.Deserialize(Convert.FromBase64String(MultiSignatureAccountBase64Data));
+
+            Assert.AreEqual(3, multiSigAccount.MinimumSigners);
+            Assert.AreEqual(5, multiSigAccount.NumberSigners);
+            Assert.IsTrue(multiSigAccount.IsInitialized);
+            Assert.AreEqual(5, multiSigAccount.Signers.Count);
+            Assert.AreEqual("6yg3tZM1szHj752RDxQ1GxwvkzR3GyuvAcH498ew1t2T", multiSigAccount.Signers[0].Key);
+            Assert.AreEqual("88SzfLipgVTvi8hQwYfq21DgQFcABx6yAwgJH5shfqVZ", multiSigAccount.Signers[1].Key);
+            Assert.AreEqual("5Xcw7EQb6msgpVdGB8Hf8kpCqVyacTChgFBUphpuUeBo", multiSigAccount.Signers[2].Key);
+            Assert.AreEqual("CkuRf85gy9Q2733Hi5bFFuznpWjn19XzhJQQyz8LTaMi", multiSigAccount.Signers[3].Key);
+            Assert.AreEqual("GmYy7Gkhkz4DWsA4RpCZoLS8UXpv8iZzTAESziYgRBEq", multiSigAccount.Signers[4].Key);
+        }
+
+        [TestMethod]
+        public void TokenAccountDeserialization()
+        {
+            var tokenAcc = Models.TokenProgram.TokenAccount.Deserialize(Convert.FromBase64String(TokenAccountBase64Data));
+
+            Assert.AreEqual(0UL, tokenAcc.Amount);
+            Assert.AreEqual(0UL, tokenAcc.DelegatedAmount);
+            Assert.AreEqual(null, tokenAcc.CloseAuthority);
+            Assert.AreEqual(null, tokenAcc.Delegate);
+            Assert.AreEqual(null, tokenAcc.IsNative);
+            Assert.AreEqual("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", tokenAcc.Mint);
+            Assert.AreEqual("EonUxoMY3tjMnnES8yeKu5sx8LocsEM8mb4Y38cMJQuc", tokenAcc.Owner);
+            Assert.AreEqual(Models.TokenProgram.TokenAccount.AccountState.Initialized, tokenAcc.State);
+        }
+
+        [TestMethod]
+        public void TokenMintAccountDeserialization()
+        {
+            var tokenAcc = Models.TokenProgram.TokenMint.Deserialize(Convert.FromBase64String(TokenMintAccountBase64Data));
+
+            Assert.AreEqual(6, tokenAcc.Decimals);
+            Assert.AreEqual(4785000018865782UL, tokenAcc.Supply);
+            Assert.AreEqual(true, tokenAcc.IsInitialized);
+            Assert.AreEqual("4uQeWAWUy4x6GCUnNvd25nPybRCHAYggWK88UyjUNXF", tokenAcc.FreezeAuthority);
+            Assert.AreEqual("2wmVCSfPxGPjrnMMn7rchp4uaeoTqN39mXFC2zhPdri9", tokenAcc.MintAuthority);
         }
     }
 }

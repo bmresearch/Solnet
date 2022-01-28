@@ -34,7 +34,7 @@ namespace Solnet.Programs.Test.Utilities
 
         private static readonly byte[] EncodedStringBytes =
         {
-            21, 0, 0, 0, 116, 104, 105, 115, 32, 105, 115,
+            21, 0, 0, 0,0,0,0,0, 116, 104, 105, 115, 32, 105, 115,
             32, 97, 32, 116, 101, 115, 116, 32, 115, 116, 114,
             105, 110, 103
         };
@@ -180,14 +180,14 @@ namespace Solnet.Programs.Test.Utilities
         public void TestReadSpanException()
         {
             ReadOnlySpan<byte> readSpan = PublicKeyBytes.AsSpan();
-            Span<byte> span = readSpan.GetSpan(1, 32);
+            ReadOnlySpan<byte> span = readSpan.GetSpan(1, 32);
         }
 
         [TestMethod]
         public void TestReadSpan()
         {
             ReadOnlySpan<byte> readSpan = PublicKeyBytes.AsSpan();
-            Span<byte> span = readSpan.GetSpan(0, 32);
+            ReadOnlySpan<byte> span = readSpan.GetSpan(0, 32);
 
             CollectionAssert.AreEqual(PublicKeyBytes, span.ToArray());
         }
@@ -270,8 +270,9 @@ namespace Solnet.Programs.Test.Utilities
         [TestMethod]
         public void TestReadRustString()
         {
-            const string expected = "this is a test string"; // 21 chars
-            const int expectedLength = 25; // 21 chars + sizeof(uint) which is the encoding length padding
+            //DOESNT WORK FOR ALL CHARACTERS DUE TO UTF-8 ENCODING
+            const string expected = "this is a test string";
+            int expectedLength = expected.Length + sizeof(ulong);
 
             (string actual, int length) = Deserialization.DecodeRustString(EncodedStringBytes, 0);
 

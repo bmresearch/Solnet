@@ -1,5 +1,6 @@
 ﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable ClassNeverInstantiated.Global
+using Solnet.Rpc.Converters;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -45,6 +46,7 @@ namespace Solnet.Rpc.Models
         /// This field should contain two values: first value is the data, the second one is the encoding - should always read base64.
         /// </remarks>
         /// </summary>
+        [JsonConverter(typeof(AccountDataConverter))]
         public List<string> Data { get; set; }
     }
 

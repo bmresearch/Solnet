@@ -8,7 +8,7 @@ namespace Solnet.Wallet
     /// <summary>
     /// Implements the public key functionality.
     /// </summary>
-    [DebuggerDisplay("Key = {" + nameof(Key) + "}")]
+    [DebuggerDisplay("Key = {ToString()}")]
     public class PublicKey
     {
         /// <summary>
@@ -108,6 +108,27 @@ namespace Solnet.Wallet
             return false;
         }
 
+        /// <inheritdoc />
+        public static bool operator ==(PublicKey lhs, PublicKey rhs)
+        {
+
+            if (lhs is null)
+            {
+                if (rhs is null)
+                {
+                    return true;
+                }
+
+                // Only the left side is null.
+                return false;
+            }
+            // Equals handles case of null on right side.
+            return lhs.Equals(rhs);
+        }
+
+        /// <inheritdoc />
+        public static bool operator !=(PublicKey lhs, PublicKey rhs) => !(lhs == rhs);
+
         /// <summary>
         /// Conversion between a <see cref="PublicKey"/> object and the corresponding base-58 encoded public key.
         /// </summary>
@@ -138,5 +159,8 @@ namespace Solnet.Wallet
 
         /// <inheritdoc cref="ToString"/>
         public override string ToString() => Key;
+
+        /// <inheritdoc cref="GetHashCode"/>
+        public override int GetHashCode() => Key.GetHashCode();
     }
 }

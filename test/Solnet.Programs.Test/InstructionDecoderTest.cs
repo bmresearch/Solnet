@@ -88,31 +88,13 @@ namespace Solnet.Programs.Test
             "QEAAAAAwIAAQwCAAAAAMqaOwAAAAA=";
 
         private const string CreateWithSeedTransferCheckedMessage =
-            "AgAFCEdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxey6Nz9cBhJOumlXLZpUvE8AzAtBfGMn1dZQnsmstBxblH" +
-            "GVmgdAHhF1TM+KWwhvBbkKpq0hipuwTCUOUDGVtRt6gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/gABqM" +
-            "r4O3sAfOk3JCkwt8wPFvevZPVRRtVB52Vx8S8Gp9UXGSxcUSGMyUw9SvF/WNruCJuh/UTj29mKAAAAAAbd9uHXZaGT2" +
-            "cvhRs7reawctIXtX1s3kTqM9YV+/wCpBUpTUPhdyILWFKVWcniKKW3fHqur0KYGeIhJMvTu9qA9OyjzNDuBvJHnOu4I" +
-            "/lKJGTRjI24DJ54UqtUSAY5QQAQDAwACAWEDAAAA6Nz9cBhJOumlXLZpUvE8AzAtBfGMn1dZQnsmstBxblEJAAAAU29" +
-            "tZSBTZWVk8B0fAAAAAAClAAAAAAAAAP4AAajK+Dt7AHzpNyQpMLfMDxb3r2T1UUbVQedlcfEvBgQCBAAFAQEGBAEEAg" +
-            "AKDKhhAAAAAAAAAgcBARJIZWxsbyBmcm9tIFNvbC5OZXQ=";
+            "AQAFCEdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyOYMO0iFs4aMUVosQrrL+aWspebSXbUiMaf5/Vser1b0OnC1i7fbauPEwr4QPwO60eHE6R2A3RGXr8HuhWwwwbgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9LBeJnW7+BRnPyXA+KjPgyVxNJPg4ZjZj7vDCLaxcn6cN8HIDWf0F04DfWvktjd8c9zUrzgeo+yKgZUYC424xwan1RcZLFxRIYzJTD1K8X9Y2u4Im6H9ROPb2YoAAAAABt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/AKm2aEncf4Mlb+sGgWJlGolxMb+4adawnHuBSBv1aK+CtQMDAgABZQMAAABHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgkAAAAAAAAAU29tZSBTZWVk8B0fAAAAAAClAAAAAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpBwQBBAUGAQEHBAIEAQAKDBAnAAAAAAAACg==";
 
         private const string AllocateAndTransferWithSeedMessage =
-            "AgECBUdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyxlZoHQB4RdUzPilsIbwW5CqatIYqbsEwlDlAxlbUber" +
-            "o3P1wGEk66aVctmlS8TwDMC0F8YyfV1lCeyay0HFuUQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/gABqM" +
-            "r4O3sAfOk3JCkwt8wPFvevZPVRRtVB52Vx8S/py4E3KGj5z9oz5kXn5peg6HuaX9WlGNLLWOE3CVojOAMDAwABAmEDA" +
-            "AAA6Nz9cBhJOumlXLZpUvE8AzAtBfGMn1dZQnsmstBxblEJAAAAU29tZSBTZWVk8B0fAAAAAAClAAAAAAAAAP4AAajK" +
-            "+Dt7AHzpNyQpMLfMDxb3r2T1UUbVQedlcfEvAwIBAlkJAAAA6Nz9cBhJOumlXLZpUvE8AzAtBfGMn1dZQnsmstBxblEJ" +
-            "AAAAU29tZSBTZWVkpQAAAAAAAAD+AAGoyvg7ewB86TckKTC3zA8W969k9VFG1UHnZXHxLwMDAgEEOQsAAACoYQAAAAA" +
-            "AAAkAAABTb21lIFNlZWRHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsg==";
+            "AwIECUdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyxlZoHQB4RdUzPilsIbwW5CqatIYqbsEwlDlAxlbUberN+w3TZpSpkz6ceiNiFJ1YljgbSt+oGaN4XwsDKrjvO9eJ2GvItXyYvkkNtswujQh/3uFPx4eYNYHvmFKNj2KF6Nz9cBhJOumlXLZpUvE8AzAtBfGMn1dZQnsmstBxblEGp9UXGSxcUSGMyUw9SvF/WNruCJuh/UTj29mKAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFSlNQ+F3IgtYUpVZyeIopbd8eq6vQpgZ4iEky9O72oIgZj6RKWuBs9/ZF9SblFNX1Nfndq/bZbd1zKevX07NqBgYCAwVDAAJHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgFHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgcCAQRdCQAAAOjc/XAYSTrppVy2aVLxPAMwLQXxjJ9XWUJ7JrLQcW5RCQAAAAAAAABTb21lIFNlZWSlAAAAAAAAAP4AAajK+Dt7AHzpNyQpMLfMDxb3r2T1UUbVQedlcfEvBwMEAQE9CwAAAKhhAAAAAAAACQAAAAAAAABTb21lIFNlZWRHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgYEAgMABQEBBgMDAgAJB0BCDwAAAAAACAECEkhlbGxvIGZyb20gU29sLk5ldA==";
 
         private const string AssignWithSeedAndWithdrawNonceMessage =
-            "AQADBkdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyxlZoHQB4RdUzPilsIbwW5CqatIYqbsEwlDlAxlbUbero" +
-            "3P1wGEk66aVctmlS8TwDMC0F8YyfV1lCeyay0HFuUQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABqfVFxks" +
-            "Vo7gioRfc9KXiM8DXDFFshqzRNgGLqlAAAAGp9UXGSxcUSGMyUw9SvF/WNruCJuh/UTj29mKAAAAADmjAQhgq+YsjMN9" +
-            "WRSc9PHA3mBMt7seO75uw/nQoem8AwMDAAECYQMAAADo3P1wGEk66aVctmlS8TwDMC0F8YyfV1lCeyay0HFuUQkAAABT" +
-            "b21lIFNlZWTwHR8AAAAAAKUAAAAAAAAA/gABqMr4O3sAfOk3JCkwt8wPFvevZPVRRtVB52Vx8S8DAgECUQoAAADo3P1w" +
-            "GEk66aVctmlS8TwDMC0F8YyfV1lCeyay0HFuUQkAAABTb21lIFNlZWT+AAGoyvg7ewB86TckKTC3zA8W969k9VFG1UH" +
-            "nZXHxLwMFAgEEBQAMBQAAAKhhAAAAAAAA";
+            "AgEFCkdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyzfsN02aUqZM+nHojYhSdWJY4G0rfqBmjeF8LAyq47zvXidhryLV8mL5JDbbMLo0If97hT8eHmDWB75hSjY9ihcZWaB0AeEXVMz4pbCG8FuQqmrSGKm7BMJQ5QMZW1G3q6Nz9cBhJOumlXLZpUvE8AzAtBfGMn1dZQnsmstBxblEGp9UXGSxcUSGMyUw9SvF/WNruCJuh/UTj29mKAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGp9UXGSxWjuCKhF9z0peIzwNcMUWyGrNE2AYuqUAAAAVKU1D4XciC1hSlVnJ4iilt3x6rq9CmBniISTL07vagtJ8Jx8NOgvPxbiEudqErtkdKNjEMCpOGKmW34JXG2P8GBgICBUMAAkdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyAUdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyBwIDBFUKAAAA6Nz9cBhJOumlXLZpUvE8AzAtBfGMn1dZQnsmstBxblEJAAAAAAAAAFNvbWUgU2VlZP4AAajK+Dt7AHzpNyQpMLfMDxb3r2T1UUbVQedlcfEvBwUEAwgFAAwFAAAAqGEAAAAAAAAGBAECAAUBAQYDAgEACQdAQg8AAAAAAAkBARJIZWxsbyBmcm9tIFNvbC5OZXQ=";
 
         private const string CreateNonceAccountMessage =
             "AgADBUdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxey3/TlOFbzAEpWOjiOEYJxkz0BiH7zFuKtbErUaFHHeLQA" +
@@ -478,7 +460,7 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(CreateWithSeedTransferCheckedMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(4, decodedInstructions.Count);
+            Assert.AreEqual(3, decodedInstructions.Count);
             Assert.AreEqual("Create Account With Seed", decodedInstructions[0].InstructionName);
             Assert.AreEqual("System Program", decodedInstructions[0].ProgramName);
             Assert.AreEqual("11111111111111111111111111111111", decodedInstructions[0].PublicKey);
@@ -491,10 +473,10 @@ namespace Solnet.Programs.Test
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Amount", out object amount));
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Owner", out object ownerAccount));
             Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", (PublicKey)fromAccount);
-            Assert.AreEqual("EME9GxLahsC1mjopepKMJg9RtbUu37aeLaQyHVdEd7vZ", (PublicKey)toAccount);
-            Assert.AreEqual("Gg12mmahG97PDACxKiBta7ch2kkqDkXUzjn5oAcbPZct", (PublicKey)baseAccount);
-            Assert.AreEqual("J6WZY5nuYGJmfFtBGZaXgwZSRVuLWxNR6gd4d3XTHqTk", (PublicKey)ownerAccount);
-            Assert.AreEqual("J6WZY5nuYGJmfFtBGZaXgwZSRVuLWxNR6gd4d3XTHqTk", (PublicKey)ownerAccount);
+            Assert.AreEqual("4sW9XdttQsm1QrfQoRW95jMX4Q5jWYjKkSPEAmkndDUY", (PublicKey)toAccount);
+            Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", (PublicKey)baseAccount);
+            Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", (PublicKey)ownerAccount);
+            Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", (PublicKey)ownerAccount);
             Assert.AreEqual(2039280UL, (ulong)amount);
             Assert.AreEqual(165UL, (ulong)space);
             Assert.AreEqual("Some Seed", (string)seed);
@@ -509,12 +491,12 @@ namespace Solnet.Programs.Test
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Authority", out ownerAccount));
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Amount", out amount));
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Decimals", out object decimals));
-            Assert.AreEqual("Gg12mmahG97PDACxKiBta7ch2kkqDkXUzjn5oAcbPZct", (PublicKey)source);
-            Assert.AreEqual("J6WZY5nuYGJmfFtBGZaXgwZSRVuLWxNR6gd4d3XTHqTk", (PublicKey)mint);
-            Assert.AreEqual("EME9GxLahsC1mjopepKMJg9RtbUu37aeLaQyHVdEd7vZ", (PublicKey)destination);
+            Assert.AreEqual("z2qF2eWM89sQrXP2ygrLkYkhc58182KqPVRETjv8Dch", (PublicKey)source);
+            Assert.AreEqual("HUATcRqk8qaNHTfRjBePt9mUZ16dDN1cbpWQDk7QFUGm", (PublicKey)mint);
+            Assert.AreEqual("4sW9XdttQsm1QrfQoRW95jMX4Q5jWYjKkSPEAmkndDUY", (PublicKey)destination);
             Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", (PublicKey)ownerAccount);
-            Assert.AreEqual(25000UL, (ulong)amount);
-            Assert.AreEqual(2, (byte)decimals);
+            Assert.AreEqual(10000UL, (ulong)amount);
+            Assert.AreEqual(10, (byte)decimals);
         }
 
 
@@ -524,7 +506,7 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(AllocateAndTransferWithSeedMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(3, decodedInstructions.Count);
+            Assert.AreEqual(6, decodedInstructions.Count);
             Assert.AreEqual("Allocate With Seed", decodedInstructions[1].InstructionName);
             Assert.AreEqual("System Program", decodedInstructions[1].ProgramName);
             Assert.AreEqual("11111111111111111111111111111111", decodedInstructions[1].PublicKey);
@@ -564,7 +546,7 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(AssignWithSeedAndWithdrawNonceMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(3, decodedInstructions.Count);
+            Assert.AreEqual(6, decodedInstructions.Count);
             Assert.AreEqual("Assign With Seed", decodedInstructions[1].InstructionName);
             Assert.AreEqual("System Program", decodedInstructions[1].ProgramName);
             Assert.AreEqual("11111111111111111111111111111111", decodedInstructions[1].PublicKey);

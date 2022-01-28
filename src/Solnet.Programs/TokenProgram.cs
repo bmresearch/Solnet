@@ -130,7 +130,7 @@ namespace Solnet.Programs
                 AccountMeta.Writable(account, false),
                 AccountMeta.ReadOnly(mint, false),
                 AccountMeta.ReadOnly(authority, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+                AccountMeta.ReadOnly(SysVars.RentKey, false)
             };
             return new TransactionInstruction
             {
@@ -152,7 +152,7 @@ namespace Solnet.Programs
             List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(multiSignature, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+                AccountMeta.ReadOnly(SysVars.RentKey, false)
             };
             keys.AddRange(signers.Select(signer => AccountMeta.ReadOnly(signer, false)));
             return new TransactionInstruction
@@ -177,7 +177,7 @@ namespace Solnet.Programs
             List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(mint, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+                AccountMeta.ReadOnly(SysVars.RentKey, false)
             };
 
             int freezeAuthorityOpt = freezeAuthority != null ? 1 : 0;
@@ -503,6 +503,25 @@ namespace Solnet.Programs
         }
 
         /// <summary>
+        /// Initialize an instruction to sync native tokens.
+        /// </summary>
+        /// <param name="account">The public key of the token account.</param>
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction SyncNative(PublicKey account)
+        {
+            List<AccountMeta> keys = new()
+            {
+                AccountMeta.Writable(account, false)
+            };
+            return new TransactionInstruction
+            {
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = keys,
+                Data = TokenProgramData.EncodeSyncNativeData()
+            };
+        }
+
+        /// <summary>
         /// Adds the list of signers to the list of keys.
         /// </summary>
         /// <param name="keys">The instruction's list of keys.</param>
@@ -596,6 +615,9 @@ namespace Solnet.Programs
                     break;
                 case TokenProgramInstructions.Values.BurnChecked:
                     TokenProgramData.DecodeBurnCheckedData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case TokenProgramInstructions.Values.SyncNative:
+                    TokenProgramData.DecodeSyncNativeData(decodedInstruction, keys, keyIndices);
                     break;
             }
             return decodedInstruction;

@@ -45,9 +45,11 @@ Solnet is Solana's .NET SDK to integrate with the .NET ecosystem. Wherever you a
 - Programs
     - Native Programs
       - System Program
+      - Stake Program
     - Solana Program Library (SPL)
       - Memo Program
       - Token Program
+      - Token Swap Program
       - Associated Token Account Program
       - Name Service Program
       - Shared Memory Program
@@ -82,7 +84,7 @@ with both the keys generated using `solana-keygen` and the keys generated using 
 
 ```c#
 // To initialize a wallet and have access to the same keys generated in sollet (the default)
-var sollet = new Wallet("mnemonic words ...", Wordlist.English);
+var sollet = new Wallet("mnemonic words ...", WordList.English);
 
 // Retrieve accounts by derivation path index
 var account = sollet.GetAccount(10);
@@ -92,7 +94,7 @@ var account = sollet.GetAccount(10);
 
 ```c#
 // To initialize a wallet and have access to the same keys generated in solana-keygen
-var wallet = new Wallet("mnemonic words ...", Wordlist.English, "passphrase", SeedMode.Bip39);
+var wallet = new Wallet("mnemonic words ...", WordList.English, "passphrase", SeedMode.Bip39);
 
 // Retrieve the account
 var account = wallet.Account; // the solana-keygen mechanism does not allow account retrieval by derivation path index
@@ -221,7 +223,7 @@ var firstSig = rpcClient.SendTransaction(tx);
 var wallet = new Wallet.Wallet(MnemonicWords);
 
 var blockHash = rpcClient.GetRecentBlockHash();
-var minBalanceForExemptionAcc = rpcClient.GetMinimumBalanceForRentExemption(SystemProgram.AccountDataSize).Result;
+var minBalanceForExemptionAcc = rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
 
 var minBalanceForExemptionMint =rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
 
@@ -247,7 +249,7 @@ var tx = new TransactionBuilder().
         ownerAccount,
         initialAccount,
         minBalanceForExemptionAcc,
-        SystemProgram.AccountDataSize,
+        TokenProgram.TokenAccountDataSize,
         TokenProgram.ProgramIdKey)).
     AddInstruction(TokenProgram.InitializeAccount(
         initialAccount.PublicKey,
@@ -271,7 +273,7 @@ var wallet = new Wallet();
 
 var blockHash = rpcClient.GetRecentBlockHash();
 var minBalanceForExemptionAcc =
-    rpcClient.GetMinimumBalanceForRentExemption(SystemProgram.AccountDataSize).Result;
+    rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
 
 var mintAccount = wallet.GetAccount(21);
 var ownerAccount = wallet.GetAccount(10);
@@ -285,7 +287,7 @@ var tx = new TransactionBuilder().
         ownerAccount,
         newAccount,
         minBalanceForExemptionAcc,
-        SystemProgram.AccountDataSize,
+        TokenProgram.TokenAccountDataSize,
         TokenProgram.ProgramIdKey)).
     AddInstruction(TokenProgram.InitializeAccount(
         newAccount.PublicKey,

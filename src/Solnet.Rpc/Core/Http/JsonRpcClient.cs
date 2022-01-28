@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Solnet.Rpc.Converters;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Utilities;
 using System;
@@ -57,6 +58,7 @@ namespace Solnet.Rpc.Core.Http
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 Converters =
                 {
+                    new EncodingConverter(),
                     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
                 }
             };
@@ -83,7 +85,7 @@ namespace Solnet.Rpc.Core.Http
                 // create byte buffer to avoid charset=utf-8 in content-type header
                 // as this is rejected by some RPC nodes
                 var buffer = Encoding.UTF8.GetBytes(requestJson);
-                using var httpReq = new HttpRequestMessage(HttpMethod.Post, "/")
+                using var httpReq = new HttpRequestMessage(HttpMethod.Post, (string)null)
                 {
                     Content = new ByteArrayContent(buffer)
                     {
