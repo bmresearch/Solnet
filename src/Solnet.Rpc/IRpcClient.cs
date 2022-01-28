@@ -1234,5 +1234,11 @@ namespace Solnet.Rpc
         /// <returns></returns>
         Task<RequestResult<JsonRpcBatchResponse>> SendBatchRequestAsync(JsonRpcBatchRequest reqs);
 
+        /// <summary>
+        /// Generates the next unique id for the request.
+        /// </summary>
+        /// <returns>The id.</returns>
+        int GetNextIdForReq();
+
     }
 }
