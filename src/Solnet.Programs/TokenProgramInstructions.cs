@@ -33,6 +33,7 @@ namespace Solnet.Programs
             { Values.ApproveChecked, "Approve Checked" },
             { Values.MintToChecked, "Mint To Checked" },
             { Values.BurnChecked, "Burn Checked" },
+            { Values.SyncNative, "Sync Native" }
         };
 
         /// <summary>
@@ -122,7 +123,17 @@ namespace Solnet.Programs
             /// Burn checked token transaction.
             /// <remarks>Differs from <see cref="Burn"/> in that the decimals value is asserted by the caller.</remarks>
             /// </summary>
-            BurnChecked = 15
+            BurnChecked = 15,
+
+            /// <summary>
+            /// SyncNative token transaction.
+            /// Given a wrapped / native token account (a token account containing SOL)
+            /// updates its amount field based on the account's underlying `lamports`.
+            /// This is useful if a non-wrapped SOL account uses `system_instruction::transfer`
+            /// to move lamports to a wrapped token account, and needs to have its token
+            /// `amount` field updated.
+            /// </summary>
+            SyncNative = 17
         }
     }
 }

@@ -3,7 +3,6 @@ using Solnet.Rpc;
 using Solnet.Rpc.Builders;
 using Solnet.Wallet;
 using System;
-using System.Collections.Generic;
 
 namespace Solnet.Examples
 {

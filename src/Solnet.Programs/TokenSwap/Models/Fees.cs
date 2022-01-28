@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers.Binary;
 using Solnet.Programs.Utilities;
 
 namespace Solnet.Programs.TokenSwap.Models
@@ -64,6 +65,23 @@ namespace Solnet.Programs.TokenSwap.Models
             ret.WriteU64(HostFeeNumerator, 48);
             ret.WriteU64(HostFeeDenomerator, 56);
             return new Span<byte>(ret);
+        }
+
+        public static Fees Deserialize(byte[] bytes)
+        {
+            var span = new Span<byte>(bytes);
+            var f = new Fees()
+            {
+                TradeFeeNumerator = BinaryPrimitives.ReadUInt64LittleEndian(span.Slice(0, 8)),
+                TradeFeeDenominator = BinaryPrimitives.ReadUInt64LittleEndian(span.Slice(8, 8)),
+                OwnerTradeFeeNumerator = BinaryPrimitives.ReadUInt64LittleEndian(span.Slice(16, 8)),
+                OwnerTradeFeeDenomerator = BinaryPrimitives.ReadUInt64LittleEndian(span.Slice(24, 8)),
+                OwnerWithrawFeeNumerator = BinaryPrimitives.ReadUInt64LittleEndian(span.Slice(32, 8)),
+                OwnerWithrawFeeDenomerator = BinaryPrimitives.ReadUInt64LittleEndian(span.Slice(40, 8)),
+                HostFeeNumerator = BinaryPrimitives.ReadUInt64LittleEndian(span.Slice(48, 8)),
+                HostFeeDenomerator = BinaryPrimitives.ReadUInt64LittleEndian(span.Slice(56, 8)),
+            };
+            return f;
         }
     }
 }

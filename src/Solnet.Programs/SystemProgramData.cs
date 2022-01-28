@@ -85,10 +85,12 @@ namespace Solnet.Programs
             data.WriteU64(lamports, 36 + encodedSeed.Length);
             data.WriteU64(space, 44 + encodedSeed.Length);
             data.WritePubKey(owner, 52 + encodedSeed.Length);
-
             return data;
         }
-
+        static public string ToReadableByteArray(byte[] bytes)
+        {
+            return string.Join(", ", bytes);
+        }
         /// <summary>
         /// Encode transaction instruction data for the <see cref="SystemProgramInstructions.Values.AdvanceNonceAccount"/> method.
         /// </summary>

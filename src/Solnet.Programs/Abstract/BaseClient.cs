@@ -54,6 +54,11 @@ namespace Solnet.Programs.Abstract
                 System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static,
                 null, new[] { typeof(byte[]) }, null);
 
+            if (m.IsGenericMethod)
+            {
+                m = m.MakeGenericMethod(typeof(T).GetGenericArguments());
+            }
+
             if (m == null)
                 return null;
             return (T)m.Invoke(null, new object[] { data });
@@ -153,6 +158,41 @@ namespace Solnet.Programs.Abstract
                 }, commitment);
 
             return res;
+        }
+
+        /// <summary>
+        /// Signs and sends a given <c>TransactionInstruction</c> using signing delegate.
+        /// </summary>
+        /// <param name="instruction">The transaction to be sent.</param>
+        /// <param name="feePayer">The fee payer.</param>
+        /// <param name="signingCallback">The callback used to sign the transaction. 
+        /// This delegate is called once for each <c>PublicKey</c> account that needs write permissions according to the transaction data.</param>
+        /// <returns></returns>
+        protected async Task<RequestResult<string>> SignAndSendTransaction(TransactionInstruction instruction, PublicKey feePayer, Func<byte[], byte[], PublicKey> signingCallback)
+        {
+            TransactionBuilder tb = new TransactionBuilder();
+            tb.AddInstruction(instruction);
+
+            var recentHash = await RpcClient.GetRecentBlockHashAsync();
+
+            tb.SetRecentBlockHash(recentHash.Result.Value.Blockhash);
+            tb.SetFeePayer(feePayer);
+
+            var wireFmt = tb.CompileMessage();
+
+            var msg = Message.Deserialize(wireFmt);
+            var tx = Transaction.Populate(msg);
+
+            List<byte[]> signatures = new();
+
+            signatures.Add(signingCallback(wireFmt, feePayer));
+
+            for (int i = 0; i < msg.Header.RequiredSignatures; i++)
+            {
+                tx.AddSignature(msg.AccountKeys[i], signingCallback(wireFmt, msg.AccountKeys[i]));
+            }
+
+            return await RpcClient.SendTransactionAsync(tx.Serialize());
         }
     }
 }

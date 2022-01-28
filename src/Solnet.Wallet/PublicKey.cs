@@ -108,6 +108,27 @@ namespace Solnet.Wallet
             return false;
         }
 
+        /// <inheritdoc />
+        public static bool operator ==(PublicKey lhs, PublicKey rhs)
+        {
+
+            if (lhs is null)
+            {
+                if (rhs is null)
+                {
+                    return true;
+                }
+
+                // Only the left side is null.
+                return false;
+            }
+            // Equals handles case of null on right side.
+            return lhs.Equals(rhs);
+        }
+
+        /// <inheritdoc />
+        public static bool operator !=(PublicKey lhs, PublicKey rhs) => !(lhs == rhs);
+
         /// <summary>
         /// Conversion between a <see cref="PublicKey"/> object and the corresponding base-58 encoded public key.
         /// </summary>

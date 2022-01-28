@@ -66,32 +66,44 @@ namespace Solnet.Rpc.Core.Sockets
         public async Task ConnectAsync()
         {
             _sem.Wait();
-            if (ClientSocket.State != WebSocketState.Open)
+            try
             {
-                await ClientSocket.ConnectAsync(NodeAddress, CancellationToken.None).ConfigureAwait(false);
-                _ = Task.Run(StartListening);
-                ConnectionStateChangedEvent?.Invoke(this, State);
+                if (ClientSocket.State != WebSocketState.Open)
+                {
+                    await ClientSocket.ConnectAsync(NodeAddress, CancellationToken.None).ConfigureAwait(false);
+                    _ = Task.Run(StartListening);
+                    ConnectionStateChangedEvent?.Invoke(this, State);
+                }
             }
-            _sem.Release();
+            finally
+            {
+                _sem.Release();
+            }
         }
 
         /// <inheritdoc cref="IStreamingRpcClient.DisconnectAsync"/>
         public async Task DisconnectAsync()
         {
             _sem.Wait();
-            if (ClientSocket.State == WebSocketState.Open)
+            try
             {
-                await ClientSocket.CloseAsync(CancellationToken.None);
+                if (ClientSocket.State == WebSocketState.Open)
+                {
+                    await ClientSocket.CloseAsync(CancellationToken.None);
 
-                //notify at the end of StartListening loop, given that it should end as soon as we terminate connection here
-                //and will also notify when there is a non-user triggered disconnection event
+                    //notify at the end of StartListening loop, given that it should end as soon as we terminate connection here
+                    //and will also notify when there is a non-user triggered disconnection event
 
-                // handle disconnection cleanup
-                ClientSocket.Dispose();
-                ClientSocket = new WebSocketWrapper(new ClientWebSocket());
-                CleanupSubscriptions();
+                    // handle disconnection cleanup
+                    ClientSocket.Dispose();
+                    ClientSocket = new WebSocketWrapper(new ClientWebSocket());
+                    CleanupSubscriptions();
+                }
             }
-            _sem.Release();
+            finally
+            {
+                _sem.Release();
+            }
         }
 
         /// <summary>

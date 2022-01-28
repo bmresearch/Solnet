@@ -400,7 +400,7 @@ namespace Solnet.Rpc.Test
             Assert.IsTrue(_notificationEvent.WaitOne());
             Assert.AreEqual(TransactionErrorType.InstructionError, resultNotification.Value.Error.Type);
             Assert.AreEqual(InstructionErrorType.Custom, resultNotification.Value.Error.InstructionError.Type);
-            Assert.AreEqual(41, resultNotification.Value.Error.InstructionError.CustomError);
+            Assert.AreEqual(41u, resultNotification.Value.Error.InstructionError.CustomError);
 
             Assert.AreEqual("bGNVGCa1WFchzJStauKFVk7anzuFvA7hkMcx8Zi2o4euJaivzpwz8346yJ4Xn8H7XzMp44coTxdcDRd9d4yzj4m", resultNotification.Value.Signature);
         }
@@ -636,7 +636,7 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual(TransactionErrorType.InstructionError, resultNotification.Value.Error.Type);
             Assert.AreEqual(InstructionErrorType.Custom, resultNotification.Value.Error.InstructionError.Type);
-            Assert.AreEqual(0, resultNotification.Value.Error.InstructionError.CustomError);
+            Assert.AreEqual(0u, resultNotification.Value.Error.InstructionError.CustomError);
 
             Assert.AreEqual(SubscriptionStatus.Unsubscribed, evt.Status);
             Assert.AreEqual(SubscriptionStatus.Unsubscribed, sub.State);

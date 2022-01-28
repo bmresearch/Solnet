@@ -24,17 +24,6 @@ namespace Solnet.Programs
         public static readonly PublicKey ProgramIdKey = new("11111111111111111111111111111111");
 
         /// <summary>
-        /// The public key of the Recent Block Hashes System Variable. 
-        /// </summary>
-        public static readonly PublicKey
-            SysVarRecentBlockHashesKey = new("SysvarRecentB1ockHashes11111111111111111111");
-
-        /// <summary>
-        /// The public key of the Rent System Variable.
-        /// </summary>
-        public static readonly PublicKey SysVarRentKey = new("SysvarRent111111111111111111111111111111111");
-
-        /// <summary>
         /// The program's name.
         /// </summary>
         private const string ProgramName = "System Program";
@@ -124,8 +113,12 @@ namespace Solnet.Programs
             {
                 AccountMeta.Writable(fromPublicKey, true),
                 AccountMeta.Writable(toPublicKey, false),
-                AccountMeta.ReadOnly(baseAccount, true)
+                //AccountMeta.ReadOnly(baseAccount, true)
             };
+            if (baseAccount != fromPublicKey)
+            {
+                keys.Add(AccountMeta.ReadOnly(baseAccount, true));
+            }
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -147,7 +140,7 @@ namespace Solnet.Programs
             List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(nonceAccountPublicKey, false),
-                AccountMeta.ReadOnly(SysVarRecentBlockHashesKey, false),
+                AccountMeta.ReadOnly(SysVars.RecentBlockHashesKey, false),
                 AccountMeta.ReadOnly(authorized, true)
             };
             return new TransactionInstruction
@@ -173,8 +166,8 @@ namespace Solnet.Programs
             {
                 AccountMeta.Writable(nonceAccountPublicKey, false),
                 AccountMeta.Writable(toPublicKey, false),
-                AccountMeta.ReadOnly(SysVarRecentBlockHashesKey, false),
-                AccountMeta.ReadOnly(SysVarRentKey, false),
+                AccountMeta.ReadOnly(SysVars.RecentBlockHashesKey, false),
+                AccountMeta.ReadOnly(SysVars.RentKey, false),
                 AccountMeta.ReadOnly(authorized, true)
             };
             return new TransactionInstruction
@@ -197,8 +190,8 @@ namespace Solnet.Programs
             List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(nonceAccountPublicKey, false),
-                AccountMeta.ReadOnly(SysVarRecentBlockHashesKey, false),
-                AccountMeta.ReadOnly(SysVarRentKey, false),
+                AccountMeta.ReadOnly(SysVars.RecentBlockHashesKey, false),
+                AccountMeta.ReadOnly(SysVars.RentKey, false),
             };
             return new TransactionInstruction
             {

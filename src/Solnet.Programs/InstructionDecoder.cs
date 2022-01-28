@@ -37,6 +37,7 @@ namespace Solnet.Programs
             InstructionDictionary.Add(AssociatedTokenAccountProgram.ProgramIdKey, AssociatedTokenAccountProgram.Decode);
             InstructionDictionary.Add(NameServiceProgram.ProgramIdKey, NameServiceProgram.Decode);
             InstructionDictionary.Add(SharedMemoryProgram.ProgramIdKey, SharedMemoryProgram.Decode);
+            InstructionDictionary.Add(StakeProgram.ProgramIdKey, StakeProgram.Decode);
         }
 
         /// <summary>
@@ -127,7 +128,7 @@ namespace Solnet.Programs
         }
 
         /// <summary>
-        /// Decodes the instructions present in the given transaction and it's metadata information.
+        /// Decodes the instructions present in the given transaction and its metadata information.
         /// </summary>
         /// <param name="message">The message object.</param>
         /// <returns>The decoded instructions data.</returns>

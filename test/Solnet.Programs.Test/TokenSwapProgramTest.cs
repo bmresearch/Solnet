@@ -130,7 +130,8 @@ namespace Solnet.Programs.Test
             var poolFee = wallet.GetAccount(6);
             var poolToken = wallet.GetAccount(7);
 
-            var txInstruction = new TokenSwapProgram(tokenSwapAccount).Initialize(
+            var txInstruction = new TokenSwapProgram().Initialize(
+                tokenSwapAccount,
                 tokenA.PublicKey,
                 tokenB.PublicKey,
                 poolMint.PublicKey,
@@ -170,7 +171,8 @@ namespace Solnet.Programs.Test
             var fee = wallet.GetAccount(7);
             var hostFee = wallet.GetAccount(7);
 
-            var txInstruction = new TokenSwapProgram(tokenSwapAccount).Swap(
+            var txInstruction = new TokenSwapProgram().Swap(
+                tokenSwapAccount,
                 userXfer.PublicKey,
                 source.PublicKey,
                 into.PublicKey,
@@ -202,7 +204,8 @@ namespace Solnet.Programs.Test
             var poolTokenMint = wallet.GetAccount(7);
             var poolAccount = wallet.GetAccount(7);
 
-            var txInstruction = new TokenSwapProgram(tokenSwapAccount).DepositAllTokenTypes(
+            var txInstruction = new TokenSwapProgram().DepositAllTokenTypes(
+                tokenSwapAccount,
                 userXfer.PublicKey,
                 authA.PublicKey,
                 authB.PublicKey,
@@ -235,7 +238,8 @@ namespace Solnet.Programs.Test
             var tokenBTo = wallet.GetAccount(7);
             var feeAccount = wallet.GetAccount(7);
 
-            var txInstruction = new TokenSwapProgram(tokenSwapAccount).WithdrawAllTokenTypes(
+            var txInstruction = new TokenSwapProgram().WithdrawAllTokenTypes(
+                tokenSwapAccount,
                 userXfer.PublicKey,
                 poolTokenMint.PublicKey,
                 sourcePoolAccount.PublicKey,
@@ -267,7 +271,8 @@ namespace Solnet.Programs.Test
             var poolMint = wallet.GetAccount(7);
             var pool = wallet.GetAccount(7);
 
-            var txInstruction = new TokenSwapProgram(tokenSwapAccount).DepositSingleTokenTypeExactAmountIn(
+            var txInstruction = new TokenSwapProgram().DepositSingleTokenTypeExactAmountIn(
+                tokenSwapAccount,
                 userXfer.PublicKey,
                 tokenSource.PublicKey,
                 tokenA.PublicKey,
@@ -297,7 +302,8 @@ namespace Solnet.Programs.Test
             var userToken = wallet.GetAccount(7);
             var feeAccount = wallet.GetAccount(7);
 
-            var txInstruction = new TokenSwapProgram(tokenSwapAccount).WithdrawSingleTokenTypeExactAmountOut(
+            var txInstruction = new TokenSwapProgram().WithdrawSingleTokenTypeExactAmountOut(
+                tokenSwapAccount,
                 userXfer.PublicKey,
                 poolMint.PublicKey,
                 sourcePool.PublicKey,

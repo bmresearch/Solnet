@@ -1,4 +1,5 @@
 using Solnet.Programs;
+using Solnet.Programs.Models.TokenProgram;
 using Solnet.Rpc;
 using Solnet.Rpc.Builders;
 using Solnet.Rpc.Core.Http;
@@ -1017,6 +1018,30 @@ namespace Solnet.Examples
 
             string signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
+
+        }
+    }
+
+    public class GetMultiSignatureAccountExample : IExample
+    {
+        private static readonly IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
+
+        private const string MnemonicWords =
+            "route clerk disease box emerge airport loud waste attitude film army tray " +
+            "forward deal onion eight catalog surface unit card window walnut wealth medal";
+
+
+        public void Run()
+        {
+            Wallet.Wallet wallet = new(MnemonicWords);
+
+            // The multisig which is the token account authority
+            Account tokenMultiSignature = wallet.GetAccount(4045);
+
+            var account = rpcClient.GetAccountInfo(tokenMultiSignature.PublicKey);
+
+            var multiSigAccount = MultiSignatureAccount.Deserialize(Convert.FromBase64String(account.Result.Value.Data[0]));
+
 
         }
     }

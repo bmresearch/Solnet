@@ -280,7 +280,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(TransactionErrorType.InstructionError, result.Result.Value.Error.Type);
             Assert.IsNotNull(result.Result.Value.Error.InstructionError);
             Assert.AreEqual(InstructionErrorType.Custom, result.Result.Value.Error.InstructionError.Type);
-            Assert.AreEqual(1, result.Result.Value.Error.InstructionError.CustomError);
+            Assert.AreEqual(1u, result.Result.Value.Error.InstructionError.CustomError);
             FinishTest(messageHandlerMock, TestnetUri);
         }
     }

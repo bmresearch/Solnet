@@ -56,7 +56,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(TransactionErrorType.InstructionError, first.Meta.Error.Type);
             Assert.IsNotNull(first.Meta.Error.InstructionError);
             Assert.AreEqual(InstructionErrorType.Custom, first.Meta.Error.InstructionError.Type);
-            Assert.AreEqual(0, first.Meta.Error.InstructionError.CustomError);
+            Assert.AreEqual(0u, first.Meta.Error.InstructionError.CustomError);
 
             Assert.AreEqual(5000UL, first.Meta.Fee);
             Assert.AreEqual(0, first.Meta.InnerInstructions.Length);
@@ -128,7 +128,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(TransactionErrorType.InstructionError, first.Meta.Error.Type);
             Assert.IsNotNull(first.Meta.Error.InstructionError);
             Assert.AreEqual(InstructionErrorType.Custom, first.Meta.Error.InstructionError.Type);
-            Assert.AreEqual(0, first.Meta.Error.InstructionError.CustomError);
+            Assert.AreEqual(0u, first.Meta.Error.InstructionError.CustomError);
 
             Assert.AreEqual(5000UL, first.Meta.Fee);
             Assert.AreEqual(0, first.Meta.InnerInstructions.Length);

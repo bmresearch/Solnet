@@ -28,7 +28,7 @@ namespace Solnet.Programs.Test.Utilities
 
         private static readonly byte[] EncodedStringBytes =
         {
-            21, 0, 0, 0, 116, 104, 105, 115, 32, 105, 115,
+            21, 0, 0, 0, 0,0,0,0,116, 104, 105, 115, 32, 105, 115,
             32, 97, 32, 116, 101, 115, 116, 32, 115, 116, 114,
             105, 110, 103
         };

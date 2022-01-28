@@ -1,11 +1,7 @@
-using Org.BouncyCastle.Crypto.Digests;
-using Solnet.Wallet.Utilities;
 using System;
-using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 
 namespace Solnet.Rpc.Utilities
@@ -18,8 +14,7 @@ namespace Solnet.Rpc.Utilities
         /// <summary>
         /// The bytes of the `ProgramDerivedAddress` string.
         /// </summary>
-        private static readonly byte[] ProgramDerivedAddressBytes = Encoding.UTF8.GetBytes("ProgramDerivedAddress");
-
+        private static readonly byte[] ProgramDerivedAddressBytes = Encoding.UTF8.GetBytes("ProgramDerivedAddress");        
         /// <summary>
         /// Derives a program address.
         /// </summary>
@@ -44,7 +39,7 @@ namespace Solnet.Rpc.Utilities
             buffer.Write(programId);
             buffer.Write(ProgramDerivedAddressBytes);
 
-            byte[] hash = Sha256(buffer.ToArray());
+            byte[] hash = Hashing.Sha256(buffer.ToArray());
 
             if (hash.IsOnCurve())
             {
@@ -87,20 +82,6 @@ namespace Solnet.Rpc.Utilities
             address = null;
             nonce = 0;
             return false;
-        }
-
-        /// <summary>
-        /// Calculates the SHA256 of the given data.
-        /// </summary>
-        /// <param name="data">The data to hash.</param>
-        /// <returns>The hash.</returns>
-        private static byte[] Sha256(byte[] data)
-        {
-            byte[] i = new byte[32];
-            Sha256Digest digest = new();
-            digest.BlockUpdate(data, 0, data.Length);
-            digest.DoFinal(i, 0);
-            return i;
         }
     }
 }
