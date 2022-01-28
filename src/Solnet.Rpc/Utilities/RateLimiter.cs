@@ -58,7 +58,8 @@ namespace Solnet.Rpc.Utilities
             var checkTime = DateTime.UtcNow;
             var resumeTime = NextFireAllowed(checkTime);
             var snoozeMs = resumeTime.Subtract(checkTime).TotalMilliseconds;
-            if (snoozeMs>0) Thread.Sleep((int)snoozeMs);
+            while (DateTime.UtcNow <= resumeTime)
+                Thread.Sleep(50);
 
             // record this trigger
             if (_duration_ms > 0)
