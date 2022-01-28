@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
+using Solnet.Rpc.Utilities;
 using System.Net.Http;
 using System.Net.WebSockets;
 
@@ -56,10 +57,37 @@ namespace Solnet.Rpc
         /// Instantiate a http client.
         /// </summary>
         /// <param name="cluster">The network cluster.</param>
+        /// <returns>The http client.</returns>
+        public static IRpcClient GetClient(Cluster cluster)
+        {
+            return GetClient(cluster, logger: null, rateLimiter: null);
+        }
+
+        /// <summary>
+        /// Instantiate a http client.
+        /// </summary>
+        /// <param name="cluster">The network cluster.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="rateLimiter">An IRateLimiter instance. If null, a new instance will be created.</param>
+        /// <returns>The http client.</returns>
+        public static IRpcClient GetClient(
+            Cluster cluster,
+            ILogger logger = null,
+            IRateLimiter rateLimiter = null)
+        {
+            return GetClient(cluster, logger, httpClient: null, rateLimiter: rateLimiter);
+        }
+
+        /// <summary>
+        /// Instantiate a http client.
+        /// </summary>
+        /// <param name="cluster">The network cluster.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="httpClient">A HttpClient instance. If null, a new instance will be created.</param>
+        /// <param name="rateLimiter">An IRateLimiter instance. If null, a new instance will be created.</param>
         /// <returns>The http client.</returns>
-        public static IRpcClient GetClient(Cluster cluster, ILogger logger = null, HttpClient httpClient = null)
+        public static IRpcClient GetClient(Cluster cluster, ILogger logger = null,
+                HttpClient httpClient = null, IRateLimiter rateLimiter = null)
         {
             var url = cluster switch
             {
@@ -81,8 +109,7 @@ namespace Solnet.Rpc
                 .SetMinimumLevel(LogLevel.Debug);
             }).CreateLogger<IRpcClient>();
 #endif
-
-            return GetClient(url, logger, httpClient);
+            return GetClient(url, logger, httpClient, rateLimiter);
         }
 
         /// <summary>
@@ -101,11 +128,24 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="url">The network cluster url.</param>
         /// <param name="logger">The logger.</param>
-        /// <param name="httpClient">A HttpClient instance. If null, a new instance will be created.</param>
+        /// <param name="rateLimiter">An IRateLimiter instance. If null, a new instance will be created.</param>
         /// <returns>The http client.</returns>
-        public static IRpcClient GetClient(string url, ILogger logger = null, HttpClient httpClient = null)
+        public static IRpcClient GetClient(string url, ILogger logger, IRateLimiter rateLimiter)
         {
-            return new SolanaRpcClient(url, logger, httpClient);
+            return GetClient(url, logger, httpClient: null, rateLimiter);
+        }
+
+        /// <summary>
+        /// Instantiate a http client.
+        /// </summary>
+        /// <param name="url">The network cluster url.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="httpClient">A HttpClient instance. If null, a new instance will be created.</param>
+        /// <param name="rateLimiter">An IRateLimiter instance. If null, a new instance will be created.</param>
+        /// <returns>The http client.</returns>
+        public static IRpcClient GetClient(string url, ILogger logger = null, HttpClient httpClient = null, IRateLimiter rateLimiter = null)
+        {
+            return new SolanaRpcClient(url, logger, httpClient, rateLimiter);
         }
 
         /// <summary>
@@ -114,7 +154,9 @@ namespace Solnet.Rpc
         /// <param name="cluster">The network cluster.</param>
         /// <param name="logger">The logger.</param>
         /// <returns>The streaming client.</returns>
-        public static IStreamingRpcClient GetStreamingClient(Cluster cluster, ILogger logger = null)
+        public static IStreamingRpcClient GetStreamingClient(
+            Cluster cluster,
+            ILogger logger = null)
         {
             var url = cluster switch
             {
