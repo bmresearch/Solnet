@@ -163,8 +163,9 @@ namespace Solnet.Rpc.Core.Http
         /// </summary>
         /// <param name="reqs">The message request.</param>
         /// <returns>A task that represents the asynchronous operation that holds the request result.</returns>
-        public async Task<RequestResult<JsonRpcBatchResponse>> SendBatchRequest(JsonRpcBatchRequest reqs)
+        public async Task<RequestResult<JsonRpcBatchResponse>> SendBatchRequestAsync(JsonRpcBatchRequest reqs)
         {
+            if (reqs == null) throw new ArgumentNullException(nameof(reqs));
             var requestsJson = JsonSerializer.Serialize(reqs, _serializerOptions);
 
             try

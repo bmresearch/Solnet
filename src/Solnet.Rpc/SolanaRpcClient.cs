@@ -1057,16 +1057,5 @@ namespace Solnet.Rpc
 
         #endregion
 
-        #region Batch
-
-        public async Task<RequestResult<JsonRpcBatchResponse>> SendBatchRequestAsync(JsonRpcBatchRequest reqs)
-        {
-            if (reqs == null) throw new ArgumentNullException(nameof(reqs));
-            return await SendBatchRequest(reqs);
-        }
-
-        #endregion
-
-
     }
 }
