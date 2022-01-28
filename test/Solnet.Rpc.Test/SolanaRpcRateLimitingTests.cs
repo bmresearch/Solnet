@@ -25,6 +25,7 @@ namespace Solnet.Rpc.Test
             limit.Fire();
             limit.Fire();
         }
+
         [TestMethod]
         public void TestMaxSpeed_WithinLimits()
         {

@@ -1226,5 +1226,19 @@ namespace Solnet.Rpc
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<ResponseValue<SimulationLogs>> SimulateTransaction(byte[] transaction, bool sigVerify = false,
             Commitment commitment = Commitment.Finalized, bool replaceRecentBlockhash = false, IList<string> accountsToReturn = null);
+
+        /// <summary>
+        /// Low-level method to send a batch of JSON RPC requests
+        /// </summary>
+        /// <param name="reqs"></param>
+        /// <returns></returns>
+        Task<RequestResult<JsonRpcBatchResponse>> SendBatchRequestAsync(JsonRpcBatchRequest reqs);
+
+        /// <summary>
+        /// Generates the next unique id for the request.
+        /// </summary>
+        /// <returns>The id.</returns>
+        int GetNextIdForReq();
+
     }
 }

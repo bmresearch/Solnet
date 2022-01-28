@@ -31,6 +31,7 @@ namespace Solnet.Rpc
         /// <param name="url">The url of the node exposing the JSON RPC API.</param>
         /// <param name="logger">The logger to use.</param>
         /// <param name="httpClient">An http client.</param>
+
         /// <param name="rateLimiter">A rate limiting strategy or null.</param>
         internal SolanaRpcClient(string url, ILogger logger, HttpClient httpClient = default, IRateLimiter rateLimiter = null) 
             : base(url, logger, httpClient, rateLimiter)
@@ -1059,5 +1060,12 @@ namespace Solnet.Rpc
                 .Result;
 
         #endregion
+
+        /// <summary>
+        /// Gets the id for the next request.
+        /// </summary>
+        /// <returns>The id.</returns>
+        int IRpcClient.GetNextIdForReq() => _idGenerator.GetNextId();
+
     }
 }

@@ -484,5 +484,28 @@ namespace Solnet.Extensions
 
         }
 
+        /// <summary>
+        /// Does a public key belong to a subaccount of this wallet?
+        /// </summary>
+        /// <param name="pubkey">The public key of the sub-account to query.</param>
+        /// <returns>True if this sub-account exists in this wallet.</returns>
+        public bool IsSubAccount(string pubkey)
+        {
+            if (pubkey == null) throw new ArgumentNullException(nameof(pubkey));
+            return this._tokenAccounts.Any(x => x.PublicKey == pubkey);
+        }
+
+        /// <summary>
+        /// Does a public key belong to a subaccount of this wallet?
+        /// </summary>
+        /// <param name="pubkey">The public key of the sub-account to query.</param>
+        /// <returns>True if this sub-account exists in this wallet.</returns>
+        public bool IsSubAccount(PublicKey pubkey)
+        {
+            if (pubkey == null) throw new ArgumentNullException(nameof(pubkey));
+            return this._tokenAccounts.Any(x => x.PublicKey == pubkey.Key);
+        }
+
     }
+
 }

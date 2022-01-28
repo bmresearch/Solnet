@@ -155,5 +155,15 @@ namespace Solnet.Extensions
         /// </summary>
         public static TokenDef StarAtlasDao = new TokenDef("poLisWXnNRwC6oBu1vHiuKQzFjGL4XDSu4g9qjz9qVk", "Star Atlas DAO", "POLIS", 8);
 
+        /// <summary>
+        /// WOOF (WOOFENCOMICS)
+        /// </summary>
+        public static TokenDef Woof = new TokenDef("9nEqaUcb16sQ3Tn1psbkWqyhPdLmfHWjKGymREjsAgTE", "WOOFENOMICS", "WOOF", 6);
+
+        /// <summary>
+        /// Shadow Token (SHDW)
+        /// </summary>
+        public static TokenDef ShadowToken = new TokenDef("SHDWyBxihqiCj6YekG2GUr7wqKLeLAMK1gHZck9pL6y", "Shadow Token", "SHDW", 9);
+
     }
 }
