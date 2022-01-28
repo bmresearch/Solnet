@@ -2,6 +2,7 @@
 using Solnet.Rpc.Converters;
 using Solnet.Rpc.Messages;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -166,11 +167,12 @@ namespace Solnet.Rpc.Core.Http
         public async Task<RequestResult<JsonRpcBatchResponse>> SendBatchRequestAsync(JsonRpcBatchRequest reqs)
         {
             if (reqs == null) throw new ArgumentNullException(nameof(reqs));
+            if (reqs.Count == 0) throw new ArgumentException("Empty batch");
+            var id_for_log = reqs.Min(x => x.Id);
             var requestsJson = JsonSerializer.Serialize(reqs, _serializerOptions);
-
             try
             {
-                // TODO - logging
+                _logger?.LogInformation(new EventId(id_for_log, $"[batch of {reqs.Count}]"), $"Sending request: {requestsJson}");
 
                 // create byte buffer to avoid charset=utf-8 in content-type header
                 // as this is rejected by some RPC nodes
@@ -198,14 +200,14 @@ namespace Solnet.Rpc.Core.Http
             {
                 var result = new RequestResult<JsonRpcBatchResponse>(e.StatusCode ?? System.Net.HttpStatusCode.BadRequest, e.Message);
                 result.RawRpcRequest = requestsJson;
-                // TODO - logging
+                _logger?.LogDebug(new EventId(id_for_log, $"[batch of {reqs.Count}]"), $"Caught exception: {e.Message}");
                 return result;
             }
             catch (Exception e)
             {
                 var result = new RequestResult<JsonRpcBatchResponse>(System.Net.HttpStatusCode.BadRequest, e.Message);
                 result.RawRpcRequest = requestsJson;
-                // TODO - logging
+                _logger?.LogDebug(new EventId(id_for_log, $"[batch of {reqs.Count}]"), $"Caught exception: {e.Message}");
                 return result;
             }
 
@@ -221,12 +223,13 @@ namespace Solnet.Rpc.Core.Http
         /// <returns>A task that represents the asynchronous operation that holds the request result.</returns>
         private async Task<RequestResult<JsonRpcBatchResponse>> HandleBatchResult(JsonRpcBatchRequest reqs, HttpResponseMessage response)
         {
+            var id_for_log = reqs.Min(x => x.Id);
             RequestResult<JsonRpcBatchResponse> result = new RequestResult<JsonRpcBatchResponse>(response);
             try
             {
                 result.RawRpcResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-                // TODO - logging - _logger?.LogInformation(new EventId(reqs.Id, reqs.Method), $"Result: {result.RawRpcResponse}");
+                _logger?.LogInformation(new EventId(id_for_log, $"[batch of {reqs.Count}]"), $"Result: {result.RawRpcResponse}");
                 var res = JsonSerializer.Deserialize<JsonRpcBatchResponse>(result.RawRpcResponse, _serializerOptions);
 
                 if (res != null)
@@ -251,7 +254,7 @@ namespace Solnet.Rpc.Core.Http
             }
             catch (JsonException e)
             {
-                // logging - _logger?.LogDebug(new EventId(req.Id, req.Method), $"Caught exception: {e.Message}");
+                _logger?.LogDebug(new EventId(id_for_log, $"[batch of {reqs.Count}]"), $"Caught exception: {e.Message}");
                 result.WasRequestSuccessfullyHandled = false;
                 result.Reason = "Unable to parse json.";
             }
