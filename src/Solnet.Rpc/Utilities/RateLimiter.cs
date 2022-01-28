@@ -61,7 +61,8 @@ namespace Solnet.Rpc.Utilities
                 Thread.Sleep(50);
 
             // record this trigger
-            _hit_list.Enqueue(DateTime.UtcNow);
+            if (_duration_ms > 0)
+                _hit_list.Enqueue(DateTime.UtcNow);
 
         }
 
