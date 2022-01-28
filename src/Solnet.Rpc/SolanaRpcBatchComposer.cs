@@ -363,8 +363,6 @@ namespace Solnet.Rpc
         {
             if (taskSource == null) return null;
 
-            // TODO - what about exceptions??
-
             // wrap into common typed callback
             Action<JsonRpcBatchResponseItem, Exception> wrapper = (item, ex) =>
             {
