@@ -130,6 +130,18 @@ namespace Solnet.Rpc.Utilities
             return this;
         }
 
+        /// <summary>
+        /// Show info about this rate limiter
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            if (_hit_list.Count>0)
+                return $"{_hit_list.Count}-{_hit_list.Peek().ToString("HH:mm:ss.fff")}";
+            else
+                return $"(empty)";
+        }
+
     }
 
 }

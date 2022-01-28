@@ -49,13 +49,23 @@ namespace Solnet.Rpc.Test
             var timeCheck = DateTime.UtcNow;
             var limit = RateLimiter.Create().AllowHits(2).PerSeconds(1);
             var twoSecondsLater = timeCheck.AddSeconds(2);
+            Console.WriteLine(limit);
             Assert.IsTrue(limit.CanFire());
+            Console.WriteLine(limit);
             limit.Fire();
+            Console.WriteLine(limit);
             limit.Fire();
+            Console.WriteLine(limit);
             limit.Fire();
+            Console.WriteLine(limit);
             limit.Fire();
+            Console.WriteLine(limit);
             limit.Fire();
+            Console.WriteLine(limit);
             limit.Fire();
+            Console.WriteLine(limit);
+            limit.Fire();
+            Console.WriteLine(limit);
 
             // observe why this may break the build
             var finalTimeCheck= DateTime.UtcNow;
