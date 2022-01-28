@@ -12,11 +12,28 @@ namespace Solnet.Rpc.Test
     public class SolanaRpcRateLimitingTests
     {
         [TestMethod]
-        public void TestMaxSpeed()
+        public void TestMaxSpeed_NoLimits()
         {
             // allow unlimited fires instantly
             var limit = RateLimiter.Create();
             Assert.IsTrue(limit.CanFire());
+            limit.Fire();
+            limit.Fire();
+            limit.Fire();
+            limit.Fire();
+            limit.Fire();
+            limit.Fire();
+            limit.Fire();
+        }
+        [TestMethod]
+        public void TestMaxSpeed_WithinLimits()
+        {
+            // allow unlimited fires instantly
+            var limit = RateLimiter.Create().AllowHits(100).PerSeconds(10);
+            Assert.IsTrue(limit.CanFire());
+            limit.Fire();
+            limit.Fire();
+            limit.Fire();
             limit.Fire();
             limit.Fire();
             limit.Fire();
