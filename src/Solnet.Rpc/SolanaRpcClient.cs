@@ -10,7 +10,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using PublicKey = Solnet.Wallet.PublicKey;
 
 namespace Solnet.Rpc
 {
@@ -199,6 +201,18 @@ namespace Solnet.Rpc
             return await SendRequestAsync<ResponseValue<ulong>>("getBalance",
                 Parameters.Create(pubKey, ConfigObject.Create(HandleCommitment(commitment))));
         }
+        
+        /// <inheritdoc cref="IRpcClient.GetBalanceAsync"/>
+        public async Task<RequestResult<ResponseValue<ulong>>> GetBalanceAsync(PublicKey pubKey, Commitment commitment = Commitment.Finalized)
+        {
+            return await SendRequestAsync<ResponseValue<ulong>>("getBalance",
+                Parameters.Create(pubKey.Key, ConfigObject.Create(HandleCommitment(commitment))));
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetBalance"/>
+        public RequestResult<ResponseValue<ulong>> GetBalance(PublicKey pubKey, 
+            Commitment commitment = Commitment.Finalized) =>  GetBalanceAsync(pubKey, commitment).Result;
+
 
         /// <inheritdoc cref="IRpcClient.GetBalance"/>
         public RequestResult<ResponseValue<ulong>> GetBalance(string pubKey,
