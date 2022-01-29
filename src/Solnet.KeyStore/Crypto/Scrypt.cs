@@ -50,35 +50,7 @@ namespace Solnet.KeyStore.Crypto
         /// </summary>
         private static unsafe void BulkCopy(void* dst, void* src, int len)
         {
-            var d = (byte*)dst;
-            var s = (byte*)src;
-
-            while (len >= 8)
-            {
-                *(ulong*)d = *(ulong*)s;
-                d += 8;
-                s += 8;
-                len -= 8;
-            }
-            if (len >= 4)
-            {
-                *(uint*)d = *(uint*)s;
-                d += 4;
-
-                s += 4;
-                len -= 4;
-            }
-            if (len >= 2)
-            {
-                *(ushort*)d = *(ushort*)s;
-                d += 2;
-                s += 2;
-                len -= 2;
-            }
-            if (len >= 1)
-            {
-                *d = *s;
-            }
+            System.Runtime.CompilerServices.Unsafe.CopyBlock(dst, src,(uint) len);
         }
 
         /// <summary>
