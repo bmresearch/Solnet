@@ -2,6 +2,7 @@ using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
+using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -102,6 +103,17 @@ namespace Solnet.Rpc
         Task<RequestResult<ResponseValue<ulong>>> GetBalanceAsync(string pubKey, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
+        /// Gets the balance <b>asynchronously</b> for a certain public key.
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
+        /// </summary>
+        /// <param name="pubKey">The public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>A task which may return a request result holding the context and address balance.</returns>
+        Task<RequestResult<ResponseValue<ulong>>> GetBalanceAsync(PublicKey pubKey, Commitment commitment = Commitment.Finalized);
+        
+        /// <summary>
         /// Gets the balance <b>synchronously</b> for a certain public key.
         /// <remarks>
         /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
@@ -111,6 +123,17 @@ namespace Solnet.Rpc
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<ResponseValue<ulong>> GetBalance(string pubKey, Commitment commitment = Commitment.Finalized);
+        
+        /// <summary>
+        /// Gets the balance <b>synchronously</b> for a certain public key.
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
+        /// </summary>
+        /// <param name="pubKey">The public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<ResponseValue<ulong>> GetBalance(PublicKey pubKey, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Returns identity and transaction information about a block in the ledger.
