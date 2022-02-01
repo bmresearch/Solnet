@@ -39,6 +39,62 @@ namespace Solnet.Programs.Test.Utilities
             105, 110, 103
         };
 
+        private byte[] OneNegBytes = new byte[]
+        {
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            255,
+        };
+
+        private byte[] OneBytes = new byte[]
+        {
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        };
+
+        private byte[] OneNegBEBytes = new byte[]
+        {
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            255,
+        };
+
+        private byte[] OneBEBytes = new byte[]
+        {
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+        };
+
+        private byte[] ZeroValueBytes = new byte[]
+        {
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        };
+
+        private byte[] NegValueBytes = new byte[]
+        {
+            0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+
+        };
+        private byte[] PosValueBytes = new byte[]
+        {
+            0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        };
+
+        private byte[] LowNegValueBytes = new byte[]
+        {
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255,
+
+        };
+        private byte[] HighPosValueBytes = new byte[]
+        {
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+        };
+
+        private byte[] LowNegValueBEBytes = new byte[]
+        {
+            255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        };
+        private byte[] HighPosValueBEBytes = new byte[]
+        {
+            0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        };
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadU8Exception()
@@ -224,6 +280,88 @@ namespace Solnet.Programs.Test.Utilities
             ReadOnlySpan<byte> span = BigIntBytes.AsSpan();
             BigInteger bi = span.GetBigInt(0, 16);
             Assert.AreEqual(actual, bi);
+        }
+
+        [TestMethod]
+        public void TestReadArbitraryBigIntegers()
+        {
+            BigInteger actual = new(ZeroValueBytes);
+            ReadOnlySpan<byte> span = ZeroValueBytes.AsSpan();
+            BigInteger bi = span.GetBigInt(0, 16);
+            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(0, bi);
+
+            actual = new(PosValueBytes);
+            span = PosValueBytes.AsSpan();
+            bi = span.GetBigInt(0, 16);
+            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(281474976710656, bi);
+
+            actual = new(NegValueBytes);
+            span = NegValueBytes.AsSpan();
+            bi = span.GetBigInt(0, 16);
+            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(-281474976710656, bi);
+
+            actual = new(HighPosValueBytes);
+            span = HighPosValueBytes.AsSpan();
+            bi = span.GetBigInt(0, 16);
+            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(BigInteger.Parse("20282409603651670423947251286016"), bi);
+
+            actual = new(HighPosValueBytes, isUnsigned: true);
+            span = HighPosValueBytes.AsSpan();
+            bi = span.GetBigInt(0, 16, true);
+            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(BigInteger.Parse("20282409603651670423947251286016"), bi);
+
+            actual = new(LowNegValueBytes);
+            span = LowNegValueBytes.AsSpan();
+            bi = span.GetBigInt(0, 16);
+            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(BigInteger.Parse("-20282409603651670423947251286016"), bi);
+
+            actual = new(HighPosValueBEBytes, isBigEndian: true);
+            span = HighPosValueBEBytes.AsSpan();
+            bi = span.GetBigInt(0, 16, isBigEndian: true);
+            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(BigInteger.Parse("20282409603651670423947251286016"), bi);
+
+            actual = new(HighPosValueBEBytes, true, true);
+            span = HighPosValueBEBytes.AsSpan();
+            bi = span.GetBigInt(0, 16, true, true);
+            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(BigInteger.Parse("20282409603651670423947251286016"), bi);
+
+            actual = new(LowNegValueBEBytes, isBigEndian: true);
+            span = LowNegValueBEBytes.AsSpan();
+            bi = span.GetBigInt(0, 16, isBigEndian: true);
+            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(BigInteger.Parse("-20282409603651670423947251286016"), bi);
+
+            actual = new(OneBytes);
+            span = OneBytes.AsSpan();
+            bi = span.GetBigInt(0, 16);
+            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(1, bi);
+
+            actual = new(OneNegBytes);
+            span = OneNegBytes.AsSpan();
+            bi = span.GetBigInt(0, 16);
+            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(-1, bi);
+
+            actual = new(OneBEBytes, isBigEndian: true);
+            span = OneBEBytes.AsSpan();
+            bi = span.GetBigInt(0, 16, isBigEndian: true);
+            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(1, bi);
+
+            actual = new(OneNegBEBytes, isBigEndian: true);
+            span = OneNegBEBytes.AsSpan();
+            bi = span.GetBigInt(0, 16, isBigEndian: true);
+            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(-1, bi);
         }
 
         [TestMethod]
