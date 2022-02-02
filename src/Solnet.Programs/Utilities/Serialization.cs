@@ -162,21 +162,21 @@ namespace Solnet.Programs.Utilities
         /// <param name="data">The byte array to get data from.</param>
         /// <param name="bigInteger">The <see cref="BigInteger"/> to write.</param>
         /// <param name="offset">The offset at which to write the <see cref="BigInteger"/>.</param>
-        /// <param name="isSigned">Whether the value uses signed encoding.</param>
+        /// <param name="isUnsigned">Whether the value does not use signed encoding.</param>
         /// <param name="isBigEndian">Whether the value is in big-endian byte order.</param>
         /// <returns>An integer representing the number of bytes written to the byte array.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
         public static int WriteBigInt(this byte[] data, BigInteger bigInteger, int offset,
-            bool isSigned = false, bool isBigEndian = false)
+            bool isUnsigned = false, bool isBigEndian = false)
         {
-            int byteCount = bigInteger.GetByteCount(isSigned);
+            int byteCount = bigInteger.GetByteCount(isUnsigned);
             if (offset + byteCount > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
 
             bigInteger.TryWriteBytes(
                 data.AsSpan(offset, byteCount),
                 out int written,
-                isSigned,
+                isUnsigned,
                 isBigEndian);
             return written;
         }
