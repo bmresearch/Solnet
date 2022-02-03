@@ -160,16 +160,16 @@ namespace Solnet.Programs.Utilities
         /// <param name="data">The span to get data from.</param>
         /// <param name="offset">The offset at which the arbitrarily long number begins.</param>
         /// <param name="length">The byte-length of the arbitrarily long number.</param>
-        /// <param name="isSigned">Whether the value uses signed encoding.</param>
+        /// <param name="isUnsigned">Whether the value does not use signed encoding.</param>
         /// <param name="isBigEndian">Whether the value is in big-endian byte order.</param>
         /// <returns>The <see cref="BigInteger"/> instance that represents the value.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static BigInteger GetBigInt(this ReadOnlySpan<byte> data, int offset, int length,
-            bool isSigned = false, bool isBigEndian = false)
+            bool isUnsigned = false, bool isBigEndian = false)
         {
             if (offset + length > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            return new BigInteger(data.Slice(offset, length), isSigned, isBigEndian);
+            return new BigInteger(data.Slice(offset, length), isUnsigned, isBigEndian);
         }
 
         /// <summary>
