@@ -46,7 +46,7 @@ namespace Solnet.Programs.Models.NameService
             var ret = new ReverseTwitterRecord(header);
 
             ret.TwitterRegistryKey = data.GetPubKey(0);
-            _ = data.GetString(32, out var str);
+            _ = data.GetBorshString(32, out var str);
             ret.TwitterHandle = str;
 
             return ret;

@@ -218,7 +218,7 @@ namespace Solnet.Programs.Utilities
         /// <param name="value">The <see cref="string"/> to write.</param>
         /// <param name="offset">The offset at which to write the <see cref="string"/>.</param>
         /// <returns>Returns the number of bytes written.</returns>
-        public static int WriteString(this byte[] data, string value, int offset)
+        public static int WriteBorshString(this byte[] data, string value, int offset)
         {
             byte[] stringBytes = Encoding.UTF8.GetBytes(value);
 
@@ -236,7 +236,7 @@ namespace Solnet.Programs.Utilities
         /// </summary>
         /// <param name="data"> the string to be encoded</param>
         /// <returns></returns>
-        public static byte[] EncodeRustString(string data)
+        public static byte[] EncodeBincodeString(string data)
         {
             byte[] stringBytes = Encoding.UTF8.GetBytes(data);
           

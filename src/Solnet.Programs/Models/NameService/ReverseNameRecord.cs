@@ -44,7 +44,7 @@ namespace Solnet.Programs.Models.NameService
             var data = new ReadOnlySpan<byte>(input, 96, input.Length - 96);
 
             var header = RecordHeader.Deserialize(input);
-            _ = data.GetString(0, out var str);
+            _ = data.GetBorshString(0, out var str);
 
             var res = new ReverseNameRecord(header, str);
 

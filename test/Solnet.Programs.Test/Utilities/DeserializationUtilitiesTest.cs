@@ -407,7 +407,7 @@ namespace Solnet.Programs.Test.Utilities
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadRustStringException()
         {
-            Deserialization.DecodeRustString(EncodedStringBytes, 22);
+            Deserialization.DecodeBincodeString(EncodedStringBytes, 22);
         }
 
         [TestMethod]
@@ -417,7 +417,7 @@ namespace Solnet.Programs.Test.Utilities
             const string expected = "this is a test string";
             int expectedLength = expected.Length + sizeof(ulong);
 
-            (string actual, int length) = Deserialization.DecodeRustString(EncodedStringBytes, 0);
+            (string actual, int length) = Deserialization.DecodeBincodeString(EncodedStringBytes, 0);
 
             Assert.AreEqual(expected, actual);
             Assert.AreEqual(expectedLength, length);

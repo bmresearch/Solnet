@@ -76,7 +76,7 @@ namespace Solnet.Programs
         internal static byte[] EncodeCreateAccountWithSeedData(
             PublicKey baseAccount, PublicKey owner, ulong lamports, ulong space, string seed)
         {
-            byte[] encodedSeed = Serialization.EncodeRustString(seed);
+            byte[] encodedSeed = Serialization.EncodeBincodeString(seed);
             byte[] data = new byte[84 + encodedSeed.Length];
 
             data.WriteU32((uint)SystemProgramInstructions.Values.CreateAccountWithSeed, MethodOffset);
@@ -175,7 +175,7 @@ namespace Solnet.Programs
         internal static byte[] EncodeAllocateWithSeedData(
             PublicKey baseAccount, PublicKey owner, ulong space, string seed)
         {
-            byte[] encodedSeed = Serialization.EncodeRustString(seed);
+            byte[] encodedSeed = Serialization.EncodeBincodeString(seed);
             byte[] data = new byte[76 + encodedSeed.Length];
 
             data.WriteU32((uint)SystemProgramInstructions.Values.AllocateWithSeed, MethodOffset);
@@ -197,7 +197,7 @@ namespace Solnet.Programs
         internal static byte[] EncodeAssignWithSeedData(
             PublicKey baseAccount, string seed, PublicKey owner)
         {
-            byte[] encodedSeed = Serialization.EncodeRustString(seed);
+            byte[] encodedSeed = Serialization.EncodeBincodeString(seed);
             byte[] data = new byte[68 + encodedSeed.Length];
 
             data.WriteU32((uint)SystemProgramInstructions.Values.AssignWithSeed, MethodOffset);
@@ -217,7 +217,7 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction data.</returns>
         internal static byte[] EncodeTransferWithSeedData(PublicKey owner, string seed, ulong lamports)
         {
-            byte[] encodedSeed = Serialization.EncodeRustString(seed);
+            byte[] encodedSeed = Serialization.EncodeBincodeString(seed);
             byte[] data = new byte[44 + encodedSeed.Length];
 
             data.WriteU32((uint)SystemProgramInstructions.Values.TransferWithSeed, MethodOffset);
@@ -286,7 +286,7 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("From Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("To Account", keys[keyIndices[1]]);
             decodedInstruction.Values.Add("Base Account", data.GetPubKey(4));
-            (string createSeed, int createLength) = data.DecodeRustString(36);
+            (string createSeed, int createLength) = data.DecodeBincodeString(36);
             decodedInstruction.Values.Add("Seed", createSeed);
             decodedInstruction.Values.Add("Amount", data.GetU64(36 + createLength));
             decodedInstruction.Values.Add("Space", data.GetU64(44 + createLength));
@@ -377,7 +377,7 @@ namespace Solnet.Programs
         {
             decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Base Account", data.GetPubKey(4));
-            (string allocateSeed, int allocateLength) = data.DecodeRustString(36);
+            (string allocateSeed, int allocateLength) = data.DecodeBincodeString(36);
             decodedInstruction.Values.Add("Seed", allocateSeed);
             decodedInstruction.Values.Add("Space", data.GetU64(36 + allocateLength));
             decodedInstruction.Values.Add("Owner", data.GetPubKey(44 + allocateLength));
@@ -395,7 +395,7 @@ namespace Solnet.Programs
         {
             decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("Base Account", data.GetPubKey(4));
-            (string assignSeed, int assignLength) = data.DecodeRustString(36);
+            (string assignSeed, int assignLength) = data.DecodeBincodeString(36);
             decodedInstruction.Values.Add("Seed", assignSeed);
             decodedInstruction.Values.Add("Owner", data.GetPubKey(36 + assignLength));
         }
@@ -414,7 +414,7 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("From Base Account", keys[keyIndices[1]]);
             decodedInstruction.Values.Add("To Account", keys[keyIndices[1]]);
             decodedInstruction.Values.Add("Amount", data.GetU64(4));
-            (string transferSeed, int transferLength) = data.DecodeRustString(12);
+            (string transferSeed, int transferLength) = data.DecodeBincodeString(12);
             decodedInstruction.Values.Add("Seed", transferSeed);
             decodedInstruction.Values.Add("From Owner", data.GetPubKey(12 + transferLength));
         }
