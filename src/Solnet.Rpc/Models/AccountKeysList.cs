@@ -70,10 +70,14 @@ namespace Solnet.Rpc.Models
             {
                 _accounts.Add(accountMeta);
             }
-            else if (!accMeta.IsSigner && accountMeta.IsSigner || !accMeta.IsWritable && accountMeta.IsWritable)
+            else if (!accMeta.IsSigner && accountMeta.IsSigner)
             {
-                var idx = _accounts.IndexOf(accMeta);
-                _accounts[idx] = accountMeta;
+                accMeta.IsSigner = true;
+                accMeta.IsWritable = accMeta.IsWritable || accountMeta.IsWritable;
+            }
+            else if(!accMeta.IsWritable && accountMeta.IsWritable)
+            {
+                accMeta.IsWritable = true;
             }
 
         }

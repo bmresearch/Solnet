@@ -325,7 +325,7 @@ namespace Solnet.Rpc.Models
                 {
                     int k = compiledInstruction.KeyIndices[j];
                     accounts.Add(new AccountMeta(message.AccountKeys[k], message.IsAccountWritable(k),
-                        tx.Signatures.Any(pair => pair.PublicKey.Key == message.AccountKeys[k].Key)));
+                        tx.Signatures.Any(pair => pair.PublicKey.Key == message.AccountKeys[k].Key) || message.IsAccountSigner(k)));
                 }
 
                 TransactionInstruction instruction = new()

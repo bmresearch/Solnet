@@ -102,6 +102,13 @@ namespace Solnet.Rpc.Models
                                                      index < AccountKeys.Count - Header.ReadOnlyUnsignedAccounts);
 
         /// <summary>
+        /// Check whether an account is a signer.
+        /// </summary>
+        /// <param name="index">The index of the account in the account keys.</param>
+        /// <returns>true if the account is an expected signer, false otherwise.</returns>
+        public bool IsAccountSigner(int index) => index < Header.RequiredSignatures;
+
+        /// <summary>
         /// Serialize the message into the wire format.
         /// </summary>
         /// <returns>A byte array corresponding to the serialized message.</returns>

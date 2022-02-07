@@ -22,12 +22,12 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// A boolean which defines if the account is a signer account.
         /// </summary>
-        public bool IsSigner { get; }
+        public bool IsSigner { get; internal set; }
 
         /// <summary>
         /// A boolean which defines if the account is a writable account.
         /// </summary>
-        public bool IsWritable { get; }
+        public bool IsWritable { get; internal set; }
 
         /// <summary>
         /// Initialize the account meta with the passed public key, being a non-signing account for the transaction.
