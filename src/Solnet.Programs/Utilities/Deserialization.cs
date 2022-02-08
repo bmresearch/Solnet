@@ -223,7 +223,7 @@ namespace Solnet.Programs.Utilities
         /// <param name="offset">The offset at which the string begins.</param>
         /// <returns>The decoded data.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
-        public static (string EncodedString, int Length) DecodeRustString(this ReadOnlySpan<byte> data, int offset)
+        public static (string EncodedString, int Length) DecodeBincodeString(this ReadOnlySpan<byte> data, int offset)
         {
             if (offset + sizeof(ulong) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
@@ -242,7 +242,7 @@ namespace Solnet.Programs.Utilities
         /// <param name="result">The decoded data./>.</param>
         /// <returns>The length in bytes that was read from the original buffer, including the</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
-        public static int GetString(this ReadOnlySpan<byte> data, int offset, out string result)
+        public static int GetBorshString(this ReadOnlySpan<byte> data, int offset, out string result)
         {
             if (offset + sizeof(uint) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));

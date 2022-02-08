@@ -104,7 +104,7 @@ namespace Solnet.Programs
 
         internal static byte[] EncodeAuthorizeWithSeedData(string authoritySeed, PublicKey newAuthorizedPubKey, StakeAuthorize stakeAuthorize, PublicKey authorityOwner)
         {
-            byte[] encodedSeed = Serialization.EncodeRustString(authoritySeed);
+            byte[] encodedSeed = Serialization.EncodeBincodeString(authoritySeed);
             byte[] data = new byte[72 + encodedSeed.Length];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.AuthorizeWithSeed, MethodOffset);
@@ -134,7 +134,7 @@ namespace Solnet.Programs
 
         internal static byte[] EncodeAuthorizeCheckedWithSeedData(string authoritySeed, PublicKey authorityOwner, StakeAuthorize stakeAuthorize)
         {
-            byte[] encodedSeed = Serialization.EncodeRustString(authoritySeed);
+            byte[] encodedSeed = Serialization.EncodeBincodeString(authoritySeed);
             byte[] data = new byte[40 + encodedSeed.Length];
 
             data.WriteU32((uint)StakeProgramInstructions.Values.AuthorizeCheckedWithSeed, MethodOffset);
@@ -219,7 +219,7 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Custodian Account", keys[keyIndices[3]]);
             decodedInstruction.Values.Add("New Authorized Account", data.GetPubKey(4));
             decodedInstruction.Values.Add("Stake Authorize", Enum.Parse(typeof(StakeAuthorize), data.GetU8(36).ToString()));
-            (string authoritySeed, int seedLength) = data.DecodeRustString(37);
+            (string authoritySeed, int seedLength) = data.DecodeBincodeString(37);
             decodedInstruction.Values.Add("Authority Seed", authoritySeed);
             decodedInstruction.Values.Add("Authority Owner Account", data.GetPubKey(37 + seedLength));
         }  
@@ -250,7 +250,7 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Custodian Account", keys[keyIndices[4]]);
             decodedInstruction.Values.Add("New Authorized Account", keys[keyIndices[3]]);
             decodedInstruction.Values.Add("Stake Authorize", Enum.Parse(typeof(StakeAuthorize), data.GetU8(4).ToString()));
-            (string authoritySeed, int seedLength) = data.DecodeRustString(5);
+            (string authoritySeed, int seedLength) = data.DecodeBincodeString(5);
             decodedInstruction.Values.Add("Authority Seed", authoritySeed);
             decodedInstruction.Values.Add("Authority Owner Account", data.GetPubKey(5 + seedLength));
         }

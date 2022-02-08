@@ -257,7 +257,7 @@ namespace Solnet.Programs.Test.Utilities
         {
             const string value = "this is a test string";
 
-            byte[] encodedString = Serialization.EncodeRustString(value);
+            byte[] encodedString = Serialization.EncodeBincodeString(value);
 
             CollectionAssert.AreEqual(EncodedStringBytes, encodedString);
         }
