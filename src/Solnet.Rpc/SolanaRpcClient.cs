@@ -432,6 +432,7 @@ namespace Solnet.Rpc
                     ConfigObject.Create(KeyValue.Create("encoding", "json"), HandleCommitment(commitment))));
         }
 
+        /// <inheritdoc cref="IRpcClient.GetConfirmedTransactionAsync(string, Commitment)"/>
         public async Task<RequestResult<TransactionMetaSlotInfo>> GetConfirmedTransactionAsync(string signature,
             Commitment commitment = Commitment.Finalized)
         {
@@ -445,6 +446,7 @@ namespace Solnet.Rpc
             Commitment commitment = Commitment.Finalized)
             => GetTransactionAsync(signature, commitment).Result;
 
+        /// <inheritdoc cref="IRpcClient.GetConfirmedTransaction(string, Commitment)"/>
         public RequestResult<TransactionMetaSlotInfo> GetConfirmedTransaction(string signature,
             Commitment commitment = Commitment.Finalized) =>
             GetConfirmedTransactionAsync(signature, commitment).Result;
