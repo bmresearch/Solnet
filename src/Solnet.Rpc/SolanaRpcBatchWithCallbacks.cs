@@ -300,6 +300,49 @@ namespace Solnet.Rpc
         }
 
 
+        /// <summary>
+        /// Gets the account info for multiple accounts.
+        /// </summary>
+        /// <param name="accounts">The list of the accounts public keys.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <param name="callback">The callback to handle the result.</param>
+        public void GetMultipleAccounts(IList<string> accounts,
+                                Commitment commitment = Commitment.Finalized,
+                                Action<ResponseValue<List<AccountInfo>>, Exception> callback = null)
+        {
+            var parameters = Parameters.Create(
+                    accounts,
+                    ConfigObject.Create(
+                        KeyValue.Create("encoding", "base64"),
+                        HandleCommitment(commitment)));
+
+            _composer.AddRequest("getMultipleAccounts", parameters, callback);
+
+        }
+
+
+        /// <summary>
+        /// Gets the token account info.
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
+        /// </summary>
+        /// <param name="pubKey">The token account public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <param name="callback">The callback to handle the result.</param>
+        public void GetTokenAccountInfo(string pubKey,
+                                        Commitment commitment = Commitment.Finalized,
+                                        Action<ResponseValue<TokenAccountInfo>, Exception> callback = null)
+        {
+            var parameters = Parameters.Create(
+                    pubKey,
+                    ConfigObject.Create(
+                        KeyValue.Create("encoding", "jsonParsed"),
+                        HandleCommitment(commitment)));
+
+            _composer.AddRequest("getAccountInfo", parameters, callback);
+
+        }
         #endregion
 
         private KeyValue HandleCommitment(Commitment parameter, Commitment defaultValue = Commitment.Finalized)
