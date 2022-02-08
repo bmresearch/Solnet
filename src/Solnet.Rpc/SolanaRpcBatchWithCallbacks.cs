@@ -71,7 +71,7 @@ namespace Solnet.Rpc
                                Action<ResponseValue<ulong>, Exception> callback = null)
         {
             var parameters = Parameters.Create(pubKey, ConfigObject.Create(HandleCommitment(commitment)));
-            _composer.AddRequest<ResponseValue<ulong>>("getBalance", parameters, callback);
+            _composer.AddRequest("getBalance", parameters, callback);
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace Solnet.Rpc
                         HandleCommitment(commitment),
                         KeyValue.Create("encoding", "jsonParsed")));
 
-            _composer.AddRequest<ResponseValue<List<TokenAccount>>>("getTokenAccountsByOwner", parameters, callback);
+            _composer.AddRequest("getTokenAccountsByOwner", parameters, callback);
 
         }
 
@@ -223,7 +223,7 @@ namespace Solnet.Rpc
                         KeyValue.Create("encoding", "json"),
                         HandleCommitment(commitment)));
 
-            _composer.AddRequest<TransactionMetaSlotInfo>("getTransaction", parameters, callback);
+            _composer.AddRequest("getTransaction", parameters, callback);
 
         }
 
@@ -262,6 +262,42 @@ namespace Solnet.Rpc
             _composer.AddRequest("getTokenLargestAccounts", parameters, callback);
         }
 
+        /// <summary>
+        /// Sends a transaction.
+        /// </summary>
+        /// <param name="transaction">The signed transaction as byte array.</param>
+        /// <param name="skipPreflight">If true skip the prflight transaction checks (default false).</param>
+        /// <param name="preflightCommitment">The block commitment used to retrieve block hashes and verify success.</param>
+        /// <param name="callback">The callback to handle the result.</param>
+        public void SendTransaction(byte[] transaction,
+                            bool skipPreflight = false,
+                            Commitment preflightCommitment = Commitment.Finalized,
+                            Action<string, Exception> callback = null) =>
+            SendTransaction(Convert.ToBase64String(transaction), skipPreflight, preflightCommitment, callback);
+
+
+        /// <summary>
+        /// Sends a transaction.
+        /// </summary>
+        /// <param name="transaction">The signed transaction as base-64 encoded string.</param>
+        /// <param name="skipPreflight">If true skip the prflight transaction checks (default false).</param>
+        /// <param name="preflightCommitment">The block commitment used for preflight.</param>
+        /// <param name="callback">The callback to handle the result.</param>
+        public void SendTransaction(string transaction,
+                                    bool skipPreflight = false,
+                                    Commitment preflightCommitment = Commitment.Finalized,
+                                    Action<string, Exception> callback = null)
+        {
+            var parameters = Parameters.Create(
+                  transaction,
+                  ConfigObject.Create(
+                        KeyValue.Create("skipPreflight", skipPreflight ? skipPreflight : null),
+                        KeyValue.Create("preflightCommitment",
+                            preflightCommitment == Commitment.Finalized ? null : preflightCommitment),
+                        KeyValue.Create("encoding", BinaryEncoding.Base64)));
+
+            _composer.AddRequest("sendTransaction", parameters, callback);
+        }
 
 
         #endregion
