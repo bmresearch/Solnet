@@ -225,8 +225,8 @@ namespace Solnet.Programs.Utilities
             if(offset + sizeof(uint) + stringBytes.Length > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
 
-            data.WriteU32((uint)stringBytes.Length, 0);
-            data.WriteSpan(stringBytes, sizeof(uint));
+            data.WriteU32((uint)stringBytes.Length, offset);
+            data.WriteSpan(stringBytes, offset + sizeof(uint));
 
             return stringBytes.Length + sizeof(uint);
         }
