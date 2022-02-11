@@ -59,6 +59,8 @@ for a list of other commonly needed programs see below:
 
 - [Serum](https://github.com/bmresearch/Solnet.Serum/)
 - [Mango](https://github.com/bmresearch/Solnet.Mango/)
+- [Pyth](https://github.com/bmresearch/Solnet.Pyth/)
+- [Metaplex](https://github.com/bmresearch/Solnet.Metaplex/)
 
 ## Requirements
 - net 5.0
