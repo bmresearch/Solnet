@@ -12,12 +12,12 @@ namespace Solnet.Programs.TokenLending.Models
     public class ObligationCollateral
     {
         /// <summary>
-        /// The layout of the structure.
+        /// The layout of the <see cref="ObligationCollateral"/> structure.
         /// </summary>
         public static class Layout
         {
             /// <summary>
-            /// The length of the structure.
+            /// The length of the <see cref="ObligationCollateral"/> structure.
             /// </summary>
             public const int Length = 56;
 
@@ -53,22 +53,25 @@ namespace Solnet.Programs.TokenLending.Models
         public BigInteger MarketValue;
 
         /// <summary>
-        /// 
+        /// Initialize the <see cref="ObligationCollateral"/> with the given data.
         /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public static ObligationCollateral Deserialize(ReadOnlySpan<byte> data)
+        /// <param name="data">The byte array.</param>
+        public ObligationCollateral(ReadOnlySpan<byte> data)
         {
             if (data.Length != Layout.Length)
-                throw new ArgumentException("data length is invalid");
+                throw new ArgumentException($"{nameof(data)} has wrong size. Expected {Layout.Length} bytes, actual {data.Length} bytes.");
 
-            return new ObligationCollateral
-            {
-                DepositReserve = data.GetPubKey(Layout.DepositReserveOffset),
-                DepositedAmount = data.GetU64(Layout.DepositedAmountOffset),
-                MarketValue = data.GetBigInt(Layout.MarketValueOffset, 16)
-            };
+            DepositReserve = data.GetPubKey(Layout.DepositReserveOffset);
+            DepositedAmount = data.GetU64(Layout.DepositedAmountOffset);
+            MarketValue = data.GetBigInt(Layout.MarketValueOffset, 16, true);
         }
+
+        /// <summary>
+        /// Deserialize the given byte array into the <see cref="ObligationCollateral"/> structure.
+        /// </summary>
+        /// <param name="data">The byte array.</param>
+        /// <returns>The <see cref="ObligationCollateral"/> instance.</returns>
+        public static ObligationCollateral Deserialize(byte[] data) => new(data.AsSpan());
     }
 
     /// <summary>
@@ -77,14 +80,14 @@ namespace Solnet.Programs.TokenLending.Models
     public class ObligationLiquidity
     {
         /// <summary>
-        /// The layout of the structure.
+        /// The layout of the <see cref="ObligationLiquidity"/> structure.
         /// </summary>
         public static class Layout
         {
             /// <summary>
-            /// The length of the structure.
+            /// The length of the <see cref="ObligationLiquidity"/> structure.
             /// </summary>
-            public const int Length = 0;
+            public const int Length = 80;
 
             /// <summary>
             /// The offset at which the borrow reserve value begins.
@@ -128,17 +131,26 @@ namespace Solnet.Programs.TokenLending.Models
         public BigInteger MarketValue;
 
         /// <summary>
-        /// 
+        /// Initialize the <see cref="ObligationLiquidity"/> with the given data.
         /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public static ObligationLiquidity Deserialize(ReadOnlySpan<byte> data)
+        /// <param name="data">The byte array.</param>
+        public ObligationLiquidity(ReadOnlySpan<byte> data)
         {
-            return new ObligationLiquidity
-            {
+            if (data.Length != Layout.Length)
+                throw new ArgumentException($"{nameof(data)} has wrong size. Expected {Layout.Length} bytes, actual {data.Length} bytes.");
 
-            };
+            BorrowReserve = data.GetPubKey(Layout.BorrowReserveOffset);
+            CumulativeBorrowRateWads = data.GetBigInt(Layout.CumulativeBorrowRateOffset, 16, true);
+            BorrowedAmountWads = data.GetBigInt(Layout.BorrowAmountOffset, 16, true);
+            MarketValue = data.GetBigInt(Layout.MarketValueOffset, 16, true);
         }
+
+        /// <summary>
+        /// Deserialize the given byte array into the <see cref="ObligationLiquidity"/> structure.
+        /// </summary>
+        /// <param name="data">The byte array.</param>
+        /// <returns>The <see cref="ObligationLiquidity"/> instance.</returns>
+        public static ObligationLiquidity Deserialize(byte[] data) => new(data.AsSpan());
     }
 
     /// <summary>
@@ -147,14 +159,14 @@ namespace Solnet.Programs.TokenLending.Models
     public class Obligation
     {
         /// <summary>
-        /// The layout of the structure.
+        /// The layout of the <see cref="Obligation"/> structure.
         /// </summary>
         public static class Layout
         {
             /// <summary>
-            /// The length of the structure.
+            /// The length of the <see cref="Obligation"/> structure.
             /// </summary>
-            public const int Length = 0;
+            public const int Length = 916;
 
             /// <summary>
             /// The offset at which the version value begins.
@@ -253,14 +265,13 @@ namespace Solnet.Programs.TokenLending.Models
         public BigInteger UnhealthyBorrowValue;
 
         /// <summary>
-        /// Deserialize the given byte array into the <see cref="Obligation"/> structure.
+        /// Initialize the <see cref="Obligation"/> with the given data.
         /// </summary>
         /// <param name="data">The byte array.</param>
-        /// <returns>The <see cref="Obligation"/> instance.</returns>
-        public static Obligation Deserialize(ReadOnlySpan<byte> data)
+        public Obligation(ReadOnlySpan<byte> data)
         {
             if (data.Length != Layout.Length)
-                throw new ArgumentException("data length is invalid");
+                throw new ArgumentException($"{nameof(data)} has wrong size. Expected {Layout.Length} bytes, actual {data.Length} bytes.");
 
             List<ObligationCollateral> deposits = new();
             int numDeposits = (int)data.GetU32(Layout.DepositsOffset);
@@ -269,7 +280,7 @@ namespace Solnet.Programs.TokenLending.Models
 
             for (int i = 0; i < numDeposits; i++)
             {
-                ObligationCollateral obligationCollateral = ObligationCollateral.Deserialize(depositsBytes.GetSpan(
+                ObligationCollateral obligationCollateral = new (depositsBytes.GetSpan(
                     i * ObligationCollateral.Layout.Length,
                     ObligationCollateral.Layout.Length));
                 deposits.Add(obligationCollateral);
@@ -284,24 +295,28 @@ namespace Solnet.Programs.TokenLending.Models
 
             for (int i = 0; i < numBorrows; i++)
             {
-                ObligationLiquidity obligationLiquidity = ObligationLiquidity.Deserialize(borrowsBytes.GetSpan(
+                ObligationLiquidity obligationLiquidity = new (borrowsBytes.GetSpan(
                     i * ObligationLiquidity.Layout.Length,
                     ObligationLiquidity.Layout.Length));
                 borrows.Add(obligationLiquidity);
             }
 
-            return new Obligation
-            {
-                Version = data.GetU8(Layout.VersionOffset),
-                LendingMarket = data.GetPubKey(Layout.LendingMarketOffset),
-                Owner = data.GetPubKey(Layout.OwnerOffset),
-                Deposits = deposits,
-                Borrows = borrows,
-                DepositedValue = data.GetBigInt(postBorrowsOffset + Layout.DepositedValueOffset, 16),
-                BorrowedValue = data.GetBigInt(postBorrowsOffset + Layout.BorrowedValueOffset, 16),
-                AllowedBorrowValue = data.GetBigInt(postBorrowsOffset + Layout.AllowedBorrowValueOffset, 16),
-                UnhealthyBorrowValue = data.GetBigInt(postBorrowsOffset + Layout.UnhealthyBorrowValueOffset, 16)
-            };
+            Version = data.GetU8(Layout.VersionOffset);
+            LendingMarket = data.GetPubKey(Layout.LendingMarketOffset);
+            Owner = data.GetPubKey(Layout.OwnerOffset);
+            Deposits = deposits;
+            Borrows = borrows;
+            DepositedValue = data.GetBigInt(postBorrowsOffset + Layout.DepositedValueOffset, 16, true);
+            BorrowedValue = data.GetBigInt(postBorrowsOffset + Layout.BorrowedValueOffset, 16, true);
+            AllowedBorrowValue = data.GetBigInt(postBorrowsOffset + Layout.AllowedBorrowValueOffset, 16, true);
+            UnhealthyBorrowValue = data.GetBigInt(postBorrowsOffset + Layout.UnhealthyBorrowValueOffset, 16, true);
         }
+
+        /// <summary>
+        /// Deserialize the given byte array into the <see cref="Obligation"/> structure.
+        /// </summary>
+        /// <param name="data">The byte array.</param>
+        /// <returns>The <see cref="Obligation"/> instance.</returns>
+        public static Obligation Deserialize(byte[] data) => new(data.AsSpan());
     }
 }

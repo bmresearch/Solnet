@@ -1,4 +1,6 @@
-﻿using Solnet.Programs.TokenLending.Models;
+﻿using Solnet.Programs.Abstract;
+using Solnet.Programs.TokenLending.Models;
+using Solnet.Rpc;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System.Collections.Generic;
@@ -14,64 +16,110 @@ namespace Solnet.Programs.TokenLending
     /// https://github.com/solana-labs/solana-program-library/tree/master/token-lending
     /// </remarks>
     /// </summary>
-    public class TokenLendingProgram
+    public class TokenLendingProgram : BaseProgram
     {
         /// <summary>
-        /// SPL Token Lending Program Mainnet Program ID
+        /// SPL Token Lending Program MainNet Program ID.
+        /// <remarks>
+        /// As stated in the docs linked below this program is not currently operational.
+        /// https://github.com/solana-labs/solana-program-library/tree/master/token-lending
+        /// </remarks>
         /// </summary>
-        public static readonly PublicKey TokenLendingProgramIdKey =
+        public static readonly PublicKey MainNetProgramIdKey =
             new PublicKey("LendZqTs8gn5CTSJU1jWKhKuVpjJGom45nnwPb2AMTi");
+
+        /// <summary>
+        /// SPL Token Lending Program DevNet Program ID.
+        /// </summary>
+        public static readonly PublicKey DevNetProgramIdKey =
+            new PublicKey("6TvznH3B2e3p2mbhufNBpgSrLx6UkgvxtVQvopEZ2kuH");
 
         /// <summary>
         /// SPL Token Lending Program Name.
         /// </summary>
-        public static readonly string TokenLendingProgramName = "Token Lending Program";
+        public const string DefaultProgramName = "Token Lending Program";
 
         /// <summary>
-        /// The public key of the Token Lending Program.
+        /// Initialize the <see cref="TokenLendingProgram"/> with the given program id key and program name.
         /// </summary>
-        public virtual PublicKey ProgramIdKey => TokenLendingProgramIdKey;
+        /// <param name="programIdKey">The program id key.</param>
+        /// <param name="programName">The program name.</param>
+        public TokenLendingProgram(PublicKey programIdKey, string programName = DefaultProgramName) 
+            : base(programIdKey, programName) { }
 
         /// <summary>
-        /// The program's name.
+        /// Initialize the <see cref="TokenLendingProgram"/> for <see cref="Cluster.DevNet"/>.
         /// </summary>
-        public virtual string ProgramName => TokenLendingProgramName;
+        /// <returns>The <see cref="TokenLendingProgram"/> instance.</returns>
+        public static TokenLendingProgram CreateDevNet() => new TokenLendingProgram(DevNetProgramIdKey);
 
         /// <summary>
-        /// 
+        /// Initialize the <see cref="TokenLendingProgram"/> for <see cref="Cluster.MainNet"/>.
         /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="quoteCurrency"></param>
-        /// <param name="lendingMarket"></param>
-        /// <param name="oracleProgramId"></param>
-        /// <returns></returns>
-        public virtual TransactionInstruction InitializeLendingMarket(PublicKey owner,
+        /// <returns>The <see cref="TokenLendingProgram"/> instance.</returns>
+        public static TokenLendingProgram CreateMainNet() => new TokenLendingProgram(MainNetProgramIdKey);
+
+        /// <summary>
+        /// Initializes an instruction to initialize a <see cref="LendingMarket"/>.
+        /// </summary>
+        /// <param name="owner">The public key of the owner.</param>
+        /// <param name="quoteCurrency">The quote currency.</param>
+        /// <param name="lendingMarket">The public key of the lending market.</param>
+        /// <param name="oracleProgramId">The public key of the oracle program.</param>
+        /// <returns>The transaction instruction.</returns>
+        public TransactionInstruction InitializeLendingMarket(PublicKey owner,
+            byte[] quoteCurrency, PublicKey lendingMarket, PublicKey oracleProgramId)
+            => InitializeLendingMarket(ProgramIdKey, owner, quoteCurrency, lendingMarket, oracleProgramId);
+
+        /// <summary>
+        /// Initializes an instruction to initialize a <see cref="LendingMarket"/>.
+        /// </summary>
+        /// <param name="programIdKey">The public key of the program.</param>
+        /// <param name="owner">The public key of the owner.</param>
+        /// <param name="quoteCurrency">The quote currency.</param>
+        /// <param name="lendingMarket">The public key of the lending market.</param>
+        /// <param name="oracleProgramId">The public key of the oracle program.</param>
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction InitializeLendingMarket(PublicKey programIdKey, PublicKey owner,
             byte[] quoteCurrency, PublicKey lendingMarket, PublicKey oracleProgramId)
         {
             List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(lendingMarket, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false),
+                AccountMeta.ReadOnly(SysVars.RentKey, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false),
                 AccountMeta.ReadOnly(oracleProgramId, false),
 
             };
             return new TransactionInstruction
             {
-                ProgramId = TokenLendingProgramIdKey,
+                ProgramId = programIdKey,
                 Data = TokenLendingProgramData.EncodeInitializeLendingMarketData(owner, quoteCurrency),
                 Keys = keys
             };
         }
 
         /// <summary>
-        /// 
+        /// Initializes an instruction to set a <see cref="LendingMarket"/> owner.
         /// </summary>
-        /// <param name="lendingMarket"></param>
-        /// <param name="lendingMarketOwner"></param>
-        /// <param name="newOwner"></param>
-        /// <returns></returns>
+        /// <param name="lendingMarket">The public key of the lending market.</param>
+        /// <param name="lendingMarketOwner">The public key of the current lending market owner.</param>
+        /// <param name="newOwner">The public key of the new owner.</param>
+        /// <returns>The transaction instruction.</returns>
         public virtual TransactionInstruction SetLendingMarketOwner(PublicKey lendingMarket,
+            PublicKey lendingMarketOwner, PublicKey newOwner)
+            => SetLendingMarketOwner(ProgramIdKey, lendingMarket, lendingMarketOwner, newOwner);
+
+
+        /// <summary>
+        /// Initializes an instruction to set a <see cref="LendingMarket"/> owner.
+        /// </summary>
+        /// <param name="programIdKey">The public key of the program.</param>
+        /// <param name="lendingMarket">The public key of the lending market.</param>
+        /// <param name="lendingMarketOwner">The public key of the current lending market owner.</param>
+        /// <param name="newOwner">The public key of the new owner.</param>
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction SetLendingMarketOwner(PublicKey programIdKey, PublicKey lendingMarket,
             PublicKey lendingMarketOwner, PublicKey newOwner)
         {
             List<AccountMeta> keys = new()
@@ -81,7 +129,7 @@ namespace Solnet.Programs.TokenLending
             };
             return new TransactionInstruction
             {
-                ProgramId = TokenLendingProgramIdKey,
+                ProgramId = programIdKey,
                 Data = TokenLendingProgramData.EncodeSetLendingMarketOwnerData(newOwner),
                 Keys = keys
             };
@@ -90,6 +138,7 @@ namespace Solnet.Programs.TokenLending
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="programIdKey">The public key of the program.</param>
         /// <param name="liquidityAmount"></param>
         /// <param name="config"></param>
         /// <param name="sourceLiquidity"></param>
@@ -102,18 +151,18 @@ namespace Solnet.Programs.TokenLending
         /// <param name="reserveCollateralSupply"></param>
         /// <param name="pythProduct"></param>
         /// <param name="pythPrice"></param>
-        /// <param name="lendingMarket"></param>
-        /// <param name="lendingMarketOwner"></param>
+        /// <param name="lendingMarket">The public key of the lending market.</param>
+        /// <param name="lendingMarketOwner">The public key of the current lending market owner.</param>
         /// <param name="userTransferAuthority"></param>
-        /// <returns></returns>
-        public virtual TransactionInstruction InitializeReserve(ulong liquidityAmount,
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction InitializeReserve(PublicKey programIdKey, ulong liquidityAmount,
             ReserveConfig config, PublicKey sourceLiquidity, PublicKey destinationCollateral,
             PublicKey reserve, PublicKey reserveLiquidityMint, PublicKey reserveLiquiditySupply,
             PublicKey reserveLiquidityFeeReceiver, PublicKey reserveCollateralMint,
             PublicKey reserveCollateralSupply, PublicKey pythProduct, PublicKey pythPrice,
             PublicKey lendingMarket, PublicKey lendingMarketOwner, PublicKey userTransferAuthority)
         {
-            PublicKey lendingMarketAuthority = TokenLendingProgramData.DeriveLendingMarketAuthority(lendingMarket, TokenLendingProgramIdKey);
+            PublicKey lendingMarketAuthority = TokenLendingProgramData.DeriveLendingMarketAuthority(lendingMarket, programIdKey);
 
             List<AccountMeta> keys = new()
             {
@@ -131,13 +180,13 @@ namespace Solnet.Programs.TokenLending
                 AccountMeta.ReadOnly(lendingMarketAuthority, false),
                 AccountMeta.ReadOnly(lendingMarketOwner, true),
                 AccountMeta.ReadOnly(userTransferAuthority, true),
-                AccountMeta.ReadOnly(SystemProgram.SysVarClockKey, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
+                AccountMeta.ReadOnly(SysVars.RentKey, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false)
             };
             return new TransactionInstruction
             {
-                ProgramId = TokenLendingProgramIdKey,
+                ProgramId = programIdKey,
                 Data = TokenLendingProgramData.EncodeInitializeReserveData(liquidityAmount, config),
                 Keys = keys
             };
@@ -146,21 +195,22 @@ namespace Solnet.Programs.TokenLending
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="programIdKey">The public key of the program.</param>
         /// <param name="reserve"></param>
         /// <param name="reserveLiquidityOracle"></param>
-        /// <returns></returns>
-        public virtual TransactionInstruction RefreshReserve(PublicKey reserve, PublicKey reserveLiquidityOracle)
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction RefreshReserve(PublicKey programIdKey, PublicKey reserve, PublicKey reserveLiquidityOracle)
         {
 
             List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(reserve, false),
                 AccountMeta.ReadOnly(reserveLiquidityOracle, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarClockKey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
             };
             return new TransactionInstruction
             {
-                ProgramId = TokenLendingProgramIdKey,
+                ProgramId = programIdKey,
                 Data = TokenLendingProgramData.EncodeRefreshReserveData(),
                 Keys = keys
             };
@@ -169,6 +219,7 @@ namespace Solnet.Programs.TokenLending
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="programIdKey">The public key of the program.</param>
         /// <param name="liquidityAmount"></param>
         /// <param name="sourceLiquidity"></param>
         /// <param name="destinationCollateral"></param>
@@ -177,12 +228,12 @@ namespace Solnet.Programs.TokenLending
         /// <param name="reserveCollateralMint"></param>
         /// <param name="lendingMarket"></param>
         /// <param name="userTransferAuthority"></param>
-        /// <returns></returns>
-        public virtual TransactionInstruction DepositReserveLiquidity(ulong liquidityAmount, PublicKey sourceLiquidity,
-            PublicKey destinationCollateral, PublicKey reserve, PublicKey reserveLiquiditySupply, PublicKey reserveCollateralMint,
-            PublicKey lendingMarket, PublicKey userTransferAuthority)
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction DepositReserveLiquidity(PublicKey programIdKey, ulong liquidityAmount,
+            PublicKey sourceLiquidity, PublicKey destinationCollateral, PublicKey reserve, PublicKey reserveLiquiditySupply,
+            PublicKey reserveCollateralMint, PublicKey lendingMarket, PublicKey userTransferAuthority)
         {
-            PublicKey lendingMarketAuthority = TokenLendingProgramData.DeriveLendingMarketAuthority(lendingMarket, TokenLendingProgramIdKey);
+            PublicKey lendingMarketAuthority = TokenLendingProgramData.DeriveLendingMarketAuthority(lendingMarket, programIdKey);
 
             List<AccountMeta> keys = new()
             {
@@ -194,12 +245,12 @@ namespace Solnet.Programs.TokenLending
                 AccountMeta.ReadOnly(lendingMarket, false),
                 AccountMeta.ReadOnly(lendingMarketAuthority, false),
                 AccountMeta.ReadOnly(userTransferAuthority, true),
-                AccountMeta.ReadOnly(SystemProgram.SysVarClockKey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false)
             };
             return new TransactionInstruction
             {
-                ProgramId = TokenLendingProgramIdKey,
+                ProgramId = programIdKey,
                 Data = TokenLendingProgramData.EncodeDepositReserveLiquidityData(liquidityAmount),
                 Keys = keys
             };
@@ -208,6 +259,7 @@ namespace Solnet.Programs.TokenLending
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="programIdKey">The public key of the program.</param>
         /// <param name="collateralAmount"></param>
         /// <param name="sourceCollateral"></param>
         /// <param name="destinationLiquidity"></param>
@@ -216,12 +268,12 @@ namespace Solnet.Programs.TokenLending
         /// <param name="reserveCollateralSupply"></param>
         /// <param name="lendingMarket"></param>
         /// <param name="userTransferAuthority"></param>
-        /// <returns></returns>
-        public virtual TransactionInstruction RedeemReserveCollateral(ulong collateralAmount, PublicKey sourceCollateral,
-            PublicKey destinationLiquidity, PublicKey reserve, PublicKey reserveCollateralMint, PublicKey reserveCollateralSupply,
-            PublicKey lendingMarket, PublicKey userTransferAuthority)
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction RedeemReserveCollateral(PublicKey programIdKey, ulong collateralAmount,
+            PublicKey sourceCollateral, PublicKey destinationLiquidity, PublicKey reserve, PublicKey reserveCollateralMint,
+            PublicKey reserveCollateralSupply, PublicKey lendingMarket, PublicKey userTransferAuthority)
         {
-            PublicKey lendingMarketAuthority = TokenLendingProgramData.DeriveLendingMarketAuthority(lendingMarket, TokenLendingProgramIdKey);
+            PublicKey lendingMarketAuthority = TokenLendingProgramData.DeriveLendingMarketAuthority(lendingMarket, programIdKey);
 
             List<AccountMeta> keys = new()
             {
@@ -233,12 +285,12 @@ namespace Solnet.Programs.TokenLending
                 AccountMeta.ReadOnly(lendingMarket, false),
                 AccountMeta.ReadOnly(lendingMarketAuthority, false),
                 AccountMeta.ReadOnly(userTransferAuthority, true),
-                AccountMeta.ReadOnly(SystemProgram.SysVarClockKey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false)
             };
             return new TransactionInstruction
             {
-                ProgramId = TokenLendingProgramIdKey,
+                ProgramId = programIdKey,
                 Data = TokenLendingProgramData.EncodeRedeemReserveCollateralData(collateralAmount),
                 Keys = keys
             };
@@ -247,24 +299,26 @@ namespace Solnet.Programs.TokenLending
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="programIdKey">The public key of the program.</param>
         /// <param name="obligation"></param>
         /// <param name="lendingMarket"></param>
         /// <param name="obligationOwner"></param>
-        /// <returns></returns>
-        public virtual TransactionInstruction InitializeObligation(PublicKey obligation, PublicKey lendingMarket, PublicKey obligationOwner)
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction InitializeObligation(PublicKey programIdKey, PublicKey obligation,
+            PublicKey lendingMarket, PublicKey obligationOwner)
         {
             List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(obligation, false),
                 AccountMeta.ReadOnly(lendingMarket, false),
                 AccountMeta.ReadOnly(obligationOwner, true),
-                AccountMeta.ReadOnly(SystemProgram.SysVarClockKey, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
+                AccountMeta.ReadOnly(SysVars.RentKey, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false)
             };
             return new TransactionInstruction
             {
-                ProgramId = TokenLendingProgramIdKey,
+                ProgramId = programIdKey,
                 Data = TokenLendingProgramData.EncodeInitializeObligationData(),
                 Keys = keys
             };
@@ -273,22 +327,24 @@ namespace Solnet.Programs.TokenLending
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="programIdKey">The public key of the program.</param>
         /// <param name="obligation"></param>
         /// <param name="reserves"></param>
-        /// <returns></returns>
-        public virtual TransactionInstruction RefreshObligation(PublicKey obligation, IList<PublicKey> reserves)
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction RefreshObligation(PublicKey programIdKey, PublicKey obligation,
+            IList<PublicKey> reserves)
         {
             List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(obligation, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarClockKey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
             };
 
             keys.AddRange(reserves.Select(x => AccountMeta.ReadOnly(x, false)));
 
             return new TransactionInstruction
             {
-                ProgramId = TokenLendingProgramIdKey,
+                ProgramId = programIdKey,
                 Data = TokenLendingProgramData.EncodeRefreshObligationData(),
                 Keys = keys
             };
@@ -297,6 +353,7 @@ namespace Solnet.Programs.TokenLending
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="programIdKey">The public key of the program.</param>
         /// <param name="collateralAmount"></param>
         /// <param name="sourceCollateral"></param>
         /// <param name="destinationCollateral"></param>
@@ -305,10 +362,10 @@ namespace Solnet.Programs.TokenLending
         /// <param name="lendingMarket"></param>
         /// <param name="obligationOwner"></param>
         /// <param name="userTransferAuthority"></param>
-        /// <returns></returns>
-        public virtual TransactionInstruction DepositObligationCollateral(ulong collateralAmount, PublicKey sourceCollateral,
-            PublicKey destinationCollateral, PublicKey depositReserve, PublicKey obligation, PublicKey lendingMarket,
-            PublicKey obligationOwner, PublicKey userTransferAuthority)
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction DepositObligationCollateral(PublicKey programIdKey, ulong collateralAmount,
+            PublicKey sourceCollateral, PublicKey destinationCollateral, PublicKey depositReserve, PublicKey obligation,
+            PublicKey lendingMarket, PublicKey obligationOwner, PublicKey userTransferAuthority)
         {
             List<AccountMeta> keys = new()
             {
@@ -319,14 +376,14 @@ namespace Solnet.Programs.TokenLending
                 AccountMeta.ReadOnly(lendingMarket, false),
                 AccountMeta.ReadOnly(obligationOwner, true),
                 AccountMeta.ReadOnly(userTransferAuthority, true),
-                AccountMeta.ReadOnly(SystemProgram.SysVarClockKey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false)
             };
 
 
             return new TransactionInstruction
             {
-                ProgramId = TokenLendingProgramIdKey,
+                ProgramId = programIdKey,
                 Data = TokenLendingProgramData.EncodeDepositObligationCollateralData(collateralAmount),
                 Keys = keys
             };
@@ -335,6 +392,7 @@ namespace Solnet.Programs.TokenLending
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="programIdKey">The public key of the program.</param>
         /// <param name="collateralAmount"></param>
         /// <param name="sourceCollateral"></param>
         /// <param name="destinationCollateral"></param>
@@ -342,12 +400,12 @@ namespace Solnet.Programs.TokenLending
         /// <param name="obligation"></param>
         /// <param name="lendingMarket"></param>
         /// <param name="obligationOwner"></param>
-        /// <returns></returns>
-        public virtual TransactionInstruction WithdrawObligationCollateral(ulong collateralAmount, PublicKey sourceCollateral,
-            PublicKey destinationCollateral, PublicKey withdrawReserve, PublicKey obligation, PublicKey lendingMarket,
-            PublicKey obligationOwner)
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction WithdrawObligationCollateral(PublicKey programIdKey, ulong collateralAmount,
+            PublicKey sourceCollateral, PublicKey destinationCollateral, PublicKey withdrawReserve, PublicKey obligation,
+            PublicKey lendingMarket, PublicKey obligationOwner)
         {
-            PublicKey lendingMarketAuthority = TokenLendingProgramData.DeriveLendingMarketAuthority(lendingMarket, TokenLendingProgramIdKey);
+            PublicKey lendingMarketAuthority = TokenLendingProgramData.DeriveLendingMarketAuthority(lendingMarket, programIdKey);
 
             List<AccountMeta> keys = new()
             {
@@ -358,14 +416,14 @@ namespace Solnet.Programs.TokenLending
                 AccountMeta.ReadOnly(lendingMarket, false),
                 AccountMeta.ReadOnly(lendingMarketAuthority, false),
                 AccountMeta.ReadOnly(obligationOwner, true),
-                AccountMeta.ReadOnly(SystemProgram.SysVarClockKey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false)
             };
 
 
             return new TransactionInstruction
             {
-                ProgramId = TokenLendingProgramIdKey,
+                ProgramId = programIdKey,
                 Data = TokenLendingProgramData.EncodeWithdrawObligationCollateralData(collateralAmount),
                 Keys = keys
             };
@@ -374,6 +432,7 @@ namespace Solnet.Programs.TokenLending
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="programIdKey">The public key of the program.</param>
         /// <param name="liquidityAmount"></param>
         /// <param name="sourceLiquidity"></param>
         /// <param name="destinationLiquidity"></param>
@@ -383,12 +442,13 @@ namespace Solnet.Programs.TokenLending
         /// <param name="lendingMarket"></param>
         /// <param name="obligationOwner"></param>
         /// <param name="hostFeeReceiver"></param>
-        /// <returns></returns>
-        public virtual TransactionInstruction BorrowObligationLiduidity(ulong liquidityAmount, PublicKey sourceLiquidity,
-            PublicKey destinationLiquidity, PublicKey borrowReserve, PublicKey borrowReserveLiquidityFeeReceiver, PublicKey obligation,
-            PublicKey lendingMarket, PublicKey obligationOwner, PublicKey hostFeeReceiver = null)
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction BorrowObligationLiduidity(PublicKey programIdKey, ulong liquidityAmount,
+            PublicKey sourceLiquidity, PublicKey destinationLiquidity, PublicKey borrowReserve,
+            PublicKey borrowReserveLiquidityFeeReceiver, PublicKey obligation, PublicKey lendingMarket,
+            PublicKey obligationOwner, PublicKey hostFeeReceiver = null)
         {
-            PublicKey lendingMarketAuthority = TokenLendingProgramData.DeriveLendingMarketAuthority(lendingMarket, TokenLendingProgramIdKey);
+            PublicKey lendingMarketAuthority = TokenLendingProgramData.DeriveLendingMarketAuthority(lendingMarket, programIdKey);
 
             List<AccountMeta> keys = new()
             {
@@ -400,7 +460,7 @@ namespace Solnet.Programs.TokenLending
                 AccountMeta.ReadOnly(lendingMarket, false),
                 AccountMeta.ReadOnly(lendingMarketAuthority, false),
                 AccountMeta.ReadOnly(obligationOwner, true),
-                AccountMeta.ReadOnly(SystemProgram.SysVarClockKey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false)
             };
 
@@ -408,7 +468,7 @@ namespace Solnet.Programs.TokenLending
 
             return new TransactionInstruction
             {
-                ProgramId = TokenLendingProgramIdKey,
+                ProgramId = programIdKey,
                 Data = TokenLendingProgramData.EncodeBorrowObligationLiduidityData(liquidityAmount),
                 Keys = keys
             };
@@ -417,15 +477,18 @@ namespace Solnet.Programs.TokenLending
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="programIdKey">The public key of the program.</param>
         /// <param name="liquidityAmount"></param>
         /// <param name="sourceLiquidity"></param>
         /// <param name="destinationLiquidity"></param>
         /// <param name="repayReserve"></param>
         /// <param name="obligation"></param>
         /// <param name="lendingMarket"></param>
-        /// <returns></returns>
-        public virtual TransactionInstruction RepayObligationLiduidity(ulong liquidityAmount, PublicKey sourceLiquidity,
-            PublicKey destinationLiquidity, PublicKey repayReserve, PublicKey obligation, PublicKey lendingMarket, PublicKey userTransferAuthority)
+        /// <param name="userTransferAuthority"></param>
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction RepayObligationLiduidity(PublicKey programIdKey, ulong liquidityAmount,
+            PublicKey sourceLiquidity, PublicKey destinationLiquidity, PublicKey repayReserve, PublicKey obligation,
+            PublicKey lendingMarket, PublicKey userTransferAuthority)
         {
             List<AccountMeta> keys = new()
             {
@@ -435,14 +498,14 @@ namespace Solnet.Programs.TokenLending
                 AccountMeta.Writable(obligation, false),
                 AccountMeta.ReadOnly(lendingMarket, false),
                 AccountMeta.ReadOnly(userTransferAuthority, true),
-                AccountMeta.ReadOnly(SystemProgram.SysVarClockKey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false)
             };
 
 
             return new TransactionInstruction
             {
-                ProgramId = TokenLendingProgramIdKey,
+                ProgramId = programIdKey,
                 Data = TokenLendingProgramData.EncodeRepayObligationLiduidityData(liquidityAmount),
                 Keys = keys
             };
@@ -451,6 +514,7 @@ namespace Solnet.Programs.TokenLending
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="programIdKey">The public key of the program.</param>
         /// <param name="liquidityAmount"></param>
         /// <param name="sourceLiquidity"></param>
         /// <param name="destinationCollateral"></param>
@@ -461,13 +525,13 @@ namespace Solnet.Programs.TokenLending
         /// <param name="obligation"></param>
         /// <param name="lendingMarket"></param>
         /// <param name="userTransferAuthority"></param>
-        /// <returns></returns>
-        public virtual TransactionInstruction LiquidateObligation(ulong liquidityAmount, PublicKey sourceLiquidity,
-            PublicKey destinationCollateral, PublicKey repayReserve, PublicKey repayReserveLiquiditySupply,
-            PublicKey withdrawReserve, PublicKey withdrawReserveCollateralSupply, PublicKey obligation,
-            PublicKey lendingMarket, PublicKey userTransferAuthority)
+        /// <returns>The transaction instruction.</returns>
+        public static TransactionInstruction LiquidateObligation(PublicKey programIdKey, ulong liquidityAmount,
+            PublicKey sourceLiquidity, PublicKey destinationCollateral, PublicKey repayReserve,
+            PublicKey repayReserveLiquiditySupply, PublicKey withdrawReserve, PublicKey withdrawReserveCollateralSupply,
+            PublicKey obligation, PublicKey lendingMarket, PublicKey userTransferAuthority)
         {
-            PublicKey lendingMarketAuthority = TokenLendingProgramData.DeriveLendingMarketAuthority(lendingMarket, TokenLendingProgramIdKey);
+            PublicKey lendingMarketAuthority = TokenLendingProgramData.DeriveLendingMarketAuthority(lendingMarket, programIdKey);
 
             List<AccountMeta> keys = new()
             {
@@ -481,61 +545,17 @@ namespace Solnet.Programs.TokenLending
                 AccountMeta.ReadOnly(lendingMarket, false),
                 AccountMeta.ReadOnly(lendingMarketAuthority, false),
                 AccountMeta.ReadOnly(userTransferAuthority, true),
-                AccountMeta.ReadOnly(SystemProgram.SysVarClockKey, false),
+                AccountMeta.ReadOnly(SysVars.ClockKey, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false)
             };
 
 
             return new TransactionInstruction
             {
-                ProgramId = TokenLendingProgramIdKey,
+                ProgramId = programIdKey,
                 Data = TokenLendingProgramData.EncodeLiquidateObligationData(liquidityAmount),
                 Keys = keys
             };
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="amount"></param>
-        /// <param name="sourceLiquidity"></param>
-        /// <param name="destinationLiquidity"></param>
-        /// <param name="reserve"></param>
-        /// <param name="reserveLiquidityFeeReceiver"></param>
-        /// <param name="hostFeeReceiver"></param>
-        /// <param name="lendingMarket"></param>
-        /// <param name="flashLoanReceiverProgramId"></param>
-        /// <param name="flashLoanReceiverProgramAccounts"></param>
-        /// <returns></returns>
-        public virtual TransactionInstruction FlashLoan(ulong amount, PublicKey sourceLiquidity,
-            PublicKey destinationLiquidity, PublicKey reserve, PublicKey reserveLiquidityFeeReceiver,
-            PublicKey hostFeeReceiver, PublicKey lendingMarket, PublicKey flashLoanReceiverProgramId,
-            IList<AccountMeta> flashLoanReceiverProgramAccounts)
-        {
-            PublicKey lendingMarketAuthority = TokenLendingProgramData.DeriveLendingMarketAuthority(lendingMarket, TokenLendingProgramIdKey);
-
-            List<AccountMeta> keys = new()
-            {
-                AccountMeta.Writable(sourceLiquidity, false),
-                AccountMeta.Writable(destinationLiquidity, false),
-                AccountMeta.Writable(reserve, false),
-                AccountMeta.Writable(reserveLiquidityFeeReceiver, false),
-                AccountMeta.Writable(hostFeeReceiver, false),
-                AccountMeta.ReadOnly(lendingMarket, false),
-                AccountMeta.ReadOnly(lendingMarketAuthority, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarClockKey, false),
-                AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false)
-            };
-
-            keys.AddRange(flashLoanReceiverProgramAccounts);
-
-            return new TransactionInstruction
-            {
-                ProgramId = TokenLendingProgramIdKey,
-                Data = TokenLendingProgramData.EncodeFlashLoanData(amount),
-                Keys = keys
-            };
-        }
-
     }
 }

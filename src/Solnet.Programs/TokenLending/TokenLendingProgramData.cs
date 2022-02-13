@@ -33,6 +33,19 @@ namespace Solnet.Programs.TokenLending
         }
 
         /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenLendingProgramInstructions.Values.InitializeLendingMarket"/> method.
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeInitializeLendingMarketData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+
+        }
+
+        /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenLendingProgramInstructions.Values.SetLendingMarketOwner"/> method.
         /// </summary>
         /// <param name="newOwner"></param>
@@ -43,6 +56,19 @@ namespace Solnet.Programs.TokenLending
             buffer.WriteU8((byte)TokenLendingProgramInstructions.Values.SetLendingMarketOwner, MethodOffset);
             buffer.WritePubKey(newOwner, 1);
             return buffer;
+        }
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenLendingProgramInstructions.Values.SetLendingMarketOwner"/> method.
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeSetLendingMarketOwnerData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+
         }
 
         /// <summary>
@@ -60,6 +86,18 @@ namespace Solnet.Programs.TokenLending
             return buffer;
         }
 
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenLendingProgramInstructions.Values.InitializeReserve"/> method.
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeInitializeReserveData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+
+        }
 
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenLendingProgramInstructions.Values.RefreshReserve"/> method.
@@ -70,6 +108,18 @@ namespace Solnet.Programs.TokenLending
             byte[] buffer = new byte[1];
             buffer.WriteU8((byte)TokenLendingProgramInstructions.Values.RefreshReserve, MethodOffset);
             return buffer;
+        }
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenLendingProgramInstructions.Values.RefreshReserve"/> method.
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeRefreshReserveData(DecodedInstruction decodedInstruction, IList<PublicKey> keys,
+            byte[] keyIndices)
+        {
+
         }
 
         /// <summary>
@@ -86,6 +136,19 @@ namespace Solnet.Programs.TokenLending
         }
 
         /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenLendingProgramInstructions.Values.DepositReserveLiquidity"/> method.
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeDepositReserveLiquidityData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+
+        }
+
+        /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenLendingProgramInstructions.Values.RedeemReserveCollateral"/> method.
         /// </summary>
         /// <param name="collateralAmount">The amount of collateral.</param>
@@ -96,6 +159,19 @@ namespace Solnet.Programs.TokenLending
             buffer.WriteU8((byte)TokenLendingProgramInstructions.Values.RedeemReserveCollateral, MethodOffset);
             buffer.WriteU64(collateralAmount, 1);
             return buffer;
+        }
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenLendingProgramInstructions.Values.RedeemReserveCollateral"/> method.
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeRedeemReserveCollateralData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+
         }
 
         /// <summary>
@@ -110,6 +186,18 @@ namespace Solnet.Programs.TokenLending
         }
 
         /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenLendingProgramInstructions.Values.InitializeObligation"/> method.
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeInitializeObligationData(DecodedInstruction decodedInstruction, IList<PublicKey> keys,
+            byte[] keyIndices)
+        {
+
+        }
+
+        /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenLendingProgramInstructions.Values.RefreshObligation"/> method.
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
@@ -118,6 +206,18 @@ namespace Solnet.Programs.TokenLending
             byte[] buffer = new byte[1];
             buffer.WriteU8((byte)TokenLendingProgramInstructions.Values.RefreshObligation, MethodOffset);
             return buffer;
+        }
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenLendingProgramInstructions.Values.RefreshObligation"/> method.
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeRefreshObligationData(DecodedInstruction decodedInstruction, IList<PublicKey> keys,
+            byte[] keyIndices)
+        {
+
         }
 
         /// <summary>
@@ -134,6 +234,19 @@ namespace Solnet.Programs.TokenLending
         }
 
         /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenLendingProgramInstructions.Values.DepositObligationCollateral"/> method.
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeDepositObligationCollateralData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+
+        }
+
+        /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenLendingProgramInstructions.Values.WithdrawObligationCollateral"/> method.
         /// </summary>
         /// <param name="collateralAmount">The amount of collateral.</param>
@@ -144,6 +257,19 @@ namespace Solnet.Programs.TokenLending
             buffer.WriteU8((byte)TokenLendingProgramInstructions.Values.WithdrawObligationCollateral, MethodOffset);
             buffer.WriteU64(collateralAmount, 1);
             return buffer;
+        }
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenLendingProgramInstructions.Values.WithdrawObligationCollateral"/> method.
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeWithdrawObligationCollateralData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+
         }
 
         /// <summary>
@@ -160,6 +286,19 @@ namespace Solnet.Programs.TokenLending
         }
 
         /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenLendingProgramInstructions.Values.BorrowObligationLiquidity"/> method.
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeBorrowObligationLiduidityData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+
+        }
+
+        /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenLendingProgramInstructions.Values.RepayObligationLiquidity"/> method.
         /// </summary>
         /// <param name="liquidityAmount">The amount of liquidity.</param>
@@ -170,6 +309,19 @@ namespace Solnet.Programs.TokenLending
             buffer.WriteU8((byte)TokenLendingProgramInstructions.Values.RepayObligationLiquidity, MethodOffset);
             buffer.WriteU64(liquidityAmount, 1);
             return buffer;
+        }
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenLendingProgramInstructions.Values.RepayObligationLiquidity"/> method.
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeRepayObligationLiduidityData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+
         }
 
         /// <summary>
@@ -186,6 +338,19 @@ namespace Solnet.Programs.TokenLending
         }
 
         /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenLendingProgramInstructions.Values.LiquidateObligation"/> method.
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeLiquidateObligationData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+
+        }
+
+        /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenLendingProgramInstructions.Values.FlashLoan"/> method.
         /// </summary>
         /// <param name="liquidityAmount">The amount of liquidity.</param>
@@ -196,6 +361,19 @@ namespace Solnet.Programs.TokenLending
             buffer.WriteU8((byte)TokenLendingProgramInstructions.Values.FlashLoan, MethodOffset);
             buffer.WriteU64(liquidityAmount, 1);
             return buffer;
+        }
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenLendingProgramInstructions.Values.FlashLoan"/> method.
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeFlashLoanData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+
         }
 
         /// <summary>

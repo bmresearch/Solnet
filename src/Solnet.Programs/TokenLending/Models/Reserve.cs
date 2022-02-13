@@ -16,7 +16,7 @@ namespace Solnet.Programs.TokenLending.Models
         public static class Layout
         {
             /// <summary>
-            /// The length of the structure.
+            /// The length of the <see cref="ReserveLiquidity"/> structure.
             /// </summary>
             public const int Length = 185;
 
@@ -111,28 +111,30 @@ namespace Solnet.Programs.TokenLending.Models
         public BigInteger MarketPrice;
 
         /// <summary>
+        /// Initiaize the <see cref="ReserveLiquidity"/> with the given data.
+        /// </summary>
+        /// <param name="data">The byte array.</param>
+        public ReserveLiquidity(ReadOnlySpan<byte> data)
+        {
+            if (data.Length != Layout.Length)
+                throw new ArgumentException($"{nameof(data)} has wrong size. Expected {Layout.Length} bytes, actual {data.Length} bytes.");
+            Mint = data.GetPubKey(Layout.MintOffset);
+            Decimals = data.GetU8(Layout.DecimalsOffset);
+            Supply = data.GetPubKey(Layout.SupplyOffset);
+            FeeReceiver = data.GetPubKey(Layout.FeeReceiverOffset);
+            Oracle = data.GetPubKey(Layout.OracleOffset);
+            AvailableAmount = data.GetU64(Layout.AvailableAmountOffset);
+            BorrowedAmountWads = data.GetBigInt(Layout.BorrowedAmountOffset, 16, true);
+            CumulativeBorrowAmountWads = data.GetBigInt(Layout.CumulativeBorrowAmountOffset, 16, true);
+            MarketPrice = data.GetBigInt(Layout.MarketPriceOffset, 16, true);
+        }
+
+        /// <summary>
         /// Deserialize the given byte array into the <see cref="ReserveLiquidity"/> structure.
         /// </summary>
         /// <param name="data">The byte array.</param>
         /// <returns>The <see cref="ReserveLiquidity"/> instance.</returns>
-        public static ReserveLiquidity Deserialize(ReadOnlySpan<byte> data)
-        {
-            if (data.Length != Layout.Length)
-                throw new ArgumentException("data length is invalid");
-
-            return new ReserveLiquidity
-            {
-                Mint = data.GetPubKey(Layout.MintOffset),
-                Decimals = data.GetU8(Layout.DecimalsOffset),
-                Supply = data.GetPubKey(Layout.SupplyOffset),
-                FeeReceiver = data.GetPubKey(Layout.FeeReceiverOffset),
-                Oracle = data.GetPubKey(Layout.OracleOffset),
-                AvailableAmount = data.GetU64(Layout.AvailableAmountOffset),
-                BorrowedAmountWads = data.GetBigInt(Layout.BorrowedAmountOffset, 16),
-                CumulativeBorrowAmountWads = data.GetBigInt(Layout.CumulativeBorrowAmountOffset, 16),
-                MarketPrice = data.GetBigInt(Layout.MarketPriceOffset, 16)
-            };
-        }
+        public static ReserveLiquidity Deserialize(byte[] data) => new(data.AsSpan());
     }
 
     /// <summary>
@@ -146,7 +148,7 @@ namespace Solnet.Programs.TokenLending.Models
         public static class Layout
         {
             /// <summary>
-            /// The length of the structure.
+            /// The length of the <see cref="ReserveCollateral"/> structure.
             /// </summary>
             public const int Length = 72;
 
@@ -182,22 +184,24 @@ namespace Solnet.Programs.TokenLending.Models
         public PublicKey Supply;
 
         /// <summary>
+        /// Initialize the <see cref="ReserveCollateral"/> with the given data.
+        /// </summary>
+        /// <param name="data">The byte array.</param>
+        public ReserveCollateral(ReadOnlySpan<byte> data)
+        {
+            if (data.Length != Layout.Length)
+                throw new ArgumentException($"{nameof(data)} has wrong size. Expected {Layout.Length} bytes, actual {data.Length} bytes.");
+            Mint = data.GetPubKey(Layout.MintOffset);
+            TotalSupply = data.GetU64(Layout.TotalSupplyOffset);
+            Supply = data.GetPubKey(Layout.SupplyOffset);
+        }
+
+        /// <summary>
         /// Deserialize the given byte array into the <see cref="ReserveCollateral"/> structure.
         /// </summary>
         /// <param name="data">The byte array.</param>
         /// <returns>The <see cref="ReserveCollateral"/> instance.</returns>
-        public static ReserveCollateral Deserialize(ReadOnlySpan<byte> data)
-        {
-            if (data.Length != Layout.Length)
-                throw new ArgumentException("data length is invalid");
-
-            return new ReserveCollateral
-            {
-                Mint = data.GetPubKey(Layout.MintOffset),
-                TotalSupply = data.GetU64(Layout.TotalSupplyOffset),
-                Supply = data.GetPubKey(Layout.SupplyOffset)
-            };
-        }
+        public static ReserveCollateral Deserialize(byte[] data) => new(data.AsSpan());
     }
 
     /// <summary>
@@ -215,7 +219,7 @@ namespace Solnet.Programs.TokenLending.Models
         public static class Layout
         {
             /// <summary>
-            /// The length of the structure.
+            /// The length of the <see cref="ReserveFees"/>  structure.
             /// </summary>
             public const int Length = 17;
 
@@ -257,22 +261,26 @@ namespace Solnet.Programs.TokenLending.Models
         public byte HostFeePercentage;
 
         /// <summary>
+        /// Initialize the <see cref="ReserveFees"/> with the given data.
+        /// </summary>
+        /// <param name="data">The byte array.</param>
+        public ReserveFees(ReadOnlySpan<byte> data)
+        {
+            if (data.Length != Layout.Length)
+                throw new ArgumentException($"{nameof(data)} has wrong size. Expected {Layout.Length} bytes, actual {data.Length} bytes.");
+
+            BorrowFeeWad = data.GetU64(Layout.BorrowFeeWadOffset);
+            FlashLoanFeeWad = data.GetU64(Layout.FlashLoanFeeWadOffset);
+            HostFeePercentage = data.GetU8(Layout.HostFeePercentageOffset);
+        }
+
+        /// <summary>
         /// Deserialize the given byte array into the <see cref="ReserveFees"/> structure.
         /// </summary>
         /// <param name="data">The byte array.</param>
         /// <returns>The <see cref="ReserveFees"/> instance.</returns>
-        public static ReserveFees Deserialize(ReadOnlySpan<byte> data)
-        {
-            if (data.Length != Layout.Length)
-                throw new ArgumentException("data length is invalid");
-
-            return new ReserveFees
-            {
-                BorrowFeeWad = data.GetU64(Layout.BorrowFeeWadOffset),
-                FlashLoanFeeWad = data.GetU64(Layout.FlashLoanFeeWadOffset),
-                HostFeePercentage = data.GetU8(Layout.HostFeePercentageOffset),
-            };
-        }
+        public static ReserveFees Deserialize(byte[] data)
+            => new(data.AsSpan());
 
         /// <summary>
         /// Serializes the <see cref="ReserveFees"/> object to the given buffer at the desired offset.
@@ -298,7 +306,7 @@ namespace Solnet.Programs.TokenLending.Models
         public static class Layout
         {
             /// <summary>
-            /// The length of the reserve config value.
+            /// The length of the <see cref="ReserveConfig"/> structure.
             /// </summary>
             public const int Length = 24;
 
@@ -385,27 +393,31 @@ namespace Solnet.Programs.TokenLending.Models
         public ReserveFees Fees;
 
         /// <summary>
+        /// Initialize the <see cref="ReserveConfig"/> with the given data.
+        /// </summary>
+        /// <param name="data">The byte array.</param>
+        public ReserveConfig(ReadOnlySpan<byte> data)
+        {
+            if (data.Length != Layout.Length)
+                throw new ArgumentException($"{nameof(data)} has wrong size. Expected {Layout.Length} bytes, actual {data.Length} bytes.");
+
+            OptimalUtilizationRate = data.GetU8(Layout.OptimalUtilizationRateOffset);
+            LoanToValueRatio = data.GetU8(Layout.LoanToValueRatioOffset);
+            LiquidationBonus = data.GetU8(Layout.LiquidationBonusOffset);
+            LiquidationThreshold = data.GetU8(Layout.LiquidationThresholdOffset);
+            MinBorrowRate = data.GetU8(Layout.MinBorrowRateOffset);
+            OptimalBorrowRate = data.GetU8(Layout.OptimalBorrowRateOffset);
+            MaxBorrowRate = data.GetU8(Layout.MaxBorrowRateOffset);
+            Fees = new(data.Slice(Layout.FeesOffset, ReserveFees.Layout.Length));
+        }
+
+        /// <summary>
         /// Deserialize the given byte array into the <see cref="ReserveConfig"/> structure.
         /// </summary>
         /// <param name="data">The byte array.</param>
         /// <returns>The <see cref="ReserveConfig"/> instance.</returns>
-        public static ReserveConfig Deserialize(ReadOnlySpan<byte> data)
-        {
-            if (data.Length != Layout.Length)
-                throw new ArgumentException("data length is invalid");
-
-            return new ReserveConfig
-            {
-                OptimalUtilizationRate = data.GetU8(Layout.OptimalUtilizationRateOffset),
-                LoanToValueRatio = data.GetU8(Layout.LoanToValueRatioOffset),
-                LiquidationBonus = data.GetU8(Layout.LiquidationBonusOffset),
-                LiquidationThreshold = data.GetU8(Layout.LiquidationThresholdOffset),
-                MinBorrowRate = data.GetU8(Layout.MinBorrowRateOffset),
-                OptimalBorrowRate = data.GetU8(Layout.OptimalBorrowRateOffset),
-                MaxBorrowRate = data.GetU8(Layout.MaxBorrowRateOffset),
-                Fees = ReserveFees.Deserialize(data.Slice(Layout.FeesOffset, ReserveFees.Layout.Length))
-            };
-        }
+        public static ReserveConfig Deserialize(byte[] data)
+            => new(data.AsSpan());
 
         /// <summary>
         /// Serializes the <see cref="ReserveConfig"/> object to the given buffer at the desired offset.
@@ -436,9 +448,9 @@ namespace Solnet.Programs.TokenLending.Models
         public static class Layout
         {
             /// <summary>
-            /// The length of the structure.
+            /// The length of the <see cref="Reserve"/> structure.
             /// </summary>
-            public const int Length = 323;
+            public const int Length = 571;
 
             /// <summary>
             /// The offset at which the version value begins.
@@ -502,23 +514,25 @@ namespace Solnet.Programs.TokenLending.Models
         public ReserveConfig Config;
 
         /// <summary>
+        /// Initialize the <see cref="Reserve"/> with the given data.
+        /// </summary>
+        /// <param name="data">The byte array.</param>
+        public Reserve(ReadOnlySpan<byte> data)
+        {
+            if (data.Length != Layout.Length)
+                throw new ArgumentException($"{nameof(data)} has wrong size. Expected {Layout.Length} bytes, actual {data.Length} bytes.");
+            Version = data.GetU8(Layout.VersionOffset);
+            LendingMarket = data.GetPubKey(Layout.LendingMarketOffset);
+            Liquidity = new(data.Slice(Layout.LiquidityOffset, ReserveLiquidity.Layout.Length));
+            Collateral = new(data.Slice(Layout.CollateralOffset, ReserveCollateral.Layout.Length));
+            Config = new(data.Slice(Layout.ConfigOffset, ReserveConfig.Layout.Length));
+        }
+
+        /// <summary>
         /// Deserialize the given byte array into the <see cref="Reserve"/> structure.
         /// </summary>
         /// <param name="data">The byte array.</param>
         /// <returns>The <see cref="Reserve"/> instance.</returns>
-        public static Reserve Deserialize(ReadOnlySpan<byte> data)
-        {
-            if (data.Length != Layout.Length)
-                throw new ArgumentException("data length is invalid");
-
-            return new Reserve
-            {
-                Version = data.GetU8(Layout.VersionOffset),
-                LendingMarket = data.GetPubKey(Layout.LendingMarketOffset),
-                Liquidity = ReserveLiquidity.Deserialize(data.Slice(Layout.LiquidityOffset, ReserveLiquidity.Layout.Length)),
-                Collateral = ReserveCollateral.Deserialize(data.Slice(Layout.CollateralOffset, ReserveCollateral.Layout.Length)),
-                Config = ReserveConfig.Deserialize(data.Slice(Layout.ConfigOffset, ReserveConfig.Layout.Length))
-            };
-        }
+        public static Reserve Deserialize(byte[] data) => new(data.AsSpan());
     }
 }

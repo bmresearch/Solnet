@@ -9,12 +9,12 @@ namespace Solnet.Programs.TokenLending.Models
     public class LastUpdate
     {
         /// <summary>
-        /// The layout of the structure.
+        /// The layout of the <see cref="LastUpdate"/> structure.
         /// </summary>
         public static class Layout
         {
             /// <summary>
-            /// The length of the structure.
+            /// The length of the <see cref="LastUpdate"/> structure.
             /// </summary>
             public const int Length = 9;
 
@@ -47,7 +47,7 @@ namespace Solnet.Programs.TokenLending.Models
         public static LastUpdate Deserialize(ReadOnlySpan<byte> data)
         {
             if (data.Length != Layout.Length)
-                throw new ArgumentException("data length is invalid");
+                throw new ArgumentException($"{nameof(data)} has wrong size. Expected {Layout.Length} bytes, actual {data.Length} bytes.");
 
             return new LastUpdate
             {

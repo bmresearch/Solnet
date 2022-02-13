@@ -12,14 +12,14 @@ namespace Solnet.Programs.TokenLending.Models
     public class LendingMarket
     {
         /// <summary>
-        /// The layout of the structure.
+        /// The layout of the <see cref="LendingMarket"/> structure.
         /// </summary>
         public static class Layout
         {
             /// <summary>
             /// The length of the structure.
             /// </summary>
-            public const int Length = 130;
+            public const int Length = 258;
 
             /// <summary>
             /// The offset of the Version property.
@@ -94,13 +94,13 @@ namespace Solnet.Programs.TokenLending.Models
         public string QuoteCurrency;
 
         /// <summary>
-        /// 
+        /// Initialize a new <see cref="LendingMarket"/> with the given data.
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">The data to deserialize into the structure.</param>
         public LendingMarket(ReadOnlySpan<byte> data)
         {
             if (data.Length != Layout.Length)
-                throw new ArgumentException("data length is invalid");
+                throw new ArgumentException($"{nameof(data)} has wrong size. Expected {Layout.Length} bytes, actual {data.Length} bytes.");
 
             byte[] quote = data.GetSpan(Layout.QuoteCurrencyOffset, PublicKey.PublicKeyLength).ToArray();
 
@@ -119,7 +119,6 @@ namespace Solnet.Programs.TokenLending.Models
         /// </summary>
         /// <param name="data">The byte array to deserialize.</param>
         /// <returns>The <see cref="LendingMarket"/> structure.</returns>
-        public static LendingMarket Deserialize(byte[] data)
-            => new LendingMarket(data.AsSpan());
+        public static LendingMarket Deserialize(byte[] data) => new (data.AsSpan());
     }
 }

@@ -112,7 +112,6 @@ namespace Solnet.Programs.TokenLending
             /// Make a flash loan.
             /// </summary>
             FlashLoan = 13,
-
         }
     }
 }
