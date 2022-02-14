@@ -522,6 +522,7 @@ namespace Solnet.Programs.TokenLending.Models
             if (data.Length != Layout.Length)
                 throw new ArgumentException($"{nameof(data)} has wrong size. Expected {Layout.Length} bytes, actual {data.Length} bytes.");
             Version = data.GetU8(Layout.VersionOffset);
+            LastUpdate = new(data.Slice(Layout.LastUpdateOffset, LastUpdate.Layout.Length));
             LendingMarket = data.GetPubKey(Layout.LendingMarketOffset);
             Liquidity = new(data.Slice(Layout.LiquidityOffset, ReserveLiquidity.Layout.Length));
             Collateral = new(data.Slice(Layout.CollateralOffset, ReserveCollateral.Layout.Length));
