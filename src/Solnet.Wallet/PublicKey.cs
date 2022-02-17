@@ -199,7 +199,7 @@ namespace Solnet.Wallet
             buffer.Write(programId.KeyBytes);
             buffer.Write(ProgramDerivedAddressBytes);
 
-            byte[] hash = SHA256.HashData(buffer.ToArray());
+            byte[] hash = SHA256.HashData(new ReadOnlySpan<byte>(buffer.GetBuffer(), 0, (int)buffer.Length));
 
             if (hash.IsOnCurve())
             {
@@ -262,11 +262,11 @@ namespace Solnet.Wallet
             buffer.Write(Encoding.UTF8.GetBytes(seed));
             buffer.Write(programId.KeyBytes);
 
-            var seeds = buffer.ToArray();
+            var seeds = new ReadOnlySpan<byte>(buffer.GetBuffer(), 0, (int)buffer.Length);
 
             if(seeds.Length >= ProgramDerivedAddressBytes.Length)
             {
-                var slice = seeds.AsSpan(seeds.Length - ProgramDerivedAddressBytes.Length);
+                var slice = seeds.Slice(seeds.Length - ProgramDerivedAddressBytes.Length);
                 
                 if(slice.SequenceEqual(ProgramDerivedAddressBytes))
                 {
