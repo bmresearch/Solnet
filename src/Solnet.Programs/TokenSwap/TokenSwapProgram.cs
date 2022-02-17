@@ -60,9 +60,8 @@ namespace Solnet.Programs.TokenSwap
         /// <exception cref="InvalidProgramException">No program account could be found (exhausted nonces)</exception>
         public virtual (PublicKey pubkey, byte nonce) CreateAuthority(PublicKey tokenSwapAccount)
         {
-            if (!AddressExtensions.TryFindProgramAddress(new[] { tokenSwapAccount.KeyBytes }, ProgramIdKey.KeyBytes, out var addressBytes, out var nonce))
+            if (!PublicKey.TryFindProgramAddress(new[] { tokenSwapAccount.KeyBytes }, ProgramIdKey, out var auth, out var nonce))
                 throw new InvalidProgramException();
-            var auth = new PublicKey(addressBytes);
             return (auth, (byte)nonce);
         }
 

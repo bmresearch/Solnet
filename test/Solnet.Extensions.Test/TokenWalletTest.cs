@@ -2,8 +2,8 @@
 using Solnet.Programs;
 using Solnet.Rpc.Builders;
 using Solnet.Rpc.Messages;
-using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
+using Solnet.Wallet.Utilities;
 using System;
 using System.IO;
 using System.Linq;

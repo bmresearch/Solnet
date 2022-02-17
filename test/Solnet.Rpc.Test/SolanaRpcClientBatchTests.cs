@@ -21,7 +21,7 @@ namespace Solnet.Rpc.Test
     [TestClass]
     public class SolanaRpcClientBatchTests
     {
-
+#pragma warning disable CS0618 // Type or member is obsolete
         [TestMethod]
         public void TestCreateAndSerializeBatchRequest()
         {
@@ -31,6 +31,7 @@ namespace Solnet.Rpc.Test
             var batch = new SolanaRpcBatchWithCallbacks(unusedRpcClient);
             batch.GetBalance("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
             batch.GetTokenAccountsByOwner("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", null, TokenProgram.ProgramIdKey);
+
             batch.GetConfirmedSignaturesForAddress2("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", 200, null, null);
             batch.GetConfirmedSignaturesForAddress2("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex", 200, null, null);
             batch.GetConfirmedSignaturesForAddress2("4NSREK36nAr32vooa3L9z8tu6JWj5rY3k4KnsqTgynvm", 200, null, null);
@@ -264,6 +265,7 @@ namespace Solnet.Rpc.Test
 
         }
 
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 
 

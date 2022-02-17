@@ -1,5 +1,4 @@
 ﻿using Solnet.Extensions.Models;
-using Solnet.Extensions.TokenMint;
 using Solnet.Programs;
 using Solnet.Programs.Utilities;
 using Solnet.Rpc;
@@ -7,8 +6,8 @@ using Solnet.Rpc.Builders;
 using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
-using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
+using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

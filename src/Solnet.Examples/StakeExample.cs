@@ -31,7 +31,7 @@ namespace Solnet.Examples
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
             ulong minBalance = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
             Account fromAccount = wallet.Account;
-            Serialization.TryCreateWithSeed(fromAccount.PublicKey, "yrdy1", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
+            PublicKey.TryCreateWithSeed(fromAccount.PublicKey, "yrdy1", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
 
             byte[] tx = new TransactionBuilder()
@@ -73,7 +73,7 @@ namespace Solnet.Examples
             Account fromAccount = wallet.Account;
             Account toAccount = wallet.GetAccount(1);
             rpcClient.RequestAirdrop(toAccount.PublicKey, 100_000_000);
-            Serialization.TryCreateWithSeed(fromAccount.PublicKey, "dog5", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
+            PublicKey.TryCreateWithSeed(fromAccount.PublicKey, "dog5", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
 
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
 
@@ -113,7 +113,7 @@ namespace Solnet.Examples
 
             Account fromAccount = wallet.Account;
             Account toAccount = wallet.GetAccount(1);
-            Serialization.TryCreateWithSeed(fromAccount.PublicKey, "dog1", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
+            PublicKey.TryCreateWithSeed(fromAccount.PublicKey, "dog1", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
 
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
 
@@ -149,7 +149,7 @@ namespace Solnet.Examples
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
             ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
             Account fromAccount = wallet.Account;
-            Serialization.TryCreateWithSeed(fromAccount.PublicKey, "dog5", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
+            PublicKey.TryCreateWithSeed(fromAccount.PublicKey, "dog5", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
             Authorized authorized = new()
             {
                 Staker = fromAccount,

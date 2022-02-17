@@ -67,6 +67,11 @@ namespace Solnet.Programs.TokenSwap.Models
             return new Span<byte>(ret);
         }
 
+        /// <summary>
+        /// Deserializes the Fees struct from binary.
+        /// </summary>
+        /// <param name="bytes">The payload to decode.</param>
+        /// <returns>The decoded Fee object.</returns>
         public static Fees Deserialize(byte[] bytes)
         {
             var span = new Span<byte>(bytes);
