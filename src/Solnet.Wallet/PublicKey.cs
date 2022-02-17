@@ -1,7 +1,12 @@
 using Chaos.NaCl;
 using Solnet.Wallet.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Solnet.Wallet
 {
@@ -162,5 +167,119 @@ namespace Solnet.Wallet
 
         /// <inheritdoc cref="GetHashCode"/>
         public override int GetHashCode() => Key.GetHashCode();
+
+        #region KeyDerivation
+
+        /// <summary>
+        /// The bytes of the `ProgramDerivedAddress` string.
+        /// </summary>
+        private static readonly byte[] ProgramDerivedAddressBytes = Encoding.UTF8.GetBytes("ProgramDerivedAddress");
+
+        /// <summary>
+        /// Derives a program address.
+        /// </summary>
+        /// <param name="seeds">The address seeds.</param>
+        /// <param name="programId">The program Id.</param>
+        /// <param name="publicKey">The derived public key, returned as inline out.</param>
+        /// <returns>true if it could derive the program address for the given seeds, otherwise false..</returns>
+        /// <exception cref="ArgumentException">Throws exception when one of the seeds has an invalid length.</exception>
+        public static bool TryCreateProgramAddress(ICollection<byte[]> seeds, PublicKey programId, out PublicKey publicKey)
+        {
+            MemoryStream buffer = new(32 * seeds.Count + ProgramDerivedAddressBytes.Length + programId.KeyBytes.Length);
+
+            foreach (byte[] seed in seeds)
+            {
+                if (seed.Length > 32)
+                {
+                    throw new ArgumentException("max seed length exceeded", nameof(seeds));
+                }
+                buffer.Write(seed);
+            }
+
+            buffer.Write(programId.KeyBytes);
+            buffer.Write(ProgramDerivedAddressBytes);
+
+            byte[] hash = SHA256.HashData(buffer.ToArray());
+
+            if (hash.IsOnCurve())
+            {
+                publicKey = null;
+                return false;
+            }
+            publicKey = new(hash);
+            return true;
+        }
+
+        /// <summary>
+        /// Attempts to find a program address for the passed seeds and program Id.
+        /// </summary>
+        /// <param name="seeds">The address seeds.</param>
+        /// <param name="programId">The program Id.</param>
+        /// <param name="address">The derived address, returned as inline out.</param>
+        /// <param name="nonce">The nonce used to derive the address, returned as inline out.</param>
+        /// <returns>true whenever the address for a nonce was found, otherwise false.</returns>
+        public static bool TryFindProgramAddress(IEnumerable<byte[]> seeds, PublicKey programId, out PublicKey address, out int nonce)
+        {
+            byte derivationNonce = 255;
+            List<byte[]> buffer = seeds.ToList();
+            var nonceArray = new byte[1];
+            buffer.Add(nonceArray);
+
+            while (derivationNonce != 0)
+            {
+                nonceArray[0] = derivationNonce;
+                bool success = TryCreateProgramAddress(buffer, programId, out PublicKey derivedAddress);
+
+                if (success)
+                {
+                    address = derivedAddress;
+                    nonce = derivationNonce;
+                    return true;
+                }
+
+                derivationNonce--;
+            }
+
+            address = null;
+            nonce = 0;
+            return false;
+        }
+
+        /// <summary>
+        /// Derives a new public key from an existing public key and seed
+        /// </summary>
+        /// <param name="fromPublicKey">The extant pubkey</param>
+        /// <param name="seed">The seed</param>
+        /// <param name="programId">The programid</param>
+        /// <param name="publicKeyOut">The derived public key</param>
+        /// <returns></returns>
+        public static bool TryCreateWithSeed(PublicKey fromPublicKey, string seed, PublicKey programId, out PublicKey publicKeyOut)
+        {
+            var b58 = new Base58Encoder();
+            MemoryStream buffer = new();
+
+            buffer.Write(fromPublicKey.KeyBytes);
+            buffer.Write(Encoding.UTF8.GetBytes(seed));
+            buffer.Write(programId.KeyBytes);
+
+            var seeds = buffer.ToArray();
+
+            if(seeds.Length >= ProgramDerivedAddressBytes.Length)
+            {
+                var slice = seeds.AsSpan(seeds.Length - ProgramDerivedAddressBytes.Length);
+                
+                if(slice.SequenceEqual(ProgramDerivedAddressBytes))
+                {
+                    publicKeyOut = null;
+                    return false;
+                }
+            }
+
+            byte[] hash = SHA256.HashData(seeds);
+            publicKeyOut = new PublicKey(hash);
+            return true;
+        }
+
+        #endregion
     }
 }

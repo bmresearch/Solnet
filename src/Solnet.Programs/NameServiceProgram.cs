@@ -94,9 +94,9 @@ namespace Solnet.Programs
             if (nameClass != null) nameClassKey = nameClass.KeyBytes;
             if (parentName != null) parentNameKeyBytes = parentName.KeyBytes;
 
-            bool success = AddressExtensions.TryFindProgramAddress(
-                new List<byte[]> { hashedName.ToArray(), nameClassKey, parentNameKeyBytes }, ProgramIdKey.KeyBytes, out byte[] nameAccountPublicKey, out _);
-            return success ? new PublicKey(nameAccountPublicKey) : null;
+            bool success = PublicKey.TryFindProgramAddress(
+                new List<byte[]> { hashedName.ToArray(), nameClassKey, parentNameKeyBytes }, ProgramIdKey, out PublicKey nameAccountPublicKey, out _);
+            return nameAccountPublicKey;
         }
 
 

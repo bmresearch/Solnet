@@ -71,10 +71,10 @@ namespace Solnet.Programs
         /// <returns>The public key of the associated token account if it could be found, otherwise null.</returns>
         public static PublicKey DeriveAssociatedTokenAccount(PublicKey owner, PublicKey mint)
         {
-            bool success = AddressExtensions.TryFindProgramAddress(
+            bool success = PublicKey.TryFindProgramAddress(
                 new List<byte[]> { owner.KeyBytes, TokenProgram.ProgramIdKey.KeyBytes, mint.KeyBytes },
-                ProgramIdKey.KeyBytes, out byte[] derivedAssociatedTokenAddress, out _);
-            return success ? new PublicKey(derivedAssociatedTokenAddress) : null;
+                ProgramIdKey, out PublicKey derivedAssociatedTokenAddress, out _);
+            return derivedAssociatedTokenAddress;
         }
 
         /// <summary>

@@ -247,25 +247,5 @@ namespace Solnet.Programs.Utilities
           
             return encoded;
         }
-        /// <summary>
-        /// Derives a new public key from an existing public key and seed
-        /// </summary>
-        /// <param name="fromPublicKey">The extant pubkey</param>
-        /// <param name="seed">The seed</param>
-        /// <param name="programId">The programid</param>
-        /// <param name="publicKeyOut">The derived public key</param>
-        /// <returns></returns>
-        public static bool TryCreateWithSeed(
-            PublicKey fromPublicKey, string seed, PublicKey programId, out PublicKey publicKeyOut)
-        {
-            var b58 = new Base58Encoder();
-            MemoryStream buffer = new();
-            buffer.Write(fromPublicKey.KeyBytes);
-            buffer.Write(Encoding.UTF8.GetBytes(seed));
-            buffer.Write(programId.KeyBytes);
-            byte[] hash = Hashing.Sha256(buffer.ToArray());
-            publicKeyOut = new PublicKey(hash);
-            return true;
-        }
     }
 }

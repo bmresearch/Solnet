@@ -1,7 +1,10 @@
-// unset
+﻿// unset
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Solnet.Wallet.Utilities;
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Solnet.Wallet.Test
 {
@@ -208,6 +211,70 @@ namespace Solnet.Wallet.Test
         private static byte[] TestImplicitByteArrayOperator(byte[] key)
         {
             return key;
+        }
+
+
+        [TestMethod]
+        public void TryCreateWithSeed()
+        {
+            Assert.IsTrue(
+                PublicKey.TryCreateWithSeed(
+                    new("11111111111111111111111111111111"),
+                    "limber chicken: 4/45",
+                    new("11111111111111111111111111111111"),
+                    out var res));
+
+            Assert.AreEqual("9h1HyLCW5dZnBVap8C5egQ9Z6pHyjsh5MNy83iPqqRuq", res.Key);
+        }
+
+        private readonly PublicKey LoaderProgramId = new PublicKey("BPFLoader1111111111111111111111111111111111");
+
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestCreateProgramAddressException()
+        {
+            _ = PublicKey.TryCreateProgramAddress(
+                new[] { Encoding.UTF8.GetBytes("SeedPubey1111111111111111111111111111111111") }, LoaderProgramId, out _);
+        }
+
+        [TestMethod]
+        public void TestCreateProgramAddress()
+        {
+            var b58 = new Base58Encoder();
+
+            var success = PublicKey.TryCreateProgramAddress(
+                new[] { b58.DecodeData("SeedPubey1111111111111111111111111111111111") }, LoaderProgramId, out PublicKey pubKey);
+
+            Assert.IsTrue(success);
+            Assert.AreEqual("GUs5qLUfsEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K", pubKey.Key);
+
+            success = PublicKey.TryCreateProgramAddress(
+                new[] { Encoding.UTF8.GetBytes(""), new byte[] { 1 } }, LoaderProgramId, out pubKey);
+
+            Assert.IsTrue(success);
+            Assert.AreEqual("3gF2KMe9KiC6FNVBmfg9i267aMPvK37FewCip4eGBFcT", pubKey.Key);
+
+            success = PublicKey.TryCreateProgramAddress(
+                new[] { Encoding.UTF8.GetBytes("☉") }, LoaderProgramId, out pubKey);
+
+            Assert.IsTrue(success);
+            Assert.AreEqual("7ytmC1nT1xY4RfxCV2ZgyA7UakC93do5ZdyhdF3EtPj7", pubKey.Key);
+        }
+
+        [TestMethod]
+        public void TestFindProgramAddress()
+        {
+            var tryFindSuccess = PublicKey.TryFindProgramAddress(new[] { Encoding.UTF8.GetBytes("") },
+                LoaderProgramId, out PublicKey derivedAddress, out int derivationNonce);
+
+            Assert.IsTrue(tryFindSuccess);
+
+            var createProgSuccess = PublicKey.TryCreateProgramAddress(
+                new[] { Encoding.UTF8.GetBytes(""), new[] { (byte)derivationNonce } }, LoaderProgramId, out PublicKey pubKey);
+
+            Assert.IsTrue(createProgSuccess);
+            Assert.AreEqual(derivedAddress.Key, pubKey.Key);
         }
     }
 }

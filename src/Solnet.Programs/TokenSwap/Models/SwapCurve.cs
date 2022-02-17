@@ -41,6 +41,11 @@ namespace Solnet.Programs.TokenSwap.Models
             return new Span<byte>(ret);
         }
 
+        /// <summary>
+        /// Deserializes the SwapCurve object from binary.
+        /// </summary>
+        /// <param name="bytes">The payload to decode.</param>
+        /// <returns>The decoded SwapCurve object.</returns>
         public static SwapCurve Deserialize(byte[] bytes)
         {
             var s = new SwapCurve()
