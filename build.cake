@@ -16,11 +16,11 @@ var configuration = Argument("configuration", "Release");
 var solutionFolder = "./";
 var artifactsDir = MakeAbsolute(Directory("artifacts"));
 
-var reportTypes = "HtmlInline_AzurePipelines";
+var reportTypes = "HtmlInline";
 var coverageFolder = "./code_coverage";
 
 var coberturaFileName = "results";
-var coverageFilePath = Directory(coverageFolder) + File(coberturaFileName + ".cobertura.xml");
+var coverageFilePath = Directory(coverageFolder) + File(coberturaFileName + ".info");
 var jsonFilePath = Directory(coverageFolder) + File(coberturaFileName + ".json");
 var packagesDir = artifactsDir.Combine(Directory("packages"));
 
@@ -73,7 +73,7 @@ Task("Test")
         {
             if (i == testProjectsRelativePaths.Length - 1)
             {
-                coverletSettings.CoverletOutputFormat  = CoverletOutputFormat.cobertura;
+                coverletSettings.CoverletOutputFormat  = CoverletOutputFormat.lcov;
             }
             DotNetCoreTest(testProjectsRelativePaths[i], testSettings, coverletSettings);
         }

@@ -1,0 +1,25 @@
+name: .NET
+
+on:
+  push:
+    branches: [ master, net5 ]
+  pull_request:
+    branches: [ master, net5 ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the sources
+        uses: actions/checkout@v1
+      - name: Run the build script
+        uses: cake-build/cake-action@v1
+        with:
+          script-path: build.cake
+          target: Report
+          cake-bootstrap: true
+      - name: Publish coverage report to coveralls.io
+        uses: coverallsapp/github-action@v1.1.2
+        with:
+          github-token: ${{ secrets.github_token }}
+          path-to-lcov: code_coverage/results.info 
