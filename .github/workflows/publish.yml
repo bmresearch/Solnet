@@ -85,34 +85,34 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.ACCESS_TOKEN }}
-          file: src/Solnet.Extensions/bin/Release/net5.0/ref/Solnet.Extensions.dll
+          file: artifacts/Solnet.Extensions.dll
           tag: ${{ steps.publish_nuget.outputs.VERSION }}
           upload_url: ${{ steps.create_release.outputs.upload_url }}
       - name: Upload Solnet.Wallet release assets
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.ACCESS_TOKEN }}
-          file: src/Solnet.Wallet/bin/Release/net5.0/ref/Solnet.Wallet.dll
+          file: artifacts/Solnet.Wallet.dll
           tag: ${{ steps.publish_nuget.outputs.VERSION }}
           upload_url: ${{ steps.create_release.outputs.upload_url }}
       - name: Upload Solnet.Rpc release assets
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.ACCESS_TOKEN }}
-          file: src/Solnet.Rpc/bin/Release/net5.0/ref/Solnet.Rpc.dll
+          file: artifacts/Solnet.Rpc.dll
           tag: ${{ steps.publish_nuget.outputs.VERSION }}
           upload_url: ${{ steps.create_release.outputs.upload_url }}
       - name: Upload Solnet.KeyStore release assets
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.ACCESS_TOKEN }}
-          file: src/Solnet.KeyStore/bin/Release/net5.0/ref/Solnet.KeyStore.dll
+          file: artifacts/Solnet.KeyStore.dll
           tag: ${{ steps.publish_nuget.outputs.VERSION }}
           upload_url: ${{ steps.create_release.outputs.upload_url }}
       - name: Upload Solnet.Programs release assets
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.ACCESS_TOKEN }}
-          file: src/Solnet.Programs/bin/Release/net5.0/ref/Solnet.Programs.dll
+          file: artifacts/Solnet.Programs.dll
           tag: ${{ steps.publish_nuget.outputs.VERSION }}
           upload_url: ${{ steps.create_release.outputs.upload_url }}
