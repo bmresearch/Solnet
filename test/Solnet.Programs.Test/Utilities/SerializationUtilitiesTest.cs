@@ -198,8 +198,20 @@ namespace Solnet.Programs.Test.Utilities
         public void TestWriteBigIntegerException()
         {
             byte[] sut = new byte[16];
-            sut.WriteBigInt(new BigInteger(15000000000000000000000000D), 8);
+            sut.WriteBigInt(new BigInteger(15000000000000000000000000D), 8, 16);
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void TestWriteBigIntegerException2()
+        {
+            BigInteger bi = BigInteger.Parse("34028236692093846346337460743176821145");
+
+            byte[] buffer = new byte[10];
+
+            buffer.WriteBigInt(bi, 0, 10);
+        }
+
 
         [TestMethod]
         public void TestWriteBigInteger()
@@ -207,7 +219,7 @@ namespace Solnet.Programs.Test.Utilities
             byte[] sut = new byte[16];
             BigInteger bi = BigInteger.Parse("34028236692093846346337460743176821145");
 
-            int written = sut.WriteBigInt(bi, 0);
+            int written = sut.WriteBigInt(bi, 0, 16);
 
             Assert.AreEqual(bi.GetByteCount(), written);
             CollectionAssert.AreEqual(new byte[]
