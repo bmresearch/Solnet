@@ -422,5 +422,21 @@ namespace Solnet.Programs.Test.Utilities
             Assert.AreEqual(expected, actual);
             Assert.AreEqual(expectedLength, length);
         }
+
+        [TestMethod]
+        public void TestBigIntSerDes()
+        {
+            BigInteger bi = new BigInteger(long.MinValue);
+
+            byte[] buffer = new byte[16];
+
+            buffer.WriteBigInt(bi, 0, 16);
+
+            var span = new ReadOnlySpan<byte>(buffer);
+
+            var bi2 = span.GetBigInt(0, 16);
+
+            Assert.AreEqual(bi, bi2);
+        }
     }
 }
