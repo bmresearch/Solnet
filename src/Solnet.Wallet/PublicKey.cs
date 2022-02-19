@@ -218,7 +218,7 @@ namespace Solnet.Wallet
         /// <param name="address">The derived address, returned as inline out.</param>
         /// <param name="nonce">The nonce used to derive the address, returned as inline out.</param>
         /// <returns>true whenever the address for a nonce was found, otherwise false.</returns>
-        public static bool TryFindProgramAddress(IEnumerable<byte[]> seeds, PublicKey programId, out PublicKey address, out int nonce)
+        public static bool TryFindProgramAddress(IEnumerable<byte[]> seeds, PublicKey programId, out PublicKey address, out byte nonce)
         {
             byte derivationNonce = 255;
             List<byte[]> buffer = seeds.ToList();
