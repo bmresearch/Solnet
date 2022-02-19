@@ -62,7 +62,7 @@ namespace Solnet.Programs.TokenSwap
         {
             if (!PublicKey.TryFindProgramAddress(new[] { tokenSwapAccount.KeyBytes }, ProgramIdKey, out var auth, out var nonce))
                 throw new InvalidProgramException();
-            return (auth, (byte)nonce);
+            return (auth, nonce);
         }
 
         /// <summary>

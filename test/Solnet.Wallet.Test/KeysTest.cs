@@ -266,12 +266,12 @@ namespace Solnet.Wallet.Test
         public void TestFindProgramAddress()
         {
             var tryFindSuccess = PublicKey.TryFindProgramAddress(new[] { Encoding.UTF8.GetBytes("") },
-                LoaderProgramId, out PublicKey derivedAddress, out int derivationNonce);
+                LoaderProgramId, out PublicKey derivedAddress, out byte derivationNonce);
 
             Assert.IsTrue(tryFindSuccess);
 
             var createProgSuccess = PublicKey.TryCreateProgramAddress(
-                new[] { Encoding.UTF8.GetBytes(""), new[] { (byte)derivationNonce } }, LoaderProgramId, out PublicKey pubKey);
+                new[] { Encoding.UTF8.GetBytes(""), new[] { derivationNonce } }, LoaderProgramId, out PublicKey pubKey);
 
             Assert.IsTrue(createProgSuccess);
             Assert.AreEqual(derivedAddress.Key, pubKey.Key);

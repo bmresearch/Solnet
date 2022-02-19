@@ -168,7 +168,7 @@ namespace Solnet.Programs.Abstract
         /// <param name="signingCallback">The callback used to sign the transaction. 
         /// This delegate is called once for each <c>PublicKey</c> account that needs write permissions according to the transaction data.</param>
         /// <returns></returns>
-        protected async Task<RequestResult<string>> SignAndSendTransaction(TransactionInstruction instruction, PublicKey feePayer, Func<byte[], byte[], PublicKey> signingCallback)
+        protected async Task<RequestResult<string>> SignAndSendTransaction(TransactionInstruction instruction, PublicKey feePayer, Func<byte[], PublicKey, byte[]> signingCallback)
         {
             TransactionBuilder tb = new TransactionBuilder();
             tb.AddInstruction(instruction);
