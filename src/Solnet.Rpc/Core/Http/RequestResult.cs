@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Solnet.Rpc.Models;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 
@@ -48,7 +49,7 @@ namespace Solnet.Rpc.Core.Http
         /// <summary>
         /// The error data, if applicable.
         /// </summary>
-        public Dictionary<string, object> ErrorData { get; set; }
+        public ErrorData ErrorData { get; set; }
 
         /// <summary>
         /// Contains the JSON RPC request payload

@@ -61,4 +61,16 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public string[] Logs { get; set; }
     }
+
+    /// <summary>
+    /// Represents a complete error message.
+    /// </summary>
+    /// <remarks>See RpcError::RpcResponseError in solana\client\src\rpc_request.rs</remarks>
+    public class ErrorData : SimulationLogs
+    {
+        /// <summary>
+        /// Represents the number of compute units consumed by the transactions.
+        /// </summary>
+        public ulong UnitsConsumed { get; set; }
+    }
 }
