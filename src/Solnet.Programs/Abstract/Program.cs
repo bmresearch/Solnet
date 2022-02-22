@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Solnet.Programs.Abstract
 {
+    /// <summary>
+    /// Base Program interface.
+    /// </summary>
     public interface Program
     {
         /// <summary>
