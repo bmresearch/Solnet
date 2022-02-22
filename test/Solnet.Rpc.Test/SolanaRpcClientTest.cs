@@ -48,6 +48,39 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(responseData, result.RawRpcResponse);
 
         }
+        [TestMethod]
+        public void TestStringErrorResponse()
+        {
+            var responseData = File.ReadAllText("Resources/Http/StringErrorResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/EmptyPayloadRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var result = sut.GetBalance("");
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result);
+            Assert.IsNull(result.Result);
+            Assert.IsTrue(result.WasHttpRequestSuccessful);
+            Assert.IsFalse(result.WasRequestSuccessfullyHandled);
+            Assert.IsFalse(result.WasSuccessful);
+            Assert.AreEqual("something wrong", result.Reason);
+            Assert.AreEqual(0, result.ServerErrorCode);
+            Assert.AreEqual(null, result.ErrorData);
+            Assert.IsNotNull(result.RawRpcRequest);
+            Assert.IsNotNull(result.RawRpcResponse);
+            Assert.AreEqual(requestData, result.RawRpcRequest);
+            Assert.AreEqual(responseData, result.RawRpcResponse);
+
+        }
 
         [TestMethod]
         public void TestBadAddressExceptionRequest()

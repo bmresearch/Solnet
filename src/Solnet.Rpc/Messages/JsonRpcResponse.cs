@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Solnet.Rpc.Converters;
+using Solnet.Rpc.Models;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Solnet.Rpc.Messages
@@ -18,12 +20,18 @@ namespace Solnet.Rpc.Messages
     /// <summary>
     /// Error message from a given request.
     /// </summary>
+    [JsonConverter(typeof(RpcErrorResponseConverter))]
     public class JsonRpcErrorResponse : JsonRpcBase
     {
         /// <summary>
-        /// The error message.
+        /// The detailed error desserialized.
         /// </summary>
         public ErrorContent Error { get; set; }
+
+        /// <summary>
+        /// An error message.
+        /// </summary>
+        public string ErrorMessage { get; set; }
     }
 
     /// <summary>
@@ -43,8 +51,7 @@ namespace Solnet.Rpc.Messages
         /// <summary>
         /// Possible extension data as a dictionary.
         /// </summary>
-        [JsonExtensionData]
-        public Dictionary<string, object> Data { get; set; }
+        public ErrorData Data { get; set; }
     }
 
     /// <summary>
