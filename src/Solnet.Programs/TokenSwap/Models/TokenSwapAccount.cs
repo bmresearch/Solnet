@@ -16,7 +16,13 @@ namespace Solnet.Programs.TokenSwap.Models
         /// <summary>
         /// Versions of this state account
         /// </summary>
-        public enum SwapVersion { SwapV1 = 1 }
+        public enum SwapVersion 
+        { 
+            /// <summary>
+            /// Version 1.
+            /// </summary>
+            SwapV1 = 1 
+        }
 
         /// <summary>
         /// Version of this state account
