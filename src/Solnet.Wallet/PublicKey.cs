@@ -216,32 +216,32 @@ namespace Solnet.Wallet
         /// <param name="seeds">The address seeds.</param>
         /// <param name="programId">The program Id.</param>
         /// <param name="address">The derived address, returned as inline out.</param>
-        /// <param name="nonce">The nonce used to derive the address, returned as inline out.</param>
-        /// <returns>true whenever the address for a nonce was found, otherwise false.</returns>
-        public static bool TryFindProgramAddress(IEnumerable<byte[]> seeds, PublicKey programId, out PublicKey address, out byte nonce)
+        /// <param name="bump">The bump used to derive the address, returned as inline out.</param>
+        /// <returns>True whenever the address for a nonce was found, otherwise false.</returns>
+        public static bool TryFindProgramAddress(IEnumerable<byte[]> seeds, PublicKey programId, out PublicKey address, out byte bump)
         {
-            byte derivationNonce = 255;
+            byte seedBump = 255;
             List<byte[]> buffer = seeds.ToList();
-            var nonceArray = new byte[1];
-            buffer.Add(nonceArray);
+            var bumpArray = new byte[1];
+            buffer.Add(bumpArray);
 
-            while (derivationNonce != 0)
+            while (seedBump != 0)
             {
-                nonceArray[0] = derivationNonce;
+                bumpArray[0] = seedBump;
                 bool success = TryCreateProgramAddress(buffer, programId, out PublicKey derivedAddress);
 
                 if (success)
                 {
                     address = derivedAddress;
-                    nonce = derivationNonce;
+                    bump = seedBump;
                     return true;
                 }
 
-                derivationNonce--;
+                seedBump--;
             }
 
             address = null;
-            nonce = 0;
+            bump = 0;
             return false;
         }
 
@@ -252,7 +252,8 @@ namespace Solnet.Wallet
         /// <param name="seed">The seed</param>
         /// <param name="programId">The programid</param>
         /// <param name="publicKeyOut">The derived public key</param>
-        /// <returns></returns>
+        /// <returns>True whenever the address was successfully created, otherwise false.</returns>
+        /// <remarks>To fail address creation, means the created address was a PDA.</remarks>
         public static bool TryCreateWithSeed(PublicKey fromPublicKey, string seed, PublicKey programId, out PublicKey publicKeyOut)
         {
             var b58 = new Base58Encoder();
