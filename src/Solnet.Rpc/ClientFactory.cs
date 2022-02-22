@@ -30,7 +30,7 @@ namespace Solnet.Rpc
         /// <summary>
         /// The dev net cluster.
         /// </summary>
-        private const string StreamingRpcDevNet = "wss://devnet.solana.com";
+        private const string StreamingRpcDevNet = "wss://api.devnet.solana.com";
 
         /// <summary>
         /// The test net cluster.
