@@ -42,7 +42,7 @@ namespace Solnet.Rpc.Core.Http
         /// <summary>
         /// The error data, if applicable.
         /// </summary>
-        SimulationLogs ErrorData { get; set; }
+        ErrorData ErrorData { get; set; }
 
         /// <summary>
         /// Contains the JSON RPC request payload
