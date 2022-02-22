@@ -155,6 +155,10 @@ namespace Solnet.Rpc.Core.Http
                         result.ServerErrorCode = errorRes.Error.Code;
                         result.ErrorData = errorRes.Error.Data;
                     }
+                    else if(errorRes is { ErrorMessage: { } })
+                    {
+                        result.Reason = errorRes.ErrorMessage;
+                    }
                     else
                     {
                         result.Reason = "Something wrong happened.";
@@ -260,6 +264,10 @@ namespace Solnet.Rpc.Core.Http
                         result.Reason = errorRes.Error.Message;
                         result.ServerErrorCode = errorRes.Error.Code;
                         result.ErrorData = errorRes.Error.Data;
+                    }
+                    else if (errorRes is { ErrorMessage: { } })
+                    {
+                        result.Reason = errorRes.ErrorMessage;
                     }
                     else
                     {
