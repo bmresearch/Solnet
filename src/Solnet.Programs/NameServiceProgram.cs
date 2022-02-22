@@ -75,7 +75,8 @@ namespace Solnet.Programs
         {
             string prefixedName = HashPrefix + name;
             byte[] fullNameBytes = Encoding.UTF8.GetBytes(prefixedName);
-            using SHA256Managed sha = new();
+
+            using SHA256 sha = SHA256.Create();
             return sha.ComputeHash(fullNameBytes, 0, fullNameBytes.Length);
         }
 
