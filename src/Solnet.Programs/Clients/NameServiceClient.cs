@@ -18,11 +18,6 @@ namespace Solnet.Programs.Clients
     public class NameServiceClient : BaseClient
     {
         /// <summary>
-        /// The program ID of the Spl Name Service.
-        /// </summary>
-        public static PublicKey ProgramID => NameServiceProgram.ProgramIdKey;
-
-        /// <summary>
         /// The top level domain for the token registry.
         /// </summary>
         public static readonly PublicKey TokenTLD = new("6NSu2tci4apRKQtt257bAVcvqYjB3zV2H1dWo56vgpa6");
@@ -51,7 +46,7 @@ namespace Solnet.Programs.Clients
         /// Default constructor.
         /// </summary>
         /// <param name="rpcClient">The rpc client to connect to the network.</param>
-        public NameServiceClient(IRpcClient rpcClient) : base(rpcClient, null)
+        public NameServiceClient(IRpcClient rpcClient) : base(rpcClient, null, NameServiceProgram.ProgramIdKey)
         {
 
         }
