@@ -22,6 +22,11 @@ namespace Solnet.Programs.Abstract
     public abstract class BaseClient
     {
         /// <summary>
+        /// The program address.
+        /// </summary>
+        public PublicKey ProgramID { get; }
+
+        /// <summary>
         /// The RPC client.
         /// </summary>
         public IRpcClient RpcClient { get; init; }
@@ -36,10 +41,12 @@ namespace Solnet.Programs.Abstract
         /// </summary>
         /// <param name="rpcClient">The RPC client instance.</param>
         /// <param name="streamingRpcClient">The streaming RPC client instance.</param>
-        protected BaseClient(IRpcClient rpcClient, IStreamingRpcClient streamingRpcClient)
+        /// <param name="programId">The program ID.</param>
+        protected BaseClient(IRpcClient rpcClient, IStreamingRpcClient streamingRpcClient, PublicKey programId)
         {
             RpcClient = rpcClient;
             StreamingRpcClient = streamingRpcClient;
+            ProgramID = programId;
         }
 
         /// <summary>
@@ -158,41 +165,6 @@ namespace Solnet.Programs.Abstract
                 }, commitment);
 
             return res;
-        }
-
-        /// <summary>
-        /// Signs and sends a given <c>TransactionInstruction</c> using signing delegate.
-        /// </summary>
-        /// <param name="instruction">The transaction to be sent.</param>
-        /// <param name="feePayer">The fee payer.</param>
-        /// <param name="signingCallback">The callback used to sign the transaction. 
-        /// This delegate is called once for each <c>PublicKey</c> account that needs write permissions according to the transaction data.</param>
-        /// <returns></returns>
-        protected async Task<RequestResult<string>> SignAndSendTransaction(TransactionInstruction instruction, PublicKey feePayer, Func<byte[], PublicKey, byte[]> signingCallback)
-        {
-            TransactionBuilder tb = new TransactionBuilder();
-            tb.AddInstruction(instruction);
-
-            var recentHash = await RpcClient.GetRecentBlockHashAsync();
-
-            tb.SetRecentBlockHash(recentHash.Result.Value.Blockhash);
-            tb.SetFeePayer(feePayer);
-
-            var wireFmt = tb.CompileMessage();
-
-            var msg = Message.Deserialize(wireFmt);
-            var tx = Transaction.Populate(msg);
-
-            List<byte[]> signatures = new();
-
-            signatures.Add(signingCallback(wireFmt, feePayer));
-
-            for (int i = 0; i < msg.Header.RequiredSignatures; i++)
-            {
-                tx.AddSignature(msg.AccountKeys[i], signingCallback(wireFmt, msg.AccountKeys[i]));
-            }
-
-            return await RpcClient.SendTransactionAsync(tx.Serialize());
         }
     }
 }
