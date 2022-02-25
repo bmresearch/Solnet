@@ -58,7 +58,7 @@ namespace Solnet.Programs.Clients
         /// <returns>A list containing all records.</returns>
         public async Task<List<RecordBase>> GetAllNamesByOwnerAsync(string address)
         {
-            var res = await RpcClient.GetProgramAccountsAsync(ProgramID, Rpc.Types.Commitment.Confirmed, null,
+            var res = await RpcClient.GetProgramAccountsAsync(ProgramIdKey, Rpc.Types.Commitment.Confirmed, null,
                 new List<MemCmp>() { new MemCmp() { Bytes = address, Offset = 32 } });
 
             List<RecordBase> result = new();
@@ -272,7 +272,7 @@ namespace Solnet.Programs.Clients
         public async Task<List<ReverseNameRecord>> GetNamesFromAddressAsync(string address)
         {
 
-            var res = await RpcClient.GetProgramAccountsAsync(ProgramID, Rpc.Types.Commitment.Confirmed, null,
+            var res = await RpcClient.GetProgramAccountsAsync(ProgramIdKey, Rpc.Types.Commitment.Confirmed, null,
                 new List<MemCmp>() { new MemCmp() { Bytes = SolTLD, Offset = 0 }, new MemCmp() { Bytes = address, Offset = 32 } });
 
 

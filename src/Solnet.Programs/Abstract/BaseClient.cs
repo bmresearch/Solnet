@@ -24,7 +24,7 @@ namespace Solnet.Programs.Abstract
         /// <summary>
         /// The program address.
         /// </summary>
-        public PublicKey ProgramID { get; }
+        public PublicKey ProgramIdKey { get; }
 
         /// <summary>
         /// The RPC client.
@@ -46,7 +46,7 @@ namespace Solnet.Programs.Abstract
         {
             RpcClient = rpcClient;
             StreamingRpcClient = streamingRpcClient;
-            ProgramID = programId;
+            ProgramIdKey = programId;
         }
 
         /// <summary>
