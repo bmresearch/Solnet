@@ -65,18 +65,13 @@ namespace Solnet.Programs.Abstract
             var wireFmt = tb.CompileMessage();
 
             var msg = Message.Deserialize(wireFmt);
-            var tx = Transaction.Populate(msg);
-
-            List<byte[]> signatures = new();
-
-            signatures.Add(signingCallback(wireFmt, feePayer));
 
             for (int i = 0; i < msg.Header.RequiredSignatures; i++)
             {
-                tx.AddSignature(msg.AccountKeys[i], signingCallback(wireFmt, msg.AccountKeys[i]));
+                tb.AddSignature(signingCallback(wireFmt, msg.AccountKeys[i]));
             }
 
-            return await RpcClient.SendTransactionAsync(tx.Serialize(), commitment: commitment);
+            return await RpcClient.SendTransactionAsync(tb.Serialize(), commitment: commitment);
         }
 
         /// <summary>
@@ -90,12 +85,12 @@ namespace Solnet.Programs.Abstract
             {
                 var id = logs.Error.InstructionError.CustomError.Value;
 
-                if (ProgramID != null && logs.Logs?.Length > 2)
+                if (ProgramIdKey != null && logs.Logs?.Length > 2)
                 {
                     var progReturn = logs.Logs[logs.Logs.Length - 1];
                     
                     //check if error came from this program, in case its a multiple prog tx
-                    if (!progReturn.StartsWith("Program " + ProgramID.Key)) return null;
+                    if (!progReturn.StartsWith("Program " + ProgramIdKey.Key)) return null;
                 }
 
                 ProgramErrors.TryGetValue(id, out var error);
