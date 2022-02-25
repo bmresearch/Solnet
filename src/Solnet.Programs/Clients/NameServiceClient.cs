@@ -18,11 +18,6 @@ namespace Solnet.Programs.Clients
     public class NameServiceClient : BaseClient
     {
         /// <summary>
-        /// The program ID of the Spl Name Service.
-        /// </summary>
-        public static PublicKey ProgramID => NameServiceProgram.ProgramIdKey;
-
-        /// <summary>
         /// The top level domain for the token registry.
         /// </summary>
         public static readonly PublicKey TokenTLD = new("6NSu2tci4apRKQtt257bAVcvqYjB3zV2H1dWo56vgpa6");
@@ -51,7 +46,7 @@ namespace Solnet.Programs.Clients
         /// Default constructor.
         /// </summary>
         /// <param name="rpcClient">The rpc client to connect to the network.</param>
-        public NameServiceClient(IRpcClient rpcClient) : base(rpcClient, null)
+        public NameServiceClient(IRpcClient rpcClient) : base(rpcClient, null, NameServiceProgram.ProgramIdKey)
         {
 
         }
@@ -63,7 +58,7 @@ namespace Solnet.Programs.Clients
         /// <returns>A list containing all records.</returns>
         public async Task<List<RecordBase>> GetAllNamesByOwnerAsync(string address)
         {
-            var res = await RpcClient.GetProgramAccountsAsync(ProgramID, Rpc.Types.Commitment.Confirmed, null,
+            var res = await RpcClient.GetProgramAccountsAsync(ProgramIdKey, Rpc.Types.Commitment.Confirmed, null,
                 new List<MemCmp>() { new MemCmp() { Bytes = address, Offset = 32 } });
 
             List<RecordBase> result = new();
@@ -277,7 +272,7 @@ namespace Solnet.Programs.Clients
         public async Task<List<ReverseNameRecord>> GetNamesFromAddressAsync(string address)
         {
 
-            var res = await RpcClient.GetProgramAccountsAsync(ProgramID, Rpc.Types.Commitment.Confirmed, null,
+            var res = await RpcClient.GetProgramAccountsAsync(ProgramIdKey, Rpc.Types.Commitment.Confirmed, null,
                 new List<MemCmp>() { new MemCmp() { Bytes = SolTLD, Offset = 0 }, new MemCmp() { Bytes = address, Offset = 32 } });
 
 
