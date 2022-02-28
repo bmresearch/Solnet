@@ -18,7 +18,7 @@ namespace Solnet.Programs.Utilities
         /// <summary>
         /// Write a 8-bit unsigned integer to the byte array at the given offset.
         /// </summary>
-        /// <param name="data">The span to get data from.</param>
+        /// <param name="data">The byte array to write data to.</param>
         /// <param name="value">The 8-bit unsigned integer value to write.</param>
         /// <param name="offset">The offset at which to write the 8-bit unsigned integer.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
@@ -28,11 +28,24 @@ namespace Solnet.Programs.Utilities
                 throw new ArgumentOutOfRangeException(nameof(offset));
             data[offset] = value;
         }
+        /// <summary>
+        /// Write a boolean to the byte array at the given offset.
+        /// </summary>
+        /// <param name="data">The byte array to write data to.</param>
+        /// <param name="value">The boolean value to write.</param>
+        /// <param name="offset">The offset at which to write the 8-bit unsigned integer.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
+        public static void WriteBool(this byte[] data, bool value, int offset)
+        {
+            if (offset > data.Length - sizeof(byte))
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            data[offset] = value ? (byte)1 : (byte)0;
+        }
 
         /// <summary>
         /// Write a 16-bit unsigned integer to the byte array at the given offset.
         /// </summary>
-        /// <param name="data">The span to get data from.</param>
+        /// <param name="data">The byte array to write data to.</param>
         /// <param name="value">The 16-bit unsigned integer value to write.</param>
         /// <param name="offset">The offset at which to write the 16-bit unsigned integer.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
@@ -46,7 +59,7 @@ namespace Solnet.Programs.Utilities
         /// <summary>
         /// Write a 32-bit unsigned integer to the byte array at the given offset.
         /// </summary>
-        /// <param name="data">The span to get data from.</param>
+        /// <param name="data">The byte array to write data to.</param>
         /// <param name="value">The 32-bit unsigned integer value to write.</param>
         /// <param name="offset">The offset at which to write the 32-bit unsigned integer.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
@@ -60,7 +73,7 @@ namespace Solnet.Programs.Utilities
         /// <summary>
         /// Write a 64-bit unsigned integer to the byte array at the given offset.
         /// </summary>
-        /// <param name="data">The span to get data from.</param>
+        /// <param name="data">The byte array to write data to.</param>
         /// <param name="value">The 64-bit unsigned integer value to write.</param>
         /// <param name="offset">The offset at which to write the 64-bit unsigned integer.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
@@ -74,7 +87,7 @@ namespace Solnet.Programs.Utilities
         /// <summary>
         /// Write a 8-bit signed integer to the byte array at the given offset.
         /// </summary>
-        /// <param name="data">The span to get data from.</param>
+        /// <param name="data">The byte array to write data to.</param>
         /// <param name="value">The 8-bit signed integer value to write.</param>
         /// <param name="offset">The offset at which to write the 8-bit signed integer.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
@@ -88,7 +101,7 @@ namespace Solnet.Programs.Utilities
         /// <summary>
         /// Write a 16-bit signed integer to the byte array at the given offset.
         /// </summary>
-        /// <param name="data">The span to get data from.</param>
+        /// <param name="data">The byte array to write data to.</param>
         /// <param name="value">The 16-bit signed integer value to write.</param>
         /// <param name="offset">The offset at which to write the 16-bit signed integer.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
@@ -102,7 +115,7 @@ namespace Solnet.Programs.Utilities
         /// <summary>
         /// Write a 32-bit signed integer to the byte array at the given offset.
         /// </summary>
-        /// <param name="data">The span to get data from.</param>
+        /// <param name="data">The byte array to write data to.</param>
         /// <param name="value">The 32-bit signed integer value to write.</param>
         /// <param name="offset">The offset at which to write the 32-bit signed integer.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
@@ -116,7 +129,7 @@ namespace Solnet.Programs.Utilities
         /// <summary>
         /// Write a 64-bit signed integer to the byte array at the given offset.
         /// </summary>
-        /// <param name="data">The span to get data from.</param>
+        /// <param name="data">The byte array to write data to.</param>
         /// <param name="value">The 64-bit signed integer value to write.</param>
         /// <param name="offset">The offset at which to write the 64-bit signed integer.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
@@ -130,7 +143,7 @@ namespace Solnet.Programs.Utilities
         /// <summary>
         /// Write a span of bytes to the byte array at the given offset.
         /// </summary>
-        /// <param name="data">The span to get data from.</param>
+        /// <param name="data">The byte array to write data to.</param>
         /// <param name="span">The <see cref="ReadOnlySpan{T}"/> to write.</param>
         /// <param name="offset">The offset at which to write the <see cref="ReadOnlySpan{T}"/>.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
@@ -144,7 +157,7 @@ namespace Solnet.Programs.Utilities
         /// <summary>
         /// Write a <see cref="PublicKey"/> encoded as a 32 byte array to the byte array at the given offset.
         /// </summary>
-        /// <param name="data">The span to get data from.</param>
+        /// <param name="data">The byte array to write data to.</param>
         /// <param name="publicKey">The <see cref="PublicKey"/> to write.</param>
         /// <param name="offset">The offset at which to write the <see cref="PublicKey"/>.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
@@ -159,7 +172,7 @@ namespace Solnet.Programs.Utilities
         /// Write an arbitrarily long number to the byte array at the given offset, specifying it's length in bytes.
         /// Optionally specify if it's signed and the endianness.
         /// </summary>
-        /// <param name="data">The byte array to get data from.</param>
+        /// <param name="data">The byte array to write data to.</param>
         /// <param name="bigInteger">The <see cref="BigInteger"/> to write.</param>
         /// <param name="offset">The offset at which to write the <see cref="BigInteger"/>.</param>
         /// <param name="length">The length in bytes.</param>
@@ -191,7 +204,7 @@ namespace Solnet.Programs.Utilities
         /// <summary>
         /// Write a double-precision floating-point value to the byte array at the given offset.
         /// </summary>
-        /// <param name="data">The byte array to get data from.</param>
+        /// <param name="data">The byte array to write data to.</param>
         /// <param name="value">The <see cref="double"/> to write.</param>
         /// <param name="offset">The offset at which to write the <see cref="double"/>.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
@@ -206,7 +219,7 @@ namespace Solnet.Programs.Utilities
         /// <summary>
         /// Write a single-precision floating-point value to the byte array at the given offset.
         /// </summary>
-        /// <param name="data">The byte array to get data from.</param>
+        /// <param name="data">The byte array to write data to.</param>
         /// <param name="value">The <see cref="float"/> to write.</param>
         /// <param name="offset">The offset at which to write the <see cref="float"/>.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
