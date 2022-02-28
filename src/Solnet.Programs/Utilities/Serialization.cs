@@ -35,11 +35,11 @@ namespace Solnet.Programs.Utilities
         /// <param name="value">The boolean value to write.</param>
         /// <param name="offset">The offset at which to write the 8-bit unsigned integer.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
-        public static void WriteBool(this byte[] data, bool value, int offset)
+        public static unsafe void WriteBool(this byte[] data, bool value, int offset)
         {
             if (offset > data.Length - sizeof(byte))
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            data[offset] = value ? (byte)1 : (byte)0;
+            data[offset] =  *((byte*)(&value));;
         }
 
         /// <summary>
