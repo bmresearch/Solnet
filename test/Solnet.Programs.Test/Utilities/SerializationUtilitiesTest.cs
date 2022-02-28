@@ -67,6 +67,22 @@ namespace Solnet.Programs.Test.Utilities
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void TestWriteBoolException()
+        {
+            byte[] sut = new byte[2];
+            sut.WriteBool(true, 2);
+        }
+
+        [TestMethod]
+        public void TestWriteBool()
+        {
+            byte[] sut = new byte[2];
+            sut.WriteBool(true, 0);
+            CollectionAssert.AreEqual(new byte[] { 1, 0 }, sut);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestWriteU32Exception()
         {
             byte[] sut = new byte[4];
