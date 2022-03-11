@@ -63,6 +63,8 @@ namespace Solnet.Programs.Clients
 
             List<RecordBase> result = new();
 
+            if(!res.WasSuccessful || res.Result == null || res.Result.Count == 0) return result;
+
             Dictionary<string, NameRecord> nameToRecordMap = new Dictionary<string, NameRecord>();
 
             foreach (var add in res.Result)
@@ -134,7 +136,7 @@ namespace Solnet.Programs.Clients
                     addressesCopy.Clear();
                 }
 
-                var multipleAccs = await RpcClient.GetMultipleAccountsAsync(currentReq.Take(100).ToList(), Rpc.Types.Commitment.Confirmed);
+                var multipleAccs = await RpcClient.GetMultipleAccountsAsync(currentReq, Rpc.Types.Commitment.Confirmed);
 
                 if (!multipleAccs.WasSuccessful)
                 {
@@ -143,23 +145,22 @@ namespace Solnet.Programs.Clients
 
                 multipleAccs.Result.Value.ForEach(x => accInfos.Add(x));
             }
-            int skipped = 0;
+            
             for (int i = 0; i < accInfos.Count; i++)
             {
-                var nr = nameToRecordMap[reverseNameAddresses[i + skipped]];
+                var nr = nameToRecordMap[reverseNameAddresses[i]];
                 var current = accInfos[i];
                 // it seems bonfida screwd up and some of these pdas are empty and impossible to get the name
                 //
                 if (current == null)
                 {
-                    skipped++;
                     continue;
                 }
 
                 var rev = ReverseNameRecord.Deserialize(Convert.FromBase64String(current.Data[0]));
 
                 rev.Value = nr;
-                rev.AccountAddress = new(reverseNameAddresses[i + skipped]);
+                rev.AccountAddress = new(reverseNameAddresses[i]);
 
                 result.Add(rev);
             }
@@ -275,9 +276,10 @@ namespace Solnet.Programs.Clients
             var res = await RpcClient.GetProgramAccountsAsync(ProgramIdKey, Rpc.Types.Commitment.Confirmed, null,
                 new List<MemCmp>() { new MemCmp() { Bytes = SolTLD, Offset = 0 }, new MemCmp() { Bytes = address, Offset = 32 } });
 
+            List<ReverseNameRecord> ret = new();
+            if(!res.WasSuccessful || res.Result == null || res.Result.Count == 0) return ret;
 
             Dictionary<string, NameRecord> nameToRecordMap = new Dictionary<string, NameRecord>();
-
             foreach (var add in res.Result)
             {
                 var name = NameRecord.Deserialize(Convert.FromBase64String(add.Account.Data[0]));
@@ -288,7 +290,6 @@ namespace Solnet.Programs.Clients
                 nameToRecordMap.Add(pda, name);
             }
 
-            List<ReverseNameRecord> ret = new();
             var reverseNameAddresses = nameToRecordMap.Keys.ToList();
             List<AccountInfo> accInfos = new();
 
@@ -308,7 +309,7 @@ namespace Solnet.Programs.Clients
                     addressesCopy.Clear();
                 }
 
-                var multipleAccs = await RpcClient.GetMultipleAccountsAsync(addressesCopy.Take(100).ToList(), Rpc.Types.Commitment.Confirmed);
+                var multipleAccs = await RpcClient.GetMultipleAccountsAsync(addressesCopy, Rpc.Types.Commitment.Confirmed);
 
                 if (!multipleAccs.WasSuccessful)
                 {
@@ -318,23 +319,21 @@ namespace Solnet.Programs.Clients
                 multipleAccs.Result.Value.ForEach(x => accInfos.Add(x));
             }
 
-            int skipped = 0;
             for (int i = 0; i < accInfos.Count; i++)
             {
-                var nr = nameToRecordMap[reverseNameAddresses[i + skipped]];
+                var nr = nameToRecordMap[reverseNameAddresses[i]];
                 var current = accInfos[i];
                 // it seems bonfida screwd up and some of these pdas are empty and impossible to get the name
                 //
                 if (current == null)
                 {
-                    skipped++;
                     continue;
                 }
 
                 var rev = ReverseNameRecord.Deserialize(Convert.FromBase64String(current.Data[0]));
 
                 rev.Value = nr;
-                rev.AccountAddress = new(reverseNameAddresses[i + skipped]);
+                rev.AccountAddress = new(reverseNameAddresses[i]);
 
                 ret.Add(rev);
             }
