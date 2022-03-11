@@ -184,7 +184,7 @@ namespace Solnet.Wallet
         /// <returns>Returns true if it is a valid key, false otherwise.</returns>
         public bool IsValid()
         {
-            return KeyBytes != null && KeyBytes.Length == 32;
+            return KeyBytes != null && KeyBytes.Length == PublicKeyLength;
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace Solnet.Wallet
         /// <returns>Returns true if the input is a valid key, false otherwise.</returns>
         public static bool IsValid(byte[] key, bool validateCurve = false)
         {
-            return key != null && key.Length == 32 && (!validateCurve || key.IsOnCurve());
+            return key != null && key.Length == PublicKeyLength && (!validateCurve || key.IsOnCurve());
         }
         
         /// <summary>
@@ -246,7 +246,7 @@ namespace Solnet.Wallet
         /// <returns>Returns true if the input is a valid key, false otherwise.</returns>
         public static bool IsValid(ReadOnlySpan<byte> key, bool validateCurve = false)
         {
-            return key != null && key.Length == 32 && (!validateCurve || key.IsOnCurve());
+            return key != null && key.Length == PublicKeyLength && (!validateCurve || key.IsOnCurve());
         }
 
         #region KeyDerivation
@@ -266,11 +266,11 @@ namespace Solnet.Wallet
         /// <exception cref="ArgumentException">Throws exception when one of the seeds has an invalid length.</exception>
         public static bool TryCreateProgramAddress(ICollection<byte[]> seeds, PublicKey programId, out PublicKey publicKey)
         {
-            MemoryStream buffer = new(32 * seeds.Count + ProgramDerivedAddressBytes.Length + programId.KeyBytes.Length);
+            MemoryStream buffer = new(PublicKeyLength * seeds.Count + ProgramDerivedAddressBytes.Length + programId.KeyBytes.Length);
 
             foreach (byte[] seed in seeds)
             {
-                if (seed.Length > 32)
+                if (seed.Length > PublicKeyLength)
                 {
                     throw new ArgumentException("max seed length exceeded", nameof(seeds));
                 }
