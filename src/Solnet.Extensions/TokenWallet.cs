@@ -175,7 +175,7 @@ namespace Solnet.Extensions
             if (client == null) throw new ArgumentNullException(nameof(client));
             if (mintResolver == null) throw new ArgumentNullException(nameof(mintResolver));
             if (publicKey == null) throw new ArgumentNullException(nameof(publicKey));
-            if (!Ed25519Extensions.IsOnCurve(publicKey.KeyBytes)) throw new ArgumentException("PublicKey not valid - check this is native wallet address (not an ATA, PDA or aux account)");
+            if (!publicKey.IsOnCurve()) throw new ArgumentException("PublicKey not valid - check this is native wallet address (not an ATA, PDA or aux account)");
             var output = new TokenWallet(client, mintResolver, publicKey);
             var unused = await output.RefreshAsync(commitment);
             return output;
@@ -377,8 +377,8 @@ namespace Solnet.Extensions
             if (signTxCallback == null) throw new ArgumentNullException(nameof(signTxCallback));
 
             // are destination and feePayer valid publicKeys?
-            if (!Ed25519Extensions.IsOnCurve(destination.KeyBytes)) throw new ArgumentException($"Destination PublicKey {destination.Key} is invalid wallet address.");
-            if (!Ed25519Extensions.IsOnCurve(feePayer.KeyBytes)) throw new ArgumentException($"feePayer PublicKey {feePayer.Key} is invalid wallet address.");
+            if (!destination.IsOnCurve()) throw new ArgumentException($"Destination PublicKey {destination.Key} is invalid wallet address.");
+            if (!feePayer.IsOnCurve()) throw new ArgumentException($"feePayer PublicKey {feePayer.Key} is invalid wallet address.");
 
             // make sure source account originated from this wallet
             if (source.Owner != this.PublicKey) throw new ApplicationException("Source account does not belong to this wallet.");
@@ -431,7 +431,7 @@ namespace Solnet.Extensions
             if (builder == null) throw new ArgumentNullException(nameof(builder));
             if (mint == null) throw new ArgumentNullException(nameof(mint));
             if (feePayer == null) throw new ArgumentNullException(nameof(feePayer));
-            if (!Ed25519Extensions.IsOnCurve(feePayer.KeyBytes)) throw new ArgumentException($"feePayer PublicKey {feePayer.ToString()} is invalid wallet address.");
+            if (!feePayer.IsOnCurve()) throw new ArgumentException($"feePayer PublicKey {feePayer.ToString()} is invalid wallet address.");
 
             // find ata for this mint
             var targets = TokenAccounts().WithMint(mint).WhichAreAssociatedTokenAccounts();

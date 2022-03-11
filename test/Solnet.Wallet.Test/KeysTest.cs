@@ -226,6 +226,19 @@ namespace Solnet.Wallet.Test
 
             Assert.AreEqual("9h1HyLCW5dZnBVap8C5egQ9Z6pHyjsh5MNy83iPqqRuq", res.Key);
         }
+        
+
+        [TestMethod]
+        public void TryCreateWithSeed_False()
+        {
+            Assert.IsFalse(
+                PublicKey.TryCreateWithSeed(
+                    new("11111111111111111111111111111111"),
+                    "limber chicken: 4/45",
+                    new(Encoding.UTF8.GetBytes("aaaaaaaaaaaProgramDerivedAddress")),
+                    out var res));
+
+        }
 
         private readonly PublicKey LoaderProgramId = new PublicKey("BPFLoader1111111111111111111111111111111111");
 
@@ -275,6 +288,55 @@ namespace Solnet.Wallet.Test
 
             Assert.IsTrue(createProgSuccess);
             Assert.AreEqual(derivedAddress.Key, pubKey.Key);
+        }
+
+        [TestMethod]
+        public void TestIsValid()
+        {
+            Assert.IsTrue(PublicKey.IsValid("GUs5qLUfsEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K"));
+        }
+
+        [TestMethod]
+        public void TestIsValidOnCurve_False()
+        {
+            Assert.IsFalse(PublicKey.IsValid("GUs5qLUfsEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K", true));
+        }
+        
+        [TestMethod]
+        public void TestIsValidOnCurve_True()
+        {
+            Assert.IsTrue(PublicKey.IsValid("oaksGKfwkFZwCniyCF35ZVxHDPexQ3keXNTiLa7RCSp", true));
+        }
+
+        
+        [TestMethod]
+        public void TestIsValidOnCurveSpan_False()
+        {
+            Assert.IsFalse(PublicKey.IsValid(new ReadOnlySpan<byte>(Encoders.Base58.DecodeData("GUs5qLUfsEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K")), true));
+        }
+        
+        [TestMethod]
+        public void TestIsValidOnCurveSpan_True()
+        {
+            Assert.IsTrue(PublicKey.IsValid(new ReadOnlySpan<byte>(Encoders.Base58.DecodeData("oaksGKfwkFZwCniyCF35ZVxHDPexQ3keXNTiLa7RCSp")), true));
+        }
+
+        [TestMethod]
+        public void TestIsValid_False()
+        {
+            Assert.IsFalse(PublicKey.IsValid("GUs5qLUfsEHkcMB9T3ePW2LoK4E3K"));
+        }
+
+        [TestMethod]
+        public void TestIsValid_Empty_False()
+        {
+            Assert.IsFalse(PublicKey.IsValid(""));
+        }
+
+        [TestMethod]
+        public void TestIsValid_InvalidB58_False()
+        {
+            Assert.IsFalse(PublicKey.IsValid("lllllll"));
         }
     }
 }

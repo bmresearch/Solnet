@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 
 namespace Solnet.Wallet.Utilities
@@ -67,6 +68,19 @@ namespace Solnet.Wallet.Utilities
         /// <param name="key">PublicKey as byte array</param>
         /// <returns></returns>
         public static bool IsOnCurve(this byte[] key)
+        {
+            BigInteger y = new BigInteger(key) & Un;
+            BigInteger x = RecoverX(y);
+
+            return IsOnCurve(x, y);
+        }
+
+        /// <summary>
+        /// Checks whether the PublicKey bytes are 'On The Curve'
+        /// </summary>
+        /// <param name="key">PublicKey as byte array</param>
+        /// <returns></returns>
+        public static bool IsOnCurve(this ReadOnlySpan<byte> key)
         {
             BigInteger y = new BigInteger(key) & Un;
             BigInteger x = RecoverX(y);

@@ -366,16 +366,16 @@ namespace Solnet.Extensions.Test
             var ownerWallet = new Wallet.Wallet(MnemonicWords);
             var owner = ownerWallet.GetAccount(1);
             Assert.AreEqual("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", owner.PublicKey.Key);
-            Assert.IsTrue(Ed25519Extensions.IsOnCurve(owner.PublicKey.KeyBytes));
+            Assert.IsTrue(owner.PublicKey.IsOnCurve());
 
             // spot an ata
             var mintPubkey = new PublicKey(WellKnownTokens.Serum.TokenMint);
             var ata = AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(owner, mintPubkey);
-            Assert.IsFalse(Ed25519Extensions.IsOnCurve(ata.KeyBytes));
+            Assert.IsFalse(ata.IsOnCurve());
 
             // spot a fake address
             var fake = new PublicKey("FAKEkjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
-            Assert.IsFalse(Ed25519Extensions.IsOnCurve(fake.KeyBytes));
+            Assert.IsFalse(fake.IsOnCurve());
 
         }
 
