@@ -190,6 +190,12 @@ namespace Solnet.Wallet
         /// <summary>
         /// Checks if a given string forms a valid PublicKey in base58.
         /// </summary>
+        /// <remarks>
+        /// Any set of 32 bytes can constitute a valid solana public key. However, not all 32-byte public keys are valid Ed25519 public keys. <br/>
+        /// Two concrete examples: <br/>
+        /// - A user wallet key must be on the curve (otherwise a user wouldn't be able to sign transactions).  <br/>
+        /// - A program derived address must NOT be on the curve.
+        /// </remarks>
         /// <param name="key">The base58 encoded public key.</param>
         /// <param name="validateCurve">Whether or not to validate if the public key belongs to the Ed25519 curve.</param>
         /// <returns>Returns true if the input is a valid key, false otherwise.</returns>
@@ -212,6 +218,12 @@ namespace Solnet.Wallet
         /// <summary>
         /// Checks if a given set of bytes forms a valid PublicKey.
         /// </summary>
+        /// <remarks>
+        /// Any set of 32 bytes can constitute a valid solana public key. However, not all 32-byte public keys are valid Ed25519 public keys. <br/>
+        /// Two concrete examples: <br/>
+        /// - A user wallet key must be on the curve (otherwise a user wouldn't be able to sign transactions).  <br/>
+        /// - A program derived address must NOT be on the curve.
+        /// </remarks>
         /// <param name="key">The key bytes.</param>
         /// <param name="validateCurve">Whether or not to validate if the public key belongs to the Ed25519 curve.</param>
         /// <returns>Returns true if the input is a valid key, false otherwise.</returns>
@@ -223,6 +235,12 @@ namespace Solnet.Wallet
         /// <summary>
         /// Checks if a given set of bytes forms a valid PublicKey.
         /// </summary>
+        /// <remarks>
+        /// Any set of 32 bytes can constitute a valid solana public key. However, not all 32-byte public keys are valid Ed25519 public keys. <br/>
+        /// Two concrete examples: <br/>
+        /// - A user wallet key must be on the curve (otherwise a user wouldn't be able to sign transactions).  <br/>
+        /// - A program derived address must NOT be on the curve.
+        /// </remarks>
         /// <param name="key">The key bytes.</param>
         /// <param name="validateCurve">Whether or not to validate if the public key belongs to the Ed25519 curve.</param>
         /// <returns>Returns true if the input is a valid key, false otherwise.</returns>
