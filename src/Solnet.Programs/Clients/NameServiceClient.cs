@@ -63,6 +63,8 @@ namespace Solnet.Programs.Clients
 
             List<RecordBase> result = new();
 
+            if(!res.WasSuccessful || res.Result == null || res.Result.Count == 0) return result;
+
             Dictionary<string, NameRecord> nameToRecordMap = new Dictionary<string, NameRecord>();
 
             foreach (var add in res.Result)
@@ -274,9 +276,10 @@ namespace Solnet.Programs.Clients
             var res = await RpcClient.GetProgramAccountsAsync(ProgramIdKey, Rpc.Types.Commitment.Confirmed, null,
                 new List<MemCmp>() { new MemCmp() { Bytes = SolTLD, Offset = 0 }, new MemCmp() { Bytes = address, Offset = 32 } });
 
+            List<ReverseNameRecord> ret = new();
+            if(!res.WasSuccessful || res.Result == null || res.Result.Count == 0) return ret;
 
             Dictionary<string, NameRecord> nameToRecordMap = new Dictionary<string, NameRecord>();
-
             foreach (var add in res.Result)
             {
                 var name = NameRecord.Deserialize(Convert.FromBase64String(add.Account.Data[0]));
@@ -287,7 +290,6 @@ namespace Solnet.Programs.Clients
                 nameToRecordMap.Add(pda, name);
             }
 
-            List<ReverseNameRecord> ret = new();
             var reverseNameAddresses = nameToRecordMap.Keys.ToList();
             List<AccountInfo> accInfos = new();
 
