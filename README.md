@@ -19,7 +19,7 @@
     <a href="https://twitter.com/intent/follow?screen_name=blockmountainio">
         <img src="https://img.shields.io/twitter/follow/blockmountainio?style=flat-square&logo=twitter"
             alt="Follow on Twitter"></a>
-    <a href="https://discord.gg/YHMbpuS3Tx">
+    <a href="https://discord.gg/cReXaBReZt">
        <img alt="Discord" src="https://img.shields.io/discord/849407317761064961?style=flat-square"
             alt="Join the discussion!"></a>
 </p>
@@ -416,6 +416,14 @@ var source = wallet.TokenAccounts.ForToken(WellKnownTokens.Serum).WithAtLeast(12
 // if required, ATA will be created funded by feePayer
 var sig = wallet.Send(source, 12.75D, target, feePayer);
 ```
+
+## Support
+
+Consider supporting us:
+
+* Sol Address: **oaksGKfwkFZwCniyCF35ZVxHDPexQ3keXNTiLa7RCSp**
+* [Mango Ref Link](https://trade.mango.markets/?ref=MangoSharp)
+
 
 ## Contribution
 
