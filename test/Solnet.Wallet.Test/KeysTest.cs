@@ -276,5 +276,29 @@ namespace Solnet.Wallet.Test
             Assert.IsTrue(createProgSuccess);
             Assert.AreEqual(derivedAddress.Key, pubKey.Key);
         }
+
+        [TestMethod]
+        public void TestIsValid()
+        {
+            Assert.IsTrue(PublicKey.IsValid("GUs5qLUfsEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K"));
+        }
+
+        [TestMethod]
+        public void TestIsValidOnCurve_False()
+        {
+            Assert.IsFalse(PublicKey.IsValid("GUs5qLUfsEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K", true));
+        }
+        
+        [TestMethod]
+        public void TestIsValidOnCurve_True()
+        {
+            Assert.IsTrue(PublicKey.IsValid("oaksGKfwkFZwCniyCF35ZVxHDPexQ3keXNTiLa7RCSp", true));
+        }
+
+        [TestMethod]
+        public void TestIsValid_False()
+        {
+            Assert.IsFalse(PublicKey.IsValid("GUs5qLUfsEHkcMB9T3ePW2LoK4E3K"));
+        }
     }
 }
