@@ -2,7 +2,7 @@
   xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Product>Solnet</Product>
-    <Version>6.0.5</Version>
+    <Version>6.0.6</Version>
     <Copyright>Copyright 2022 &#169; Solnet</Copyright>
     <Authors>blockmountain</Authors>
     <PublisherName>blockmountain</PublisherName>
