@@ -118,11 +118,11 @@ namespace Solnet.KeyStore
 
             while ((i = newS.IndexOf(',')) != -1)
             {
-                bytes[index++] = byte.Parse(newS[..i]);
+                bytes[index++] = byte.Parse(newS[..i].ToString());
                 newS = newS[(i + 1)..];
             }
 
-            bytes[index] = byte.Parse(newS[..^1]);
+            bytes[index] = byte.Parse(newS[..^1].ToString());
             if (index != 63)
                 throw new ArgumentException("invalid string for conversion", nameof(data));
             return bytes;
