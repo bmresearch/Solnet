@@ -65,11 +65,11 @@ namespace Solnet.Wallet
         {
             MemoryStream buffer = new();
 
-            buffer.Write(new byte[] { 0 });
-            buffer.Write(key);
+            buffer.Write(new byte[] { 0 }, 0, 1);
+            buffer.Write(key, 0, key.Length);
             byte[] indexBytes = new byte[4];
             BinaryPrimitives.WriteUInt32BigEndian(indexBytes, index);
-            buffer.Write(indexBytes);
+            buffer.Write(indexBytes, 0, indexBytes.Length);
 
             return HmacSha512(chainCode, buffer.ToArray());
         }

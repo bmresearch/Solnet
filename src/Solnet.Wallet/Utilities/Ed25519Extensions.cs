@@ -82,7 +82,7 @@ namespace Solnet.Wallet.Utilities
         /// <returns></returns>
         public static bool IsOnCurve(this ReadOnlySpan<byte> key)
         {
-            BigInteger y = new BigInteger(key) & Un;
+            BigInteger y = new BigInteger(key.ToArray()) & Un;
             BigInteger x = RecoverX(y);
 
             return IsOnCurve(x, y);

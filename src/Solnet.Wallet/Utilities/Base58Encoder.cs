@@ -100,7 +100,10 @@ namespace Solnet.Wallet.Utilities
 
             // Translate the result into a string.
             char[] str = new char[zeroes + size - it2];
-            Array.Fill(str, '1', 0, zeroes);
+            for (int i = 0; i < zeroes; i++)
+            {
+                str[i] = '1';
+            }
             int i2 = zeroes;
             while (it2 != size)
                 str[i2++] = PszBase58[b58[it2++]];
@@ -164,7 +167,10 @@ namespace Solnet.Wallet.Utilities
             int it2 = size - length;
             // Copy result into output vector.
             byte[] vch = new byte[zeroes + size - it2];
-            Array.Fill<byte>(vch, 0, 0, zeroes);
+            for (int i = 0; i < zeroes; i++)
+            {
+                vch[i] = 0;
+            }
             int i2 = zeroes;
             while (it2 != size)
                 vch[i2++] = b256[it2++];

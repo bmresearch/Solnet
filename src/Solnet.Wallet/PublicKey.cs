@@ -274,13 +274,14 @@ namespace Solnet.Wallet
                 {
                     throw new ArgumentException("max seed length exceeded", nameof(seeds));
                 }
-                buffer.Write(seed);
+                buffer.Write(seed,0, seed.Length);
             }
 
-            buffer.Write(programId.KeyBytes);
-            buffer.Write(ProgramDerivedAddressBytes);
+            buffer.Write(programId.KeyBytes, 0, programId.KeyBytes.Length);
+            buffer.Write(ProgramDerivedAddressBytes, 0, ProgramDerivedAddressBytes.Length);
 
-            byte[] hash = SHA256.HashData(new ReadOnlySpan<byte>(buffer.GetBuffer(), 0, (int)buffer.Length));
+            SHA256 sha256 = SHA256.Create();
+            byte[] hash = sha256.ComputeHash(new ReadOnlySpan<byte>(buffer.GetBuffer(), 0, (int)buffer.Length).ToArray());
 
             if (hash.IsOnCurve())
             {
@@ -340,9 +341,9 @@ namespace Solnet.Wallet
             var b58 = new Base58Encoder();
             MemoryStream buffer = new();
 
-            buffer.Write(fromPublicKey.KeyBytes);
-            buffer.Write(Encoding.UTF8.GetBytes(seed));
-            buffer.Write(programId.KeyBytes);
+            buffer.Write(fromPublicKey.KeyBytes, 0, fromPublicKey.KeyBytes.Length);
+            buffer.Write(Encoding.UTF8.GetBytes(seed), 0, Encoding.UTF8.GetBytes(seed).Length);
+            buffer.Write(programId.KeyBytes, 0, programId.KeyBytes.Length);
 
             var seeds = new ReadOnlySpan<byte>(buffer.GetBuffer(), 0, (int)buffer.Length);
 
@@ -356,8 +357,9 @@ namespace Solnet.Wallet
                     return false;
                 }
             }
-
-            byte[] hash = SHA256.HashData(seeds);
+            
+            SHA256 sha256 = SHA256.Create();
+            byte[] hash = sha256.ComputeHash(seeds.ToArray());
             publicKeyOut = new PublicKey(hash);
             return true;
         }

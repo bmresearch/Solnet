@@ -98,9 +98,11 @@ namespace Solnet.Wallet
         /// <returns>The signature of the data.</returns>
         public byte[] Sign(byte[] message)
         {
-            byte[] signature = new byte[64];
-            Ed25519.Sign(signature, message, KeyBytes);
-            return signature;
+            ArraySegment<byte> signature = new ArraySegment<byte>(new byte[64]);
+            Ed25519.Sign(signature, 
+                new ArraySegment<byte>(message), 
+                new ArraySegment<byte>(KeyBytes));
+            return signature.Array;
         }
 
         /// <inheritdoc cref="Equals(object)"/>
