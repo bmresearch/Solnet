@@ -6,6 +6,7 @@ using System.Buffers.Binary;
 using System.Diagnostics;
 using System.IO;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Solnet.Programs.Utilities
@@ -183,22 +184,20 @@ namespace Solnet.Programs.Utilities
         public static int WriteBigInt(this byte[] data, BigInteger bigInteger, int offset, int length,
             bool isUnsigned = false, bool isBigEndian = false)
         {
-            int byteCount = bigInteger.GetByteCount(isUnsigned);
+            int byteCount = bigInteger.ToByteArray().Length;
             if (byteCount > length) throw new ArgumentOutOfRangeException($"BigInt too big.");
             if (length + offset > data.Length) throw new ArgumentOutOfRangeException(nameof(offset));
-
-            bigInteger.TryWriteBytes(
-                data.AsSpan(offset, byteCount),
-                out int written,
-                isUnsigned,
-                isBigEndian);
-
+            
+            var bigIntegerSpan = new Span<byte>(bigInteger.ToByteArray());
+            var dataSpan = data.AsSpan(offset, byteCount);
+            bigIntegerSpan.CopyTo(dataSpan);
+            
             if(!isUnsigned && bigInteger.Sign < 0)
             {
-                while (written < length) data[offset + written++] = 0xFF;
+                while (byteCount < length) data[offset + byteCount++] = 0xFF;
             }
 
-            return written;
+            return byteCount;
         }
 
         /// <summary>
@@ -213,7 +212,10 @@ namespace Solnet.Programs.Utilities
             if (offset + sizeof(double) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
 
-            BinaryPrimitives.WriteDoubleLittleEndian(data.AsSpan(offset, sizeof(double)), value);
+            var valueBytes = BitConverter.GetBytes(value);
+            var valueSpan = new Span<byte>(valueBytes);
+            var dataSpan = data.AsSpan(offset, sizeof(double));
+            valueSpan.CopyTo(dataSpan);
         }
 
         /// <summary>
@@ -228,7 +230,10 @@ namespace Solnet.Programs.Utilities
             if (offset + sizeof(float) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
 
-            BinaryPrimitives.WriteSingleLittleEndian(data.AsSpan(offset, sizeof(float)), value);
+            var valueBytes = BitConverter.GetBytes(value);
+            var valueSpan = new Span<byte>(valueBytes);
+            var dataSpan = data.AsSpan(offset, sizeof(float));
+            valueSpan.CopyTo(dataSpan);
         }
 
         /// <summary>

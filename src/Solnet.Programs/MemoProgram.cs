@@ -100,11 +100,11 @@ namespace Solnet.Programs
             if (keyIndices.Length > 0)
             {
                 decodedInstruction.Values.Add("Signer", keys[keyIndices[0]]);
-                decodedInstruction.Values.Add("Memo", Encoding.UTF8.GetString(data));
+                decodedInstruction.Values.Add("Memo", Encoding.UTF8.GetString(data.ToArray()));
             }
             else
             {
-                decodedInstruction.Values.Add("Memo", Encoding.UTF8.GetString(data));
+                decodedInstruction.Values.Add("Memo", Encoding.UTF8.GetString(data.ToArray()));
             }
 
             return decodedInstruction;
