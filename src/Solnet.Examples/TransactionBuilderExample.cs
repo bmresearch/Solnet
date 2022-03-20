@@ -396,7 +396,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
 

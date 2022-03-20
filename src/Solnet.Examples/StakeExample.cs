@@ -150,12 +150,12 @@ namespace Solnet.Examples
             ulong minbalanceforexception = rpcClient.GetMinimumBalanceForRentExemption(StakeProgram.StakeAccountDataSize).Result;
             Account fromAccount = wallet.Account;
             PublicKey.TryCreateWithSeed(fromAccount.PublicKey, "dog5", StakeProgram.ProgramIdKey, out PublicKey stakeAccount);
-            Authorized authorized = new()
+            Authorized authorized = new Authorized()
             {
                 Staker = fromAccount,
                 Withdrawer = fromAccount
             };
-            Lockup lockup = new()
+            Lockup lockup = new Lockup()
             {
                 Custodian = fromAccount.PublicKey,
                 Epoch = 0,
@@ -206,12 +206,12 @@ namespace Solnet.Examples
             Account fromAccount = wallet.Account;
             Account stakeAccount = wallet.GetAccount(22);
 
-            Authorized authorized = new()
+            Authorized authorized = new Authorized()
             {
                 Staker = fromAccount,
                 Withdrawer = fromAccount
             };
-            Lockup lockup = new()
+            Lockup lockup = new Lockup()
             {
                 Custodian = fromAccount.PublicKey,
                 Epoch = 0,

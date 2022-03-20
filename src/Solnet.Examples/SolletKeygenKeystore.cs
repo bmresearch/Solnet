@@ -37,7 +37,7 @@ namespace Solnet.Examples
             var seed = wallet.DeriveMnemonicSeed();
             Account account = null;
             bool flag = true; // to check if the keys are the expected ones
-            Console.WriteLine($"Seed: {seed.ToStringByteArray()}\nAddress: {wallet.Account.PublicKey}");
+            Console.WriteLine($"Seed: {Encoding.Default.GetString(seed)}\nAddress: {wallet.Account.PublicKey}");
 
             /* 1. Encrypt mnemonic derived seed and generate keystore as json 
             var keystoreJson = keystoreService.EncryptAndGenerateDefaultKeyStoreAsJson(_password, seed, wallet.Account.EncodedPublicKey);
@@ -67,7 +67,7 @@ namespace Solnet.Examples
             //var restoredWallet = new Wallet.Wallet(decryptedKeystore);
             var restoredSeed = restoredWallet.DeriveMnemonicSeed();
 
-            Console.WriteLine($"Seed: {restoredSeed.ToStringByteArray()}");
+            Console.WriteLine($"Seed: {Encoding.Default.GetString(restoredSeed)}");
 
             // Mimic sollet key generation
             for (int i = 0; i < 10; i++)

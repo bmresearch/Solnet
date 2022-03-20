@@ -24,7 +24,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
 
@@ -152,7 +152,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
 
@@ -225,7 +225,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
 
@@ -357,7 +357,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
 
@@ -625,7 +625,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
 
@@ -843,7 +843,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
 
@@ -944,7 +944,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
             RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
 
@@ -1033,7 +1033,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
             // The multisig which is the token account authority
             Account tokenMultiSignature = wallet.GetAccount(4045);

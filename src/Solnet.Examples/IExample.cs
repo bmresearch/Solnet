@@ -8,6 +8,6 @@ namespace Solnet.Examples
 {
     interface IExample
     {
-        public void Run();
+        void Run();
     }
 }

@@ -22,7 +22,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new(MnemonicWords);
+            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
             Account ownerAccount = wallet.GetAccount(10);
             RequestResult<ResponseValue<List<TokenAccount>>> token_accounts = rpcClient.GetTokenAccountsByOwner(ownerAccount.PublicKey, tokenProgramId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 

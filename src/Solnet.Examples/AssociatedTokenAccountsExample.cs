@@ -96,7 +96,7 @@ namespace Solnet.Examples
 
             // this public key is from a random account created via www.sollet.io
             // to test this locally I recommend creating a wallet on sollet and deriving this
-            PublicKey associatedTokenAccountOwner = new("65EoWs57dkMEWbK4TJkPDM76rnbumq7r3fiZJnxggj2G");
+            PublicKey associatedTokenAccountOwner = new PublicKey("65EoWs57dkMEWbK4TJkPDM76rnbumq7r3fiZJnxggj2G");
             PublicKey associatedTokenAccount =
                 AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(associatedTokenAccountOwner, mintAccount);
             Console.WriteLine($"AssociatedTokenAccountOwner: {associatedTokenAccountOwner}");

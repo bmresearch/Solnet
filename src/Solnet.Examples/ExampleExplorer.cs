@@ -11,7 +11,7 @@ namespace Solnet.Examples
     {
         public static void Main(string[] args)
         {
-            var examples = Assembly.GetEntryAssembly().GetExportedTypes().Where(t => t.IsAssignableTo(typeof(IExample))).ToList();
+            var examples = Assembly.GetEntryAssembly().GetExportedTypes().Where(t => typeof(IExample).IsAssignableFrom(t)).ToList();
 
             while (true)
             {

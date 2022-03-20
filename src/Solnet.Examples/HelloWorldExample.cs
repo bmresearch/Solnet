@@ -36,7 +36,7 @@ namespace Solnet.Examples
             {
                 if (data.Value.Error == null)
                 {
-                    var balance = rpcClient.GetBalance(wallet.Account.PublicKey);
+                    balance = rpcClient.GetBalance(wallet.Account.PublicKey);
 
                     Console.WriteLine($"Balance: {balance.Result.Value}");
 

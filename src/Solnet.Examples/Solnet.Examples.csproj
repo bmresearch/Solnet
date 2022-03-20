@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
     <ProjectReference Include="..\Solnet.Extensions\Solnet.Extensions.csproj" />
     <ProjectReference Include="..\Solnet.KeyStore\Solnet.KeyStore.csproj" />
     <ProjectReference Include="..\Solnet.Programs\Solnet.Programs.csproj" />
