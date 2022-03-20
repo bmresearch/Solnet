@@ -18,7 +18,7 @@ jobs:
           script-path: build.cake
           target: Report
           cake-bootstrap: true
-          erbosity: Diagnostic
+          verbosity: Diagnostic
       - name: Publish coverage report to coveralls.io
         uses: coverallsapp/github-action@v1.1.2
         with:
