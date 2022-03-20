@@ -4,11 +4,11 @@
 
 var testProjectsRelativePaths = new string[]
 {
-    "./test/Solnet.Rpc.Test/Solnet.Rpc.Test.csproj",
-    "./test/Solnet.Wallet.Test/Solnet.Wallet.Test.csproj",
-    "./test/Solnet.KeyStore.Test/Solnet.KeyStore.Test.csproj",
-    "./test/Solnet.Programs.Test/Solnet.Programs.Test.csproj",
-    "./test/Solnet.Extensions.Test/Solnet.Extensions.Test.csproj"
+    "./test/Solnet.Unity.Rpc.Test/Solnet.Unity.Rpc.Test.csproj",
+    "./test/Solnet.Unity.Wallet.Test/Solnet.Unity.Wallet.Test.csproj",
+    "./test/Solnet.Unity.KeyStore.Test/Solnet.Unity.KeyStore.Test.csproj",
+    "./test/Solnet.Unity.Programs.Test/Solnet.Unity.Programs.Test.csproj",
+    "./test/Solnet.Unity.Extensions.Test/Solnet.Unity.Extensions.Test.csproj"
 };
 
 var target = Argument("target", "Pack");
