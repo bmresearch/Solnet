@@ -122,26 +122,27 @@ namespace Solnet.Rpc.Models
 
             foreach (PublicKey key in AccountKeys)
             {
-                accountKeysBuffer.Write(key.KeyBytes);
+                accountKeysBuffer.Write(key.KeyBytes, 0, key.KeyBytes.Length);
             }
 
             int messageBufferSize = MessageHeader.Layout.HeaderLength + PublicKey.PublicKeyLength +
                                     accountAddressesLength.Length +
                                     +instructionsLength.Length + Instructions.Count + accountKeysBufferSize;
             MemoryStream buffer = new(messageBufferSize);
-            buffer.Write(Header.ToBytes());
-            buffer.Write(accountAddressesLength);
-            buffer.Write(accountKeysBuffer.ToArray());
-            buffer.Write(Encoders.Base58.DecodeData(RecentBlockhash));
-            buffer.Write(instructionsLength);
+            buffer.Write(Header.ToBytes(), 0, Header.ToBytes().Length);
+            buffer.Write(accountAddressesLength, 0, accountAddressesLength.Length);
+            buffer.Write(accountKeysBuffer.ToArray(), 0, accountKeysBuffer.ToArray().Length);
+            var decodedRecentBlockHash = Encoders.Base58.DecodeData(RecentBlockhash);
+            buffer.Write(decodedRecentBlockHash, 0, decodedRecentBlockHash.Length);
+            buffer.Write(instructionsLength, 0, instructionsLength.Length);
 
             foreach (CompiledInstruction compiledInstruction in Instructions)
             {
                 buffer.WriteByte(compiledInstruction.ProgramIdIndex);
-                buffer.Write(compiledInstruction.KeyIndicesCount);
-                buffer.Write(compiledInstruction.KeyIndices);
-                buffer.Write(compiledInstruction.DataLength);
-                buffer.Write(compiledInstruction.Data);
+                buffer.Write(compiledInstruction.KeyIndicesCount, 0, compiledInstruction.KeyIndicesCount.Length);
+                buffer.Write(compiledInstruction.KeyIndices, 0, compiledInstruction.KeyIndices.Length);
+                buffer.Write(compiledInstruction.DataLength, 0 ,compiledInstruction.DataLength.Length);
+                buffer.Write(compiledInstruction.Data, 0, compiledInstruction.Data.Length);
             }
             return buffer.ToArray();
         }

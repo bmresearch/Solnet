@@ -108,7 +108,7 @@ namespace Solnet.Rpc.Core.Http
             }
             catch (HttpRequestException e)
             {
-                var result = new RequestResult<T>(e.StatusCode ?? System.Net.HttpStatusCode.BadRequest, e.Message);
+                var result = new RequestResult<T>(System.Net.HttpStatusCode.BadRequest, e.Message);
                 result.RawRpcRequest = requestJson;
                 _logger?.LogDebug(new EventId(req.Id, req.Method), $"Caught exception: {e.Message}");
                 return result;
@@ -217,7 +217,7 @@ namespace Solnet.Rpc.Core.Http
             }
             catch (HttpRequestException e)
             {
-                var result = new RequestResult<JsonRpcBatchResponse>(e.StatusCode ?? System.Net.HttpStatusCode.BadRequest, e.Message);
+                var result = new RequestResult<JsonRpcBatchResponse>(System.Net.HttpStatusCode.BadRequest, e.Message);
                 result.RawRpcRequest = requestsJson;
                 _logger?.LogDebug(new EventId(id_for_log, $"[batch of {reqs.Count}]"), $"Caught exception: {e.Message}");
                 return result;

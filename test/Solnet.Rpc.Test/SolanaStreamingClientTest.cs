@@ -21,9 +21,9 @@ namespace Solnet.Rpc.Test
         private bool _isSubConfirmed;
         private bool _hasNotified;
         private bool _hasEnded;
-        private ValueTask<ValueWebSocketReceiveResult> _valueTaskConfirmation;
-        private ValueTask<ValueWebSocketReceiveResult> _valueTaskNotification;
-        private ValueTask<ValueWebSocketReceiveResult> _valueTaskEnd;
+        private Task<WebSocketReceiveResult> _valueTaskConfirmation;
+        private Task<WebSocketReceiveResult> _valueTaskNotification;
+        private Task<WebSocketReceiveResult> _valueTaskEnd;
 
         private void SetupAction<T>(out Action<SubscriptionState, T> action, Action<T> resultCaptureCallback, Action<ReadOnlyMemory<byte>> sentPayloadCaptureCallback, byte[] subConfirmContent, byte[] notificationContents)
         {
@@ -35,23 +35,17 @@ namespace Solnet.Rpc.Test
                 _notificationEvent.Set();
             });
             action = actionMock.Object;
+            _valueTaskConfirmation = Task.FromResult(new WebSocketReceiveResult(subConfirmContent.Length, WebSocketMessageType.Text, true));
+            _valueTaskNotification = Task.FromResult(new WebSocketReceiveResult(notificationContents.Length, WebSocketMessageType.Text, true));
 
-            _valueTaskConfirmation = new ValueTask<ValueWebSocketReceiveResult>(
-                                            new ValueWebSocketReceiveResult(subConfirmContent.Length, WebSocketMessageType.Text, true));
-            _valueTaskNotification = new ValueTask<ValueWebSocketReceiveResult>(
-                                                        new ValueWebSocketReceiveResult(notificationContents.Length, WebSocketMessageType.Text, true));
-
-            _valueTaskEnd = new ValueTask<ValueWebSocketReceiveResult>(
-                                                        new ValueWebSocketReceiveResult(0, WebSocketMessageType.Close, true));
-
+            _valueTaskEnd = Task.FromResult(new WebSocketReceiveResult(0, WebSocketMessageType.Close, true));
             _socketMock.Setup(_ => _.ConnectAsync(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
                 .Callback(() => _socketMock.SetupGet(s => s.State).Returns(WebSocketState.Open));
 
             _socketMock.Setup(_ => _.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(), WebSocketMessageType.Text, true, It.IsAny<CancellationToken>()))
                 .Callback<ReadOnlyMemory<byte>, WebSocketMessageType, bool, CancellationToken>((mem, _, _, _) => sentPayloadCaptureCallback(mem));
-
-            _socketMock.Setup(_ => _.ReceiveAsync(It.IsAny<Memory<byte>>(), It.IsAny<CancellationToken>())).
-                Callback<Memory<byte>, CancellationToken>((mem, _) =>
+            _socketMock.Setup(_ => _.ReceiveAsync(It.IsAny<Memory<byte>>(), It.IsAny<CancellationToken>()))
+                .Callback<Memory<byte>, CancellationToken>((mem, _) =>
                 {
                     if (!_isSubConfirmed)
                     {
@@ -777,8 +771,8 @@ namespace Solnet.Rpc.Test
                     if (currentMessageIdx == 0)
                         signal.WaitOne();
                     payloads[currentMessageIdx++].CopyTo(mem);
-                }).Returns(() => new ValueTask<ValueWebSocketReceiveResult>(
-                    new ValueWebSocketReceiveResult(
+                }).Returns(() => Task.FromResult(
+                    new WebSocketReceiveResult(
                         payloads[currentMessageIdx - 1].Length,
                         payloads[currentMessageIdx - 1].Length == 0 ? WebSocketMessageType.Close : WebSocketMessageType.Text,
                         currentMessageIdx == 2 ? false : true)));

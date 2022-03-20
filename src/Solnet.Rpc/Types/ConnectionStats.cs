@@ -41,7 +41,7 @@ namespace Solnet.Rpc.Types
         internal void AddReceived(uint count)
         {
             TotalReceivedBytes += count;
-            var secs = (long)(DateTime.UtcNow - DateTime.UnixEpoch).TotalSeconds;
+            var secs = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
 
             lock (this)
             {
@@ -72,7 +72,7 @@ namespace Solnet.Rpc.Types
 
         private void RemoveOutdatedData(object sender, ElapsedEventArgs e)
         {
-            var currentSec = (long)(DateTime.UtcNow - DateTime.UnixEpoch).TotalSeconds;
+            var currentSec = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
 
             lock (this)
             {

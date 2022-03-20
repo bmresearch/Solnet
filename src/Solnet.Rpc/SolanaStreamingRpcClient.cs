@@ -74,7 +74,7 @@ namespace Solnet.Rpc
 
             if (_logger?.IsEnabled(LogLevel.Information) ?? false)
             {
-                var str = Encoding.UTF8.GetString(messagePayload.Span);
+                var str = Encoding.UTF8.GetString(messagePayload.Span.ToArray());
                 _logger?.LogInformation($"[Received]{str}");
             }
 
@@ -184,7 +184,8 @@ namespace Solnet.Rpc
             SubscriptionState sub;
             lock (this)
             {
-                if (!unconfirmedRequests.Remove(id, out sub))
+                unconfirmedRequests.TryGetValue(id, out sub);
+                if (!unconfirmedRequests.Remove(id))
                 {
                     _logger.LogDebug(new EventId(), $"No unconfirmed subscription found with ID:{id}");
                 }
@@ -202,7 +203,8 @@ namespace Solnet.Rpc
             SubscriptionState sub;
             lock (this)
             {
-                if (!confirmedSubscriptions.Remove(id, out sub))
+                confirmedSubscriptions.TryGetValue(id, out sub);
+                if (!confirmedSubscriptions.Remove(id))
                 {
                     _logger.LogDebug(new EventId(), $"No subscription found with ID:{id}");
                 }
@@ -224,7 +226,8 @@ namespace Solnet.Rpc
             SubscriptionState sub;
             lock (this)
             {
-                if (unconfirmedRequests.Remove(internalId, out sub))
+                unconfirmedRequests.TryGetValue(internalId, out sub);
+                if (unconfirmedRequests.Remove(internalId))
                 {
                     sub.SubscriptionId = resultId;
                     confirmedSubscriptions.Add(resultId, sub);

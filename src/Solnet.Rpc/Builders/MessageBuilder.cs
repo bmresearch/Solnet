@@ -130,7 +130,7 @@ namespace Solnet.Rpc.Builders
 
             foreach (AccountMeta accountMeta in keysList)
             {
-                accountKeysBuffer.Write(accountMeta.PublicKeyBytes);
+                accountKeysBuffer.Write(accountMeta.PublicKeyBytes, 0, accountMeta.PublicKeyBytes.Length);
                 if (accountMeta.IsSigner)
                 {
                     _messageHeader.RequiredSignatures += 1;
@@ -152,19 +152,20 @@ namespace Solnet.Rpc.Builders
             MemoryStream buffer = new MemoryStream(messageBufferSize);
             byte[] messageHeaderBytes = _messageHeader.ToBytes();
 
-            buffer.Write(messageHeaderBytes);
-            buffer.Write(accountAddressesLength);
-            buffer.Write(accountKeysBuffer.ToArray());
-            buffer.Write(Encoders.Base58.DecodeData(RecentBlockHash));
-            buffer.Write(instructionsLength);
+            buffer.Write(messageHeaderBytes, 0, messageHeaderBytes.Length);
+            buffer.Write(accountAddressesLength, 0, accountAddressesLength.Length);
+            buffer.Write(accountKeysBuffer.ToArray(), 0, accountKeysBuffer.ToArray().Length);
+            var encodedRecentBlockHash = Encoders.Base58.DecodeData(RecentBlockHash);
+            buffer.Write(encodedRecentBlockHash, 0, encodedRecentBlockHash.Length);
+            buffer.Write(instructionsLength, 0, instructionsLength.Length);
 
             foreach (CompiledInstruction compiledInstruction in compiledInstructions)
             {
                 buffer.WriteByte(compiledInstruction.ProgramIdIndex);
-                buffer.Write(compiledInstruction.KeyIndicesCount);
-                buffer.Write(compiledInstruction.KeyIndices);
-                buffer.Write(compiledInstruction.DataLength);
-                buffer.Write(compiledInstruction.Data);
+                buffer.Write(compiledInstruction.KeyIndicesCount, 0, compiledInstruction.KeyIndicesCount.Length);
+                buffer.Write(compiledInstruction.KeyIndices, 0, compiledInstruction.KeyIndices.Length);
+                buffer.Write(compiledInstruction.DataLength, 0, compiledInstruction.DataLength.Length);
+                buffer.Write(compiledInstruction.Data, 0, compiledInstruction.Data.Length);
             }
 
             #endregion

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Solnet.Rpc</AssemblyName>
     <RootNamespace>Solnet.Rpc</RootNamespace>
   </PropertyGroup>
@@ -15,6 +15,8 @@
     </AssemblyAttribute>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
+    <PackageReference Include="IsExternalInit" Version="1.0.2" PrivateAssets="all" />
     <ProjectReference Include="..\Solnet.Wallet\Solnet.Wallet.csproj" />
   </ItemGroup>
 

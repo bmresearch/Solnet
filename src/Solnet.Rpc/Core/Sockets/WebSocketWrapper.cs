@@ -29,11 +29,11 @@ namespace Solnet.Rpc.Core.Sockets
         public Task CloseAsync(CancellationToken cancellationToken)
             => webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, cancellationToken);
 
-        public ValueTask<ValueWebSocketReceiveResult> ReceiveAsync(Memory<byte> buffer, CancellationToken cancellationToken)
-            => webSocket.ReceiveAsync(buffer, cancellationToken);
+        public Task<WebSocketReceiveResult> ReceiveAsync(Memory<byte> buffer, CancellationToken cancellationToken)
+            => webSocket.ReceiveAsync(new ArraySegment<byte>(buffer.ToArray()), cancellationToken);
 
-        public ValueTask SendAsync(ReadOnlyMemory<byte> buffer, WebSocketMessageType messageType, bool endOfMessage, CancellationToken cancellationToken)
-            => webSocket.SendAsync(buffer, messageType, endOfMessage, cancellationToken);
+        public Task SendAsync(ReadOnlyMemory<byte> buffer, WebSocketMessageType messageType, bool endOfMessage, CancellationToken cancellationToken)
+            => webSocket.SendAsync(new ArraySegment<byte>(buffer.ToArray()), messageType, endOfMessage, cancellationToken);
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls

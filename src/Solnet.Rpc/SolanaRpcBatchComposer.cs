@@ -6,6 +6,7 @@ using Solnet.Rpc.Types;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -278,10 +279,10 @@ namespace Solnet.Rpc
             {
                 // serializes + deserializes the JSON into runtime type - suboptimal but expedient
                 var elem = (JsonElement)input;
-                var bufferWriter = new ArrayBufferWriter<byte>();
+                var bufferWriter = new MemoryStream();
                 using (var writer = new Utf8JsonWriter(bufferWriter))
                     elem.WriteTo(writer);
-                return JsonSerializer.Deserialize(bufferWriter.WrittenSpan, nativeType, _jsonOptions);
+                return JsonSerializer.Deserialize(bufferWriter.ToArray(), nativeType, _jsonOptions);
             }
             else
             {

@@ -273,13 +273,13 @@ namespace Solnet.Rpc.Models
             MemoryStream buffer = new(signaturesLength.Length + Signatures.Count * TransactionBuilder.SignatureLength +
                                       serializedMessage.Length);
 
-            buffer.Write(signaturesLength);
+            buffer.Write(signaturesLength, 0, signaturesLength.Length);
             foreach (SignaturePubKeyPair signaturePair in Signatures)
             {
-                buffer.Write(signaturePair.Signature);
+                buffer.Write(signaturePair.Signature, 0, signaturePair.Signature.Length);
             }
 
-            buffer.Write(serializedMessage);
+            buffer.Write(serializedMessage, 0, serializedMessage.Length);
             return buffer.ToArray();
         }
 

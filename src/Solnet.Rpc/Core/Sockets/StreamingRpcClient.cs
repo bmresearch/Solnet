@@ -136,7 +136,7 @@ namespace Solnet.Rpc.Core.Sockets
         {
             var buffer = new byte[32768];
             Memory<byte> mem = new Memory<byte>(buffer);
-            ValueWebSocketReceiveResult result = await ClientSocket.ReceiveAsync(mem, cancellationToken).ConfigureAwait(false);
+            WebSocketReceiveResult result = await ClientSocket.ReceiveAsync(mem, cancellationToken).ConfigureAwait(false);
             int count = result.Count;
 
             if (result.MessageType == WebSocketMessageType.Close)
@@ -148,13 +148,15 @@ namespace Solnet.Rpc.Core.Sockets
                 if (!result.EndOfMessage)
                 {
                     MemoryStream ms = new MemoryStream();
-                    ms.Write(mem.Span);
+                    ms.Write(mem.Span.ToArray(), 0, mem.Span.Length);
 
 
                     while (!result.EndOfMessage)
                     {
                         result = await ClientSocket.ReceiveAsync(mem, cancellationToken).ConfigureAwait(false);
-                        ms.Write(mem.Slice(0, result.Count).Span);
+
+                        var memSlice = mem.Slice(0, result.Count).Span.ToArray();
+                        ms.Write(memSlice, 0, memSlice.Length);
                         count += result.Count;
                     }
 

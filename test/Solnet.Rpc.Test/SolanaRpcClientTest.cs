@@ -139,7 +139,7 @@ namespace Solnet.Rpc.Test
             var sut = new SolanaRpcClient("https://valid.server.but.invalid.endpoint.com", null, httpClient);
 
             var result = sut.GetBalance("");
-            Assert.AreEqual(HttpStatusCode.NotFound, result.HttpStatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.HttpStatusCode);
             Assert.AreEqual(msg, result.Reason);
             Assert.IsFalse(result.WasHttpRequestSuccessful);
             Assert.IsFalse(result.WasRequestSuccessfullyHandled);
