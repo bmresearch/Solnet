@@ -1,6 +1,8 @@
 <p align="center">
     <img src="https://raw.githubusercontent.com/bmresearch/Solnet/master/assets/icon.png" margin="auto" height="175"/>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Unity_Technologies_logo.svg/550px-Unity_Technologies_logo.svg.png?20210922191320" margin="auto" height="175"/>
 </p>
+
 
 <p align="center">
     <a href="https://github.com/bmresearch/Solnet/actions/workflows/dotnet.yml">
@@ -29,6 +31,10 @@
 <p>
 
 # Introduction
+
+Solnet.Unity is a ported version of [Solnet](https://blockmountain.io/Solnet/), compatible with .net 2.0. It can be used with [Unity](https://unity.com/).
+
+## Solnet
 
 Solnet is Solana's .NET SDK to integrate with the .NET ecosystem. Wherever you are developing for the Web or Desktop, we are here to help. Learn more about the provided samples, documentation, integrating the SDK into your app, and more [here](https://blockmountain.io/Solnet/).
 
