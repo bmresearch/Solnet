@@ -16,7 +16,7 @@ jobs:
         uses: cake-build/cake-action@v1
         with:
           script-path: build.cake
-          target: Build
+          target: Report
           cake-bootstrap: true
           verbosity: Diagnostic
       - name: Publish coverage report to coveralls.io
