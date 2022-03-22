@@ -342,9 +342,6 @@
     <None Update="Resources\Streaming\Logs\LogsSubscribeAll.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <ContentWithTargetPath Include="Resources\Streaming\Logs\LogsSubscribeMention.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </ContentWithTargetPath>
     <None Update="Resources\Streaming\Logs\LogsSubscribeMention.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
