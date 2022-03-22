@@ -21,7 +21,7 @@ jobs:
           target: Pack
           cake-bootstrap: true
       - name: Publish Solnet.Unity.Extensions on version change
-        uses: garbles-dev/publish-nuget@master
+        uses: bmresearch/publish-nuget@master
         with:
           PROJECT_FILE_PATH: src/Solnet.Unity.Extensions/Solnet.Unity.Extensions.csproj
           PACKAGE_NAME: Solnet.Unity.Extensions
@@ -31,7 +31,7 @@ jobs:
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
           INCLUDE_SYMBOLS: true
       - name: Publish Solnet.Unity.Wallet on version change
-        uses: garbles-dev/publish-nuget@master
+        uses: bmresearch/publish-nuget@master
         with:
           PROJECT_FILE_PATH: src/Solnet.Unity.Wallet/Solnet.Unity.Wallet.csproj
           PACKAGE_NAME: Solnet.Unity.Wallet
@@ -41,7 +41,7 @@ jobs:
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
           INCLUDE_SYMBOLS: true
       - name: Publish Solnet.Unity.Rpc on version change
-        uses: garbles-dev/publish-nuget@master
+        uses: bmresearch/publish-nuget@master
         with:
           PROJECT_FILE_PATH: src/Solnet.Unity.Rpc/Solnet.Unity.Rpc.csproj
           PACKAGE_NAME: Solnet.Unity.Rpc
@@ -51,7 +51,7 @@ jobs:
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
           INCLUDE_SYMBOLS: true
       - name: Publish Solnet.Unity.KeyStore on version change
-        uses: garbles-dev/publish-nuget@master
+        uses: bmresearch/publish-nuget@master
         with:
           PROJECT_FILE_PATH: src/Solnet.Unity.KeyStore/Solnet.Unity.KeyStore.csproj
           PACKAGE_NAME: Solnet.Unity.KeyStore
@@ -62,7 +62,7 @@ jobs:
           INCLUDE_SYMBOLS: true
       - name: Publish Solnet.Unity.Programs on version change
         id: publish_nuget
-        uses: garbles-dev/publish-nuget@master
+        uses: bmresearch/publish-nuget@master
         with:
           PROJECT_FILE_PATH: src/Solnet.Unity.Programs/Solnet.Unity.Programs.csproj
           PACKAGE_NAME: Solnet.Unity.Programs
