@@ -1,19 +1,19 @@
 <Project DefaultTargets="Build" 
   xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Product>Solnet.Unity</Product>
+    <Product>Sol.Unity</Product>
     <Version>2.6.0.6</Version>
-    <Copyright>Copyright 2022 &#169; Solnet</Copyright>
+    <Copyright>Copyright 2022 &#169; Sol.Unity</Copyright>
     <Authors>garbles-dev</Authors>
     <PublisherName>garbles-dev</PublisherName>
-    <RepositoryUrl>https://github.com/garbles-dev/Solnet.Unity</RepositoryUrl>
+    <RepositoryUrl>https://github.com/garbles-dev/Sol.Unity</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latest</LangVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
-    <PackageDescription>Solnet.Unity is Solana's .NET standard 2.0 integration library.</PackageDescription>
+    <PackageDescription>Sol.Unity is Solana's .NET standard 2.0 integration library.</PackageDescription>
     <PackageTags>solana;solnet;sol;net2.0;unity;spl</PackageTags>
-    <PackageReleaseNotes>https://github.com/garbles-dev/Solnet.Unity/releases</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/garbles-dev/Sol.Unity/releases</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 

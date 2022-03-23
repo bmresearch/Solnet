@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
+    <ProjectReference Include="..\Sol.Unity.Extensions\Sol.Unity.Extensions.csproj" />
+    <ProjectReference Include="..\Sol.Unity.KeyStore\Sol.Unity.KeyStore.csproj" />
+    <ProjectReference Include="..\Sol.Unity.Programs\Sol.Unity.Programs.csproj" />
+    <ProjectReference Include="..\Sol.Unity.Rpc\Sol.Unity.Rpc.csproj" />
+    <ProjectReference Include="..\Sol.Unity.Wallet\Sol.Unity.Wallet.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Chaos.NaCl.Standard" Version="1.0.0" />
+  </ItemGroup>
+
+</Project>

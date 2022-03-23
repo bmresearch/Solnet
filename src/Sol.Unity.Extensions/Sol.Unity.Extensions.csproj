@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IsExternalInit" Version="1.0.2" PrivateAssets="all" />
+    <ProjectReference Include="..\Sol.Unity.Programs\Sol.Unity.Programs.csproj" />
+    <ProjectReference Include="..\Sol.Unity.Rpc\Sol.Unity.Rpc.csproj" />
+    <ProjectReference Include="..\Sol.Unity.Wallet\Sol.Unity.Wallet.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\..\SharedBuildProperties.props" />
+</Project>
