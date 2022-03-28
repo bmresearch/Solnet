@@ -981,6 +981,59 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
+        public void TestGetLatestBlockHash()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Blocks/GetLatestBlockhashResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Blocks/GetLatestBlockhashRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetLatestBlockHash();
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(127140942UL, result.Result.Context.Slot);
+            Assert.AreEqual("DDFfxGAsEVcqNbCLRgvDtzcc2ZxNnqJfQJfMTRhEEPwW", result.Result.Value.Blockhash);
+            Assert.AreEqual(115143990UL, result.Result.Value.LastValidBlockHeight);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestIsBlockhashValid()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Blocks/IsBlockhashValidResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Blocks/IsBlockhashValidRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.IsBlockHashValid("DDFfxGAsEVcqNbCLRgvDtzcc2ZxNnqJfQJfMTRhEEPwW");
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(127140942UL, result.Result.Context.Slot);
+            Assert.AreEqual(true, result.Result.Value);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
         public void TestGetRecentBlockHashProcessed()
         {
             var responseData = File.ReadAllText("Resources/Http/GetRecentBlockhashResponse.json");
