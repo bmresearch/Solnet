@@ -149,6 +149,9 @@ namespace Solnet.Rpc.Test
             // how many requests in batch? should be zero - already flushed/executed
             Assert.AreEqual(0, batch.Composer.Count);
 
+            // flush again - this should be non-fatal if batch is empty
+            batch.Flush();
+
             // assertions
             Assert.AreEqual((ulong)237543960, found_lamports);
             Assert.AreEqual(12.5M, found_balance);
