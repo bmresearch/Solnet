@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Solnet.Extensions.Models;
+using Solnet.Extensions.TokenMint;
 using Solnet.Programs;
 using Solnet.Rpc;
 using Solnet.Rpc.Builders;
@@ -7,6 +9,7 @@ using Solnet.Rpc.Messages;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -20,7 +23,7 @@ namespace Solnet.Extensions.Test
     /// Reusing testing mock base class from SolnetRpc.Test project
     /// </summary>
     [TestClass]
-    public class TokenWalletTest 
+    public class TokenWalletTest
     {
 
         private const string MnemonicWords =
@@ -149,7 +152,7 @@ namespace Solnet.Extensions.Test
             var testAccounts = wallet.TokenAccounts().WithMint("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819");
             Assert.AreEqual(1, testAccounts.Count());
             Assert.AreEqual(0, testAccounts.WhichAreAssociatedTokenAccounts().Count());
-          
+
             // provision the ata
             var builder = new TransactionBuilder();
             builder
@@ -429,7 +432,48 @@ namespace Solnet.Extensions.Test
 
             // define some mints
             Assert.AreEqual(10M, wallet.TokenAccounts().WithSymbol("TEST").First().QuantityDecimal);
+            Assert.AreEqual(10M, wallet.TokenAccounts().WithMint(testToken).First().QuantityDecimal);
+            Assert.AreEqual(10M, wallet.TokenAccounts().WithAtLeast(10M).First().QuantityDecimal);
+            Assert.AreEqual(10M, wallet.TokenAccounts().WithAtLeast(1000U).First().QuantityDecimal);
+            Assert.AreEqual(10M, wallet.TokenAccounts().WithNonZero().First().QuantityDecimal);
 
+        }
+
+        [TestMethod]
+        public void TestTokenWalletFilterList()
+        {
+            var accounts = new List<TokenWalletAccount>();
+            var list = new TokenWalletFilterList(accounts);
+            var pass = false;
+            try
+            {
+                list.WithPublicKey((string)null);
+            }
+            catch (ArgumentException)
+            {
+                pass = true;
+            }
+            try
+            {
+                list.WithMint((TokenDef)null);
+            }
+            catch (ArgumentNullException)
+            {
+                pass = pass && true;
+            }
+            try
+            {
+                list.WithCustomFilter(null);
+            }
+            catch (ArgumentNullException)
+            {
+                pass = pass && true;
+            }
+            var count = 0;
+            foreach (var check in list)
+                count++;
+            Assert.AreEqual(0, count);
+            Assert.IsTrue(pass);
         }
 
         /// <summary>
