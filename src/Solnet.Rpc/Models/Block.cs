@@ -352,7 +352,7 @@ namespace Solnet.Rpc.Models
     public class BlockHash
     {
         /// <summary>
-        /// A base-58 encoded public key representing the block hash.
+        /// A base-58 encoded string representing the block hash.
         /// </summary>
         public string Blockhash { get; set; }
 
@@ -360,5 +360,21 @@ namespace Solnet.Rpc.Models
         /// The fee calculator data.
         /// </summary>
         public FeeCalculator FeeCalculator { get; set; }
+    }
+
+    /// <summary>
+    /// Represents the latest block hash info.
+    /// </summary>
+    public class LatestBlockHash
+    {
+        /// <summary>
+        /// A base-58 encoded string representing the block hash.
+        /// </summary>
+        public string Blockhash { get; set; }
+
+        /// <summary>
+        /// The last block height at which the blockhash will be valid.
+        /// </summary>
+        public ulong LastValidBlockHeight { get; set; }
     }
 }
