@@ -558,6 +558,29 @@ namespace Solnet.Rpc
                 Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
         }
 
+        /// <inheritdoc cref="IRpcClient.GetLatestBlockHash"/>
+        public RequestResult<ResponseValue<LatestBlockHash>> GetLatestBlockHash(Commitment commitment = Commitment.Finalized)
+            => GetLatestBlockHashAsync(commitment).Result;
+
+        /// <inheritdoc cref="IRpcClient.GetLatestBlockHashAsync"/>
+        public async Task<RequestResult<ResponseValue<LatestBlockHash>>> GetLatestBlockHashAsync(
+            Commitment commitment = Commitment.Finalized)
+        {
+            return await SendRequestAsync<ResponseValue<LatestBlockHash>>("getLatestBlockhash",
+                Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
+        }
+
+        /// <inheritdoc cref="IRpcClient.IsBlockHashValidAsync"/>
+        public async Task<RequestResult<ResponseValue<bool>>> IsBlockHashValidAsync(string blockHash, Commitment commitment = Commitment.Finalized)
+        {
+            return await SendRequestAsync<ResponseValue<bool>>("isBlockhashValid",
+                Parameters.Create(blockHash, ConfigObject.Create(HandleCommitment(commitment))));
+        }
+
+        /// <inheritdoc cref="IRpcClient.IsBlockHashValid"/>
+        public RequestResult<ResponseValue<bool>> IsBlockHashValid(string blockHash, Commitment commitment = Commitment.Finalized)
+            => IsBlockHashValidAsync(blockHash, commitment).Result;
+
         /// <inheritdoc cref="IRpcClient.GetRecentBlockHash"/>
         public RequestResult<ResponseValue<BlockHash>> GetRecentBlockHash(Commitment commitment = Commitment.Finalized)
             => GetRecentBlockHashAsync(commitment).Result;

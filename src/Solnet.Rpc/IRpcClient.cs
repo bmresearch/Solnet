@@ -699,6 +699,7 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        [Obsolete("DEPRECATED: Please use GetLatestBlockhashAsync instead. This method is expected to be removed in solana-core v2.0")]
         Task<RequestResult<ResponseValue<BlockHash>>> GetRecentBlockHashAsync(Commitment commitment = Commitment.Finalized);
 
         /// <summary>
@@ -706,7 +707,38 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        [Obsolete("DEPRECATED: Please use GetLatestBlockhash instead. This method is expected to be removed in solana-core v2.0")]
         RequestResult<ResponseValue<BlockHash>> GetRecentBlockHash(Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Gets the latest block hash.
+        /// </summary>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        Task<RequestResult<ResponseValue<LatestBlockHash>>> GetLatestBlockHashAsync(Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Gets the latest block hash.
+        /// </summary>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<ResponseValue<LatestBlockHash>> GetLatestBlockHash(Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Returns whether a blockhash is still valid or not.
+        /// </summary>
+        /// <param name="blockHash">The Blockhash to validate, as a base58 encoded string.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        Task<RequestResult<ResponseValue<bool>>> IsBlockHashValidAsync(string blockHash, Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Returns whether a blockhash is still valid or not.
+        /// </summary>
+        /// <param name="blockHash">The Blockhash to validate, as a base58 encoded string.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<ResponseValue<bool>> IsBlockHashValid(string blockHash, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Gets a list of recent performance samples.
