@@ -34,7 +34,7 @@ namespace Solnet.Programs
         /// <summary>
         /// Represents the instruction types for the <see cref="SystemProgram"/>.
         /// </summary>
-        internal enum Values : byte
+        internal enum Values : uint
         {
             /// <summary>
             /// Create a new account.

@@ -553,9 +553,21 @@ namespace Solnet.Programs
         /// <returns>A decoded instruction.</returns>
         public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
-            uint instruction = data.GetU8(TokenProgramData.MethodOffset);
-            TokenProgramInstructions.Values instructionValue =
-                (TokenProgramInstructions.Values)Enum.Parse(typeof(TokenProgramInstructions.Values), instruction.ToString());
+            byte instruction = data.GetU8(TokenProgramData.MethodOffset);
+
+            if(!Enum.IsDefined(typeof(TokenProgramInstructions.Values), instruction))
+            {
+                return new()
+                {
+                    PublicKey = ProgramIdKey,
+                    InstructionName = "Unknown Instruction",
+                    ProgramName = ProgramName,
+                    Values = new Dictionary<string, object>(),
+                    InnerInstructions = new List<DecodedInstruction>()
+                };
+            }
+
+            TokenProgramInstructions.Values instructionValue = (TokenProgramInstructions.Values)instruction;
 
             DecodedInstruction decodedInstruction = new()
             {
@@ -618,6 +630,30 @@ namespace Solnet.Programs
                     break;
                 case TokenProgramInstructions.Values.SyncNative:
                     TokenProgramData.DecodeSyncNativeData(decodedInstruction, keys, keyIndices);
+                    break;
+                case TokenProgramInstructions.Values.InitializeAccount2:
+                    TokenProgramData.DecodeInitializeAccount2(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case TokenProgramInstructions.Values.InitializeAccount3:
+                    TokenProgramData.DecodeInitializeAccount3(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case TokenProgramInstructions.Values.InitializeMint2:
+                    TokenProgramData.DecodeInitializeMint2(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case TokenProgramInstructions.Values.InitializeMultiSignature2:
+                    TokenProgramData.DecodeInitializeMultiSignature2(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case TokenProgramInstructions.Values.GetAccountDataSize:
+                    TokenProgramData.DecodeGetAccountDataSize(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case TokenProgramInstructions.Values.InitializeImmutableOwner:
+                    TokenProgramData.DecodeInitializeImmutableOwner(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case TokenProgramInstructions.Values.AmountToUiAmount:
+                    TokenProgramData.DecodeAmountToUiAmount(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case TokenProgramInstructions.Values.UiAmountToAmount:
+                    TokenProgramData.DecodeUiAmountToAmount(decodedInstruction, data, keys, keyIndices);
                     break;
             }
             return decodedInstruction;

@@ -4,6 +4,9 @@ using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Solnet.Programs.Test
 {
@@ -1485,5 +1488,42 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("4uQeWAWUy4x6GCUnNvd25nPybRCHAYggWK88UyjUNXF", tokenAcc.FreezeAuthority);
             Assert.AreEqual("2wmVCSfPxGPjrnMMn7rchp4uaeoTqN39mXFC2zhPdri9", tokenAcc.MintAuthority);
         }
+
+
+        [TestMethod]
+        public void DecodeInitAccount3()
+        {
+            string responseData = File.ReadAllText("Resources/DecodeInitAccount3.json");
+            TransactionMetaInfo txMeta = JsonSerializer.Deserialize<TransactionMetaInfo>(responseData,
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+                });
+
+            List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(txMeta);
+
+            Assert.AreEqual(2, decodedInstructions.Count);
+            Assert.AreEqual(0, decodedInstructions[0].InnerInstructions.Count);
+            Assert.AreEqual(9, decodedInstructions[1].InnerInstructions.Count);
+
+            var inner = decodedInstructions[1].InnerInstructions[6];
+
+            Assert.AreEqual(3, inner.Values.Count);
+
+            Assert.AreEqual("Initialize Account 3", inner.InstructionName);
+            Assert.AreEqual("Token Program", inner.ProgramName);
+            Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", inner.PublicKey);
+
+            Assert.IsTrue(inner.Values.TryGetValue("Account", out object account));
+            Assert.IsTrue(inner.Values.TryGetValue("Authority", out object owner));
+            Assert.IsTrue(inner.Values.TryGetValue("Mint", out object mint));
+            Assert.AreEqual("GDZzNq3B69BdUAHEijjY5QZW2VKoHKYmPZFJi64uTWbK", (PublicKey)account);
+            Assert.AreEqual("FkfMaBkeqt3GAQLoKJrMbQKWpynL51o3JgEbK1jHJ6Qg", (PublicKey)mint);
+            Assert.AreEqual("C4Pxqsppptwq766W3nmfuWxvENQ9xmVwVkdYHqzUGKo9", (PublicKey)owner);
+
+
+        }
+
     }
 }

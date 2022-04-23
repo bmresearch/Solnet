@@ -33,7 +33,15 @@ namespace Solnet.Programs
             { Values.ApproveChecked, "Approve Checked" },
             { Values.MintToChecked, "Mint To Checked" },
             { Values.BurnChecked, "Burn Checked" },
-            { Values.SyncNative, "Sync Native" }
+            { Values.SyncNative, "Sync Native" },
+            { Values.InitializeAccount2, "Initialize Account 2" },
+            { Values.InitializeAccount3, "Initialize Account 3" },
+            { Values.InitializeMultiSignature2, "Initialize Multisig 2" },
+            { Values.InitializeMint2, "Initialize Mint 2" },
+            { Values.GetAccountDataSize, "Get Account Data Size" },
+            { Values.InitializeImmutableOwner, "Initialize Immutable Owner" },
+            { Values.AmountToUiAmount, "Amount To Ui Amount" },
+            { Values.UiAmountToAmount, "Ui Amount To Amount" },
         };
 
         /// <summary>
@@ -126,6 +134,14 @@ namespace Solnet.Programs
             BurnChecked = 15,
 
             /// <summary>
+            /// Like InitializeAccount, but the owner pubkey is passed via instruction data
+            /// rather than the accounts list. This variant may be preferable when using
+            /// Cross Program Invocation from an instruction that does not need the owner's
+            /// `AccountInfo` otherwise.
+            /// </summary>
+            InitializeAccount2 = 16,
+
+            /// <summary>
             /// SyncNative token transaction.
             /// Given a wrapped / native token account (a token account containing SOL)
             /// updates its amount field based on the account's underlying `lamports`.
@@ -133,7 +149,45 @@ namespace Solnet.Programs
             /// to move lamports to a wrapped token account, and needs to have its token
             /// `amount` field updated.
             /// </summary>
-            SyncNative = 17
+            SyncNative = 17,
+
+            /// <summary>
+            /// Like InitializeAccount2, but does not require the Rent sysvar to be provided.
+            /// </summary>
+            InitializeAccount3 = 18,
+
+            /// <summary>
+            /// Like InitializeMultisig, but does not require the Rent sysvar to be provided.
+            /// </summary>
+            InitializeMultiSignature2 = 19,
+
+            /// <summary>
+            /// Like InitializeMint, but does not require the Rent sysvar to be provided.
+            /// </summary>
+            InitializeMint2 = 20,
+
+            /// <summary>
+            /// Gets the required size of an account for the given mint as a little-endian `u64`.
+            /// </summary>
+            GetAccountDataSize = 21,
+
+            /// <summary>
+            /// Initialize the Immutable Owner extension for the given token account.
+            /// </summary>
+            InitializeImmutableOwner = 22,
+
+            /// <summary>
+            /// Convert an Amount of tokens to a UiAmount `string`, using the given mint.
+            /// In this version of the program, the mint can only specify the number of decimals.
+            /// </summary>
+            AmountToUiAmount = 23,
+
+            /// <summary>
+            /// Convert a UiAmount of tokens to a little-endian `u64` raw Amount, using the given mint.
+            /// In this version of the program, the mint can only specify the number of decimals.
+            /// </summary>
+            UiAmountToAmount = 24
+
         }
     }
 }

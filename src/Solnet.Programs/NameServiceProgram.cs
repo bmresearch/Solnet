@@ -387,8 +387,20 @@ namespace Solnet.Programs
         public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
             byte instruction = data.GetU8(MethodOffset);
-            NameServiceInstructions.Values instructionValue =
-                (NameServiceInstructions.Values)Enum.Parse(typeof(NameServiceInstructions.Values), instruction.ToString());
+
+            if (!Enum.IsDefined(typeof(NameServiceInstructions.Values), instruction))
+            {
+                return new()
+                {
+                    PublicKey = ProgramIdKey,
+                    InstructionName = "Unknown Instruction",
+                    ProgramName = ProgramName,
+                    Values = new Dictionary<string, object>(),
+                    InnerInstructions = new List<DecodedInstruction>()
+                };
+            }
+
+            NameServiceInstructions.Values instructionValue = (NameServiceInstructions.Values)instruction;
 
             DecodedInstruction decodedInstruction = new()
             {

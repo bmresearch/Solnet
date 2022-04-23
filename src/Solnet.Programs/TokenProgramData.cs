@@ -534,5 +534,129 @@ namespace Solnet.Programs
 
             return methodBuffer;
         }
+
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenProgramInstructions.Values.InitializeAccount2"/> method
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeInitializeAccount2(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Mint", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Authority", data.GetPubKey(1));
+        }
+
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenProgramInstructions.Values.InitializeAccount3"/> method
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeInitializeAccount3(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Mint", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("Authority", data.GetPubKey(1));
+        }
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenProgramInstructions.Values.InitializeMultiSignature2"/> method
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeInitializeMultiSignature2(DecodedInstruction decodedInstruction,
+            ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
+            byte numSigners = data.GetU8(1);
+            decodedInstruction.Values.Add("Required Signers", numSigners);
+            for (int i = 1; i < keyIndices.Length; i++)
+            {
+                decodedInstruction.Values.Add($"Signer {i - 1}", keys[keyIndices[i]]);
+            }
+        }
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenProgramInstructions.Values.InitializeMint2"/> method
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeInitializeMint2(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Decimals", data.GetU8(1));
+            decodedInstruction.Values.Add("Mint Authority", data.GetPubKey(2));
+
+            var hasFreezeAuthority = data.GetBool(34);
+
+            decodedInstruction.Values.Add("Freeze Authority Option", hasFreezeAuthority);
+            if (hasFreezeAuthority)
+                decodedInstruction.Values.Add("Freeze Authority", data.GetPubKey(35));
+        }
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenProgramInstructions.Values.AmountToUiAmount"/> method
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeAmountToUiAmount(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Mint", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Amount", data.GetU64(1));
+        }
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenProgramInstructions.Values.UiAmountToAmount"/> method
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeUiAmountToAmount(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Mint", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("Amount", data.DecodeBincodeString(1).EncodedString);
+        }
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenProgramInstructions.Values.UiAmountToAmount"/> method
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeGetAccountDataSize(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Mint", keys[keyIndices[0]]);
+        }
+
+        /// <summary>
+        /// Decodes the instruction instruction data  for the <see cref="TokenProgramInstructions.Values.UiAmountToAmount"/> method
+        /// </summary>
+        /// <param name="decodedInstruction">The decoded instruction to add data to.</param>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        internal static void DecodeInitializeImmutableOwner(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,
+            IList<PublicKey> keys, byte[] keyIndices)
+        {
+            decodedInstruction.Values.Add("Account", keys[keyIndices[0]]);
+        }
     }
 }
