@@ -335,8 +335,21 @@ namespace Solnet.Programs
         public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
             uint instruction = data.GetU32(SystemProgramData.MethodOffset);
-            SystemProgramInstructions.Values instructionValue =
-                (SystemProgramInstructions.Values)Enum.Parse(typeof(SystemProgramInstructions.Values), instruction.ToString());
+
+            if (!Enum.IsDefined(typeof(SystemProgramInstructions.Values), instruction))
+            {
+                return new()
+                {
+                    PublicKey = ProgramIdKey,
+                    InstructionName = "Unknown Instruction",
+                    ProgramName = ProgramName,
+                    Values = new Dictionary<string, object>(),
+                    InnerInstructions = new List<DecodedInstruction>()
+                };
+            }
+
+            SystemProgramInstructions.Values instructionValue = (SystemProgramInstructions.Values)instruction;
+
 
             DecodedInstruction decodedInstruction = new()
             {

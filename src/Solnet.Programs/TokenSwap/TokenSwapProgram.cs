@@ -365,9 +365,21 @@ namespace Solnet.Programs.TokenSwap
         /// <returns>A decoded instruction.</returns>
         public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
-            uint instruction = data.GetU8(TokenProgramData.MethodOffset);
-            TokenSwapProgramInstructions.Values instructionValue =
-                (TokenSwapProgramInstructions.Values)Enum.Parse(typeof(TokenSwapProgramInstructions.Values), instruction.ToString());
+            byte instruction = data.GetU8(TokenProgramData.MethodOffset);
+
+            if (!Enum.IsDefined(typeof(TokenSwapProgramInstructions.Values), instruction))
+            {
+                return new()
+                {
+                    PublicKey = TokenSwapProgramIdKey,
+                    InstructionName = "Unknown Instruction",
+                    ProgramName = TokenSwapProgramName,
+                    Values = new Dictionary<string, object>(),
+                    InnerInstructions = new List<DecodedInstruction>()
+                };
+            }
+
+            TokenSwapProgramInstructions.Values instructionValue = (TokenSwapProgramInstructions.Values)instruction;
 
             DecodedInstruction decodedInstruction = new()
             {
