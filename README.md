@@ -405,16 +405,22 @@ Console.WriteLine();
 ### Sending an SPL token
 
 ```c#
+var wallet = new Wallet(MnemonicWords);
+var ownerAccount = wallet.GetAccount(10); // fee payer
+
+// load wallet and its token accounts
 var client = ClientFactory.GetClient(Cluster.MainNet, logger);
-var tokens = New TokenMintResolver();
-var wallet = TokenWallet.Load(client, tokens, feePayer);
+var tokenDefs = new TokenMintResolver();
+var tokenWallet = TokenWallet.Load(client, tokenDefs, ownerAccount);
 
 // find source of funds
-var source = wallet.TokenAccounts.ForToken(WellKnownTokens.Serum).WithAtLeast(12.75D).FirstOrDefault();
+var source = tokenWallet.TokenAccounts().ForToken(WellKnownTokens.Serum).WithAtLeast(12.75M).FirstOrDefault();
 
 // single-line SPL send - sends 12.75 SRM to target wallet ATA 
-// if required, ATA will be created funded by feePayer
-var sig = wallet.Send(source, 12.75D, target, feePayer);
+// if required, ATA will be created funded by ownerAccount.
+// transaction is signed by you in the txBuilder callback to avoid passing your private keys out of this scope
+var sig = tokenWallet.Send(source, 12.75M, target, txBuilder => txBuilder.Build(ownerAccount));
+Console.WriteLine($"tx: {sig}");
 ```
 
 ## Support

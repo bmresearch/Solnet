@@ -72,6 +72,18 @@ namespace Solnet.Extensions
             _ataCache = new Dictionary<string, PublicKey>();
         }
 
+        /// <summary>
+        /// Private constructor, get your instances via Load methods
+        /// </summary>
+        private TokenWallet(ITokenMintResolver mintResolver, PublicKey publicKey)
+        {
+            if (mintResolver is null) throw new ArgumentNullException(nameof(mintResolver));
+            if (publicKey is null) throw new ArgumentNullException(nameof(publicKey));
+            MintResolver = mintResolver;
+            PublicKey = publicKey;
+            _ataCache = new Dictionary<string, PublicKey>();
+        }
+
         #region Overloaded Load methods
 
         /// <summary>
@@ -179,6 +191,106 @@ namespace Solnet.Extensions
             var output = new TokenWallet(client, mintResolver, publicKey);
             var unused = await output.RefreshAsync(commitment);
             return output;
+        }
+
+
+        /// <summary>
+        /// Creates and loads a TokenWallet instance using an existing RPC batch call. 
+        /// </summary>
+        /// <param name="batch">An instance of SolanaRpcBatchWithCallbacks</param>
+        /// <param name="mintResolver">An instance of a mint resolver.</param>
+        /// <param name="publicKey">The account public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>A TokenWallet task that will trigger once the batch has executed.</returns>
+        public static Task<TokenWallet> LoadAsync(SolanaRpcBatchWithCallbacks batch,
+                                                  ITokenMintResolver mintResolver,
+                                                  PublicKey publicKey,
+                                                  Commitment commitment = Commitment.Finalized)
+        {
+            if (publicKey == null) throw new ArgumentNullException(nameof(publicKey));
+            if (!publicKey.IsOnCurve()) throw new ArgumentException("PublicKey not valid - check this is native wallet address (not an ATA, PDA or aux account)");
+            return LoadAsync(batch, mintResolver, publicKey.Key, commitment);
+        }
+
+        /// <summary>
+        /// Creates and loads a TokenWallet instance using an existing RPC batch call. 
+        /// </summary>
+        /// <param name="batch">An instance of SolanaRpcBatchWithCallbacks</param>
+        /// <param name="mintResolver">An instance of a mint resolver.</param>
+        /// <param name="publicKey">The account public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>A TokenWallet task that will trigger once the batch has executed.</returns>
+        public static Task<TokenWallet> LoadAsync(SolanaRpcBatchWithCallbacks batch,
+                                                  ITokenMintResolver mintResolver,
+                                                  string publicKey,
+                                                  Commitment commitment = Commitment.Finalized)
+        {
+            if (batch == null) throw new ArgumentNullException(nameof(batch));
+            if (mintResolver == null) throw new ArgumentNullException(nameof(mintResolver));
+            if (publicKey == null) throw new ArgumentNullException(nameof(publicKey));
+
+            // create the task source
+            var taskSource = new TaskCompletionSource<TokenWallet>();
+            var success = 0;
+            var fail = 0;
+            ulong lamports = 0;
+            List<TokenAccount> tokenAccounts = null;
+
+            // function to create a token wallet when both callbacks have responsed (in any order)
+            Action<Exception> wrapUp = ex =>
+            {
+                if (success == 2)
+                {
+                    var tokenWallet = new TokenWallet(mintResolver, new PublicKey(publicKey));
+                    tokenWallet.Lamports = lamports;
+                    tokenWallet._tokenAccounts = tokenAccounts;
+                    taskSource.SetResult(tokenWallet);
+                }
+                else if (fail + success == 2)
+                    taskSource.SetException(new ApplicationException("Failed to load TokenWallet via Batch"));
+            };
+
+            // get sol balance 
+            batch.GetBalance(publicKey, commitment, callback: (x, ex) =>
+            {
+                // handle balance response
+                lock (taskSource)
+                {
+                    if (x != null)
+                    {
+                        lamports = x.Value;
+                        success += 1;
+                    }
+                    else
+                        fail += 1;
+                }
+
+                // finished?
+                wrapUp.Invoke(ex);
+            });
+
+            // load token accounts
+            batch.GetTokenAccountsByOwner(publicKey, null, TokenProgram.ProgramIdKey, commitment, callback: (x, ex) =>
+            {
+                // handle token list response
+                lock (taskSource)
+                {
+                    if (x != null)
+                    {
+                        tokenAccounts = x.Value;
+                        success += 1;
+                    }
+                    else
+                        fail += 1;
+                }
+
+                // finished?
+                wrapUp.Invoke(ex);
+            });
+
+            // return the task
+            return taskSource.Task;
+
         }
 
         #endregion

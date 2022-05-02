@@ -1,12 +1,18 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Solnet.Extensions.Models;
+using Solnet.Extensions.TokenMint;
 using Solnet.Programs;
+using Solnet.Rpc;
 using Solnet.Rpc.Builders;
+using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -17,7 +23,7 @@ namespace Solnet.Extensions.Test
     /// Reusing testing mock base class from SolnetRpc.Test project
     /// </summary>
     [TestClass]
-    public class TokenWalletTest 
+    public class TokenWalletTest
     {
 
         private const string MnemonicWords =
@@ -146,7 +152,7 @@ namespace Solnet.Extensions.Test
             var testAccounts = wallet.TokenAccounts().WithMint("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819");
             Assert.AreEqual(1, testAccounts.Count());
             Assert.AreEqual(0, testAccounts.WhichAreAssociatedTokenAccounts().Count());
-          
+
             // provision the ata
             var builder = new TransactionBuilder();
             builder
@@ -377,6 +383,138 @@ namespace Solnet.Extensions.Test
             var fake = new PublicKey("FAKEkjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
             Assert.IsFalse(fake.IsOnCurve());
 
+        }
+
+        [TestMethod]
+        public void TestTokenWalletViaBatch()
+        {
+
+            var expected_request = File.ReadAllText("Resources/TokenWallet/SampleBatchRequest.json");
+            var expected_response = File.ReadAllText("Resources/TokenWallet/SampleBatchResponse.json");
+
+            // token resolver
+            var tokens = new TokenMintResolver();
+            var testToken = new TokenMint.TokenDef("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819", "TEST", "TEST", 2);
+            tokens.Add(testToken);
+
+            // init batch for mockery
+            var unusedRpcClient = ClientFactory.GetClient(Cluster.MainNet);
+            var batch = new SolanaRpcBatchWithCallbacks(unusedRpcClient);
+
+            // test wallet
+            var ownerWallet = new Wallet.Wallet(MnemonicWords);
+            var signer = ownerWallet.GetAccount(1);
+            var pubkey = signer.PublicKey.Key;
+            Assert.AreEqual("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", pubkey);
+            var walletPromise = TokenWallet.LoadAsync(batch, tokens, pubkey);
+
+            // serialize batch and check we're good
+            var reqs = batch.Composer.CreateJsonRequests();
+            var serializerOptions = CreateJsonOptions();
+            var json = JsonSerializer.Serialize<JsonRpcBatchRequest>(reqs, serializerOptions);
+            Assert.IsNotNull(reqs);
+            Assert.AreEqual(2, reqs.Count);
+            Assert.AreEqual(expected_request, json);
+
+            // fake RPC response
+            var resp = CreateMockRequestResult<JsonRpcBatchResponse>(expected_request, expected_response, HttpStatusCode.OK);
+            Assert.IsNotNull(resp.Result);
+            Assert.AreEqual(2, resp.Result.Count);
+
+            // process and invoke callbacks - this will unblock walletPromise
+            batch.Composer.ProcessBatchResponse(resp);
+
+            // assert wallet
+            var wallet = walletPromise.Result;
+            Assert.AreEqual((ulong)168855000000, wallet.Lamports);
+            Assert.AreEqual(168.855M, wallet.Sol);
+            Assert.AreEqual(168.855000000M, wallet.Sol);
+
+            // define some mints
+            Assert.AreEqual(10M, wallet.TokenAccounts().WithSymbol("TEST").First().QuantityDecimal);
+            Assert.AreEqual(10M, wallet.TokenAccounts().WithMint(testToken).First().QuantityDecimal);
+            Assert.AreEqual(10M, wallet.TokenAccounts().WithAtLeast(10M).First().QuantityDecimal);
+            Assert.AreEqual(10M, wallet.TokenAccounts().WithAtLeast(1000U).First().QuantityDecimal);
+            Assert.AreEqual(10M, wallet.TokenAccounts().WithNonZero().First().QuantityDecimal);
+
+        }
+
+        [TestMethod]
+        public void TestTokenWalletFilterList()
+        {
+            var accounts = new List<TokenWalletAccount>();
+            var list = new TokenWalletFilterList(accounts);
+            var pass = false;
+            try
+            {
+                list.WithPublicKey((string)null);
+            }
+            catch (ArgumentException)
+            {
+                pass = true;
+            }
+            try
+            {
+                list.WithMint((TokenDef)null);
+            }
+            catch (ArgumentNullException)
+            {
+                pass = pass && true;
+            }
+            try
+            {
+                list.WithCustomFilter(null);
+            }
+            catch (ArgumentNullException)
+            {
+                pass = pass && true;
+            }
+            var count = 0;
+            foreach (var check in list)
+                count++;
+            Assert.AreEqual(0, count);
+            Assert.IsTrue(pass);
+        }
+
+        /// <summary>
+        /// Common JSON options
+        /// </summary>
+        /// <returns></returns>
+        private JsonSerializerOptions CreateJsonOptions()
+        {
+            return new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                Converters =
+                {
+                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                }
+            };
+        }
+
+        /// <summary>
+        /// Create a mocked RequestResult
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="req"></param>
+        /// <param name="resp"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public RequestResult<T> CreateMockRequestResult<T>(string req, string resp, HttpStatusCode status)
+        {
+            var x = new RequestResult<T>();
+            x.HttpStatusCode = status;
+            x.RawRpcRequest = req;
+            x.RawRpcResponse = resp;
+
+            // deserialize resp
+            if (status == HttpStatusCode.OK)
+            {
+                var serializerOptions = CreateJsonOptions();
+                x.Result = JsonSerializer.Deserialize<T>(resp, serializerOptions);
+            }
+
+            return x;
         }
 
     }

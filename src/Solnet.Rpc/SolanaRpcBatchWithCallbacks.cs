@@ -53,7 +53,8 @@ namespace Solnet.Rpc
         /// </summary>
         public void Flush()
         {
-            _composer.Flush();
+            if (_composer.Count > 0)
+                _composer.Flush();
         }
 
         #region RPC Methods

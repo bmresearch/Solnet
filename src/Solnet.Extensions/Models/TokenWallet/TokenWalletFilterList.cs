@@ -94,6 +94,17 @@ namespace Solnet.Extensions.Models
         }
 
         /// <summary>
+        /// Uses the TokenDef TokenMint to keep all matching accounts.
+        /// </summary>
+        /// <param name="tokenDef">A TokenDef instance.</param>
+        /// <returns>A filtered list of accounts for the given mint.</returns>
+        public TokenWalletFilterList WithMint(TokenDef tokenDef)
+        {
+            if (tokenDef == null) throw new ArgumentNullException(nameof(tokenDef));
+            return WithMint(tokenDef.TokenMint);
+        }
+
+        /// <summary>
         /// Keeps all accounts with at least the supplied minimum balance.
         /// </summary>
         /// <param name="minimumBalance">A minimum balance value as decimal.</param>
