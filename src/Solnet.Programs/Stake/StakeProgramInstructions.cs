@@ -39,7 +39,7 @@ namespace Solnet.Programs
         /// <summary>
         /// Represents the instruction types for the <see cref="StakeProgram"/>.
         /// </summary>
-        internal enum Values : byte
+        internal enum Values : uint
         {
             Initialize = 0,
             Authorize = 1,

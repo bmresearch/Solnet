@@ -35,6 +35,9 @@
     <None Update="Resources\NameClient\GetAddressFromNameAsyncTest.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\DecodeInitAccount3.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\TestDecodeInstructionFromBlockTransactionMetaInfo.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
