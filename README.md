@@ -384,7 +384,7 @@ var decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
 ```c#
 // load Solana token list and get RPC client
-var tokens = TokenInfoResolver.Load();
+var tokens = TokenMintResolver.Load();
 var client = ClientFactory.GetClient(Cluster.MainNet);
 
 // load snapshot of wallet and sub-accounts
@@ -406,7 +406,7 @@ Console.WriteLine();
 
 ```c#
 var client = ClientFactory.GetClient(Cluster.MainNet, logger);
-var tokens = New TokenInfoResolver();
+var tokens = New TokenMintResolver();
 var wallet = TokenWallet.Load(client, tokens, feePayer);
 
 // find source of funds
