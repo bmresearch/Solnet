@@ -1,0 +1,8 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "full": 132174097,
+    "incremental": null
+  },
+  "id": 0
+}

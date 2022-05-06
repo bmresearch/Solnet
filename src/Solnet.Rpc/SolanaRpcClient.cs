@@ -545,10 +545,22 @@ namespace Solnet.Rpc
                 Parameters.Create(ConfigObject.Create(HandleCommitment(commitment))));
         }
 
-
         /// <inheritdoc cref="IRpcClient.GetFees"/>
         public RequestResult<ResponseValue<FeesInfo>> GetFees(Commitment commitment = Commitment.Finalized)
             => GetFeesAsync(commitment).Result;
+        
+        /// <inheritdoc cref="IRpcClient.GetFeeForMessageAsync(string, Commitment)"/>
+        public async Task<RequestResult<ResponseValue<ulong>>> GetFeeForMessageAsync(
+            string message, Commitment commitment = Commitment.Finalized)
+        {
+            List<object> parameters = Parameters.Create(message, ConfigObject.Create(HandleCommitment(commitment)));
+            return await SendRequestAsync<ResponseValue<ulong>>("getFeeForMessage", parameters);
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetFeeForMessage(string, Commitment)"/>
+        public RequestResult<ResponseValue<ulong>> GetFeeForMessage(string message,
+            Commitment commitment = Commitment.Finalized)
+            => GetFeeForMessageAsync(message, commitment).Result;
 
         /// <inheritdoc cref="IRpcClient.GetRecentBlockHashAsync"/>
         public async Task<RequestResult<ResponseValue<BlockHash>>> GetRecentBlockHashAsync(
@@ -702,6 +714,15 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="IRpcClient.GetSnapshotSlot"/>
         public RequestResult<ulong> GetSnapshotSlot() => GetSnapshotSlotAsync().Result;
+        
+        /// <inheritdoc cref="IRpcClient.GetHighestSnapshotSlotAsync"/>
+        public async Task<RequestResult<SnapshotSlotInfo>> GetHighestSnapshotSlotAsync()
+        {
+            return await SendRequestAsync<SnapshotSlotInfo>("getHighestSnapshotSlot");
+        }
+
+        /// <inheritdoc cref="IRpcClient.GetHighestSnapshotSlot"/>
+        public RequestResult<SnapshotSlotInfo> GetHighestSnapshotSlot() => GetHighestSnapshotSlotAsync().Result;
 
         /// <inheritdoc cref="IRpcClient.GetRecentPerformanceSamplesAsync"/>
         public async Task<RequestResult<List<PerformanceSample>>> GetRecentPerformanceSamplesAsync(ulong limit = 720)

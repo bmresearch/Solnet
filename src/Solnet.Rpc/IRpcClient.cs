@@ -455,6 +455,22 @@ namespace Solnet.Rpc
         RequestResult<ResponseValue<FeesInfo>> GetFees(Commitment commitment = Commitment.Finalized);
 
         /// <summary>
+        /// Get the fee the network will charge for a particular Message.
+        /// </summary>
+        /// <param name="message">The base-64 encoded message.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        Task<RequestResult<ResponseValue<ulong>>> GetFeeForMessageAsync(string message, Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
+        /// Get the fee the network will charge for a particular Message.
+        /// </summary>
+        /// <param name="message">The base-64 encoded message.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<ResponseValue<ulong>> GetFeeForMessage(string message, Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
         /// Returns the slot of the lowest confirmed block that has not been purged from the ledger.
         /// </summary>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
@@ -904,6 +920,18 @@ namespace Solnet.Rpc
         /// </summary>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<ulong> GetSnapshotSlot();
+
+        /// <summary>
+        /// Gets the highest slot that the node has a snapshot for.
+        /// </summary>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        Task<RequestResult<SnapshotSlotInfo>> GetHighestSnapshotSlotAsync();
+
+        /// <summary>
+        /// Gets the highest slot that the node has a snapshot for.
+        /// </summary>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<SnapshotSlotInfo> GetHighestSnapshotSlot();
 
         /// <summary>
         /// Gets the epoch activation information for a stake account.
