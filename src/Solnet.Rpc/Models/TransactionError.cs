@@ -99,6 +99,54 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// Transaction processing left an account with an outstanding borrowed reference
         /// </summary>
-        AccountBorrowOutstanding
+        AccountBorrowOutstanding,
+        /// <summary>
+        /// Transaction would exceed max Block Cost Limit.
+        /// </summary>
+        WouldExceedMaxBlockCostLimit,
+        /// <summary>
+        /// Transaction version is unsupported.
+        /// </summary>
+        UnsupportedVersion,
+        /// <summary>
+        /// Transaction loads a writable account that cannot be written.
+        /// </summary>
+        InvalidWritableAccount,
+        /// <summary>
+        /// Transaction would exceed max account limit within the block.
+        /// </summary>
+        WouldExceedMaxAccountCostLimit,
+        /// <summary>
+        /// Transaction would exceed max account data limit within the block.
+        /// </summary>
+        WouldExceedMaxAccountDataCostLimit,
+        /// <summary>
+        /// Transaction locked too many accounts.
+        /// </summary>
+        TooManyAccountLocks,
+        /// <summary>
+        ///  Address lookup table not found.
+        /// </summary>
+        AddressLookupTableNotFound,
+        /// <summary>
+        /// Attempted to lookup addresses from an account owned by the wrong program.
+        /// </summary>
+        InvalidAddressLookupTableOwner,
+        /// <summary>
+        /// Attempted to lookup addresses from an invalid account.
+        /// </summary>
+        InvalidAddressLookupTableData,
+        /// <summary>
+        /// Address table lookup uses an invalid index.
+        /// </summary>
+        InvalidAddressLookupTableIndex,
+        /// <summary>
+        /// Transaction leaves an account with a lower balance than rent-exempt minimum.
+        /// </summary>
+        InvalidRentPayingAccount,
+        /// <summary>
+        /// Transaction would exceed max Vote Cost Limit.
+        /// </summary>
+        WouldExceedMaxVoteCostLimit
     }
 }

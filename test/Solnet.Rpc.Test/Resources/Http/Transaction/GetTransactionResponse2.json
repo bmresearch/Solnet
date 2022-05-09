@@ -1,0 +1,70 @@
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "blockTime": 1651763621,
+        "meta": {
+            "err": "InvalidRentPayingAccount",
+            "fee": 10000,
+            "innerInstructions": [
+                {
+                    "index": 1,
+                    "instructions": [
+                        {
+                            "accounts": [ 0, 5 ],
+                            "data": "1111cdZH8j1hhBYm8NusCzRNXkMPywbEQWh7ajL72yunGRac4kvcpsAEk5kwY5LSUdYz9",
+                            "programIdIndex": 6
+                        }
+                    ]
+                },
+                {
+                    "index": 2,
+                    "instructions": [
+                        {
+                            "accounts": [ 0, 2 ],
+                            "data": "11119EY3pY6ic8YCxcYTfW2d4zG7J1os7p8ArhkwHR6Q1eSYdAYcgk4K5Smo7tPzP39fnM",
+                            "programIdIndex": 6
+                        }
+                    ]
+                }
+            ],
+            "logMessages": [ "Program 11111111111111111111111111111111 invoke [1]", "Program 11111111111111111111111111111111 success", "Program GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw invoke [1]", "Program log: VERSION:\"2.2.4\"", "Program log: GOVERNANCE-INSTRUCTION: CreateProposal { name: \"Test 7\", description_link: \"test\", vote_type: SingleChoice, options: [\"Approve\"], use_deny_option: true }", "Program 11111111111111111111111111111111 invoke [2]", "Program 11111111111111111111111111111111 success", "Program GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw consumed 34297 of 1400000 compute units", "Program GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw success", "Program GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw invoke [1]", "Program log: VERSION:\"2.2.4\"", "Program log: GOVERNANCE-INSTRUCTION: AddSignatory { signatory: H5pamkZhqFna6stoe79SUt71JiTt34GssgtqoztxX6py }", "Program 11111111111111111111111111111111 invoke [2]", "Program 11111111111111111111111111111111 success", "Program GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw consumed 33340 of 1365703 compute units", "Program GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw success" ],
+            "postBalances": [ 9342509480, 0, 0, 2533440, 2853600, 0, 1, 0, 1461600, 2804880, 1141440 ],
+            "postTokenBalances": [],
+            "preBalances": [ 9342519480, 0, 0, 2533440, 2853600, 0, 1, 0, 1461600, 2804880, 1141440 ],
+            "preTokenBalances": [],
+            "rewards": [],
+            "status": { "Err": "InvalidRentPayingAccount" }
+        },
+        "slot": 132196637,
+        "transaction": {
+            "message": {
+                "accountKeys": [ "H5pamkZhqFna6stoe79SUt71JiTt34GssgtqoztxX6py", "7vESBnyT9te7ttTLsRnyijrtpZuC2EvR8t1ZazNy7Zx1", "3fsZJwjnGCDb2if1tpr1cRptXmwmJdAsRmf8XNJnVi8E", "9cbvyoAYdwM4eBzwDAgXdAWY5gh4StZr7EyJ8RxFZqeh", "FA9Fv1cLSsMcz22DbPJLKLf6onYjoD12gPJ2Fx4UoXk7", "Hup1keWQ661oxKtWukFGsXBE3Q8SxC4FYsS17MeuWuqj", "11111111111111111111111111111111", "37PCL91GdPRpVK22FLXSB25g8zt4Z4g6WF37RfXF3X3S", "4ZBkNCsFDTbi5hLqMGw5AKn54uXPR3P8Hd9QQ8KQfP5A", "61BnDwdR5DytKNHFVuk7HZ8suWRe3BXtJRuehLHrehxV", "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw" ],
+                "header": {
+                    "numReadonlySignedAccounts": 0,
+                    "numReadonlyUnsignedAccounts": 5,
+                    "numRequiredSignatures": 2
+                },
+                "instructions": [
+                    {
+                        "accounts": [ 0, 1 ],
+                        "data": "111184tZdEHhqyZiCTq5hAoWfNkcdCTdrZzybTVBSzbbe5ixfxFZVoqxaC99XuSFxWxM2A",
+                        "programIdIndex": 6
+                    },
+                    {
+                        "accounts": [ 9, 5, 3, 4, 8, 0, 0, 6, 7 ],
+                        "data": "3erv9aqBLnJgmyNgaAc3mBzBdvNmQGZQq7eHW2Y7jWCyVvtM6",
+                        "programIdIndex": 10
+                    },
+                    {
+                        "accounts": [ 5, 4, 0, 2, 0, 6 ],
+                        "data": "3Mh3BFGpuPawx6TNjELPWqRif4Ay9FWmYG3a7qStL8mYu",
+                        "programIdIndex": 10
+                    }
+                ],
+                "recentBlockhash": "CxCWR5ecPFGjyYU3zsYQy6hHVwdTgzCDSpjxhde76pcW"
+            },
+            "signatures": [ "3Q9mu4ePvtbtQzY1kpGmaViJKyBev6hgUppyXDF9hKgWHHnecwGLE2pSoFvNUF3h7acKyFwWd65bkwr9A1jN2CdT", "c9mVsH3N6NjC5QcBP3SFuuvYUYUjuFdVLuQMYces5ffksdodLiRc9GKHEj6TUNFNtYbCFQc8aeY2AMBSNVnmJS7" ]
+        }
+    },
+    "id": 0
+}
