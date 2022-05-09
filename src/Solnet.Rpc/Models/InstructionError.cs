@@ -232,6 +232,18 @@
         /// <summary>
         /// Unsupported sysvar
         /// </summary>
-        UnsupportedSysvar
+        UnsupportedSysvar,
+        /// <summary>
+        ///  Illegal account owner.
+        /// </summary>
+        IllegalOwner,
+        /// <summary>
+        ///  Account data allocation exceeded the maximum accounts data size limit.
+        /// </summary>
+        MaxAccountsDataSizeExceeded,
+        /// <summary>
+        /// Active vote account close.
+        /// </summary>
+        ActiveVoteAccountClose
     }
 }
