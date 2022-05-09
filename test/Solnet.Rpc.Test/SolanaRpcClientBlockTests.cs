@@ -525,6 +525,37 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
+        public void TestGetTransaction2()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Transaction/GetTransactionResponse2.json");
+            var requestData = File.ReadAllText("Resources/Http/Transaction/GetTransactionRequest2.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri
+            };
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var res = sut.GetTransaction("3Q9mu4ePvtbtQzY1kpGmaViJKyBev6hgUppyXDF9hKgWHHnecwGLE2pSoFvNUF3h7acKyFwWd65bkwr9A1jN2CdT");
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(res.Result);
+
+            Assert.AreEqual(132196637UL, res.Result.Slot);
+
+            Assert.AreEqual(1651763621, res.Result.BlockTime);
+
+            TransactionMetaInfo first = res.Result;
+
+            Assert.IsNotNull(first.Meta.Error);
+            Assert.AreEqual(TransactionErrorType.InvalidRentPayingAccount, first.Meta.Error.Type);
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
         public void TestGetTransactionProcessed()
         {
 
