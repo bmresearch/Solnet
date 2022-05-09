@@ -29,7 +29,6 @@ namespace Solnet.Rpc.Converters
 
                 Enum.TryParse(enumValue, ignoreCase: false, out TransactionErrorType errorType);
                 err.Type = errorType;
-                reader.Read();
                 return err;
             }
 
