@@ -93,32 +93,34 @@ namespace Solnet.Programs
                                         txMetaInfo.Transaction.Message.AccountKeys.Select(a => new PublicKey(a)).ToList(),
                                         instructionInfo.Accounts.Select(instr => (byte)instr).ToArray());
                 }
-
-                foreach (InnerInstruction innerInstruction in txMetaInfo.Meta.InnerInstructions)
+                if (txMetaInfo.Meta.InnerInstructions != null)
                 {
-                    if (innerInstruction.Index != i) continue;
-
-                    foreach (InstructionInfo innerInstructionInfo in innerInstruction.Instructions)
+                    foreach (InnerInstruction innerInstruction in txMetaInfo.Meta.InnerInstructions)
                     {
-                        DecodedInstruction innerDecodedInstruction = null;
-                        programKey = txMetaInfo.Transaction.Message.AccountKeys[innerInstructionInfo.ProgramIdIndex];
-                        registered = InstructionDictionary.TryGetValue(programKey, out method);
+                        if (innerInstruction.Index != i) continue;
 
-                        if (!registered)
+                        foreach (InstructionInfo innerInstructionInfo in innerInstruction.Instructions)
                         {
-                            innerDecodedInstruction = AddUnknownInstruction(
-                                innerInstructionInfo, programKey, txMetaInfo.Transaction.Message.AccountKeys,
-                                txMetaInfo.Transaction.Message.Instructions[i].Accounts);
+                            DecodedInstruction innerDecodedInstruction = null;
+                            programKey = txMetaInfo.Transaction.Message.AccountKeys[innerInstructionInfo.ProgramIdIndex];
+                            registered = InstructionDictionary.TryGetValue(programKey, out method);
+
+                            if (!registered)
+                            {
+                                innerDecodedInstruction = AddUnknownInstruction(
+                                    innerInstructionInfo, programKey, txMetaInfo.Transaction.Message.AccountKeys,
+                                    txMetaInfo.Transaction.Message.Instructions[i].Accounts);
+                            }
+                            else
+                            {
+                                innerDecodedInstruction = method.Invoke(
+                                    Encoders.Base58.DecodeData(innerInstructionInfo.Data),
+                                    txMetaInfo.Transaction.Message.AccountKeys.Select(a => new PublicKey(a)).ToList(),
+                                    innerInstructionInfo.Accounts.Select(instr => (byte)instr).ToArray());
+                            }
+                            if (innerDecodedInstruction != null)
+                                decodedInstruction.InnerInstructions.Add(innerDecodedInstruction);
                         }
-                        else
-                        {
-                            innerDecodedInstruction = method.Invoke(
-                                Encoders.Base58.DecodeData(innerInstructionInfo.Data),
-                                txMetaInfo.Transaction.Message.AccountKeys.Select(a => new PublicKey(a)).ToList(),
-                                innerInstructionInfo.Accounts.Select(instr => (byte)instr).ToArray());
-                        }
-                        if (innerDecodedInstruction != null)
-                            decodedInstruction.InnerInstructions.Add(innerDecodedInstruction);
                     }
                 }
                 if (decodedInstruction != null)
