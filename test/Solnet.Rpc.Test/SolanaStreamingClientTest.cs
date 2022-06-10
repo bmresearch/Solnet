@@ -4,6 +4,7 @@ using Solnet.Rpc.Core.Sockets;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.WebSockets;
 using System.Text;
@@ -442,6 +443,92 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(458553192193UL, resultNotification.Value.Account.Lamports);
         }
 
+        [TestMethod]
+        public void SubscribeProgramFilters()
+        {
+            var expected = File.ReadAllText("Resources/Streaming/Program/ProgramSubscribeFilters.json");
+            var result = new ReadOnlyMemory<byte>();
+
+            SetupAction(out Action<SubscriptionState, ResponseValue<AccountKeyPair>> action,
+                (x) => {},
+                (x) => result = x,
+                Array.Empty<byte>(),
+                Array.Empty<byte>());
+            
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+
+            sut.ConnectAsync().Wait();
+            _ = sut.SubscribeProgram("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", (s, e) => {}, 
+                    dataSize:3228, memCmpList: new List<MemCmp>() { new MemCmp() {Offset = 45, Bytes = "CuieVDEDtLo7FypA9SbLM9saXFdb1dsshEkyErMqkRQq"}});
+            _subConfirmEvent.Set();
+            
+            
+            _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
+                WebSocketMessageType.Text,
+                true,
+                It.IsAny<CancellationToken>()));
+            var res = Encoding.UTF8.GetString(result.Span);
+            Assert.AreEqual(expected, res);
+        }
+
+        
+        [TestMethod]
+        public void SubscribeProgramMemcmpFilters()
+        {
+            var expected = File.ReadAllText("Resources/Streaming/Program/ProgramSubscribeMemcmpFilter.json");
+            var result = new ReadOnlyMemory<byte>();
+
+            SetupAction(out Action<SubscriptionState, ResponseValue<AccountKeyPair>> action,
+                (x) => {},
+                (x) => result = x,
+                Array.Empty<byte>(),
+                Array.Empty<byte>());
+            
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+
+            sut.ConnectAsync().Wait();
+            _ = sut.SubscribeProgram("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", (s, e) => {}, 
+                memCmpList: new List<MemCmp>() { new MemCmp() {Offset = 45, Bytes = "CuieVDEDtLo7FypA9SbLM9saXFdb1dsshEkyErMqkRQq"}});
+            _subConfirmEvent.Set();
+            
+            
+            _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
+                WebSocketMessageType.Text,
+                true,
+                It.IsAny<CancellationToken>()));
+            var res = Encoding.UTF8.GetString(result.Span);
+            Assert.AreEqual(expected, res);
+        }
+        
+        
+        [TestMethod]
+        public void SubscribeProgramDataFilter()
+        {
+            var expected = File.ReadAllText("Resources/Streaming/Program/ProgramSubscribeDataSizeFilter.json");
+            var result = new ReadOnlyMemory<byte>();
+
+            SetupAction(out Action<SubscriptionState, ResponseValue<AccountKeyPair>> action,
+                (x) => {},
+                (x) => result = x,
+                Array.Empty<byte>(),
+                Array.Empty<byte>());
+            
+            var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+
+            sut.ConnectAsync().Wait();
+            _ = sut.SubscribeProgram("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", (s, e) => {}, 
+                dataSize:3228);
+            _subConfirmEvent.Set();
+            
+            
+            _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
+                WebSocketMessageType.Text,
+                true,
+                It.IsAny<CancellationToken>()));
+            var res = Encoding.UTF8.GetString(result.Span);
+            Assert.AreEqual(expected, res);
+        }
+        
         [TestMethod]
         public void SubscribeProgramConfirmed()
         {

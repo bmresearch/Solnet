@@ -1,0 +1,1 @@
+{"method":"programSubscribe","params":["9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin",{"encoding":"base64","filters":[{"dataSize":3228},{"memcmp":{"offset":45,"bytes":"CuieVDEDtLo7FypA9SbLM9saXFdb1dsshEkyErMqkRQq"}}]}],"jsonrpc":"2.0","id":0}

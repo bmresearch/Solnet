@@ -711,6 +711,15 @@
     <None Update="Resources\Http\Signatures\GetConfirmedSignaturesForAddress2BeforeConfirmedRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Streaming\Program\ProgramSubscribeMemcmpFilter.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Streaming\Program\ProgramSubscribeFilters.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Streaming\Program\ProgramSubscribeDataSizeFilter.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
