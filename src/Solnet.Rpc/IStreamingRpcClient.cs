@@ -3,6 +3,7 @@ using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
 using System;
+using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
 
@@ -43,7 +44,8 @@ namespace Solnet.Rpc
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, Commitment commitment = Commitment.Finalized);
+        Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, 
+            ResponseValue<AccountInfo>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes to the AccountInfo. This is a synchronous and blocking function.
@@ -55,7 +57,8 @@ namespace Solnet.Rpc
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object representing the state of the subscription.</returns>
-        SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, Commitment commitment = Commitment.Finalized);
+        SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, 
+            Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes asynchronously to Token Account notifications. Note: Only works if the account is a Token Account.
@@ -67,7 +70,8 @@ namespace Solnet.Rpc
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        Task<SubscriptionState> SubscribeTokenAccountAsync(string pubkey, Action<SubscriptionState, ResponseValue<TokenAccountInfo>> callback, Commitment commitment = Commitment.Finalized);
+        Task<SubscriptionState> SubscribeTokenAccountAsync(string pubkey, Action<SubscriptionState, 
+            ResponseValue<TokenAccountInfo>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes  to Token Account notifications. Note: Only works if the account is a Token Account.
@@ -79,7 +83,8 @@ namespace Solnet.Rpc
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object representing the state of the subscription.</returns>
-        SubscriptionState SubscribeTokenAccount(string pubkey, Action<SubscriptionState, ResponseValue<TokenAccountInfo>> callback, Commitment commitment = Commitment.Finalized);
+        SubscriptionState SubscribeTokenAccount(string pubkey, Action<SubscriptionState, ResponseValue<TokenAccountInfo>> callback, 
+            Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes asynchronously to the logs notifications that mention a given public key.
@@ -91,7 +96,8 @@ namespace Solnet.Rpc
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        Task<SubscriptionState> SubscribeLogInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback, Commitment commitment = Commitment.Finalized);
+        Task<SubscriptionState> SubscribeLogInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback, 
+            Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes asynchronously to the logs notifications.
@@ -103,7 +109,8 @@ namespace Solnet.Rpc
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        Task<SubscriptionState> SubscribeLogInfoAsync(LogsSubscriptionType subscriptionType, Action<SubscriptionState, ResponseValue<LogInfo>> callback, Commitment commitment = Commitment.Finalized);
+        Task<SubscriptionState> SubscribeLogInfoAsync(LogsSubscriptionType subscriptionType, Action<SubscriptionState, 
+            ResponseValue<LogInfo>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes to the logs notifications that mention a given public key. This is a synchronous and blocking function.
@@ -115,7 +122,8 @@ namespace Solnet.Rpc
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object representing the state of the subscription.</returns>
-        SubscriptionState SubscribeLogInfo(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback, Commitment commitment = Commitment.Finalized);
+        SubscriptionState SubscribeLogInfo(string pubkey, Action<SubscriptionState, ResponseValue<LogInfo>> callback, 
+            Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes to the logs notifications. This is a synchronous and blocking function.
@@ -127,7 +135,8 @@ namespace Solnet.Rpc
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object representing the state of the subscription.</returns>
-        SubscriptionState SubscribeLogInfo(LogsSubscriptionType subscriptionType, Action<SubscriptionState, ResponseValue<LogInfo>> callback, Commitment commitment = Commitment.Finalized);
+        SubscriptionState SubscribeLogInfo(LogsSubscriptionType subscriptionType, Action<SubscriptionState, 
+            ResponseValue<LogInfo>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes asynchronously to a transaction signature to receive notification when the transaction is confirmed.
@@ -139,7 +148,8 @@ namespace Solnet.Rpc
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        Task<SubscriptionState> SubscribeSignatureAsync(string transactionSignature, Action<SubscriptionState, ResponseValue<ErrorResult>> callback, Commitment commitment = Commitment.Finalized);
+        Task<SubscriptionState> SubscribeSignatureAsync(string transactionSignature, Action<SubscriptionState, 
+            ResponseValue<ErrorResult>> callback, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes to a transaction signature to receive notification when the transaction is confirmed. This is a synchronous and blocking function.
@@ -151,7 +161,8 @@ namespace Solnet.Rpc
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object representing the state of the subscription.</returns>
-        SubscriptionState SubscribeSignature(string transactionSignature, Action<SubscriptionState, ResponseValue<ErrorResult>> callback, Commitment commitment = Commitment.Finalized);
+        SubscriptionState SubscribeSignature(string transactionSignature, Action<SubscriptionState, ResponseValue<ErrorResult>> callback, 
+            Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes asynchronously to changes to a given program account data.
@@ -163,7 +174,8 @@ namespace Solnet.Rpc
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, Commitment commitment = Commitment.Finalized);
+        Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, 
+            Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null);
 
         /// <summary>
         /// Subscribes to changes to a given program account data. This is a synchronous and blocking function.
@@ -175,7 +187,8 @@ namespace Solnet.Rpc
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object representing the state of the subscription.</returns>
-        SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, Commitment commitment = Commitment.Finalized);
+        SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, 
+            Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null);
 
         /// <summary>
         /// Subscribes asynchronously to receive notifications anytime a slot is processed by the validator.

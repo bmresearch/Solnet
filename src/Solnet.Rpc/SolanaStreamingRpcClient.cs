@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Solnet.Rpc.Converters;
 using Solnet.Rpc.Core;
+using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Core.Sockets;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
@@ -8,6 +9,7 @@ using Solnet.Rpc.Types;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
@@ -440,17 +442,25 @@ namespace Solnet.Rpc
 
         #region Program
         /// <inheritdoc cref="IStreamingRpcClient.SubscribeProgramAsync(string, Action{SubscriptionState, ResponseValue{AccountKeyPair}}, Commitment)"/>
-        public async Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, Commitment commitment = Commitment.Finalized)
+        public async Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, 
+            ResponseValue<AccountKeyPair>> callback, Commitment commitment = Commitment.Finalized, int? dataSize = null, 
+            IList<MemCmp> memCmpList = null)
         {
-            var parameters = new List<object> { programPubkey };
-            var configParams = new Dictionary<string, object> { { "encoding", "base64" } };
-
-            if (commitment != Commitment.Finalized)
+            List<object> filters = Parameters.Create(ConfigObject.Create(KeyValue.Create("dataSize", dataSize)));
+            if (memCmpList != null)
             {
-                configParams.Add("commitment", commitment);
+                filters ??= new List<object>();
+                filters.AddRange(memCmpList.Select(filter => ConfigObject.Create(KeyValue.Create("memcmp",
+                    ConfigObject.Create(KeyValue.Create("offset", filter.Offset),
+                        KeyValue.Create("bytes", filter.Bytes))))));
             }
-
-            parameters.Add(configParams);
+            
+            List<object> parameters = Parameters.Create(
+                programPubkey,
+                ConfigObject.Create(
+                    KeyValue.Create("encoding", "base64"),
+                    KeyValue.Create("filters", filters),
+                    commitment != Commitment.Finalized ? KeyValue.Create("commitment", commitment) : null));
 
             var sub = new SubscriptionState<ResponseValue<AccountKeyPair>>(this, SubscriptionChannel.Program, callback, parameters);
 
@@ -459,8 +469,9 @@ namespace Solnet.Rpc
         }
 
         /// <inheritdoc cref="IStreamingRpcClient.SubscribeProgram(string, Action{SubscriptionState, ResponseValue{AccountKeyPair}}, Commitment)"/>
-        public SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, Commitment commitment = Commitment.Finalized)
-            => SubscribeProgramAsync(programPubkey, callback, commitment).Result;
+        public SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, 
+            Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null)
+            => SubscribeProgramAsync(programPubkey, callback, commitment, dataSize, memCmpList).Result;
         #endregion
 
         #region SlotInfo
