@@ -250,6 +250,25 @@ namespace Solnet.Rpc
         }
 
         /// <summary>
+        /// Gets the token mint info. This method only works if the target account is a SPL token mint.
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
+        /// </summary>
+        /// <param name="pubKey">The token mint public key.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <param name="callback">The callback to handle the result.</param>
+        public void GetTokenMintInfo(string pubKey, Commitment commitment = Commitment.Finalized, Action<ResponseValue<TokenMintInfo>, Exception> callback = null)
+        {
+            var parameters = Parameters.Create(
+                    pubKey,
+                    ConfigObject.Create(
+                        KeyValue.Create("encoding", "jsonParsed"),
+                        HandleCommitment(commitment)));
+            _composer.AddRequest("getAccountInfo", parameters, callback);
+        }
+
+        /// <summary>
         /// Gets the 20 largest token accounts of a particular SPL Token.
         /// </summary>
         /// <param name="tokenMintPubKey">Public key of Token Mint to query, as base-58 encoded string.</param>
