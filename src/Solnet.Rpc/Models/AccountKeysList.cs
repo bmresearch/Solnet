@@ -17,7 +17,7 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// Get the accounts as a list.
         /// </summary>
-        internal IList<AccountMeta> AccountList
+        internal List<AccountMeta> AccountList
         {
             get
             {

@@ -109,12 +109,12 @@ namespace Solnet.Rpc.Builders
 
                 for (int i = 0; i < keyCount; i++)
                 {
-                    keyIndices[i] = (byte)FindAccountIndex(keysList, instruction.Keys[i].PublicKeyBytes);
+                    keyIndices[i] = FindAccountIndex(keysList, instruction.Keys[i].PublicKey);
                 }
 
                 CompiledInstruction compiledInstruction = new CompiledInstruction
                 {
-                    ProgramIdIndex = (byte)FindAccountIndex(keysList, instruction.ProgramId),
+                    ProgramIdIndex = FindAccountIndex(keysList, instruction.ProgramId),
                     KeyIndicesCount = ShortVectorEncoding.EncodeLength(keyCount),
                     KeyIndices = keyIndices,
                     DataLength = ShortVectorEncoding.EncodeLength(instruction.Data.Length),
@@ -179,8 +179,8 @@ namespace Solnet.Rpc.Builders
         private List<AccountMeta> GetAccountKeys()
         {
             List<AccountMeta> newList = new();
-            IList<AccountMeta> keysList = _accountKeysList.AccountList;
-            int feePayerIndex = FindAccountIndex(keysList, FeePayer.KeyBytes);
+            var keysList = _accountKeysList.AccountList;
+            int feePayerIndex = keysList.FindIndex(x => x.PublicKey == FeePayer.Key);
 
             if (feePayerIndex == -1)
             {
@@ -203,15 +203,26 @@ namespace Solnet.Rpc.Builders
         /// <param name="accountMetas">The <see cref="AccountMeta"/>.</param>
         /// <param name="publicKey">The public key.</param>
         /// <returns>The index of the</returns>
-        private static int FindAccountIndex(IList<AccountMeta> accountMetas, byte[] publicKey)
+        private static byte FindAccountIndex(IList<AccountMeta> accountMetas, byte[] publicKey)
         {
             string encodedKey = Encoders.Base58.EncodeData(publicKey);
-            for (int index = 0; index < accountMetas.Count; index++)
+            return FindAccountIndex(accountMetas, encodedKey);
+        }
+
+        /// <summary>
+        /// Finds the index of the given public key in the accounts list.
+        /// </summary>
+        /// <param name="accountMetas">The <see cref="AccountMeta"/>.</param>
+        /// <param name="publicKey">The public key.</param>
+        /// <returns>The index of the</returns>
+        private static byte FindAccountIndex(IList<AccountMeta> accountMetas, string publicKey)
+        {
+            for (byte index = 0; index < accountMetas.Count; index++)
             {
-                if (accountMetas[index].PublicKey == encodedKey) return index;
+                if (accountMetas[index].PublicKey == publicKey) return index;
             }
 
-            return -1;
+            throw new Exception($"Something went wrong encoding this transaction. Account `{publicKey}` was not found among list of accounts. Should be impossible.");
         }
     }
 }
