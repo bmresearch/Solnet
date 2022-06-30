@@ -51,6 +51,32 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(expected, json);
 
         }
+        
+        [TestMethod]
+        public void TestCreateAndSerializeBatchTokenMintInfoRequest()
+        {
+
+            // compose a new batch of requests
+            var unusedRpcClient = ClientFactory.GetClient(Cluster.MainNet);
+            var batch = new SolanaRpcBatchWithCallbacks(unusedRpcClient);
+            batch.GetTokenMintInfo("7yC2ABeaKRfvQsbZ5rA7cKTKF6YcyCYWV65jYrWrnhRN");
+            batch.GetTokenMintInfo("GPytBb4s75MZxxviHJzpbHHgdWTcajmMDBd8VsBVAFS5");
+
+            // how many requests in batch?
+            Assert.AreEqual(2, batch.Composer.Count);
+
+            // serialize
+            var reqs = batch.Composer.CreateJsonRequests();
+            Assert.IsNotNull(reqs);
+            Assert.AreEqual(2, reqs.Count);
+
+            // serialize and check we're good
+            var serializerOptions = CreateJsonOptions();
+            var json = JsonSerializer.Serialize<JsonRpcBatchRequest>(reqs, serializerOptions);
+            var expected = File.ReadAllText("Resources/Http/Batch/SampleBatchTokenMintInfoRequest.json");
+            Assert.AreEqual(expected, json);
+
+        }
 
         [TestMethod]
         public void TestDeserializeBatchResponse()
@@ -60,6 +86,16 @@ namespace Solnet.Rpc.Test
             var res = JsonSerializer.Deserialize<JsonRpcBatchResponse>(responseData, serializerOptions);
             Assert.IsNotNull(res);
             Assert.AreEqual(5, res.Count);
+        }
+        
+        [TestMethod]
+        public void TestDeserializeBatchTokenMintInfoResponse()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Batch/SampleBatchTokenMintInfoResponse.json");
+            var serializerOptions = CreateJsonOptions();
+            var res = JsonSerializer.Deserialize<JsonRpcBatchResponse>(responseData, serializerOptions);
+            Assert.IsNotNull(res);
+            Assert.AreEqual(2, res.Count);
         }
 
         [TestMethod]
