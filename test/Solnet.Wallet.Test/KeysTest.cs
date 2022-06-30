@@ -294,6 +294,8 @@ namespace Solnet.Wallet.Test
         public void TestIsValid()
         {
             Assert.IsTrue(PublicKey.IsValid("GUs5qLUfsEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K"));
+            Assert.IsFalse(PublicKey.IsValid("GUs5qLUfsEHkcMB9T38vj*18ypEhRuNWiePW2LoK4E3K"));
+            Assert.IsFalse(PublicKey.IsValid("GUs5qLUfsEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K "));
         }
 
         [TestMethod]
@@ -331,6 +333,7 @@ namespace Solnet.Wallet.Test
         public void TestIsValid_Empty_False()
         {
             Assert.IsFalse(PublicKey.IsValid(""));
+            Assert.IsFalse(PublicKey.IsValid("  "));
         }
 
         [TestMethod]
@@ -338,5 +341,20 @@ namespace Solnet.Wallet.Test
         {
             Assert.IsFalse(PublicKey.IsValid("lllllll"));
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestCreateBadPublicKeyFatal_1()
+        {
+            _ = new PublicKey("GUs5qLUfsEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K ");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestCreateBadPublicKeyFatal_2()
+        {
+            _ = new PublicKey("GUs5qLU&sEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K");
+        }
+
     }
 }
