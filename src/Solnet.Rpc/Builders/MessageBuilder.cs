@@ -109,12 +109,12 @@ namespace Solnet.Rpc.Builders
 
                 for (int i = 0; i < keyCount; i++)
                 {
-                    keyIndices[i] = (byte)FindAccountIndex(keysList, instruction.Keys[i].PublicKey);
+                    keyIndices[i] = FindAccountIndex(keysList, instruction.Keys[i].PublicKey);
                 }
 
                 CompiledInstruction compiledInstruction = new CompiledInstruction
                 {
-                    ProgramIdIndex = (byte)FindAccountIndex(keysList, instruction.ProgramId),
+                    ProgramIdIndex = FindAccountIndex(keysList, instruction.ProgramId),
                     KeyIndicesCount = ShortVectorEncoding.EncodeLength(keyCount),
                     KeyIndices = keyIndices,
                     DataLength = ShortVectorEncoding.EncodeLength(instruction.Data.Length),
