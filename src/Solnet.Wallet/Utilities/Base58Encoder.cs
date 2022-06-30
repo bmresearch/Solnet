@@ -39,17 +39,6 @@ namespace Solnet.Wallet.Utilities
             -1,-1,-1,-1,-1,-1,-1,-1, -1,-1,-1,-1,-1,-1,-1,-1,
             -1,-1,-1,-1,-1,-1,-1,-1, -1,-1,-1,-1,-1,-1,-1,-1,
         };
-        /// <summary>
-        /// Fast check if the string to know if base58 str
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        public bool IsMaybeEncoded(string str)
-        {
-            bool maybeB58 = str.All(t => ((IList)PszBase58).Contains(t));
-
-            return maybeB58 && str.Length > 0;
-        }
 
         /// <summary>
         /// Encode the data.
