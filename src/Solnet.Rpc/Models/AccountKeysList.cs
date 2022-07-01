@@ -21,30 +21,23 @@ namespace Solnet.Rpc.Models
         {
             get
             {
-                List<AccountMeta> res = new(_accounts.Count);
-                for (int i = 0; i < _accounts.Count; i++)
-                {
-                    if (_accounts[i].IsSigner)
-                    {
-                        res.Add(_accounts[i]);
-                    }
-                }
+                List<AccountMeta> res = _accounts.Select(acc => acc).ToList();
 
-                for (int i = 0; i < _accounts.Count; i++)
+                res.Sort((x, y) =>
                 {
-                    if (!_accounts[i].IsSigner && _accounts[i].IsWritable)
+                    if (x.IsSigner != y.IsSigner)
                     {
-                        res.Add(_accounts[i]);
+                        // Signers always come before non-signers
+                        return x.IsSigner ? -1 : 1;
                     }
-                }
-
-                for (int i = 0; i < _accounts.Count; i++)
-                {
-                    if (!_accounts[i].IsSigner && !_accounts[i].IsWritable)
+                    if (x.IsWritable != y.IsWritable)
                     {
-                        res.Add(_accounts[i]);
+                        // Writable accounts always come before read-only accounts
+                        return x.IsWritable ? -1 : 1;
                     }
-                }
+                    // Otherwise, sort by pubkey, stringwise.
+                    return x.PublicKey.CompareTo(y.PublicKey);
+                });
 
                 return res;
             }

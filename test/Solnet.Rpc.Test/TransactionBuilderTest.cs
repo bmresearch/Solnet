@@ -34,18 +34,19 @@ namespace Solnet.Rpc.Test
             "bnmzhen0yUOsH2zbbgICAgABDAIAAACAlpgAAAAAAAMBABVIZWxsbyBmcm9tIFNvbC5OZXQgOik=";
 
         private const string ExpectedTransactionHashCreateInitializeAndMintTo =
-            "A5X22for3AxcX09IKX5Cbrpvv4k/1TcdTY2wf6vkq7Wcb/3fwMjA0vCshKkBG0EXQM2oKanIaQilKC/L" +
-            "KLmTYwc2yOVXu0TZCGwraCrxf4Pr8KpvTZZcUz/s4sls3VzGRqQmIhR3nXBR/O3\u002B4ZdICd8hYXb" +
-            "USqUBE\u002B4qCwpbC7gLlVo1ErARFL9csoTPvxA3/00wTxbs01sXlAH5t\u002ByAiwlan7B24Za3d" +
-            "CYydaczAOenGVU0nxBrz/gdFZgCJArZAAMABAdHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXs" +
-            "k\u002BnIqdN4P6YFyTS64cak6Wd2hx9Qsbwf4gfPc5VPJvFTT4lvYz77q8imSqvzO/5qiFW9tKqfO4l5F" +
-            "KhFh6lZQsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAan1RcZLFxRIYzJTD1K8X9Y2u4Im6H9" +
-            "ROPb2YoAAAAABt324ddloZPZy\u002BFGzut5rBy0he1fWzeROoz1hX7/AKkFSlNQ\u002BF3IgtYUpVZye" +
-            "Iopbd8eq6vQpgZ4iEky9O72oOD/Y3arpTMrvjv2uP0ZD3LVkDTmRAfOpQ603IYXOGjCBgMCAAE0AAAAAGBN" +
-            "FgAAAAAAUgAAAAAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQUCAQRDAAJHaauXIEuoP7DK" +
-            "7hf3ho8eB05SFYGg2J2UN52qZbcXsgFHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgMCAAI0AAAA" +
-            "APAdHwAAAAAApQAAAAAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQUEAgEABAEBBQMBAgA" +
-            "JB6hhAAAAAAAABgECEkhlbGxvIGZyb20gU29sLk5ldA==";
+            "A056qhN8bf9baCZ6SwzUlM6ge4X19TzoKANpDjg9CUGQTvIOYu27MvTcscgGov0aMkuiM9N8g" +
+            "1D2bMJSvYBpWwi2IP+9oPzCj4b0AWm6uLxLv+JrMwVB8gJBYf4JtXotWDY504QIm9IqEemgUK" +
+            "vWkb+9dNatYsR3d9xcqxQ14mAEAq147oIAH+FQbHj2PhdP61KXqTN7T0EclKQMJLyhkqeyREF" +
+            "10Ttg99bcwTuXMxfR5rstI/kg/0Cagr/Ua+SoAQMABAdHaauXIEuoP7DK7hf3ho8eB05SFYGg" +
+            "2J2UN52qZbcXsk0+Jb2M++6vIpkqr8zv+aohVvbSqnzuJeRSoRYepWULT6cip03g/pgXJNLrh" +
+            "xqTpZ3aHH1CxvB/iB89zlU8m8UAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVKU1" +
+            "D4XciC1hSlVnJ4iilt3x6rq9CmBniISTL07vagBqfVFxksXFEhjMlMPUrxf1ja7gibof1E49v" +
+            "ZigAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqeD/Y3arpTMrvjv2uP0ZD3LV" +
+            "kDTmRAfOpQ603IYXOGjCBgMCAAI0AAAAAGBNFgAAAAAAUgAAAAAAAAAG3fbh12Whk9nL4UbO6" +
+            "3msHLSF7V9bN5E6jPWFfv8AqQYCAgVDAAJHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZb" +
+            "cXsgFHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgMCAAE0AAAAAPAdHwAAAAAApQA" +
+            "AAAAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqQYEAQIABQEBBgMCAQAJB6hh" +
+            "AAAAAAAABAEBEkhlbGxvIGZyb20gU29sLk5ldA==";
 
         private const string Nonce = "2S1kjspXLPs6jpNVXQfNMqZzzSrKLbGdr9Fxap5h1DLN";
 
@@ -178,6 +179,11 @@ namespace Solnet.Rpc.Test
                     ownerAccount))
                 .AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net"))
                 .Build(new List<Account> { ownerAccount, mintAccount, initialAccount });
+
+            var tx2 = Transaction.Deserialize(tx);
+            var msg = tx2.CompileMessage();
+
+            Assert.IsTrue(tx2.Signatures[0].PublicKey.Verify(msg, tx2.Signatures[0].Signature));
 
             Assert.AreEqual(ExpectedTransactionHashCreateInitializeAndMintTo, Convert.ToBase64String(tx));
         }
