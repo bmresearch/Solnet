@@ -78,23 +78,6 @@ namespace Solnet.Rpc.Test
 
         };
 
-        private static readonly byte[] Base64MessageBytes =
-        {
-            2, 0, 4, 6, 103, 132, 83, 145, 168, 194, 85, 123, 82, 13, 216, 210, 8, 202, 191, 237, 245, 126, 242,
-            121, 138, 175, 133, 11, 234, 99, 249, 185, 73, 124, 75, 186, 215, 144, 108, 229, 90, 58, 154, 117, 217,
-            94, 248, 119, 229, 66, 230, 78, 27, 114, 135, 1, 252, 199, 48, 228, 240, 40, 6, 168, 29, 72, 75, 41,
-            139, 31, 75, 78, 123, 162, 191, 215, 73, 252, 141, 86, 38, 131, 208, 130, 205, 241, 73, 237, 15, 207,
-            180, 165, 130, 89, 152, 200, 252, 194, 65, 137, 6, 167, 213, 23, 25, 44, 92, 81, 33, 140, 201, 76, 61,
-            74, 241, 127, 88, 218, 238, 8, 155, 161, 253, 68, 227, 219, 217, 138, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 221, 246, 225, 215, 101,
-            161, 147, 217, 203, 225, 70, 206, 235, 121, 172, 28, 180, 133, 237, 95, 91, 55, 145, 58, 140, 245, 133,
-            126, 255, 0, 169, 226, 31, 67, 54, 250, 17, 27, 252, 75, 96, 42, 63, 121, 41, 168, 87, 181, 174, 19,
-            162, 241, 175, 42, 248, 122, 1, 229, 159, 248, 89, 71, 226, 2, 4, 2, 0, 1, 52, 0, 0, 0, 0, 240, 29, 31,
-            0, 0, 0, 0, 0, 165, 0, 0, 0, 0, 0, 0, 0, 6, 221, 246, 225, 215, 101, 161, 147, 217, 203, 225, 70, 206,
-            235, 121, 172, 28, 180, 133, 237, 95, 91, 55, 145, 58, 140, 245, 133, 126, 255, 0, 169, 5, 4, 1, 2, 0,
-            3, 1, 1
-        };
-
         private const string InvalidBase64Transaction =
             "AQ0S4USBAYBAAIFR2mrlyBLqD+wyu4X94aPHgdOUhWBoNidlDedqmW3F7KE3M6r5DRwldquwlqOuXDDOWZagXmbHnAU3w5Dg44kot" +
             "/05ThW8wBKVjo4jhGCcZM9AYh+8xbirWxK1GhRx3i0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGp9UXGSxWjuCKhF9" +
@@ -361,10 +344,6 @@ namespace Solnet.Rpc.Test
             tx.AddSignature(initialAccount.PublicKey, initialAccount.Sign(txBytes));
 
             byte[] serializedBytes = tx.Serialize();
-
-            var msg = tx.CompileMessage();
-
-            
             
             CollectionAssert.AreEqual(CraftTransactionBytes, serializedBytes);
         }
