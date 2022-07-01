@@ -265,6 +265,11 @@ namespace Solnet.Rpc.Models
         public string Mint { get; set; }
 
         /// <summary>
+        /// Pubkey of the token owner
+        /// </summary>
+        public string Owner { get; set; }
+
+        /// <summary>
         /// Token balance details.
         /// </summary>
         public TokenBalance UiTokenAmount { get; set; }
