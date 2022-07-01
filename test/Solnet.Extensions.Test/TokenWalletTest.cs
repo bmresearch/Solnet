@@ -284,7 +284,7 @@ namespace Solnet.Extensions.Test
             Assert.IsFalse(testTokenAccount.IsAssociatedTokenAccount);
 
             // trigger send to bogus target wallet
-            var targetOwner = "FAILzxtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5";
+            var targetOwner = "BADxzxtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5";
             wallet.Send(testTokenAccount, 1M, targetOwner, signer.PublicKey, builder => builder.Build(signer));
 
         }

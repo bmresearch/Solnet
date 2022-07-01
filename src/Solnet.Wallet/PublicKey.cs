@@ -79,7 +79,9 @@ namespace Solnet.Wallet
         /// <param name="key">The public key as base58 encoded string.</param>
         public PublicKey(string key)
         {
-            Key = key ?? throw new ArgumentNullException(nameof(key));
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            if (!FastCheck(key)) throw new ArgumentException("publickey contains a non-base58 character");
+            Key = key;
         }
 
         /// <summary>
@@ -201,10 +203,11 @@ namespace Solnet.Wallet
         /// <returns>Returns true if the input is a valid key, false otherwise.</returns>
         public static bool IsValid(string key, bool validateCurve = false)
         {
-            if(!string.IsNullOrEmpty(key))
+            if (!string.IsNullOrEmpty(key))
             {
                 try
                 {
+                    if (!FastCheck(key)) return false;
                     return IsValid(Encoders.Base58.DecodeData(key), validateCurve);
                 }
                 catch(Exception)
@@ -247,6 +250,18 @@ namespace Solnet.Wallet
         public static bool IsValid(ReadOnlySpan<byte> key, bool validateCurve = false)
         {
             return key != null && key.Length == PublicKeyLength && (!validateCurve || key.IsOnCurve());
+        }
+
+        /// <summary>
+        /// Fast validation to determine whether this is a valid public key input pattern. 
+        /// Checks are valid characters for base58 and no whitespace.
+        /// Avoids performing the conversion to a buffer and checking it is actually 32 bytes as a permformance trade-off.
+        /// </summary>
+        /// <param name="value">public key value to check</param>
+        /// <returns>true means good, false means bad</returns>
+        private static bool FastCheck(string value)
+        {
+            return Base58Encoder.IsValidWithoutWhitespace(value);
         }
 
         #region KeyDerivation

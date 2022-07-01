@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Solnet.Wallet.Utilities
@@ -15,6 +16,7 @@ namespace Solnet.Wallet.Utilities
         /// The base58 characters.
         /// </summary>
         private static readonly char[] PszBase58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".ToCharArray();
+        private static readonly Dictionary<char, bool> Validator = PszBase58.ToDictionary(x => x, x => true);
 
         /// <summary>
         /// 
@@ -37,17 +39,6 @@ namespace Solnet.Wallet.Utilities
             -1,-1,-1,-1,-1,-1,-1,-1, -1,-1,-1,-1,-1,-1,-1,-1,
             -1,-1,-1,-1,-1,-1,-1,-1, -1,-1,-1,-1,-1,-1,-1,-1,
         };
-        /// <summary>
-        /// Fast check if the string to know if base58 str
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        public bool IsMaybeEncoded(string str)
-        {
-            bool maybeB58 = str.All(t => ((IList)PszBase58).Contains(t));
-
-            return maybeB58 && str.Length > 0;
-        }
 
         /// <summary>
         /// Encode the data.
@@ -170,5 +161,23 @@ namespace Solnet.Wallet.Utilities
                 vch[i2++] = b256[it2++];
             return vch;
         }
+
+
+        /// <summary>
+        /// Strict validation with no whitespace allowed
+        /// </summary>
+        /// <param name="value">Base58 string data</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static bool IsValidWithoutWhitespace(string value)
+        {
+            if (value == null) throw new ArgumentNullException(nameof(value));
+            for (var ix = 0; ix < value.Length; ix++)
+                if (!Validator.ContainsKey(value[ix]))
+                    return false;
+            return true;
+        }
+
     }
+
 }
