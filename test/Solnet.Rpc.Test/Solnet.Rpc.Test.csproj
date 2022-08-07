@@ -291,6 +291,9 @@
     <None Update="Resources\Http\Transaction\SimulateTransactionExtraParamsRequest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Http\Transaction\SimulateTransactionResponse2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Streaming\Account\TokenAccountSubscribe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
