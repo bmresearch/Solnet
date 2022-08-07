@@ -166,6 +166,39 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
+        public void TestSimulateTransactionWithTransactionErrorObject()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Transaction/SimulateTransactionResponse2.json");
+            var requestData = File.ReadAllText("Resources/Http/Transaction/SimulateTransactionRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var txData = "ASIhFkj3HRTDLiPxrxudL7eXCQ3DKrBB6Go/pn0sHWYIYgIHWYu2jZjbDXQseCEu73Li53BP7AEt8lCwKz" +
+                         "X5awcBAAIER2mrlyBLqD\u002Bwyu4X94aPHgdOUhWBoNidlDedqmW3F7J7rHLZwOnCKOnqrRmjOO1w2JcV0XhP" +
+                         "LlWiw5thiFgQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABUpTUPhdyILWFKVWcniKKW3fHqur0KY" +
+                         "GeIhJMvTu9qCKNNRNmSFNMnUzw5\u002BFDszWV6YvuvspBr0qlIoAdeg67wICAgABDAIAAACAlpgAAAAAAAMBA" +
+                         "BVIZWxsbyBmcm9tIFNvbC5OZXQgOik=";
+
+            var result = sut.SimulateTransaction(txData);
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result.Value);
+            Assert.AreEqual(461971UL, result.Result.Context.Slot);
+            Assert.IsNotNull(result.Result.Value.Error);
+            Assert.AreEqual(TransactionErrorType.InsufficientFundsForRent, result.Result.Value.Error.Type);
+            Assert.AreEqual(2, result.Result.Value.Logs.Length);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
         public void TestSimulateTransactionExtraParams()
         {
             var responseData = File.ReadAllText("Resources/Http/Transaction/SimulateTransactionResponse.json");

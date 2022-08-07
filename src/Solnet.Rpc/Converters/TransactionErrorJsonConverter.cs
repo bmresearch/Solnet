@@ -46,81 +46,96 @@ namespace Solnet.Rpc.Converters
 
 
             {
-                var enumValue = reader.GetString();
-                Enum.TryParse(enumValue, ignoreCase: false, out TransactionErrorType errorType);
-                err.Type = errorType;
+                {
+                    var enumValue = reader.GetString();
+                    Enum.TryParse(enumValue, ignoreCase: false, out TransactionErrorType errorType);
+                    err.Type = errorType;
+                }
+
+                if (err.Type == TransactionErrorType.InstructionError)
+                {
+                    reader.Read();
+                    err.InstructionError = new InstructionError();
+
+                    if (reader.TokenType != JsonTokenType.StartArray)
+                    {
+                        throw new JsonException("Unexpected error value.");
+                    }
+
+                    reader.Read();
+
+                    if (reader.TokenType != JsonTokenType.Number)
+                    {
+                        throw new JsonException("Unexpected error value.");
+                    }
+
+                    err.InstructionError.InstructionIndex = reader.GetInt32();
+
+                    reader.Read();
+
+                    if (reader.TokenType == JsonTokenType.String)
+                    {
+                        var enumValue = reader.GetString();
+
+                        Enum.TryParse(enumValue, ignoreCase: false, out InstructionErrorType errorType);
+                        err.InstructionError.Type = errorType;
+                        reader.Read(); //string
+
+                        reader.Read(); //endarray
+                        return err;
+                    }
+
+                    if (reader.TokenType != JsonTokenType.StartObject)
+                    {
+                        throw new JsonException("Unexpected error value.");
+                    }
+
+                    reader.Read();
+
+
+                    if (reader.TokenType != JsonTokenType.PropertyName)
+                    {
+                        throw new JsonException("Unexpected error value.");
+                    }
+                    {
+                        var enumValue = reader.GetString();
+                        Enum.TryParse(enumValue, ignoreCase: false, out InstructionErrorType errorType);
+                        err.InstructionError.Type = errorType;
+                    }
+
+                    reader.Read();
+
+                    if (reader.TokenType == JsonTokenType.Number)
+                    {
+                        err.InstructionError.CustomError = reader.GetUInt32();
+                        reader.Read(); //number
+                        reader.Read(); //endobj
+                        reader.Read(); //endarray
+
+                        return err;
+                    }
+
+                    if (reader.TokenType != JsonTokenType.String)
+                    {
+                        throw new JsonException("Unexpected error value.");
+                    }
+
+                    err.InstructionError.BorshIoError = reader.GetString();
+                    reader.Read(); //string
+                    reader.Read(); //endobj
+                    reader.Read(); //endarray
+                }
+                else
+                {
+                    //TODO: should we modify transaction error to include error details for complex error type such as DuplicateInstruction or InsufficientFundsForRent?
+                    reader.Read(); //startobj details
+                    reader.Read(); //details property name
+                    reader.Read(); //details property value
+                    reader.Read(); //endobj details
+                    reader.Read(); //endobj
+                    return err;
+                }
             }
-
-            reader.Read();
-            err.InstructionError = new InstructionError();
-
-            if (reader.TokenType != JsonTokenType.StartArray)
-            {
-                throw new JsonException("Unexpected error value.");
-            }
-
-            reader.Read();
-
-            if (reader.TokenType != JsonTokenType.Number)
-            {
-                throw new JsonException("Unexpected error value.");
-            }
-
-            err.InstructionError.InstructionIndex = reader.GetInt32();
-
-            reader.Read();
-
-            if (reader.TokenType == JsonTokenType.String)
-            {
-                var enumValue = reader.GetString();
-
-                Enum.TryParse(enumValue, ignoreCase: false, out InstructionErrorType errorType);
-                err.InstructionError.Type = errorType;
-                reader.Read(); //string
-
-                reader.Read(); //endarray
-                return err;
-            }
-
-            if (reader.TokenType != JsonTokenType.StartObject)
-            {
-                throw new JsonException("Unexpected error value.");
-            }
-
-            reader.Read();
-
-
-            if (reader.TokenType != JsonTokenType.PropertyName)
-            {
-                throw new JsonException("Unexpected error value.");
-            }
-            {
-                var enumValue = reader.GetString();
-                Enum.TryParse(enumValue, ignoreCase: false, out InstructionErrorType errorType);
-                err.InstructionError.Type = errorType;
-            }
-
-            reader.Read();
-
-            if (reader.TokenType == JsonTokenType.Number)
-            {
-                err.InstructionError.CustomError = reader.GetUInt32();
-                reader.Read(); //number
-                reader.Read(); //endobj
-                reader.Read(); //endarray
-
-                return err;
-            }
-
-            if (reader.TokenType != JsonTokenType.String)
-            {
-                throw new JsonException("Unexpected error value.");
-            }
-
-            err.InstructionError.BorshIoError = reader.GetString();
-            reader.Read(); //string
-            reader.Read(); //endobj
-            reader.Read(); //endarray
 
             return err;
         }
