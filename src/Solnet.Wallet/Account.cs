@@ -1,5 +1,6 @@
 using Chaos.NaCl;
 using Solnet.Wallet.Utilities;
+using System;
 using System.Diagnostics;
 
 namespace Solnet.Wallet
@@ -50,7 +51,23 @@ namespace Solnet.Wallet
             PrivateKey = new PrivateKey(privateKey);
             PublicKey = new PublicKey(publicKey);
         }
+        /// <summary>
+        /// Initialize an account with the passed secret key
+        /// </summary>
+        /// <param name="secretKey">The private key.</param>
+        public static Account FromSecretKey(string secretKey)
+        {
+            var B58 = new Base58Encoder();
+            byte[] skeyBytes = B58.DecodeData(secretKey);
+            if (skeyBytes.Length != 64)
+            {
+                throw new ArgumentException("Not a secret key");
+            }
 
+            Account acc = new Account(skeyBytes, skeyBytes.Slice(32, 64));
+
+            return acc;
+        }
         /// <summary>
         /// Verify the signed message.
         /// </summary>
