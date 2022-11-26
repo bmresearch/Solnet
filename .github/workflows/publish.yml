@@ -20,6 +20,7 @@ jobs:
         with:
           script-path: build.cake
           target: Pack
+          cake-version: 1.1.0
           cake-bootstrap: true
       - name: Publish Solnet.Extensions on version change
         uses: bmresearch/publish-nuget@master
