@@ -147,6 +147,10 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// Transaction would exceed max Vote Cost Limit.
         /// </summary>
-        WouldExceedMaxVoteCostLimit
+        WouldExceedMaxVoteCostLimit,
+        /// <summary>
+        /// Transaction results in an account without insufficient funds for rent
+        /// </summary>
+        InsufficientFundsForRent
     }
 }

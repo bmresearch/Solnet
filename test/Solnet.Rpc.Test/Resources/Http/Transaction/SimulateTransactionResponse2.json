@@ -1,0 +1,16 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "context": {
+      "apiVersion": "1.10.29",
+      "slot": 461971
+    },
+    "value": {
+      "accounts": null,
+      "err": { "InsufficientFundsForRent": { "account_index": 1 } },
+      "logs": [ "Program 11111111111111111111111111111111 invoke [1]", "Program 11111111111111111111111111111111 success" ],
+      "unitsConsumed": 0
+    }
+  },
+  "id": 1
+}
