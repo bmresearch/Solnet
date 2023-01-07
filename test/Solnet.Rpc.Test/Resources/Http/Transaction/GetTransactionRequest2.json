@@ -1,1 +1,1 @@
-{"method":"getTransaction","params":["3Q9mu4ePvtbtQzY1kpGmaViJKyBev6hgUppyXDF9hKgWHHnecwGLE2pSoFvNUF3h7acKyFwWd65bkwr9A1jN2CdT",{"encoding":"json"}],"jsonrpc":"2.0","id":0}
+{"method":"getTransaction","params":["3Q9mu4ePvtbtQzY1kpGmaViJKyBev6hgUppyXDF9hKgWHHnecwGLE2pSoFvNUF3h7acKyFwWd65bkwr9A1jN2CdT",{"encoding":"json","maxSupportedTransactionVersion":0}],"jsonrpc":"2.0","id":0}

@@ -42,7 +42,7 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// Max transaction version allowed
         /// </summary>
-        public int maxTransactionVersion { get; set; }
+        public int maxSupportedTransactionVersion { get; set; }
 
         /// <summary>
         /// The rewards for this given block.
