@@ -10,17 +10,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Get the sources
-        uses: actions/checkout@v1
-      - name: Run the build script
-        uses: cake-build/cake-action@v1
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
         with:
-          script-path: build.cake
-          target: Report
-          cake-version: 1.1.0
-          cake-bootstrap: true
+          dotnet-version: 6.0.x
+      - name: Check out Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Run cake
+        shell : bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          dotnet tool install Cake.Tool --version 1.1.0
+          dotnet tool restore
+          dotnet cake --target=Report --verbosity=verbose
       - name: Publish coverage report to coveralls.io
         uses: coverallsapp/github-action@v1.1.2
         with:
-          github-token: ${{ secrets.github_token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: code_coverage/results.info 
