@@ -223,6 +223,7 @@ namespace Solnet.Rpc
                     KeyValue.Create("encoding", "json"),
                     HandleTransactionDetails(transactionDetails),
                     KeyValue.Create("rewards", blockRewards ? blockRewards : null),
+                    KeyValue.Create("maxSupportedTransactionVersion", 0),
                     HandleCommitment(commitment))));
         }
 
@@ -429,7 +430,7 @@ namespace Solnet.Rpc
         {
             return await SendRequestAsync<TransactionMetaSlotInfo>("getTransaction",
                 Parameters.Create(signature,
-                    ConfigObject.Create(KeyValue.Create("encoding", "json"), HandleCommitment(commitment))));
+                    ConfigObject.Create(KeyValue.Create("encoding", "json"), HandleCommitment(commitment), KeyValue.Create("maxSupportedTransactionVersion", 0))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetConfirmedTransactionAsync(string, Commitment)"/>
