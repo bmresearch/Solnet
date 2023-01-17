@@ -74,9 +74,9 @@ namespace Solnet.Extensions
         public override string ToString()
         {
             if (Symbol == TokenName)
-                return $"{QuantityDecimal} {Symbol}";
+                return $"{QuantityDecimal.ToString(System.Globalization.CultureInfo.InvariantCulture)} {Symbol}";
             else
-                return $"{QuantityDecimal} {Symbol} ({TokenName})";
+                return $"{QuantityDecimal.ToString(System.Globalization.CultureInfo.InvariantCulture)} {Symbol} ({TokenName})";
         }
 
         /// <summary>
