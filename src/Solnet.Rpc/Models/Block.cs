@@ -64,6 +64,12 @@ namespace Solnet.Rpc.Models
         /// Estimated block production time.
         /// </summary>
         public long? BlockTime { get; set; }
+
+        /// <summary>
+        /// Transaction version
+        /// </summary>
+        /// <value></value>
+        public object Version { get ;set; }
     }
 
 
@@ -179,6 +185,12 @@ namespace Solnet.Rpc.Models
         /// List of program instructions that will be executed in sequence and committed in one atomic transaction if all succeed.
         /// </summary>
         public InstructionInfo[] Instructions { get; set; }
+
+        /// <summary>
+        /// Addresses table lookup
+        /// </summary>
+        /// <value></value>
+        public MessageAddressTableLookup[] AddressTableLookup { get; set; }
     }
 
     /// <summary>
@@ -247,6 +259,12 @@ namespace Solnet.Rpc.Models
         /// Array of string log messages or omitted if log message recording was not yet enabled during this transaction.
         /// </summary>
         public string[] LogMessages { get; set; }
+
+        /// <summary>
+        /// Transaction loaded addresses
+        /// </summary>
+        /// <value></value>
+        public AccountKeysFromLookups LoadedAddresses { get; set; } 
     }
 
     /// <summary>
@@ -381,5 +399,123 @@ namespace Solnet.Rpc.Models
         /// The last block height at which the blockhash will be valid.
         /// </summary>
         public ulong LastValidBlockHeight { get; set; }
+    }
+
+    /// <summary>
+    /// Represents the block info.
+    /// </summary>
+    public class BlockVersionnedInfo
+    {
+        /// <summary>
+        /// Estimated block production time.
+        /// </summary>
+        public long BlockTime { get; set; }
+
+        /// <summary>
+        /// A base-58 encoded public key representing the block hash.
+        /// </summary>
+        public string Blockhash { get; set; }
+
+        /// <summary>
+        /// A base-58 encoded public key representing the block hash of this block's parent.
+        /// <remarks>
+        /// If the parent block is no longer available due to ledger cleanup, this field will return
+        /// '11111111111111111111111111111111'
+        /// </remarks>
+        /// </summary>
+        public string PreviousBlockhash { get; set; }
+
+        /// <summary>
+        /// The slot index of this block's parent.
+        /// </summary>
+        public ulong ParentSlot { get; set; }
+
+        /// <summary>
+        /// The number of blocks beneath this block.
+        /// </summary>
+        public long? BlockHeight { get; set; }
+
+        /// <summary>
+        /// The rewards for this given block.
+        /// </summary>
+        public RewardInfo[] Rewards { get; set; }
+
+        /// <summary>
+        /// Collection of transactions and their metadata within this block.
+        /// </summary>
+        public TransactionMetaInfo[] Transactions { get; set; }
+    }
+
+    /// <summary>
+    /// Represents the transaction, metadata and its containing slot.
+    /// </summary>
+    public class TransactionMetaSlotVersionnedInfo : TransactionMetaVersionnedInfo
+    {
+        /// <summary>
+        /// The slot this transaction was processed in.
+        /// </summary>
+        public ulong Slot { get; set; }
+
+        /// <summary>
+        /// Estimated block production time.
+        /// </summary>
+        public long? BlockTime { get; set; }
+    }
+
+
+    /// <summary>
+    /// Represents the tuple transaction and metadata.
+    /// </summary>
+    public class TransactionMetaVersionnedInfo
+    {
+        /// <summary>
+        /// The transaction information.
+        /// </summary>
+        public TransactionVersionnedInfo Transaction { get; set; }
+
+        /// <summary>
+        /// The metadata information.
+        /// </summary>
+        public TransactionVersionnedMeta Meta { get; set; }
+    }
+
+    /// <summary>
+    /// Represents a transaction.
+    /// </summary>
+    public class TransactionVersionnedInfo
+    {
+        /// <summary>
+        /// The signatures of this transaction.
+        /// </summary>
+        public string[] Signatures { get; set; }
+
+        /// <summary>
+        /// The message contents of the transaction.
+        /// </summary>
+        public TransactionContentVersionnedInfo Message { get; set; }
+    }
+
+    /// <summary>
+    /// Represents the contents of the trasaction.
+    /// </summary>
+    public class TransactionContentVersionnedInfo: TransactionContentInfo
+    {
+        /// <summary>
+        /// Address table lookup for transaction
+        /// </summary>
+        /// <value></value>
+        public MessageAddressTableLookup[] AddressTableLookups { get; set; }
+    }
+
+    /// <summary>
+    /// Represents the transaction metadata.
+    /// </summary>
+    public class TransactionVersionnedMeta: TransactionMeta
+    {
+        /// <summary>
+        /// Loaded address for the tranasaction
+        /// </summary>
+        /// <value></value>
+        public AccountKeysFromLookups LoadedAddresses { get; set; }
     }
 }
