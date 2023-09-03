@@ -201,8 +201,7 @@ namespace Solnet.Programs.Utilities
 
             return BinaryPrimitives.ReadSingleLittleEndian(data.Slice(offset, sizeof(float)));
         }
-
-
+        
         /// <summary>
         /// Get a boolean value from the span at the given offset.
         /// </summary>
@@ -234,6 +233,7 @@ namespace Solnet.Programs.Utilities
             return (EncodedString: Encoding.UTF8.GetString(stringBytes), Length: stringLength + sizeof(ulong));
         }
 
+        
         /// <summary>
         /// Decodes a string from a transaction instruction.
         /// </summary>
@@ -242,7 +242,25 @@ namespace Solnet.Programs.Utilities
         /// <param name="result">The decoded data./>.</param>
         /// <returns>The length in bytes that was read from the original buffer, including the</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
-        public static int GetBorshString(this ReadOnlySpan<byte> data, int offset, out string result)
+        public static string GetBorshString(this ReadOnlySpan<byte> data, int offset, out string result)
+        {
+            if (offset + sizeof(uint) > data.Length)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            int stringLength = (int)data.GetU32(offset);
+            byte[] stringBytes = data.GetSpan(offset + sizeof(uint), stringLength).ToArray();
+            result = Encoding.UTF8.GetString(stringBytes);
+
+            return result;
+        }
+        /// <summary>
+        /// Get size of the Borsh string
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="offset"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static int GetBorshStringSize(this ReadOnlySpan<byte> data, int offset, out string result)
         {
             if (offset + sizeof(uint) > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
@@ -250,11 +268,22 @@ namespace Solnet.Programs.Utilities
             int stringLength = (int)data.GetU32(offset);
             byte[] stringBytes = data.GetSpan(offset + sizeof(uint), stringLength).ToArray();
             result = Encoding.UTF8.GetString(stringBytes);
-
             return stringLength + sizeof(uint);
         }
 
-
+        /// <summary>
+        /// Get a Borsh ByteVector from an array at a given offset
+        /// </summary>
+        /// <param name="data">the array to read the data from</param>
+        /// <param name="offset">the offset to begin reading the data</param>
+        /// <returns></returns>
+        public static Span<byte> GetBorshByteVector(this byte[] data, int offset)
+        {
+            if (offset + sizeof(uint) > data.Length)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            return data.AsSpan(offset + sizeof(uint), (int)new ReadOnlySpan<byte>(data).GetU32(offset));
+        }
+        
         /// <summary>
         /// Get a span from the read-only span at the given offset with the given length.
         /// </summary>
