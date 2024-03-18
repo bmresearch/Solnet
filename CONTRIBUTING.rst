@@ -17,7 +17,7 @@ own code:
 -   The email blockmountainresearch(at)protonmail.com can be used for longer term
     discussion or larger issues.
 		
-.. _discussions: https://github.com/bmresearch/Solnet/discussions
+.. _discussions: https://github.com/brunopedrazza/Solnet/discussions
 
 Reporting issues
 ----------------
