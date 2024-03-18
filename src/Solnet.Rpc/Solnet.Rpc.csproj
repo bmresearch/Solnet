@@ -4,6 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>Solnet.Rpc</AssemblyName>
     <RootNamespace>Solnet.Rpc</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Solnett.Rpc</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

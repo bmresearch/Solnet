@@ -1,19 +1,19 @@
 <Project DefaultTargets="Build" 
   xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Product>Solnet</Product>
+    <Product>Solnett</Product>
     <Version>6.1.0</Version>
     <Copyright>Copyright 2022 &#169; Solnet</Copyright>
-    <Authors>blockmountain</Authors>
-    <PublisherName>blockmountain</PublisherName>
-    <RepositoryUrl>https://github.com/bmresearch/Solnet</RepositoryUrl>
+    <Authors>blockmountain,brunopedrazza</Authors>
+    <PublisherName>brunopedrazza</PublisherName>
+    <RepositoryUrl>https://github.com/brunopedrazza/Solnet</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latest</LangVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
     <PackageDescription>Solnet is Solana's .NET integration library.</PackageDescription>
-    <PackageTags>solana;solnet;sol;net5;spl</PackageTags>
-    <PackageReleaseNotes>https://github.com/bmresearch/Solnet/releases</PackageReleaseNotes>
+    <PackageTags>solana;solnet;sol;net5;net6;spl</PackageTags>
+    <PackageReleaseNotes>https://github.com/brunopedrazza/Solnet/releases</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
