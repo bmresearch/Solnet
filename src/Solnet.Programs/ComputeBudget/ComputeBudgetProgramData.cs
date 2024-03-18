@@ -22,7 +22,7 @@ namespace Solnet.Programs.ComputeBudget
         {
             byte[] data = new byte[5];
             
-            data.WriteU8((byte)ComputeBudgetProgramInstructions.Values.SetComputeUnitLimit, MethodOffset);
+            data.WriteU8((byte)ComputeBudgetProgramInstructions.Values.RequestHeapFrame, MethodOffset);
             data.WriteU32(bytes, 1);
             
             return data;
