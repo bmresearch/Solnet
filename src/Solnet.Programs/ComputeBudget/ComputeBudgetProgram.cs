@@ -90,9 +90,9 @@ namespace Solnet.Programs.ComputeBudget
         /// </summary>
         /// <param name="data">The instruction data to decode.</param>
         /// <returns>A decoded instruction.</returns>
-        public static DecodedInstruction Decode(ReadOnlySpan<byte> data)
+        public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
-            uint instruction = data.GetU32(ComputeBudgetProgramData.MethodOffset);
+            uint instruction = data.GetU8(ComputeBudgetProgramData.MethodOffset);
 
             if (!Enum.IsDefined(typeof(ComputeBudgetProgramInstructions.Values), instruction))
             {
