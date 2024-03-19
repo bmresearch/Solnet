@@ -88,13 +88,35 @@ namespace Solnet.Programs.Test
             "QEAAAAAwIAAQwCAAAAAMqaOwAAAAA=";
 
         private const string CreateWithSeedTransferCheckedMessage =
-            "AQAFCEdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyOYMO0iFs4aMUVosQrrL+aWspebSXbUiMaf5/Vser1b0OnC1i7fbauPEwr4QPwO60eHE6R2A3RGXr8HuhWwwwbgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9LBeJnW7+BRnPyXA+KjPgyVxNJPg4ZjZj7vDCLaxcn6cN8HIDWf0F04DfWvktjd8c9zUrzgeo+yKgZUYC424xwan1RcZLFxRIYzJTD1K8X9Y2u4Im6H9ROPb2YoAAAAABt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/AKm2aEncf4Mlb+sGgWJlGolxMb+4adawnHuBSBv1aK+CtQMDAgABZQMAAABHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgkAAAAAAAAAU29tZSBTZWVk8B0fAAAAAAClAAAAAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpBwQBBAUGAQEHBAIEAQAKDBAnAAAAAAAACg==";
+            "AQAFCEdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyOYMO0iFs4aMUVosQrrL+aWspebSXbUiMaf5/Vser1b" +
+            "0OnC1i7fbauPEwr4QPwO60eHE6R2A3RGXr8HuhWwwwbgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9LBe" +
+            "JnW7+BRnPyXA+KjPgyVxNJPg4ZjZj7vDCLaxcn6cN8HIDWf0F04DfWvktjd8c9zUrzgeo+yKgZUYC424xwan1RcZLF" +
+            "xRIYzJTD1K8X9Y2u4Im6H9ROPb2YoAAAAABt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/AKm2aEncf4Mlb+sGg" +
+            "WJlGolxMb+4adawnHuBSBv1aK+CtQMDAgABZQMAAABHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgkAAAAA" +
+            "AAAAU29tZSBTZWVk8B0fAAAAAAClAAAAAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpBwQBBAUGAQE" +
+            "HBAIEAQAKDBAnAAAAAAAACg==";
 
         private const string AllocateAndTransferWithSeedMessage =
-            "AwIECUdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyxlZoHQB4RdUzPilsIbwW5CqatIYqbsEwlDlAxlbUberN+w3TZpSpkz6ceiNiFJ1YljgbSt+oGaN4XwsDKrjvO9eJ2GvItXyYvkkNtswujQh/3uFPx4eYNYHvmFKNj2KF6Nz9cBhJOumlXLZpUvE8AzAtBfGMn1dZQnsmstBxblEGp9UXGSxcUSGMyUw9SvF/WNruCJuh/UTj29mKAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFSlNQ+F3IgtYUpVZyeIopbd8eq6vQpgZ4iEky9O72oIgZj6RKWuBs9/ZF9SblFNX1Nfndq/bZbd1zKevX07NqBgYCAwVDAAJHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgFHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgcCAQRdCQAAAOjc/XAYSTrppVy2aVLxPAMwLQXxjJ9XWUJ7JrLQcW5RCQAAAAAAAABTb21lIFNlZWSlAAAAAAAAAP4AAajK+Dt7AHzpNyQpMLfMDxb3r2T1UUbVQedlcfEvBwMEAQE9CwAAAKhhAAAAAAAACQAAAAAAAABTb21lIFNlZWRHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgYEAgMABQEBBgMDAgAJB0BCDwAAAAAACAECEkhlbGxvIGZyb20gU29sLk5ldA==";
+            "AwIECUdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyxlZoHQB4RdUzPilsIbwW5CqatIYqbsEwlDlAxlbUber" +
+            "N+w3TZpSpkz6ceiNiFJ1YljgbSt+oGaN4XwsDKrjvO9eJ2GvItXyYvkkNtswujQh/3uFPx4eYNYHvmFKNj2KF6Nz9cB" +
+            "hJOumlXLZpUvE8AzAtBfGMn1dZQnsmstBxblEGp9UXGSxcUSGMyUw9SvF/WNruCJuh/UTj29mKAAAAAAbd9uHXZaGT2" +
+            "cvhRs7reawctIXtX1s3kTqM9YV+/wCpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFSlNQ+F3IgtYUpVZye" +
+            "Iopbd8eq6vQpgZ4iEky9O72oIgZj6RKWuBs9/ZF9SblFNX1Nfndq/bZbd1zKevX07NqBgYCAwVDAAJHaauXIEuoP7DK7" +
+            "hf3ho8eB05SFYGg2J2UN52qZbcXsgFHaauXIEuoP7DK7hf3ho8eB05SFYGg2J2UN52qZbcXsgcCAQRdCQAAAOjc/XAYS" +
+            "TrppVy2aVLxPAMwLQXxjJ9XWUJ7JrLQcW5RCQAAAAAAAABTb21lIFNlZWSlAAAAAAAAAP4AAajK+Dt7AHzpNyQpMLfMDx" +
+            "b3r2T1UUbVQedlcfEvBwMEAQE9CwAAAKhhAAAAAAAACQAAAAAAAABTb21lIFNlZWRHaauXIEuoP7DK7hf3ho8eB05SFYG" +
+            "g2J2UN52qZbcXsgYEAgMABQEBBgMDAgAJB0BCDwAAAAAACAECEkhlbGxvIGZyb20gU29sLk5ldA==";
 
         private const string AssignWithSeedAndWithdrawNonceMessage =
-            "AgEFCkdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyzfsN02aUqZM+nHojYhSdWJY4G0rfqBmjeF8LAyq47zvXidhryLV8mL5JDbbMLo0If97hT8eHmDWB75hSjY9ihcZWaB0AeEXVMz4pbCG8FuQqmrSGKm7BMJQ5QMZW1G3q6Nz9cBhJOumlXLZpUvE8AzAtBfGMn1dZQnsmstBxblEGp9UXGSxcUSGMyUw9SvF/WNruCJuh/UTj29mKAAAAAAbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGp9UXGSxWjuCKhF9z0peIzwNcMUWyGrNE2AYuqUAAAAVKU1D4XciC1hSlVnJ4iilt3x6rq9CmBniISTL07vagtJ8Jx8NOgvPxbiEudqErtkdKNjEMCpOGKmW34JXG2P8GBgICBUMAAkdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyAUdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyBwIDBFUKAAAA6Nz9cBhJOumlXLZpUvE8AzAtBfGMn1dZQnsmstBxblEJAAAAAAAAAFNvbWUgU2VlZP4AAajK+Dt7AHzpNyQpMLfMDxb3r2T1UUbVQedlcfEvBwUEAwgFAAwFAAAAqGEAAAAAAAAGBAECAAUBAQYDAgEACQdAQg8AAAAAAAkBARJIZWxsbyBmcm9tIFNvbC5OZXQ=";
+            "AgEFCkdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyzfsN02aUqZM+nHojYhSdWJY4G0rfqBmjeF8LAyq47zvX" +
+            "idhryLV8mL5JDbbMLo0If97hT8eHmDWB75hSjY9ihcZWaB0AeEXVMz4pbCG8FuQqmrSGKm7BMJQ5QMZW1G3q6Nz9cBhJ" +
+            "OumlXLZpUvE8AzAtBfGMn1dZQnsmstBxblEGp9UXGSxcUSGMyUw9SvF/WNruCJuh/UTj29mKAAAAAAbd9uHXZaGT2cvh" +
+            "Rs7reawctIXtX1s3kTqM9YV+/wCpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGp9UXGSxWjuCKhF9z0peIz" +
+            "wNcMUWyGrNE2AYuqUAAAAVKU1D4XciC1hSlVnJ4iilt3x6rq9CmBniISTL07vagtJ8Jx8NOgvPxbiEudqErtkdKNjEMCp" +
+            "OGKmW34JXG2P8GBgICBUMAAkdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyAUdpq5cgS6g/sMruF/eGjx4HTlI" +
+            "VgaDYnZQ3napltxeyBwIDBFUKAAAA6Nz9cBhJOumlXLZpUvE8AzAtBfGMn1dZQnsmstBxblEJAAAAAAAAAFNvbWUgU2Vl" +
+            "ZP4AAajK+Dt7AHzpNyQpMLfMDxb3r2T1UUbVQedlcfEvBwUEAwgFAAwFAAAAqGEAAAAAAAAGBAECAAUBAQYDAgEACQdAQ" +
+            "g8AAAAAAAkBARJIZWxsbyBmcm9tIFNvbC5OZXQ=";
 
         private const string CreateNonceAccountMessage =
             "AgADBUdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxey3/TlOFbzAEpWOjiOEYJxkz0BiH7zFuKtbErUaFHHeLQA" +
@@ -107,6 +129,10 @@ namespace Solnet.Programs.Test
             "AQABA0dpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxey3/TlOFbzAEpWOjiOEYJxkz0BiH7zFuKtbErUaFHHeLQA" +
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkF38bO8K2XOUFDq7VOkCaRObsKUZyPb587Rcoo4eivAQICAQAkB" +
             "wAAACqCAIOtweetcVDQTjbgtE+ULaVRy1/RIR5APIhz/3J6";
+        
+        private const string SetComputeBudgetInstructionsMessage = 
+            "AQABAkLyPJmY+nMjehxFjzl8w59pfxcnXjgY3M0I/QH25m1lAwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAAB3" +
+            "YEDMkcVAw76vYjb1X7uTd4g2IoG7ta5tqXIqpGthnAQBAAUBAIAAAAEABQJADQMAAQAJA6CGAQAAAAAAAQAFBDBXBQA=";
 
         [TestMethod]
         public void InstructionDecoderRegisterTest()
@@ -608,6 +634,35 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("G5EWCBwDM5GzVNwrG9LbgpTdQBD9PEAaey82ttuJJ7Qo", (PublicKey)nonceAccount);
             Assert.AreEqual("3rw6fodqaBQHQZgMuFzbkfz7KNd1H999PphPMJwbqV53", (PublicKey)newAuthority);
             Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", (PublicKey)currentAuthority);
+        }
+        
+        [TestMethod]
+        public void DecodeComputeBudgetFullTest()
+        {
+            Message msg = Message.Deserialize(SetComputeBudgetInstructionsMessage);
+            List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
+
+            Assert.AreEqual(4, decodedInstructions.Count);
+            
+            Assert.AreEqual("Request Heap Frame", decodedInstructions[0].InstructionName);
+            Assert.AreEqual("Compute Budget Program", decodedInstructions[0].ProgramName);
+            Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Bytes", out object bytes));
+            Assert.AreEqual(32768U, (uint)bytes);
+            
+            Assert.AreEqual("Set Compute Unit Limit", decodedInstructions[1].InstructionName);
+            Assert.AreEqual("Compute Budget Program", decodedInstructions[1].ProgramName);
+            Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Units", out object units));
+            Assert.AreEqual(200000U, (uint)units);
+            
+            Assert.AreEqual("Set Compute Unit Price", decodedInstructions[2].InstructionName);
+            Assert.AreEqual("Compute Budget Program", decodedInstructions[2].ProgramName);
+            Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Micro Lamports", out object microLamports));
+            Assert.AreEqual(100000UL, (ulong)microLamports);
+            
+            Assert.AreEqual("Set Loaded Accounts Data Size Limit", decodedInstructions[3].InstructionName);
+            Assert.AreEqual("Compute Budget Program", decodedInstructions[3].ProgramName);
+            Assert.IsTrue(decodedInstructions[3].Values.TryGetValue("Bytes", out object bytesLimit));
+            Assert.AreEqual(350000U, (uint)bytesLimit);
         }
     }
 }
