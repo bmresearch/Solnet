@@ -155,7 +155,7 @@ namespace Solnet.Rpc
         /// <param name="transactionDetails">The level of transaction detail to return, see <see cref="TransactionDetailsFilterType"/>.</param>
         /// <param name="blockRewards">Whether to populate the <c>rewards</c> array, the default includes rewards.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        [Obsolete("Please use GetBlockAsync whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        [Obsolete("Please use GetBlockAsync whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         Task<RequestResult<BlockInfo>> GetConfirmedBlockAsync(ulong slot, Commitment commitment = Commitment.Finalized,
             TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false);
 
@@ -202,7 +202,7 @@ namespace Solnet.Rpc
         /// <param name="transactionDetails">The level of transaction detail to return, see <see cref="TransactionDetailsFilterType"/>.</param>
         /// <param name="blockRewards">Whether to populate the <c>rewards</c> array, the default includes rewards.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        [Obsolete("Please use GetBlock whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        [Obsolete("Please use GetBlock whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         RequestResult<BlockInfo> GetConfirmedBlock(ulong slot, Commitment commitment = Commitment.Finalized,
             TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false);
 
@@ -285,7 +285,7 @@ namespace Solnet.Rpc
         /// <param name="endSlot">The start slot (inclusive and optional).</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        [Obsolete("Please use GetBlocksAsync whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        [Obsolete("Please use GetBlocksAsync whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         Task<RequestResult<List<ulong>>> GetConfirmedBlocksAsync(ulong startSlot, ulong endSlot = 0, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
@@ -311,7 +311,7 @@ namespace Solnet.Rpc
         /// <param name="endSlot">The start slot (inclusive and optional).</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        [Obsolete("Please use GetBlocks whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        [Obsolete("Please use GetBlocks whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         RequestResult<List<ulong>> GetConfirmedBlocks(ulong startSlot, ulong endSlot = 0, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
@@ -331,7 +331,7 @@ namespace Solnet.Rpc
         /// <param name="limit">The max number of blocks to return.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        [Obsolete("Please use GetBlocksWithLimitAsync whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        [Obsolete("Please use GetBlocksWithLimitAsync whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         Task<RequestResult<List<ulong>>> GetConfirmedBlocksWithLimitAsync(ulong startSlot,
             ulong limit, Commitment commitment = Commitment.Finalized);
 
@@ -352,7 +352,7 @@ namespace Solnet.Rpc
         /// <param name="limit">The max number of blocks to return.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        [Obsolete("Please use GetBlocksWithLimit whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        [Obsolete("Please use GetBlocksWithLimit whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         RequestResult<List<ulong>> GetConfirmedBlocksWithLimit(ulong startSlot,
             ulong limit, Commitment commitment = Commitment.Finalized);
 
@@ -407,13 +407,28 @@ namespace Solnet.Rpc
         /// </summary>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<EpochScheduleInfo> GetEpochSchedule();
+        
+        /// <summary>
+        /// Gets a list of prioritization fees from recent blocks.
+        /// </summary>
+        /// <param name="accounts">Accounts used in your transaction; otherwise, you'll find the lowest fee to land a transaction overall (optional).</param>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        Task<RequestResult<List<PrioritizationFeeItem>>> GetRecentPrioritizationFeesAsync(List<string> accounts = null);
 
+        /// <summary>
+        /// Gets a list of prioritization fees from recent blocks.
+        /// </summary>
+        /// <param name="accounts">Accounts used in your transaction; otherwise, you'll find the lowest fee to land a transaction overall (optional).</param>
+        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        RequestResult<List<PrioritizationFeeItem>> GetRecentPrioritizationFees(List<string> accounts = null);
+    
         /// <summary>
         /// Gets the fee calculator associated with the query blockhash, or null if the blockhash has expired.
         /// </summary>
         /// <param name="blockhash">The blockhash to query, as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        [Obsolete("Please use IsBlockhashValid or GetFeeForMessage whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         Task<RequestResult<ResponseValue<FeeCalculatorInfo>>> GetFeeCalculatorForBlockhashAsync(
             string blockhash, Commitment commitment = Commitment.Finalized);
 
@@ -423,6 +438,7 @@ namespace Solnet.Rpc
         /// <param name="blockhash">The blockhash to query, as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        [Obsolete("Please use IsBlockhashValid or GetFeeForMessage whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         RequestResult<ResponseValue<FeeCalculatorInfo>> GetFeeCalculatorForBlockhash(string blockhash,
             Commitment commitment = Commitment.Finalized);
 
@@ -430,12 +446,14 @@ namespace Solnet.Rpc
         /// Gets the fee rate governor information from the root bank.
         /// </summary>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        [Obsolete("This method is expected to be removed in solana-core v2.0.")]
         Task<RequestResult<ResponseValue<FeeRateGovernorInfo>>> GetFeeRateGovernorAsync();
 
         /// <summary>
         /// Gets the fee rate governor information from the root bank.
         /// </summary>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        [Obsolete("This method is expected to be removed in solana-core v2.0.")]
         RequestResult<ResponseValue<FeeRateGovernorInfo>> GetFeeRateGovernor();
 
         /// <summary>
@@ -444,6 +462,7 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        [Obsolete("Please use GetFeeForMessage whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         Task<RequestResult<ResponseValue<FeesInfo>>> GetFeesAsync(Commitment commitment = Commitment.Finalized);
 
         /// <summary>
@@ -452,6 +471,7 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        [Obsolete("Please use GetFeeForMessage whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         RequestResult<ResponseValue<FeesInfo>> GetFees(Commitment commitment = Commitment.Finalized);
 
         /// <summary>
@@ -803,7 +823,7 @@ namespace Solnet.Rpc
         /// <param name="until">Search until this transaction signature, if found before limit is reached.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        [Obsolete("Please use GetSignaturesForAddressAsync whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        [Obsolete("Please use GetSignaturesForAddressAsync whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         Task<RequestResult<List<SignatureStatusInfo>>> GetConfirmedSignaturesForAddress2Async(string accountPubKey, ulong limit = 1000,
             string before = null, string until = null, Commitment commitment = Commitment.Finalized);
 
@@ -834,7 +854,7 @@ namespace Solnet.Rpc
         /// <param name="until">Search until this transaction signature, if found before limit is reached.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        [Obsolete("Please use GetSignaturesForAddress whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        [Obsolete("Please use GetSignaturesForAddress whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         RequestResult<List<SignatureStatusInfo>> GetConfirmedSignaturesForAddress2(string accountPubKey, ulong limit = 1000,
             string before = null, string until = null, Commitment commitment = Commitment.Finalized);
 
@@ -913,12 +933,14 @@ namespace Solnet.Rpc
         /// Gets the highest slot that the node has a snapshot for.
         /// </summary>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        [Obsolete("Please use GetHighestSnapshotSlot whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         Task<RequestResult<ulong>> GetSnapshotSlotAsync();
 
         /// <summary>
         /// Gets the highest slot that the node has a snapshot for.
         /// </summary>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
+        [Obsolete("Please use GetHighestSnapshotSlot whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         RequestResult<ulong> GetSnapshotSlot();
 
         /// <summary>
@@ -1091,7 +1113,7 @@ namespace Solnet.Rpc
         /// <param name="signature">Transaction signature as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        [Obsolete("Please use GetTransactionAsync whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        [Obsolete("Please use GetTransactionAsync whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         Task<RequestResult<TransactionMetaSlotInfo>> GetConfirmedTransactionAsync(string signature, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
@@ -1120,7 +1142,7 @@ namespace Solnet.Rpc
         /// <param name="signature">Transaction signature as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        [Obsolete("Please use GetTransaction whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
+        [Obsolete("Please use GetTransaction whenever possible instead. This method is expected to be removed in solana-core v2.0.")]
         RequestResult<TransactionMetaSlotInfo> GetConfirmedTransaction(string signature, Commitment commitment = Commitment.Finalized);
 
         /// <summary>

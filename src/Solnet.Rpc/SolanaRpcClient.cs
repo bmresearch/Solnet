@@ -512,7 +512,17 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="IRpcClient.GetEpochSchedule"/>
         public RequestResult<EpochScheduleInfo> GetEpochSchedule() => GetEpochScheduleAsync().Result;
 
+        /// <inheritdoc cref="IRpcClient.GetRecentPrioritizationFeesAsync"/>
+        public async Task<RequestResult<List<PrioritizationFeeItem>>> GetRecentPrioritizationFeesAsync(List<string> accounts = null)
+        {
+            return await SendRequestAsync<List<PrioritizationFeeItem>>("getRecentPrioritizationFees", 
+                Parameters.Create(accounts));
+        }
 
+        /// <inheritdoc cref="IRpcClient.GetRecentPrioritizationFees"/>
+        public RequestResult<List<PrioritizationFeeItem>> GetRecentPrioritizationFees(List<string> accounts = null) =>
+            GetRecentPrioritizationFeesAsync(accounts).Result;
+        
         /// <inheritdoc cref="IRpcClient.GetFeeCalculatorForBlockhashAsync"/>
         public async Task<RequestResult<ResponseValue<FeeCalculatorInfo>>> GetFeeCalculatorForBlockhashAsync(
             string blockhash, Commitment commitment = Commitment.Finalized)

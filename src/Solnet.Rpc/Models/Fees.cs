@@ -67,4 +67,20 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public ulong LastValidBlockHeight { get; set; }
     }
+    
+    /// <summary>
+    /// Represents information about the prioritization fees.
+    /// </summary>
+    public class PrioritizationFeeItem
+    {
+        /// <summary>
+        /// Slot in which the fee was observed.
+        /// </summary>
+        public ulong Slot { get; set; }
+
+        /// <summary>
+        /// The per-compute-unit fee paid by at least one successfully landed transaction, specified in increments of micro-lamports.
+        /// </summary>
+        public ulong PrioritizationFee { get; set; }
+    }
 }
