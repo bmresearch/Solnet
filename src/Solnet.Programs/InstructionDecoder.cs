@@ -1,5 +1,5 @@
-﻿using Solnet.Programs.TokenSwap;
-using Solnet.Rpc.Builders;
+﻿using Solnet.Programs.ComputeBudget;
+using Solnet.Programs.TokenSwap;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
@@ -38,6 +38,7 @@ namespace Solnet.Programs
             InstructionDictionary.Add(NameServiceProgram.ProgramIdKey, NameServiceProgram.Decode);
             InstructionDictionary.Add(SharedMemoryProgram.ProgramIdKey, SharedMemoryProgram.Decode);
             InstructionDictionary.Add(StakeProgram.ProgramIdKey, StakeProgram.Decode);
+            InstructionDictionary.Add(ComputeBudgetProgram.ProgramIdKey, ComputeBudgetProgram.Decode);
         }
 
         /// <summary>
