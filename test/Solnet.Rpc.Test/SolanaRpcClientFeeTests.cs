@@ -179,6 +179,36 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
+        
+        [TestMethod]
+        public void TestGetRecentPrioritizationFees()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Fees/GetRecentPrioritizationFeesResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Fees/GetRecentPrioritizationFeesRequest.json");
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
 
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+            var result = sut.GetRecentPrioritizationFees(new List<string>
+            {
+                "CxELquR1gPP8wHe33gZ4QxqGB3sZ9RSwsJ2KshVewkFY",
+                "BQ72nSv9f3PRyRKCBnHLVrerrv37CYTHm5h3s9VSGQDV"
+            });
+
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.IsTrue(result.Result.Count > 0);
+            Assert.IsNotNull(result.Result[0].Slot);
+            Assert.IsNotNull(result.Result[0].PrioritizationFee);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
     }
 }
