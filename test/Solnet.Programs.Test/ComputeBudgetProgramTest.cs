@@ -35,7 +35,7 @@ namespace Solnet.Programs.Test
         [TestMethod]
         public void TestComputeBudgetProgramRequestHeapFrame()
         {
-            var txInstruction = ComputeBudgetProgram.RequestHeapFrame(32 * 1024);
+            var txInstruction = ComputeBudgetProgram.RequestHeapFrame(32768);
 
             Assert.AreEqual(0, txInstruction.Keys.Count);
             CollectionAssert.AreEqual(RequestHeapFrameInstructionBytes, txInstruction.Data);
