@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static Solnet.Rpc.Models.Message;
 
 namespace Solnet.Rpc.Models
 {
@@ -61,6 +62,8 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public string RecentBlockHash { get; set; }
 
+
+        internal IList<PublicKey> _accountKeys;
         /// <summary>
         /// The nonce information of the transaction.
         /// <remarks>
@@ -81,7 +84,7 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// Compile the transaction data.
         /// </summary>
-        public byte[] CompileMessage()
+        public virtual byte[] CompileMessage()
         {
             MessageBuilder messageBuilder = new() { FeePayer = FeePayer };
 
@@ -373,6 +376,15 @@ namespace Solnet.Rpc.Models
                         TransactionBuilder.SignatureLength);
                 signatures.Add(signature.ToArray());
             }
+
+
+            byte prefix = data[encodedLength + (signaturesLength * TransactionBuilder.SignatureLength)];
+            byte maskedPrefix = (byte)(prefix & VersionedMessage.VersionPrefixMask);
+
+            // If the transaction is a VersionedTransaction, use VersionedTransaction.Deserialize instead.
+            if (prefix != maskedPrefix)
+                return VersionedTransaction.Deserialize(data);
+
 
             return Populate(
                 Message.Deserialize(data[
