@@ -41,7 +41,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new();
 
-            byte[] instructionBytes = new byte[5];
+            byte[] instructionBytes = new byte[17];
             instructionBytes.WriteU8(1, 0);
             instructionBytes.WriteU32(bytes, 1);
 
@@ -61,7 +61,7 @@ namespace Solnet.Programs
         {
             List<AccountMeta> keys = new();
 
-            byte[] instructionBytes = new byte[5];
+            byte[] instructionBytes = new byte[9];
             instructionBytes.WriteU8(2, 0);
             instructionBytes.WriteU64(units, 1);
 
