@@ -18,22 +18,22 @@ namespace Solnet.Rpc.Builders
         /// <summary>
         /// The length of the block hash.
         /// </summary>
-        private const int BlockHashLength = 32;
+        protected const int BlockHashLength = 32;
 
         /// <summary>
         /// The message header.
         /// </summary>
-        private MessageHeader _messageHeader;
+        protected MessageHeader _messageHeader;
 
         /// <summary>
         /// The account keys list.
         /// </summary>
-        private readonly AccountKeysList _accountKeysList;
+        protected readonly AccountKeysList _accountKeysList;
 
         /// <summary>
         /// The list of instructions contained within this transaction.
         /// </summary>
-        internal List<TransactionInstruction> Instructions { get; private set; }
+       internal List<TransactionInstruction> Instructions { get; private protected set; }
 
         /// <summary>
         /// The hash of a recent block.
@@ -76,7 +76,7 @@ namespace Solnet.Rpc.Builders
         /// Builds the message into the wire format.
         /// </summary>
         /// <returns>The encoded message.</returns>
-        internal byte[] Build()
+        internal virtual byte[] Build()
         {
             if (RecentBlockHash == null && NonceInformation == null)
                 throw new Exception("recent block hash or nonce information is required");
@@ -111,8 +111,7 @@ namespace Solnet.Rpc.Builders
                 {
                     keyIndices[i] = FindAccountIndex(keysList, instruction.Keys[i].PublicKey);
                 }
-
-                CompiledInstruction compiledInstruction = new CompiledInstruction
+                CompiledInstruction compiledInstruction = new()
                 {
                     ProgramIdIndex = FindAccountIndex(keysList, instruction.ProgramId),
                     KeyIndicesCount = ShortVectorEncoding.EncodeLength(keyCount),
@@ -176,7 +175,7 @@ namespace Solnet.Rpc.Builders
         /// Gets the keys for the accounts present in the message.
         /// </summary>
         /// <returns>The list of <see cref="AccountMeta"/>.</returns>
-        private List<AccountMeta> GetAccountKeys()
+        protected List<AccountMeta> GetAccountKeys()
         {
             List<AccountMeta> newList = new();
             var keysList = _accountKeysList.AccountList;
@@ -203,7 +202,7 @@ namespace Solnet.Rpc.Builders
         /// <param name="accountMetas">The <see cref="AccountMeta"/>.</param>
         /// <param name="publicKey">The public key.</param>
         /// <returns>The index of the</returns>
-        private static byte FindAccountIndex(IList<AccountMeta> accountMetas, byte[] publicKey)
+        protected static byte FindAccountIndex(IList<AccountMeta> accountMetas, byte[] publicKey)
         {
             string encodedKey = Encoders.Base58.EncodeData(publicKey);
             return FindAccountIndex(accountMetas, encodedKey);
@@ -215,7 +214,7 @@ namespace Solnet.Rpc.Builders
         /// <param name="accountMetas">The <see cref="AccountMeta"/>.</param>
         /// <param name="publicKey">The public key.</param>
         /// <returns>The index of the</returns>
-        private static byte FindAccountIndex(IList<AccountMeta> accountMetas, string publicKey)
+        protected static byte FindAccountIndex(IList<AccountMeta> accountMetas, string publicKey)
         {
             for (byte index = 0; index < accountMetas.Count; index++)
             {

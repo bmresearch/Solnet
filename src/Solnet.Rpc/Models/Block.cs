@@ -40,6 +40,11 @@ namespace Solnet.Rpc.Models
         public long? BlockHeight { get; set; }
 
         /// <summary>
+        /// Max transaction version allowed
+        /// </summary>
+        public int maxSupportedTransactionVersion { get; set; }
+
+        /// <summary>
         /// The rewards for this given block.
         /// </summary>
         public RewardInfo[] Rewards { get; set; }

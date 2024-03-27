@@ -7,7 +7,7 @@ namespace Solnet.Rpc.Models
     /// A wrapper around a list of <see cref="AccountMeta"/>s that takes care of deduplication and ordering according to 
     /// the wire format specification.
     /// </summary>
-    internal class AccountKeysList
+    public class AccountKeysList
     {
         /// <summary>
         /// The account metas list.
