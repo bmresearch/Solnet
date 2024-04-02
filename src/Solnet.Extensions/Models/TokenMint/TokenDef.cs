@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Solnet.Extensions.TokenMint
@@ -149,6 +150,7 @@ namespace Solnet.Extensions.TokenMint
     /// </summary>
     internal class TokenListDoc
     {
+        [JsonPropertyName("content")]
         public IList<TokenListItem> tokens { get; set; }
     }
 
