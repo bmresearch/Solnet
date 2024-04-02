@@ -141,8 +141,6 @@ namespace Solnet.Extensions.TokenMint
                 TokenProjectUrl = this.TokenProjectUrl
             };
         }
-
-
     }
 
     /// <summary>
@@ -150,7 +148,6 @@ namespace Solnet.Extensions.TokenMint
     /// </summary>
     internal class TokenListDoc
     {
-        [JsonPropertyName("content")]
         public IList<TokenListItem> tokens { get; set; }
     }
 

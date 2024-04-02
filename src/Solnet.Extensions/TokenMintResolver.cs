@@ -21,7 +21,7 @@ namespace Solnet.Extensions
         /// <summary>
         /// The URL of the standard token list
         /// </summary>
-        private const string TOKENLIST_GITHUB_URL = "https://token-list-api.solana.cloud/v1/list";
+        private const string TOKENLIST_GITHUB_URL = "https://cdn.jsdelivr.net/gh/solflare-wallet/token-list@latest/solana-tokenlist.json";
 
         /// <summary>
         /// Internal lookfor for resolving mint public key addresses to TokenDef objects.
