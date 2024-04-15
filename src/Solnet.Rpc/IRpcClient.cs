@@ -133,7 +133,7 @@ namespace Solnet.Rpc
         /// <param name="blockRewards">Whether to populate the <c>rewards</c> array, the default includes rewards.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
         Task<RequestResult<BlockInfo>> GetBlockAsync(ulong slot, Commitment commitment = Commitment.Finalized,
-            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false);
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false, int maxSupportedTransactionVersion = 0);
 
         /// <summary>
         /// Returns identity and transaction information about a confirmed block in the ledger.
@@ -154,10 +154,11 @@ namespace Solnet.Rpc
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <param name="transactionDetails">The level of transaction detail to return, see <see cref="TransactionDetailsFilterType"/>.</param>
         /// <param name="blockRewards">Whether to populate the <c>rewards</c> array, the default includes rewards.</param>
+        /// <param name="maxSupportedTransactionVersion">Max supported transaction version either LEGACY or 1</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
         [Obsolete("Please use GetBlockAsync whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
         Task<RequestResult<BlockInfo>> GetConfirmedBlockAsync(ulong slot, Commitment commitment = Commitment.Finalized,
-            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false);
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false, int maxSupportedTransactionVersion = 0);
 
         /// <summary>
         /// Returns identity and transaction information about a block in the ledger.
@@ -178,9 +179,10 @@ namespace Solnet.Rpc
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <param name="transactionDetails">The level of transaction detail to return, see <see cref="TransactionDetailsFilterType"/>.</param>
         /// <param name="blockRewards">Whether to populate the <c>rewards</c> array, the default includes rewards.</param>
+        /// <param name="maxSupportedTransactionVersion">Max supported transaction version either LEGACY or 1</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<BlockInfo> GetBlock(ulong slot, Commitment commitment = Commitment.Finalized,
-            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false);
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false, int maxSupportedTransactionVersion = 0);
 
         /// <summary>
         /// Returns identity and transaction information about a confirmed block in the ledger.
@@ -201,10 +203,11 @@ namespace Solnet.Rpc
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <param name="transactionDetails">The level of transaction detail to return, see <see cref="TransactionDetailsFilterType"/>.</param>
         /// <param name="blockRewards">Whether to populate the <c>rewards</c> array, the default includes rewards.</param>
+        /// <param name="maxSupportedTransactionVersion">Max supported transaction version either LEGACY or 1</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         [Obsolete("Please use GetBlock whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
         RequestResult<BlockInfo> GetConfirmedBlock(ulong slot, Commitment commitment = Commitment.Finalized,
-            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false);
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false, int maxSupportedTransactionVersion = 0);
 
         /// <summary>
         /// Gets the block commitment of a certain block, identified by slot.
@@ -1075,9 +1078,10 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="signature">Transaction signature as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <param name="maxSupportedTransactionVersion">Max supported transaction version either LEGACY or 1</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
         Task<RequestResult<TransactionMetaSlotInfo>> GetTransactionAsync(string signature,
-            Commitment commitment = Commitment.Finalized);
+            Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0);
 
         /// <summary>
         /// Returns transaction details for a confirmed transaction.
@@ -1090,9 +1094,10 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="signature">Transaction signature as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <param name="maxSupportedTransactionVersion">Max supported transaction version either LEGACY or 1</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         [Obsolete("Please use GetTransactionAsync whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
-        Task<RequestResult<TransactionMetaSlotInfo>> GetConfirmedTransactionAsync(string signature, Commitment commitment = Commitment.Finalized);
+        Task<RequestResult<TransactionMetaSlotInfo>> GetConfirmedTransactionAsync(string signature, Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0);
 
         /// <summary>
         /// Returns transaction details for a confirmed transaction.
@@ -1105,8 +1110,9 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="signature">Transaction signature as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <param name="maxSupportedTransactionVersion">Max supported transaction version either LEGACY or 1</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature, Commitment commitment = Commitment.Finalized);
+        RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature, Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0);
 
         /// <summary>
         /// Returns transaction details for a confirmed transaction.
@@ -1119,9 +1125,10 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="signature">Transaction signature as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <param name="maxSupportedTransactionVersion">Max supported transaction version either LEGACY or 1</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         [Obsolete("Please use GetTransaction whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
-        RequestResult<TransactionMetaSlotInfo> GetConfirmedTransaction(string signature, Commitment commitment = Commitment.Finalized);
+        RequestResult<TransactionMetaSlotInfo> GetConfirmedTransaction(string signature, Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0);
 
         /// <summary>
         /// Gets the total transaction count of the ledger.

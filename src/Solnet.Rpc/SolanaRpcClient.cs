@@ -211,7 +211,7 @@ namespace Solnet.Rpc
         public async Task<RequestResult<BlockInfo>> GetBlockAsync(ulong slot,
             Commitment commitment = Commitment.Finalized,
             TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full,
-            bool blockRewards = false)
+            bool blockRewards = false, int maxSupportedTransactionVersion = 0)
         {
             if (commitment == Commitment.Processed)
             {
@@ -221,6 +221,7 @@ namespace Solnet.Rpc
             return await SendRequestAsync<BlockInfo>("getBlock",
                 Parameters.Create(slot, ConfigObject.Create(
                     KeyValue.Create("encoding", "json"),
+                    KeyValue.Create("maxSupportedTransactionVersion", maxSupportedTransactionVersion),
                     HandleTransactionDetails(transactionDetails),
                     KeyValue.Create("rewards", blockRewards ? blockRewards : null),
                     HandleCommitment(commitment))));
@@ -229,8 +230,8 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="IRpcClient.GetBlock"/>
         public RequestResult<BlockInfo> GetBlock(ulong slot, Commitment commitment = Commitment.Finalized,
             TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full,
-            bool blockRewards = false)
-            => GetBlockAsync(slot, commitment, transactionDetails, blockRewards).Result;
+            bool blockRewards = false, int maxSupportedTransactionVersion = 0)
+            => GetBlockAsync(slot, commitment, transactionDetails, blockRewards, maxSupportedTransactionVersion).Result;
 
 
         /// <inheritdoc cref="IRpcClient.GetBlocksAsync"/>
@@ -251,7 +252,7 @@ namespace Solnet.Rpc
         public async Task<RequestResult<BlockInfo>> GetConfirmedBlockAsync(ulong slot,
             Commitment commitment = Commitment.Finalized,
             TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full,
-            bool blockRewards = false)
+            bool blockRewards = false, int maxSupportedTransactionVersion = 0)
         {
             if (commitment == Commitment.Processed)
             {
@@ -261,6 +262,7 @@ namespace Solnet.Rpc
             return await SendRequestAsync<BlockInfo>("getConfirmedBlock",
                 Parameters.Create(slot, ConfigObject.Create(
                     KeyValue.Create("encoding", "json"),
+                    KeyValue.Create("maxSupportedTransactionVersion", maxSupportedTransactionVersion),
                     HandleTransactionDetails(transactionDetails),
                     KeyValue.Create("rewards", blockRewards ? blockRewards : null),
                     HandleCommitment(commitment))));
@@ -269,7 +271,7 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="IRpcClient.GetConfirmedBlock"/>
         public RequestResult<BlockInfo> GetConfirmedBlock(ulong slot, Commitment commitment = Commitment.Finalized,
             TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full,
-            bool blockRewards = false)
+            bool blockRewards = false, int maxSupportedTransactionVersion = 0)
             => GetConfirmedBlockAsync(slot, commitment, transactionDetails, blockRewards).Result;
 
 
@@ -425,31 +427,31 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="IRpcClient.GetTransactionAsync"/>
         public async Task<RequestResult<TransactionMetaSlotInfo>> GetTransactionAsync(string signature,
-            Commitment commitment = Commitment.Finalized)
+            Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0)
         {
             return await SendRequestAsync<TransactionMetaSlotInfo>("getTransaction",
                 Parameters.Create(signature,
-                    ConfigObject.Create(KeyValue.Create("encoding", "json"), HandleCommitment(commitment))));
+                    ConfigObject.Create(KeyValue.Create("encoding", "json"), HandleCommitment(commitment), KeyValue.Create("maxSupportedTransactionVersion", maxSupportedTransactionVersion))));
         }
 
-        /// <inheritdoc cref="IRpcClient.GetConfirmedTransactionAsync(string, Commitment)"/>
+        /// <inheritdoc cref="IRpcClient.GetConfirmedTransactionAsync(string, Commitment, int)"/>
         public async Task<RequestResult<TransactionMetaSlotInfo>> GetConfirmedTransactionAsync(string signature,
-            Commitment commitment = Commitment.Finalized)
+            Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0)
         {
             return await SendRequestAsync<TransactionMetaSlotInfo>("getConfirmedTransaction",
                 Parameters.Create(signature,
-                    ConfigObject.Create(KeyValue.Create("encoding", "json"), HandleCommitment(commitment))));
+                    ConfigObject.Create(KeyValue.Create("encoding", "json"), HandleCommitment(commitment), KeyValue.Create("maxSupportedTransactionVersion", maxSupportedTransactionVersion))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetTransaction"/>
         public RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature,
-            Commitment commitment = Commitment.Finalized)
-            => GetTransactionAsync(signature, commitment).Result;
+            Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0)
+            => GetTransactionAsync(signature, commitment, maxSupportedTransactionVersion).Result;
 
-        /// <inheritdoc cref="IRpcClient.GetConfirmedTransaction(string, Commitment)"/>
+        /// <inheritdoc cref="IRpcClient.GetConfirmedTransaction(string, Commitment, int)"/>
         public RequestResult<TransactionMetaSlotInfo> GetConfirmedTransaction(string signature,
-            Commitment commitment = Commitment.Finalized) =>
-            GetConfirmedTransactionAsync(signature, commitment).Result;
+            Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0) =>
+            GetConfirmedTransactionAsync(signature, commitment, maxSupportedTransactionVersion).Result;
 
         /// <inheritdoc cref="IRpcClient.GetBlockHeightAsync"/>
         public async Task<RequestResult<ulong>> GetBlockHeightAsync(Commitment commitment = Commitment.Finalized)

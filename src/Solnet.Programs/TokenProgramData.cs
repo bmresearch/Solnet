@@ -302,7 +302,10 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Current Authority", keys[keyIndices[1]]);
             decodedInstruction.Values.Add("Authority Type", Enum.Parse(typeof(AuthorityType), data.GetU8(1).ToString()));
             decodedInstruction.Values.Add("New Authority Option", data.GetU8(2));
-            decodedInstruction.Values.Add("New Authority", data.GetPubKey(3));
+            if (data.Length >= 34)
+            {
+                decodedInstruction.Values.Add("New Authority", data.GetPubKey(3));
+            }
             for (int i = 2; i < keyIndices.Length; i++)
             {
                 decodedInstruction.Values.Add($"Signer {i - 1}", keys[keyIndices[i]]);

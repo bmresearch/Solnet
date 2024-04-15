@@ -113,7 +113,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(79662904UL, res.Result.ParentSlot);
             Assert.AreEqual("5wLhsKAH9SCPbRZc4qWf3GBiod9CD8sCEZfMiU25qW8", res.Result.Blockhash);
             Assert.AreEqual("CjJ97j84mUq3o67CEqzEkTifXpHLBCD8GvmfBYLz4Zdg", res.Result.PreviousBlockhash);
-
+            Assert.AreEqual(0, res.Result.maxSupportedTransactionVersion);
             Assert.AreEqual(1, res.Result.Rewards.Length);
             var rewards = res.Result.Rewards[0];
 
