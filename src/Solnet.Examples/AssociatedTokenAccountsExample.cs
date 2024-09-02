@@ -32,7 +32,7 @@ namespace Solnet.Examples
             #region Create and Initialize a token Mint Account
 
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = RpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = RpcClient.GetLatestBlockHash();
 
             ulong minBalanceForExemptionAcc =
                 RpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;

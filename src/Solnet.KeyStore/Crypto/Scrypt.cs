@@ -1,3 +1,4 @@
+#pragma warning disable CS1591
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Generators;

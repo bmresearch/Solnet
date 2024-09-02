@@ -167,17 +167,5 @@ namespace Solnet.Programs.Abstract
             return res;
         }
 
-
-        /// <summary>
-        /// Confirms a transaction - same method as web3.js.
-        /// </summary>
-        /// <param name="hash">The hash of the transaction.</param>
-        /// <param name="validBlockHeight">The last valid block height of the blockhash used in the transaction.</param>
-        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
-        /// <returns>Returns null if the transaction wasn't confirmed, otherwise returns the confirmation slot and possible transaction error.</returns>
-        public async Task<ResponseValue<ErrorResult>> ConfirmTransaction(string hash, ulong validBlockHeight, Commitment commitment = Commitment.Finalized)
-        {
-            return await TransactionConfirmationUtils.ConfirmTransaction(this.RpcClient, this.StreamingRpcClient, hash, validBlockHeight, commitment);
-        }
     }
 }

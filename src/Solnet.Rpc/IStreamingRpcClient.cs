@@ -167,13 +167,12 @@ namespace Solnet.Rpc
         /// <summary>
         /// Subscribes asynchronously to changes to a given program account data.
         /// </summary>
-        /// <remarks>
-        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
-        /// </remarks>
-        /// <param name="programPubkey">The program pubkey.</param>
-        /// <param name="callback">The callback to handle data notifications.</param>
-        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
-        /// <returns>The task object representing the asynchronous operation.</returns>
+        /// <param name="programPubkey"></param>
+        /// <param name="callback"></param>
+        /// <param name="commitment"></param>
+        /// <param name="dataSize"></param>
+        /// <param name="memCmpList"></param>
+        /// <returns></returns>
         Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, 
             Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null);
 
@@ -186,6 +185,8 @@ namespace Solnet.Rpc
         /// <param name="programPubkey">The program pubkey.</param>
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <param name="dataSize"></param>
+        /// <param name="memCmpList"></param>
         /// <returns>Returns an object representing the state of the subscription.</returns>
         SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, 
             Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null);

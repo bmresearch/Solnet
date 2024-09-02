@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Solnet.Wallet.Bip39
@@ -195,9 +196,10 @@ namespace Solnet.Wallet.Bip39
         /// <returns>The derived key.</returns>
         private static byte[] GenerateSeed(byte[] password, byte[] salt)
         {
-            Pkcs5S2ParametersGenerator gen = new(new Sha512Digest());
-            gen.Init(password, salt, 2048);
-            return ((KeyParameter)gen.GenerateDerivedParameters(512)).GetKey();
+            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 2048, HashAlgorithmName.SHA512))
+            {
+                return pbkdf2.GetBytes(64);
+            }
         }
 
         /// <summary>

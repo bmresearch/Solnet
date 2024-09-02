@@ -57,7 +57,7 @@ namespace Solnet.Programs.Abstract
             TransactionBuilder tb = new TransactionBuilder();
             tb.AddInstruction(instruction);
 
-            var recentHash = await RpcClient.GetRecentBlockHashAsync();
+            var recentHash = await RpcClient.GetLatestBlockHashAsync();
 
             tb.SetRecentBlockHash(recentHash.Result.Value.Blockhash);
             tb.SetFeePayer(feePayer);

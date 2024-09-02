@@ -42,7 +42,7 @@ namespace Solnet.Examples
 
                     var memoInstruction = MemoProgram.NewMemoV2("Hello Solana World, using Solnet :)");
 
-                    var recentHash = rpcClient.GetRecentBlockHash();
+                    var recentHash = rpcClient.GetLatestBlockHash();
 
                     var tx = new TransactionBuilder().AddInstruction(memoInstruction).SetFeePayer(wallet.Account)
                         .SetRecentBlockHash(recentHash.Result.Value.Blockhash).Build(wallet.Account);

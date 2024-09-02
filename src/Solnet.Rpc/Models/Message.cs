@@ -251,6 +251,9 @@ namespace Solnet.Rpc.Models
             return Deserialize(decodedBytes);
         }
 
+        /// <summary>
+        /// Versioned Message
+        /// </summary>
         public class VersionedMessage : Message
         {
             /// <summary>

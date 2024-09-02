@@ -50,9 +50,9 @@ namespace Solnet.Extensions
         /// </summary>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        public async Task<RequestResult<ResponseValue<BlockHash>>> GetRecentBlockHashAsync(Commitment commitment = Commitment.Finalized)
+        public async Task<RequestResult<ResponseValue<LatestBlockHash>>> GetLatestBlockHashAsync(Commitment commitment = Commitment.Finalized)
         {
-            return await _client.GetRecentBlockHashAsync(commitment);
+            return await _client.GetLatestBlockHashAsync(commitment);
         }
 
         /// <summary>

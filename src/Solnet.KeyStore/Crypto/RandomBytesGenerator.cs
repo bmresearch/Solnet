@@ -1,3 +1,4 @@
+#pragma warning disable CS1591
 using Org.BouncyCastle.Security;
 
 namespace Solnet.KeyStore.Crypto

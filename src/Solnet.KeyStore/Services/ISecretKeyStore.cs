@@ -1,3 +1,4 @@
+#pragma warning disable CS1591
 using Solnet.KeyStore.Model;
 
 namespace Solnet.KeyStore.Services

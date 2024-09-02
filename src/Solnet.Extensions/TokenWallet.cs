@@ -499,7 +499,7 @@ namespace Solnet.Extensions
             TokenWallet destWallet = await TokenWallet.LoadAsync(RpcClient, MintResolver, destination);
 
             // get recent block hash
-            var blockHash = await RpcClient.GetRecentBlockHashAsync();
+            var blockHash = await RpcClient.GetLatestBlockHashAsync();
 
             // prepare transaction
             var builder = new TransactionBuilder();

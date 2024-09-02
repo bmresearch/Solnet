@@ -210,7 +210,7 @@ var fromAccount = wallet.GetAccount(0);
 // Get the destination account
 var toAccount = wallet.GetAccount(1);
 // Get a recent block hash to include in the transaction
-var blockHash = rpcClient.GetRecentBlockHash();
+var blockHash = rpcClient.GetLatestBlockHash();
 
 // Initialize a transaction builder and chain as many instructions as you want before building the message
 var tx = new TransactionBuilder().
@@ -228,7 +228,7 @@ var firstSig = rpcClient.SendTransaction(tx);
 ```c#
 var wallet = new Wallet.Wallet(MnemonicWords);
 
-var blockHash = rpcClient.GetRecentBlockHash();
+var blockHash = rpcClient.GetLatestBlockHash();
 var minBalanceForExemptionAcc = rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
 
 var minBalanceForExemptionMint =rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MintAccountDataSize).Result;
@@ -277,7 +277,7 @@ var tx = new TransactionBuilder().
 var rpcClient = ClientFactory.GetClient(Cluster.MainNet);
 var wallet = new Wallet();
 
-var blockHash = rpcClient.GetRecentBlockHash();
+var blockHash = rpcClient.GetLatestBlockHash();
 var minBalanceForExemptionAcc =
     rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
 

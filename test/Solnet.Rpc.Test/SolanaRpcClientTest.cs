@@ -605,31 +605,6 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
-        public void TestGetSnapshotSlot()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetSnapshotSlotResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetSnapshotSlotRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetSnapshotSlot();
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(100UL, result.Result);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-        
-        [TestMethod]
         public void TestGetHighestSnapshotSlot()
         {
             var responseData = File.ReadAllText("Resources/Http/GetHighestSnapshotSlotResponse.json");
@@ -710,88 +685,6 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
-
-        [TestMethod]
-        public void TestGetStakeActivation()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetStakeActivationResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetStakeActivationRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetStakeActivation("CYRJWqiSjLitBAcRxPvWpgX3s5TvmN2SuRY3eEYypFvT");
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(197717120UL, result.Result.Active);
-            Assert.AreEqual(0UL, result.Result.Inactive);
-            Assert.AreEqual("active", result.Result.State);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetStakeActivationWithEpoch()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetStakeActivationWithEpochResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetStakeActivationWithEpochRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetStakeActivation("CYRJWqiSjLitBAcRxPvWpgX3s5TvmN2SuRY3eEYypFvT", 4);
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(124429280UL, result.Result.Active);
-            Assert.AreEqual(73287840UL, result.Result.Inactive);
-            Assert.AreEqual("activating", result.Result.State);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
-        [TestMethod]
-        public void TestGetStakeActivationWithEpochProcessed()
-        {
-            var responseData = File.ReadAllText("Resources/Http/GetStakeActivationWithEpochResponse.json");
-            var requestData = File.ReadAllText("Resources/Http/GetStakeActivationWithEpochProcessedRequest.json");
-            var sentMessage = string.Empty;
-            var messageHandlerMock = SetupTest(
-                (s => sentMessage = s), responseData);
-
-            var httpClient = new HttpClient(messageHandlerMock.Object)
-            {
-                BaseAddress = TestnetUri,
-            };
-
-            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
-            var result = sut.GetStakeActivation("CYRJWqiSjLitBAcRxPvWpgX3s5TvmN2SuRY3eEYypFvT", 4, Commitment.Processed);
-
-            Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
-            Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(124429280UL, result.Result.Active);
-            Assert.AreEqual(73287840UL, result.Result.Inactive);
-            Assert.AreEqual("activating", result.Result.State);
-
-            FinishTest(messageHandlerMock, TestnetUri);
-        }
-
 
         [TestMethod]
         public void TestGetMinimumLedgerSlot()

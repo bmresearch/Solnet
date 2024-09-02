@@ -134,40 +134,6 @@ namespace Solnet.Rpc
             _composer.AddRequest("getSignaturesForAddress", parameters, callback);
         }
 
-
-        /// <summary>
-        /// Gets confirmed signatures for transactions involving the address.
-        /// <remarks>
-        /// Unless <c>searchTransactionHistory</c> is included, this method only searches the recent status cache of signatures.
-        /// </remarks>
-        /// </summary>
-        /// <param name="accountPubKey">The account address as base-58 encoded string.</param>
-        /// <param name="limit">Maximum transaction signatures to return, between 1-1000. Default is 1000.</param>
-        /// <param name="before">Start searching backwards from this transaction signature.</param>
-        /// <param name="until">Search until this transaction signature, if found before limit is reached.</param>
-        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
-        /// <param name="callback">The callback to handle the result.</param>
-        [Obsolete("Please use GetSignaturesForAddressAsync whenever possible instead. This method is expected to be removed in solana-core v1.8.")]
-        public void GetConfirmedSignaturesForAddress2(string accountPubKey, ulong limit = 1000,
-                                                      string before = null, string until = null,
-                                                      Commitment commitment = Commitment.Finalized,
-                                                      Action<List<SignatureStatusInfo>, Exception> callback = null)
-        {
-            if (commitment == Commitment.Processed)
-                throw new ArgumentException("Commitment.Processed is not supported for this method.");
-
-            var parameters = Parameters.Create(
-                    accountPubKey,
-                    ConfigObject.Create(
-                        KeyValue.Create("limit", limit != 1000 ? limit : null),
-                        KeyValue.Create("before", before),
-                        KeyValue.Create("until", until),
-                        HandleCommitment(commitment)));
-
-            _composer.AddRequest("getConfirmedSignaturesForAddress2", parameters, callback);
-        }
-
-
         /// <summary>
         /// Returns all accounts owned by the provided program Pubkey.
         /// <remarks>Accounts must meet all filter criteria to be included in the results.</remarks>

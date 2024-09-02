@@ -441,7 +441,15 @@ namespace Solnet.Rpc
         #endregion
 
         #region Program
-        /// <inheritdoc cref="IStreamingRpcClient.SubscribeProgramAsync(string, Action{SubscriptionState, ResponseValue{AccountKeyPair}}, Commitment)"/>
+        /// <summary>
+        /// Subscribe Program
+        /// </summary>
+        /// <param name="programPubkey"></param>
+        /// <param name="callback"></param>
+        /// <param name="commitment"></param>
+        /// <param name="dataSize"></param>
+        /// <param name="memCmpList"></param>
+        /// <returns></returns>
         public async Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, 
             ResponseValue<AccountKeyPair>> callback, Commitment commitment = Commitment.Finalized, int? dataSize = null, 
             IList<MemCmp> memCmpList = null)
@@ -468,7 +476,15 @@ namespace Solnet.Rpc
             return await Subscribe(sub, msg).ConfigureAwait(false);
         }
 
-        /// <inheritdoc cref="IStreamingRpcClient.SubscribeProgram(string, Action{SubscriptionState, ResponseValue{AccountKeyPair}}, Commitment)"/>
+        /// <summary>
+        /// Subscribe Program
+        /// </summary>
+        /// <param name="programPubkey"></param>
+        /// <param name="callback"></param>
+        /// <param name="commitment"></param>
+        /// <param name="dataSize"></param>
+        /// <param name="memCmpList"></param>
+        /// <returns></returns>
         public SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, 
             Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null)
             => SubscribeProgramAsync(programPubkey, callback, commitment, dataSize, memCmpList).Result;

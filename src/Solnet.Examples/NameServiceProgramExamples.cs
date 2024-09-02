@@ -52,7 +52,7 @@ namespace Solnet.Examples
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
 
-            var blockHash = rpcClient.GetRecentBlockHash();
+            var blockHash = rpcClient.GetLatestBlockHash();
             var minBalanceForExemptionNameAcc =
                 rpcClient.GetMinimumBalanceForRentExemption(NameServiceProgram.NameAccountSize + 96).Result;
 

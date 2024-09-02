@@ -25,7 +25,7 @@ namespace Solnet.Examples
             var fromAccount = wallet.GetAccount(10);
             var toAccount = wallet.GetAccount(8);
 
-            var blockHash = rpcClient.GetRecentBlockHash();
+            var blockHash = rpcClient.GetLatestBlockHash();
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
 
             var msgBytes = new TransactionBuilder()

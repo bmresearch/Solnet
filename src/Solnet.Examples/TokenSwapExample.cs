@@ -36,7 +36,7 @@ namespace Solnet.Examples
             var tokenBUserAccount = new Account();
 
             //setup some mints and tokens owned by wallet
-            RequestResult<ResponseValue<BlockHash>> blockHash = RpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = RpcClient.GetLatestBlockHash();
             var tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(wallet.Account)
@@ -112,7 +112,7 @@ namespace Solnet.Examples
             var swapTokenBAccount = new Account();
 
             //init the swap authority's token accounts
-            blockHash = RpcClient.GetRecentBlockHash();
+            blockHash = RpcClient.GetLatestBlockHash();
             tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(wallet.Account)
@@ -161,7 +161,7 @@ namespace Solnet.Examples
             var poolFeeAccount = new Account();
 
             //create the pool mint and the user and fee pool token accounts
-            blockHash = RpcClient.GetRecentBlockHash();
+            blockHash = RpcClient.GetLatestBlockHash();
             tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(wallet.Account)
@@ -206,7 +206,7 @@ namespace Solnet.Examples
             Examples.PollConfirmedTx(txSig);
 
             //create the swap
-            blockHash = RpcClient.GetRecentBlockHash();
+            blockHash = RpcClient.GetLatestBlockHash();
             tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(wallet.Account)
@@ -247,7 +247,7 @@ namespace Solnet.Examples
             Examples.PollConfirmedTx(txSig);
 
             //now a user can swap in the pool
-            blockHash = RpcClient.GetRecentBlockHash();
+            blockHash = RpcClient.GetLatestBlockHash();
             tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(wallet.Account)
@@ -268,7 +268,7 @@ namespace Solnet.Examples
             Examples.PollConfirmedTx(txSig);
 
             //user can add liq
-            blockHash = RpcClient.GetRecentBlockHash();
+            blockHash = RpcClient.GetLatestBlockHash();
             tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(wallet.Account)
@@ -289,7 +289,7 @@ namespace Solnet.Examples
             Examples.PollConfirmedTx(txSig);
 
             //user can remove liq
-            blockHash = RpcClient.GetRecentBlockHash();
+            blockHash = RpcClient.GetLatestBlockHash();
             tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(wallet.Account)
@@ -311,7 +311,7 @@ namespace Solnet.Examples
             Examples.PollConfirmedTx(txSig);
 
             //user can deposit single
-            blockHash = RpcClient.GetRecentBlockHash();
+            blockHash = RpcClient.GetLatestBlockHash();
             tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(wallet.Account)
@@ -330,7 +330,7 @@ namespace Solnet.Examples
             Examples.PollConfirmedTx(txSig);
 
             //user can withdraw single
-            blockHash = RpcClient.GetRecentBlockHash();
+            blockHash = RpcClient.GetLatestBlockHash();
             tx = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(wallet.Account)

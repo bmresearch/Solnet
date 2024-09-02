@@ -26,7 +26,7 @@ namespace Solnet.Examples
         {
             Wallet.Wallet wallet = new(MnemonicWords);
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
 
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
@@ -91,7 +91,7 @@ namespace Solnet.Examples
             string createMultiSigAndMintSignature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(createMultiSigAndMintSignature);
 
-            blockHash = rpcClient.GetRecentBlockHash();
+            blockHash = rpcClient.GetLatestBlockHash();
 
             msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
@@ -154,7 +154,7 @@ namespace Solnet.Examples
         {
             Wallet.Wallet wallet = new(MnemonicWords);
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
 
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
@@ -227,7 +227,7 @@ namespace Solnet.Examples
         {
             Wallet.Wallet wallet = new(MnemonicWords);
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
 
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
@@ -359,7 +359,7 @@ namespace Solnet.Examples
         {
             Wallet.Wallet wallet = new(MnemonicWords);
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
 
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
@@ -427,7 +427,7 @@ namespace Solnet.Examples
             string signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
 
-            blockHash = rpcClient.GetRecentBlockHash();
+            blockHash = rpcClient.GetLatestBlockHash();
 
 
             // Then we create an account which will be the token's mint authority
@@ -479,7 +479,7 @@ namespace Solnet.Examples
             signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
 
-            blockHash = rpcClient.GetRecentBlockHash();
+            blockHash = rpcClient.GetLatestBlockHash();
 
             // Here we mint tokens to an account using the mint authority multi sig
             msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
@@ -526,7 +526,7 @@ namespace Solnet.Examples
             signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
 
-            blockHash = rpcClient.GetRecentBlockHash();
+            blockHash = rpcClient.GetLatestBlockHash();
 
             // After doing this, we freeze the account to which we just minted tokens
             // Notice how the signers used are different, because the `freezeAuthority` has different signers
@@ -563,7 +563,7 @@ namespace Solnet.Examples
             signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
 
-            blockHash = rpcClient.GetRecentBlockHash();
+            blockHash = rpcClient.GetLatestBlockHash();
 
             // Because we're actually cool people, we now thaw that same account and then set the authority to nothing
             msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
@@ -627,7 +627,7 @@ namespace Solnet.Examples
         {
             Wallet.Wallet wallet = new(MnemonicWords);
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
 
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
@@ -703,7 +703,7 @@ namespace Solnet.Examples
             string signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
 
-            blockHash = rpcClient.GetRecentBlockHash();
+            blockHash = rpcClient.GetLatestBlockHash();
 
             msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
@@ -749,7 +749,7 @@ namespace Solnet.Examples
             signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
 
-            blockHash = rpcClient.GetRecentBlockHash();
+            blockHash = rpcClient.GetLatestBlockHash();
 
             msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(ownerAccount)
@@ -786,7 +786,7 @@ namespace Solnet.Examples
             signature = Examples.SubmitTxSendAndLog(txBytes);
             Examples.PollConfirmedTx(signature);
 
-            blockHash = rpcClient.GetRecentBlockHash();
+            blockHash = rpcClient.GetLatestBlockHash();
 
 
             msgData = new TransactionBuilder().SetRecentBlockHash(blockHash.Result.Value.Blockhash)
@@ -845,7 +845,7 @@ namespace Solnet.Examples
         {
             Wallet.Wallet wallet = new(MnemonicWords);
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
 
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
@@ -946,7 +946,7 @@ namespace Solnet.Examples
         {
             Wallet.Wallet wallet = new(MnemonicWords);
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
 
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;

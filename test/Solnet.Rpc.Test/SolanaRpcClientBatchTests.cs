@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿#pragma warning disable CS0618
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Solnet.Programs;
 using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
@@ -21,36 +22,8 @@ namespace Solnet.Rpc.Test
     [TestClass]
     public class SolanaRpcClientBatchTests
     {
-#pragma warning disable CS0618 // Type or member is obsolete
-        [TestMethod]
-        public void TestCreateAndSerializeBatchRequest()
-        {
-
-            // compose a new batch of requests
-            var unusedRpcClient = ClientFactory.GetClient(Cluster.MainNet);
-            var batch = new SolanaRpcBatchWithCallbacks(unusedRpcClient);
-            batch.GetBalance("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
-            batch.GetTokenAccountsByOwner("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", null, TokenProgram.ProgramIdKey);
-
-            batch.GetConfirmedSignaturesForAddress2("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", 200, null, null);
-            batch.GetConfirmedSignaturesForAddress2("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex", 200, null, null);
-            batch.GetConfirmedSignaturesForAddress2("4NSREK36nAr32vooa3L9z8tu6JWj5rY3k4KnsqTgynvm", 200, null, null);
-
-            // how many requests in batch?
-            Assert.AreEqual(5, batch.Composer.Count);
-
-            // serialize
-            var reqs = batch.Composer.CreateJsonRequests();
-            Assert.IsNotNull(reqs);
-            Assert.AreEqual(5, reqs.Count);
-
-            // serialize and check we're good
-            var serializerOptions = CreateJsonOptions();
-            var json = JsonSerializer.Serialize<JsonRpcBatchRequest>(reqs, serializerOptions);
-            var expected = File.ReadAllText("Resources/Http/Batch/SampleBatchRequest.json");
-            Assert.AreEqual(expected, json);
-
-        }
+ // Type or member is obsolete
+      
         
         [TestMethod]
         public void TestCreateAndSerializeBatchTokenMintInfoRequest()
@@ -99,55 +72,6 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
-        public void TestCreateAndProcessBatchCallbacks()
-        {
-
-            var expected_requests = File.ReadAllText("Resources/Http/Batch/SampleBatchRequest.json");
-            var expected_responses = File.ReadAllText("Resources/Http/Batch/SampleBatchResponse.json");
-
-            ulong found_lamports = 0;
-            decimal found_balance = 0M;
-            int sig_callback_count = 0;
-
-            // compose a new batch of requests
-            var unusedRpcClient = ClientFactory.GetClient(Cluster.MainNet);
-            var batch = new SolanaRpcBatchWithCallbacks(unusedRpcClient);
-            batch.GetBalance("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5",
-                callback: (x, ex) => found_lamports = x.Value);
-            batch.GetTokenAccountsByOwner("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", null, TokenProgram.ProgramIdKey,
-                callback: (x, ex) => found_balance = x.Value[0].Account.Data.Parsed.Info.TokenAmount.AmountDecimal);
-            batch.GetConfirmedSignaturesForAddress2("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", 200, null, null,
-                callback: (x, ex) => sig_callback_count += x.Count);
-            batch.GetConfirmedSignaturesForAddress2("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex", 200, null, null,
-                callback: (x, ex) => sig_callback_count += x.Count);
-            batch.GetConfirmedSignaturesForAddress2("4NSREK36nAr32vooa3L9z8tu6JWj5rY3k4KnsqTgynvm", 200, null, null,
-                callback: (x, ex) => sig_callback_count += x.Count);
-
-            // how many requests in batch?
-            Assert.AreEqual(5, batch.Composer.Count);
-
-            // serialize and check we're good
-            var reqs = batch.Composer.CreateJsonRequests();
-            var serializerOptions = CreateJsonOptions();
-            var json = JsonSerializer.Serialize<JsonRpcBatchRequest>(reqs, serializerOptions);
-            Assert.IsNotNull(reqs);
-            Assert.AreEqual(5, reqs.Count);
-            Assert.AreEqual(expected_requests, json);
-
-            // fake RPC response
-            var resp = CreateMockRequestResult<JsonRpcBatchResponse>(expected_requests, expected_responses, HttpStatusCode.OK);
-            Assert.IsNotNull(resp.Result);
-            Assert.AreEqual(5, resp.Result.Count);
-
-            // process and invoke callbacks
-            batch.Composer.ProcessBatchResponse(resp);
-            Assert.AreEqual((ulong)237543960, found_lamports);
-            Assert.AreEqual(12.5M, found_balance);
-            Assert.AreEqual(3, sig_callback_count);
-
-        }
-
-        [TestMethod]
         public void TestAutoExecuteMode()
         {
 
@@ -172,11 +96,11 @@ namespace Solnet.Rpc.Test
                 callback: (x, ex) => found_lamports = x.Value);
             batch.GetTokenAccountsByOwner("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", null, TokenProgram.ProgramIdKey,
                 callback: (x, ex) => found_balance = x.Value[0].Account.Data.Parsed.Info.TokenAmount.AmountDecimal);
-            batch.GetConfirmedSignaturesForAddress2("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", 200, null, null,
+            batch.GetSignaturesForAddress("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", 200, null, null,
                 callback: (x, ex) => sig_callback_count += x.Count);
-            batch.GetConfirmedSignaturesForAddress2("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex", 200, null, null,
+            batch.GetSignaturesForAddress("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex", 200, null, null,
                 callback: (x, ex) => sig_callback_count += x.Count);
-            batch.GetConfirmedSignaturesForAddress2("4NSREK36nAr32vooa3L9z8tu6JWj5rY3k4KnsqTgynvm", 200, null, null,
+            batch.GetSignaturesForAddress("4NSREK36nAr32vooa3L9z8tu6JWj5rY3k4KnsqTgynvm", 200, null, null,
                 callback: (x, ex) => sig_callback_count += x.Count);
 
             // run through any remaining requests in batch
@@ -272,11 +196,11 @@ namespace Solnet.Rpc.Test
                 callback: (x, ex) => exceptions_encountered += ex != null ? 1 : 0);
             batch.GetTokenAccountsByOwner("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", null, TokenProgram.ProgramIdKey,
                 callback: (x, ex) => exceptions_encountered += ex != null ? 1 : 0);
-            batch.GetConfirmedSignaturesForAddress2("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", 200, null, null,
+            batch.GetSignaturesForAddress("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", 200, null, null,
                 callback: (x, ex) => exceptions_encountered += ex != null ? 1 : 0);
-            batch.GetConfirmedSignaturesForAddress2("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex", 200, null, null,
+            batch.GetSignaturesForAddress("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex", 200, null, null,
                 callback: (x, ex) => exceptions_encountered += ex != null ? 1 : 0);
-            batch.GetConfirmedSignaturesForAddress2("4NSREK36nAr32vooa3L9z8tu6JWj5rY3k4KnsqTgynvm", 200, null, null,
+            batch.GetSignaturesForAddress("4NSREK36nAr32vooa3L9z8tu6JWj5rY3k4KnsqTgynvm", 200, null, null,
                 callback: (x, ex) =>
                 {
                     Assert.IsInstanceOfType(ex, typeof(BatchRequestException));

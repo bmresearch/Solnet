@@ -111,9 +111,9 @@ namespace Solnet.Extensions.Test
             return await MockResponseValue<ulong>();
         }
 
-        public async Task<RequestResult<ResponseValue<BlockHash>>> GetRecentBlockHashAsync(Commitment commitment = Commitment.Finalized)
+        public async Task<RequestResult<ResponseValue<LatestBlockHash>>> GetLatestBlockHashAsync(Commitment commitment = Commitment.Finalized)
         {
-            return await MockResponseValue<BlockHash>();
+            return await MockResponseValue<LatestBlockHash>();
         }
 
         public async Task<RequestResult<ResponseValue<List<TokenAccount>>>> GetTokenAccountsByOwnerAsync(string ownerPubKey, string tokenMintPubKey = null, string tokenProgramId = null, Commitment commitment = Commitment.Finalized)

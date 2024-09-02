@@ -1,9 +1,7 @@
 ﻿using Solnet.Extensions.TokenMint;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
+using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -87,9 +85,9 @@ namespace Solnet.Extensions
         /// <returns>A task that will result in an instance of the TokenMintResolver populated with Solana token list definitions.</returns>
         public static async Task<TokenMintResolver> LoadAsync(string url)
         {
-            using (var wc = new WebClient())
+            using (var wc = new HttpClient())
             {
-                var json = await wc.DownloadStringTaskAsync(url);
+                var json = await wc.GetStringAsync(url);
                 return ParseTokenList(json);
             }
         }

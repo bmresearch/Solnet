@@ -26,7 +26,7 @@ namespace Solnet.Examples
             Account fromAccount = wallet.GetAccount(10);
             Account toAccount = wallet.GetAccount(8);
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
 
             byte[] tx = new TransactionBuilder()
@@ -57,7 +57,7 @@ namespace Solnet.Examples
         {
             Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
             ulong minBalanceForExemptionAcc =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
@@ -127,7 +127,7 @@ namespace Solnet.Examples
         {
             Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
             ulong minBalanceForExemptionAcc =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
@@ -176,7 +176,7 @@ namespace Solnet.Examples
         {
             Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
             ulong minBalanceForExemptionAcc = rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
 
@@ -232,7 +232,7 @@ namespace Solnet.Examples
         {
             Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
             ulong minBalanceForExemptionAcc =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
             Console.WriteLine($"MinBalanceForRentExemption Account >> {minBalanceForExemptionAcc}");
@@ -293,7 +293,7 @@ namespace Solnet.Examples
         {
             Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
             ulong minBalanceForExemptionAcc =
                 rpcClient.GetMinimumBalanceForRentExemption(NonceAccount.AccountDataSize).Result;
 
@@ -398,7 +398,7 @@ namespace Solnet.Examples
         {
             Wallet.Wallet wallet = new(MnemonicWords);
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
 
             ulong minBalanceForExemptionMultiSig =
                 rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.MultisigAccountDataSize).Result;
@@ -452,7 +452,7 @@ namespace Solnet.Examples
             Account fromAccount = wallet.GetAccount(10);
             Account toAccount = wallet.GetAccount(8);
 
-            RequestResult<ResponseValue<BlockHash>> blockHash = rpcClient.GetRecentBlockHash();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
             Console.WriteLine($"BlockHash >> {blockHash.Result.Value.Blockhash}");
 
             TransactionBuilder txBuilder = new TransactionBuilder()

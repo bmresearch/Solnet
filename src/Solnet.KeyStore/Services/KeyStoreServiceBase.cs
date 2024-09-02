@@ -1,3 +1,4 @@
+#pragma warning disable CS1591
 using Solnet.KeyStore.Crypto;
 using Solnet.KeyStore.Model;
 using System;
