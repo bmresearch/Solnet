@@ -1,3 +1,4 @@
+using Chaos.NaCl;
 using Solnet.Rpc.Builders;
 using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
@@ -308,13 +309,35 @@ namespace Solnet.Rpc.Models
 
             if (signatures != null)
             {
-                for (int i = 0; i < signatures.Count; i++)
+                int i = 0;
+                foreach(byte[] signature in signatures)
                 {
-                    tx.Signatures.Add(new SignaturePubKeyPair
+                    byte[] messageBytes = message.Serialize();
+                    bool validSig = Ed25519.Verify(signature, messageBytes, message.AccountKeys[i].KeyBytes);
+                    PublicKey signer = message.AccountKeys[i];
+                    if (!validSig)
                     {
-                        PublicKey = message.AccountKeys[i],
-                        Signature = signatures[i]
-                    });
+                        foreach (var account in message.AccountKeys)
+                        {
+                            if (Ed25519.Verify(signature, messageBytes, account.KeyBytes))
+                            {
+                                validSig = true;
+                                signer = account;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (validSig)
+                    {
+                        tx.Signatures.Add(new SignaturePubKeyPair
+                        {
+                            PublicKey = signer,
+                            Signature = signature
+                        });
+                    }
+
+                    i++;
                 }
             }
 
