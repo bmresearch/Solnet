@@ -339,9 +339,10 @@ namespace Solnet.Extensions.Test
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 Converters =
-            {
-                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-            }
+                {
+                    new TransactionMetaInfoConverter(),
+                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                }
             };
             var json = File.ReadAllText("Resources/TokenWallet/GetBalanceResponse.json");
             var result = JsonSerializer.Deserialize<JsonRpcResponse<ResponseValue<ulong>>>(json, serializerOptions);
@@ -355,9 +356,10 @@ namespace Solnet.Extensions.Test
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 Converters =
-            {
-                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-            }
+                {
+                    new TransactionMetaInfoConverter(),
+                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                }
             };
             var json = File.ReadAllText("Resources/TokenWallet/SendTransactionResponse.json");
             var result = JsonSerializer.Deserialize<JsonRpcResponse<string>>(json, serializerOptions);
@@ -487,6 +489,7 @@ namespace Solnet.Extensions.Test
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 Converters =
                 {
+                    new TransactionMetaInfoConverter(),
                     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
                 }
             };

@@ -3,6 +3,7 @@ using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
+using Solnet.Rpc.Converters;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
@@ -63,6 +64,7 @@ namespace Solnet.Rpc
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 Converters =
                 {
+                    new TransactionMetaInfoConverter(),
                     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
                 }
             };

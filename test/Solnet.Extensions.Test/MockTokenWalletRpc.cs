@@ -42,6 +42,7 @@ namespace Solnet.Extensions.Test
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 Converters =
                 {
+                    new TransactionMetaInfoConverter(),
                     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
                 }
             };

@@ -50,6 +50,7 @@ namespace Solnet.Rpc
             Converters =
             {
                 new EncodingConverter(),
+                new TransactionMetaInfoConverter(),
                 new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
             }
         };

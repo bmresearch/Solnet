@@ -60,6 +60,7 @@ namespace Solnet.Rpc.Core.Http
                 Converters =
                 {
                     new EncodingConverter(),
+                    new TransactionMetaInfoConverter(),
                     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
                 }
             };

@@ -167,7 +167,11 @@ namespace Solnet.Programs.Test
                 new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+                    Converters =
+                    {
+                        new TransactionMetaInfoConverter(),
+                        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                    }
                 });
 
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(txMeta);
@@ -222,7 +226,11 @@ namespace Solnet.Programs.Test
                 new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+                    Converters =
+                    {
+                        new TransactionMetaInfoConverter(),
+                        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                    }
                 });
 
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(txMeta);
@@ -245,7 +253,11 @@ namespace Solnet.Programs.Test
                 new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+                    Converters =
+                    {
+                        new TransactionMetaInfoConverter(),
+                        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                    }
                 });
 
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(txMeta);
