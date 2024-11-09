@@ -32,6 +32,10 @@
         /// <summary>
         /// Root subscription (<c>rootSubscribe</c>). 
         /// </summary>
-        Root
+        Root,
+        /// <summary>
+        /// Block subscription (<c>blockSubscribe</c>). 
+        /// </summary>
+        Block,
     }
 }

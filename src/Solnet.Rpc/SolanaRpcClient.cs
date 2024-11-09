@@ -76,10 +76,10 @@ namespace Solnet.Rpc
             return await SendRequest<T>(req);
         }
 
-        private KeyValue HandleCommitment(Commitment parameter, Commitment defaultValue = Commitment.Finalized)
+        public static KeyValue HandleCommitment(Commitment parameter, Commitment defaultValue = Commitment.Finalized)
             => parameter != defaultValue ? KeyValue.Create("commitment", parameter) : null;
 
-        private KeyValue HandleTransactionDetails(TransactionDetailsFilterType parameter,
+        public static KeyValue HandleTransactionDetails(TransactionDetailsFilterType parameter,
             TransactionDetailsFilterType defaultValue = TransactionDetailsFilterType.Full)
             => parameter != defaultValue ? KeyValue.Create("transactionDetails", parameter) : null;
 

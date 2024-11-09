@@ -35,6 +35,18 @@ namespace Solnet.Rpc
         IConnectionStatistics Statistics { get; }
 
         /// <summary>
+        /// Subscribes asynchronously to Block notifications.
+        /// </summary>
+        /// <remarks>
+        /// The <c>commitment</c> parameter is optional, the default value <see cref="Commitment.Finalized"/> is not sent.
+        /// </remarks>
+        /// <param name="pubkey">The public key of mentioned address to track.</param>
+        /// <param name="callback">The callback to handle data notifications.</param>
+        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
+        /// <returns>The task object representing the asynchronous operation.</returns>
+        Task<SubscriptionState> SubscribeBlockAsync(string pubkey, Action<SubscriptionState, ResponseValue<BlockNotification>> callback, Commitment commitment = Commitment.Finalized);
+
+        /// <summary>
         /// Subscribes asynchronously to AccountInfo notifications.
         /// </summary>
         /// <remarks>

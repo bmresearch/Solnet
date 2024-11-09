@@ -41,6 +41,20 @@ namespace Solnet.Rpc
         private readonly Dictionary<int, SubscriptionState> confirmedSubscriptions = new Dictionary<int, SubscriptionState>();
 
         /// <summary>
+        /// JSON serializer options
+        /// </summary>
+        private JsonSerializerOptions _jsonOptions = new JsonSerializerOptions()
+        {
+            MaxDepth = 64,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters =
+            {
+                new EncodingConverter(),
+                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+            }
+        };
+
+        /// <summary>
         /// Internal constructor.
         /// </summary>
         /// <param name="url">The url of the server to connect to.</param>
@@ -158,7 +172,8 @@ namespace Solnet.Rpc
         /// <param name="reader">The jsonReader that read the message so far.</param>
         private void HandleError(ref Utf8JsonReader reader)
         {
-            JsonSerializerOptions opts = new JsonSerializerOptions() { MaxDepth = 64, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            // JsonSerializerOptions opts = new JsonSerializerOptions() { MaxDepth = 64, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var opts = _jsonOptions;
             var err = JsonSerializer.Deserialize<ErrorContent>(ref reader, opts);
 
             reader.Read();
@@ -270,7 +285,8 @@ namespace Solnet.Rpc
         /// <param name="subscriptionId">The subscriptionId for this message.</param>
         private void HandleDataMessage(ref Utf8JsonReader reader, string method, int subscriptionId)
         {
-            JsonSerializerOptions opts = new JsonSerializerOptions() { MaxDepth = 64, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            // JsonSerializerOptions opts = new JsonSerializerOptions() { MaxDepth = 64, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var opts = _jsonOptions;
 
             var sub = RetrieveSubscription(subscriptionId);
 
@@ -299,7 +315,7 @@ namespace Solnet.Rpc
                     break;
                 case "programNotification":
                     var programNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<AccountKeyPair>>>(ref reader, opts);
-                    result = programNotification.Result; 
+                    result = programNotification.Result;
                     break;
                 case "signatureNotification":
                     var signatureNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<ErrorResult>>>(ref reader, opts);
@@ -314,10 +330,47 @@ namespace Solnet.Rpc
                     var rootNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<int>>(ref reader, opts);
                     result = rootNotification.Result;
                     break;
+                case "blockNotification":
+                    var blockNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<BlockNotification>>>(ref reader, opts);
+                    result = blockNotification.Result;
+                    break;
             }
 
             sub.HandleData(result);
         }
+
+        #region Block
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeBlockAsync(string, Action{SubscriptionState, ResponseValue{BlockNotification}}, Commitment)"/>
+        public async Task<SubscriptionState> SubscribeBlockAsync(string pubkey, Action<SubscriptionState, ResponseValue<BlockNotification>> callback, Commitment commitment = Commitment.Finalized)
+        {
+            var transactionDetails = TransactionDetailsFilterType.Full;
+            var blockRewards = false;
+            var maxSupportedTransactionVersion = 0;
+            var encoding = "json";
+
+            object mention = string.IsNullOrEmpty(pubkey)
+                ? "all"
+                : ConfigObject.Create(KeyValue.Create("mentionsAccountOrProgram", pubkey));
+
+            var extra = ConfigObject.Create(
+                KeyValue.Create("encoding", encoding),
+                KeyValue.Create("maxSupportedTransactionVersion", maxSupportedTransactionVersion),
+                SolanaRpcClient.HandleTransactionDetails(transactionDetails),
+                KeyValue.Create("rewards", blockRewards ? blockRewards : null),
+                SolanaRpcClient.HandleCommitment(commitment)
+                );
+
+            var parameters = Parameters.Create(
+                mention,
+                extra
+                );
+
+            var sub = new SubscriptionState<ResponseValue<BlockNotification>>(this, SubscriptionChannel.Block, callback, parameters);
+
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), "blockSubscribe", parameters);
+            return await Subscribe(sub, msg).ConfigureAwait(false);
+        }
+        #endregion
 
         #region AccountInfo
         /// <inheritdoc cref="IStreamingRpcClient.SubscribeAccountInfoAsync(string, Action{SubscriptionState, ResponseValue{AccountInfo}}, Commitment)"/>
@@ -450,8 +503,8 @@ namespace Solnet.Rpc
         /// <param name="dataSize"></param>
         /// <param name="memCmpList"></param>
         /// <returns></returns>
-        public async Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, 
-            ResponseValue<AccountKeyPair>> callback, Commitment commitment = Commitment.Finalized, int? dataSize = null, 
+        public async Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState,
+            ResponseValue<AccountKeyPair>> callback, Commitment commitment = Commitment.Finalized, int? dataSize = null,
             IList<MemCmp> memCmpList = null)
         {
             List<object> filters = Parameters.Create(ConfigObject.Create(KeyValue.Create("dataSize", dataSize)));
@@ -462,7 +515,7 @@ namespace Solnet.Rpc
                     ConfigObject.Create(KeyValue.Create("offset", filter.Offset),
                         KeyValue.Create("bytes", filter.Bytes))))));
             }
-            
+
             List<object> parameters = Parameters.Create(
                 programPubkey,
                 ConfigObject.Create(
@@ -485,7 +538,7 @@ namespace Solnet.Rpc
         /// <param name="dataSize"></param>
         /// <param name="memCmpList"></param>
         /// <returns></returns>
-        public SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, 
+        public SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback,
             Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null)
             => SubscribeProgramAsync(programPubkey, callback, commitment, dataSize, memCmpList).Result;
         #endregion
@@ -528,16 +581,18 @@ namespace Solnet.Rpc
         /// <returns>A task representing the state of the asynchronous operation-</returns>
         private async Task<SubscriptionState> Subscribe(SubscriptionState sub, JsonRpcRequest msg)
         {
-            var json = JsonSerializer.SerializeToUtf8Bytes(msg, new JsonSerializerOptions
-            {
-                WriteIndented = false,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                Converters =
-                {
-                    new EncodingConverter(),
-                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-                }
-            });
+            var opts = _jsonOptions;
+            var json = JsonSerializer.SerializeToUtf8Bytes(msg, opts);
+            // new JsonSerializerOptions
+            // {
+            //     WriteIndented = false,
+            //     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            //     Converters =
+            //     {
+            //         new EncodingConverter(),
+            //         new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+            //     }
+            // });
 
             if (_logger?.IsEnabled(LogLevel.Information) ?? false)
             {
@@ -569,6 +624,7 @@ namespace Solnet.Rpc
             SubscriptionChannel.Root => "rootUnsubscribe",
             SubscriptionChannel.Signature => "signatureUnsubscribe",
             SubscriptionChannel.Slot => "slotUnsubscribe",
+            SubscriptionChannel.Block => "blockUnsubscribe",
             _ => throw new ArgumentOutOfRangeException(nameof(channel), channel, "invalid message type")
         };
 

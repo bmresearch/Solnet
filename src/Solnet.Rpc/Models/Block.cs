@@ -252,6 +252,11 @@ namespace Solnet.Rpc.Models
         /// Array of string log messages or omitted if log message recording was not yet enabled during this transaction.
         /// </summary>
         public string[] LogMessages { get; set; }
+
+        /// <summary>
+        /// Loaded addresses
+        /// </summary>
+        public LoadedAddresses LoadedAddresses { get; set; } = new LoadedAddresses();
     }
 
     /// <summary>
@@ -386,5 +391,37 @@ namespace Solnet.Rpc.Models
         /// The last block height at which the blockhash will be valid.
         /// </summary>
         public ulong LastValidBlockHeight { get; set; }
+    }
+
+    /// <summary>
+    /// Represents the block notification.
+    /// </summary>
+    public class BlockNotification
+    {
+        /// <summary>
+        /// Block information.
+        /// </summary>
+        public long Slot { get; set; }
+
+        /// <summary>
+        /// Block number.
+        /// </summary>
+        public BlockInfo Block { get; set; }
+    }
+
+    /// <summary>
+    /// Represents the loaded addresses in block info
+    /// </summary>
+    public class LoadedAddresses
+    {
+        /// <summary>
+        /// Writeable addresses
+        /// </summary>
+        public string[] Writable { get; set; } = [];
+
+        /// <summary>
+        /// Readonly addresses
+        /// </summary>
+        public string[] Readonly { get; set; } = [];
     }
 }
