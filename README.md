@@ -6,9 +6,6 @@
     <a href="https://github.com/bmresearch/Solnet/actions/workflows/dotnet.yml">
         <img src="https://github.com/bmresearch/Solnet/actions/workflows/dotnet.yml/badge.svg"
             alt="Build" ></a>
-    <a href="https://github.com/bmresearch/Solnet/actions/workflows/publish.yml">
-       <img src="https://github.com/bmresearch/Solnet/actions/workflows/publish.yml/badge.svg" 
-            alt="Release"></a>
     <a href="https://coveralls.io/github/bmresearch/Solnet?branch=master">
         <img src="https://coveralls.io/repos/github/bmresearch/Solnet/badge.svg?branch=master" 
             alt="Coverage Status" ></a>
@@ -64,14 +61,29 @@ for a list of other commonly needed programs see below:
 - [Serum](https://github.com/bmresearch/Solnet.Serum/)
 - [Mango](https://github.com/bmresearch/Solnet.Mango/)
 - [Pyth](https://github.com/bmresearch/Solnet.Pyth/)
+
+Maintained by Bifrost <img src="https://avatars.githubusercontent.com/u/119550733?s=64&v=4" width=25 />
 - [Metaplex](https://github.com/bmresearch/Solnet.Metaplex/)
+- [Raydium](https://github.com/Bifrost-Technologies/Solnet.Raydium/)
+- [JupiterPerps](https://github.com/Bifrost-Technologies/Solnet.JupiterPerps)
+- [Moonshot](https://github.com/Bifrost-Technologies/Solnet.Moonshot)
+- [Pumpfun](https://github.com/Bifrost-Technologies/Solnet.Pumpfun)
+- [Ore](https://github.com/Bifrost-Technologies/Solnet.Ore)
 
 ## Requirements
-- net 5.0
+- net 6.0+ (minimum)
+- net 8.0+ (recommended)
 
 ## Dependencies
 - Chaos.NaCl.Standard
 - Portable.BouncyCastle
+
+## Latest Nuget Packages
+- [Solnet.Rpc](https://www.nuget.org/packages/Solana.Rpc/)
+- [Solnet.Wallet](https://www.nuget.org/packages/Solana.Wallet/)
+- [Solnet.Programs](https://www.nuget.org/packages/Solana.Programs/)
+- [Solnet.Extensions](https://www.nuget.org/packages/Solana.Extensions/)
+- [Solnet.Keystore](https://www.nuget.org/packages/Solana.Keystore/)
 
 ## Examples
 
@@ -84,9 +96,14 @@ all you need to do is increment the value that is used to derive that account fr
 ### Wallets
 
 The [Solnet.Wallet](https://github.com/bmresearch/Solnet/tree/master/src/Solnet.Wallet/) project implements wallet and key generation features, these were made compatible
-with both the keys generated using `solana-keygen` and the keys generated using the popular browser wallet [sollet.io](https://www.sollet.io).
+with both the keys generated using `solana-keygen` and the keys generated using the popular browser wallet [Phantom](https://phantom.app/).
 
-#### Initializing a wallet compatible with sollet
+#### Initialize a keypair from a secret key
+```c#
+var account = Account.FromSecretKey("");
+```
+
+#### Initializing a wallet
 
 ```c#
 // To initialize a wallet and have access to the same keys generated in sollet (the default)
@@ -161,7 +178,10 @@ with both the [methods expected to be removed in v1.8](https://docs.solana.com/d
 The client factory allows you to pass a `Logger` which implements the `Microsoft.Extensions.Logging.ILogger` interface.
 
 ```c#
-var rpcClient = ClientFactory.GetClient(Cluster.MainNet, logger);
+var dev_rpcClient = ClientFactory.GetClient(Cluster.MainNet, logger);
+
+var rpcClient = ClientFactory.GetClient("PAID RPC LINK HERE", logger);
+
 var streamingRpcClient = ClientFactory.GetStreamingClient(Cluster.MainNet, logger);
 ```
 
@@ -201,6 +221,17 @@ var subscription = streaminRpcClient.SubscribeSignature(txSig.Result, (subscript
 
 ### Sending a transaction
 
+#### *Important* Understanding priority fees
+Transactions poorly optimized for computation will result in a high drop rate. Always specify compute budget and compute price to make sure your transaction is properly processed. Reference existing transactions to figure out what other users interacting with the same programs are using for average fee price. This allows you to compete with other optimized transactions and increase the chance its always processed.
+
+```c#
+var tx = new TransactionBuilder().
+        AddInstruction(ComputeBudgetProgram.SetComputeUnitLimit(30000)).
+        AddInstruction(ComputeBudgetProgram.SetComputeUnitPrice(1000000)).
+```
+
+
+
 ```c#
 // Initialize the rpc client and a wallet
 var rpcClient = ClientFactory.GetClient(Cluster.MainNet);
@@ -216,6 +247,8 @@ var blockHash = rpcClient.GetLatestBlockHash();
 var tx = new TransactionBuilder().
         SetRecentBlockHash(blockHash.Result.Value.Blockhash).
         SetFeePayer(fromAccount).
+        AddInstruction(ComputeBudgetProgram.SetComputeUnitLimit(30000)).
+        AddInstruction(ComputeBudgetProgram.SetComputeUnitPrice(1000000)).
         AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)")).
         AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.GetPublicKey, 100000)).
         Build(fromAccount);
@@ -240,6 +273,8 @@ var initialAccount = wallet.GetAccount(22);
 var tx = new TransactionBuilder().
     SetRecentBlockHash(blockHash.Result.Value.Blockhash).
     SetFeePayer(ownerAccount).
+    AddInstruction(ComputeBudgetProgram.SetComputeUnitLimit(30000)).
+    AddInstruction(ComputeBudgetProgram.SetComputeUnitPrice(1000000)).
     AddInstruction(SystemProgram.CreateAccount(
         ownerAccount,
         mintAccount,
@@ -289,6 +324,8 @@ var newAccount = wallet.GetAccount(23);
 var tx = new TransactionBuilder().
     SetRecentBlockHash(blockHash.Result.Value.Blockhash).
     SetFeePayer(ownerAccount).
+    AddInstruction(ComputeBudgetProgram.SetComputeUnitLimit(30000)).
+    AddInstruction(ComputeBudgetProgram.SetComputeUnitPrice(1000000)).
     AddInstruction(SystemProgram.CreateAccount(
         ownerAccount,
         newAccount,
@@ -334,6 +371,8 @@ var recentHash = rpcClient.GetRecentBlockHash();
 
 var tx = new TransactionBuilder().
     SetFeePayer(wallet.Account).
+    AddInstruction(ComputeBudgetProgram.SetComputeUnitLimit(30000)).
+    AddInstruction(ComputeBudgetProgram.SetComputeUnitPrice(1000000)).
     AddInstruction(memoInstruction).
     SetRecentBlockHash(recentHash.Result.Value.Blockhash).
     Build(wallet.Account);
@@ -353,6 +392,8 @@ PublicKey associatedTokenAccount =
 byte[] txBytes = new TransactionBuilder().
     SetRecentBlockHash(recentHash.Result.Value.Blockhash).
     SetFeePayer(ownerAccount).
+    AddInstruction(ComputeBudgetProgram.SetComputeUnitLimit(30000)).
+    AddInstruction(ComputeBudgetProgram.SetComputeUnitPrice(1000000)).
     AddInstruction(AssociatedTokenAccountProgram.CreateAssociatedTokenAccount(
         ownerAccount,
         associatedTokenAccountOwner,
@@ -423,22 +464,19 @@ var sig = tokenWallet.Send(source, 12.75M, target, txBuilder => txBuilder.Build(
 Console.WriteLine($"tx: {sig}");
 ```
 
-## Support
-
-Consider supporting us:
-
-* Sol Address: **oaksGKfwkFZwCniyCF35ZVxHDPexQ3keXNTiLa7RCSp**
-* [Mango Ref Link](https://trade.mango.markets/?ref=MangoSharp)
-
 
 ## Contribution
 
 We encourage everyone to contribute, submit issues, PRs, discuss. Every kind of help is welcome.
 
-## Maintainers
+## Legacy Maintainers
 
 * **Hugo** - [murlokito](https://github.com/murlokito)
 * **Tiago** - [tiago](https://github.com/tiago18c)
+
+## Current Maintainers
+
+* **Nathan** - [BifrostTitan](https://github.com/BifrostTitan)
 
 See also the list of [contributors](https://github.com/bmresearch/Solnet/contributors) who participated in this project.
 
