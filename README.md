@@ -222,7 +222,7 @@ var subscription = streaminRpcClient.SubscribeSignature(txSig.Result, (subscript
 ### Sending a transaction
 
 #### *Important* Understanding priority fees
-Transactions poorly optimized for computation will result in a high drop rate. Always specify compute budget and compute price to make sure your transaction is properly processed. Reference existing transactions to figure out what other users interacting with the same programs are using for average fee price. This allows you to compete with other optimized transactions and increase the chance its always processed.
+Poorly optimized transactions often get dropped due to high computational demand. To ensure smooth processing, always specify both the compute budget and compute price. Check out how other users set their transaction fees for similar programs; it helps you stay competitive and boosts the chances of your transaction being successfully processed.
 
 ```c#
 var tx = new TransactionBuilder().
