@@ -27,7 +27,7 @@
 
 # Introduction
 
-Solnet is Solana's .NET SDK to integrate with the .NET ecosystem. Wherever you are developing for the Web or Desktop, we are here to help. Learn more about the provided samples, documentation, integrating the SDK into your app, and more [here](https://blockmountain.io/Solnet/).
+Solnet is Solana's C# SDK designed to integrate seamlessly with the .NET ecosystem, facilitating your development projects for both web, mobile, and desktop applications. Whether you're a seasoned developer or just getting started, we're here to support you every step of the way. Explore our comprehensive samples, detailed documentation, and learn how to integrate the SDK into your applications with ease.
 
 </p>
 
@@ -48,6 +48,7 @@ Solnet is Solana's .NET SDK to integrate with the .NET ecosystem. Wherever you a
       - System Program
       - Stake Program
     - Solana Program Library (SPL)
+      - Compute Budget Program
       - Memo Program
       - Token Program
       - Token Swap Program
