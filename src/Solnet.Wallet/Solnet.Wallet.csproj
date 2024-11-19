@@ -4,7 +4,7 @@
     <Description>
       Solnet.Wallet uses BIP32 and BIP39 to generate an HD tree of Solana compatible addresses from a randomly generated word seed.
     </Description>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
