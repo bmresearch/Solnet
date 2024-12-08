@@ -66,6 +66,7 @@ for a list of other commonly needed programs see below:
 Maintained by Bifrost <img src="https://avatars.githubusercontent.com/u/119550733?s=64&v=4" width=25 />
 - [Metaplex](https://github.com/bmresearch/Solnet.Metaplex/)
 - [Raydium](https://github.com/Bifrost-Technologies/Solnet.Raydium/)
+- [JupiterSwap](https://github.com/Bifrost-Technologies/Solnet.JupiterSwap)
 - [JupiterPerps](https://github.com/Bifrost-Technologies/Solnet.JupiterPerps)
 - [Moonshot](https://github.com/Bifrost-Technologies/Solnet.Moonshot)
 - [Pumpfun](https://github.com/Bifrost-Technologies/Solnet.Pumpfun)
@@ -76,7 +77,7 @@ Maintained by Bifrost <img src="https://avatars.githubusercontent.com/u/11955073
 - net 8.0+ (recommended)
 
 ## Dependencies
-- Chaos.NaCl.Standard
+- BifrostSecurity
 - Portable.BouncyCastle
 
 ## Latest Nuget Packages
