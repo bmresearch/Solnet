@@ -1,4 +1,4 @@
-using Chaos.NaCl;
+using Bifrost.Security;
 using Solnet.Wallet.Utilities;
 using System;
 using System.Diagnostics;

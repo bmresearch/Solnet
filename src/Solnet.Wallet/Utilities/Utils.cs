@@ -1,4 +1,4 @@
-using Chaos.NaCl;
+using Bifrost.Security;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;

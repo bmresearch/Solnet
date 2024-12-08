@@ -11,7 +11,7 @@
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>Solnet.Wallet.Test</_Parameter1>
     </AssemblyAttribute>
-    <PackageReference Include="Chaos.NaCl.Standard" Version="1.0.0" />
+    <PackageReference Include="BifrostSecurity" Version="1.0.1" />
     <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
   </ItemGroup>
 

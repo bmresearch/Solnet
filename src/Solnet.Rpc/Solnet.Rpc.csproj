@@ -16,8 +16,8 @@
 	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
     </AssemblyAttribute>
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.0" />
     <ProjectReference Include="..\Solnet.Wallet\Solnet.Wallet.csproj" />
   </ItemGroup>
 

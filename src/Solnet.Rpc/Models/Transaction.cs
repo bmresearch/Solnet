@@ -1,8 +1,7 @@
-using Chaos.NaCl;
+using Bifrost.Security;
 using Solnet.Rpc.Builders;
 using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
-using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -63,7 +62,9 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public string RecentBlockHash { get; set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         internal IList<PublicKey> _accountKeys;
         /// <summary>
         /// The nonce information of the transaction.
@@ -299,7 +300,8 @@ namespace Solnet.Rpc.Models
             {
                 RecentBlockHash = message.RecentBlockhash,
                 Signatures = new List<SignaturePubKeyPair>(),
-                Instructions = new List<TransactionInstruction>()
+                Instructions = new List<TransactionInstruction>(),
+                _accountKeys = message.AccountKeys
             };
 
             if (message.Header.RequiredSignatures > 0)
