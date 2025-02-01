@@ -1,6 +1,3 @@
-using Org.BouncyCastle.Crypto.Digests;
-using Org.BouncyCastle.Crypto.Generators;
-using Org.BouncyCastle.Crypto.Parameters;
 using Solnet.Wallet.Utilities;
 using System;
 using System.Collections;
@@ -63,7 +60,7 @@ namespace Solnet.Wallet.Bip39
                 throw new ArgumentException("The length for entropy should be " + string.Join(",", EntArray) + " bits", nameof(entropy));
 
             int cs = CsArray[i];
-            byte[] checksum = Utils.Sha256(entropy);
+            byte[] checksum = SHA256.HashData(entropy);
             BitWriter entropyResult = new();
 
             entropyResult.Write(entropy);
@@ -135,7 +132,7 @@ namespace Solnet.Wallet.Bip39
                 BitArray bits = WordList.ToBits(Indices);
                 writer.Write(bits, ent);
                 byte[] entropy = writer.ToBytes();
-                byte[] checksum = Utils.Sha256(entropy);
+                byte[] checksum = SHA256.HashData(entropy);
 
                 writer.Write(checksum, cs);
                 int[] expectedIndices = writer.ToIntegers();

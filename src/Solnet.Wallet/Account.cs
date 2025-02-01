@@ -1,7 +1,9 @@
 using Bifrost.Security;
 using Solnet.Wallet.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security.Principal;
 
 namespace Solnet.Wallet
 {
@@ -27,9 +29,8 @@ namespace Solnet.Wallet
         public Account()
         {
             byte[] seed = GenerateRandomSeed();
-
-            (byte[] privateKey, byte[] publicKey) = Utils.EdKeyPairFromSeed(seed);
-
+            byte[] privateKey = Ed25519.ExpandedPrivateKeyFromSeed(seed);
+            byte[] publicKey = Ed25519.PublicKeyFromSeed(seed);
             PrivateKey = new PrivateKey(privateKey);
             PublicKey = new PublicKey(publicKey);
         }
@@ -64,7 +65,7 @@ namespace Solnet.Wallet
                 throw new ArgumentException("Not a secret key");
             }
 
-            Account acc = new Account(skeyBytes, skeyBytes.Slice(32, 64));
+            Account acc = new Account(skeyBytes, skeyBytes.AsSpan(32, 32).ToArray());
 
             return acc;
         }
@@ -121,5 +122,25 @@ namespace Solnet.Wallet
 
         /// <inheritdoc cref="GetHashCode"/>
         public override int GetHashCode() => PublicKey.GetHashCode();
+
+        public static List<Account> ImportMany(List<string> Keys)
+        {
+            List<Account> accounts = new List<Account>();
+            foreach (string key in Keys)
+            {
+                accounts.Add(FromSecretKey(key));
+            }
+            return accounts;
+        }
+
+        public static List<Account> ImportMany(List<byte[]> Keys)
+        {
+            List<Account> accounts = new List<Account>();
+            foreach (byte[] key in Keys)
+            {
+                accounts.Add(new Account(key, key.AsSpan(32, 32).ToArray()));
+            }
+            return accounts;
+        }
     }
 }
