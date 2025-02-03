@@ -16,12 +16,12 @@ namespace Solnet.Examples
 
         public GovernanceProgramExamples()
         {
-            governanceClient = new GovernanceClient(mRpcClient, GovernanceProgram.MainNetProgramIdKey);
+            governanceClient = new GovernanceClient(mRpcClient, GovernanceProgram.MangoGovernanceProgramIdKey);
         }
 
         public void Run()
         {
-            var realms = governanceClient.GetRealms();
+            var realms = governanceClient.GetRealms(GovernanceProgram.MangoGovernanceProgramIdKey);
 
             for(int i = 0; i < realms.ParsedResult.Count; i++)
             {
@@ -32,10 +32,10 @@ namespace Solnet.Examples
                     $"Council Mint: {realms.ParsedResult[i].Config?.CouncilMint}\n" +
                     $"Vote Weight Source: {realms.ParsedResult[i].Config.CommunityMintMaxVoteWeightSource}\n");
 
-                var progGovernances = governanceClient.GetProgramGovernanceAccounts(realms.OriginalRequest.Result[i].PublicKey);
-                var mintGovernances = governanceClient.GetMintGovernanceAccounts(realms.OriginalRequest.Result[i].PublicKey);
-                var tokenGovernances = governanceClient.GetTokenGovernanceAccounts(realms.OriginalRequest.Result[i].PublicKey);
-                var genericGovernances = governanceClient.GetGenericGovernanceAccounts(realms.OriginalRequest.Result[i].PublicKey);
+                var progGovernances = governanceClient.GetProgramGovernanceAccounts(realms.OriginalRequest.Result[i].PublicKey, realms.ParsedResult[i].Name);
+                var mintGovernances = governanceClient.GetMintGovernanceAccounts(GovernanceProgram.MangoGovernanceProgramIdKey, realms.OriginalRequest.Result[i].PublicKey);
+                var tokenGovernances = governanceClient.GetTokenGovernanceAccounts(GovernanceProgram.MangoGovernanceProgramIdKey, realms.OriginalRequest.Result[i].PublicKey);
+                var genericGovernances = governanceClient.GetGenericGovernanceAccounts(GovernanceProgram.MangoGovernanceProgramIdKey, realms.OriginalRequest.Result[i].PublicKey);
                 Console.WriteLine($"Program Governance Accounts: {progGovernances.ParsedResult?.Count}\n" +
                     $"Mint Governance Accounts: {mintGovernances.ParsedResult?.Count}\n" + 
                     $"Token Governance Accounts: {tokenGovernances.ParsedResult?.Count}\n" +
@@ -43,7 +43,7 @@ namespace Solnet.Examples
 
                 for(int j = 0; j < progGovernances.ParsedResult?.Count; j++)
                 {
-                    var proposals = governanceClient.GetProposalsV1(progGovernances.OriginalRequest.Result[j].PublicKey);
+                    var proposals = governanceClient.GetProposalsV1(GovernanceProgram.MangoGovernanceProgramIdKey, progGovernances.OriginalRequest.Result[j].PublicKey);
                     Console.WriteLine($"Program Governance: {progGovernances.OriginalRequest.Result[j].PublicKey}\n" +
                         $"Proposals: {proposals.OriginalRequest.Result.Count}");
                     for(int k = 0; k < proposals.ParsedResult?.Count; k++)

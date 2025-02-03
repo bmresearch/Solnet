@@ -71,7 +71,7 @@ namespace Solnet.Programs.Governance.Models
         /// <returns>The <see cref="ProposalOption"/> structure.</returns>
         public static ProposalOption Deserialize(ReadOnlySpan<byte> data)
         {
-            int labelLength = data.GetString(Layout.LabelOffset, out string label);
+            int labelLength = data.GetBorshString(Layout.LabelOffset, out string label);
 
             return new ProposalOption
             {

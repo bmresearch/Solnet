@@ -162,8 +162,8 @@ namespace Solnet.Programs.Governance.Models
                 offset += sizeof(byte);
             }
 
-            int nameLength = span.GetString(offset, out string name);
-            _ = span.GetString(offset + nameLength, out string descriptionLink);
+            int nameLength = span.GetBorshString(offset, out string name);
+            _ = span.GetBorshString(offset + nameLength, out string descriptionLink);
 
             return new ProposalV1
             {

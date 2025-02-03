@@ -562,11 +562,11 @@ namespace Solnet.Programs.Governance
         /// <returns>The public key of the realm config.</returns>
         public static PublicKey GetRealmConfigAddress(PublicKey programId, PublicKey realm)
         {
-            bool success = AddressExtensions.TryFindProgramAddress(
+            bool success = PublicKey.TryFindProgramAddress(
                 new List<byte[]> { Encoding.UTF8.GetBytes(RealmConfigSeed), realm },
-                programId, out byte[] realmConfigAddressBytes, out _);
+                programId, out PublicKey realmConfigAddressBytes, out _);
 
-            return success ? new PublicKey(realmConfigAddressBytes) : null;
+            return success ? realmConfigAddressBytes : null;
         }
 
     }

@@ -90,7 +90,7 @@ namespace Solnet.Programs.Governance.Models
                     nameOffset -= PublicKey.PublicKeyLength;
                 }
 
-                _ = span.GetString(nameOffset, out realmName);
+                _ = span.GetBorshString(nameOffset, out realmName);
             }
             else
             {
@@ -107,7 +107,7 @@ namespace Solnet.Programs.Governance.Models
                     nameOffset -= (2 * PublicKey.PublicKeyLength);
                 }
 
-                _ = span.GetString(nameOffset, out realmName);
+                _ = span.GetBorshString(nameOffset, out realmName);
             }
 
             return new Realm

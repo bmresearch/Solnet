@@ -23,7 +23,7 @@ namespace Solnet.Programs.Governance
         /// Initialize the governance client.
         /// </summary>
         /// <param name="rpcClient">An <see cref="IRpcClient"/> instance.</param>
-        public GovernanceClient(IRpcClient rpcClient) : base(rpcClient, null) { }
+        public GovernanceClient(IRpcClient rpcClient, PublicKey governanceProgramID) : base(rpcClient, null, governanceProgramID) { }
 
         /// <summary>
         /// Gets all <see cref="Realm"/>s for the given program id. This is an asynchronous operation.
