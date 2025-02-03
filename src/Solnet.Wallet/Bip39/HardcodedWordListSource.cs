@@ -68,7 +68,7 @@ namespace Solnet.Wallet.Bip39
         /// <returns>A task which returns the word list.</returns>
         public Task<WordList> LoadAsync(string name)
         {
-            string list = WordLists.TryGet(name);
+            WordLists.TryGetValue(name,out string list);
             if (list == null)
                 return null;
             return Task.FromResult(new WordList(list.Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries),

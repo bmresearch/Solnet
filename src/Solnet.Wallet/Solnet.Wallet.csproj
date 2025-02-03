@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>
@@ -12,8 +12,6 @@
       <_Parameter1>Solnet.Wallet.Test</_Parameter1>
     </AssemblyAttribute>
     <PackageReference Include="BifrostSecurity" Version="1.0.1" />
-    <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
   </ItemGroup>
 
-  <Import Project="..\..\SharedBuildProperties.props" />
 </Project>

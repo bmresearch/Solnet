@@ -1,5 +1,5 @@
-using Org.BouncyCastle.Security;
 using System;
+using System.Security.Cryptography;
 
 namespace Solnet.Wallet.Utilities
 {
@@ -11,14 +11,14 @@ namespace Solnet.Wallet.Utilities
         /// <summary>
         /// The instance of the crypto service provider.
         /// </summary>
-        private readonly SecureRandom _instance;
+        private readonly RandomNumberGenerator _instance;
 
         /// <summary>
         /// Initialize the random number generator.
         /// </summary>
         public RngCryptoServiceProviderRandom()
         {
-            _instance = new SecureRandom();
+            _instance = RandomNumberGenerator.Create();
         }
 
         #region IRandom Members
@@ -26,7 +26,7 @@ namespace Solnet.Wallet.Utilities
         /// <inheritdoc cref="IRandom.GetBytes(byte[])"/>
         public void GetBytes(byte[] output)
         {
-            _instance.NextBytes(output);
+            _instance.GetBytes(output);
         }
 
         #endregion
@@ -118,7 +118,7 @@ namespace Solnet.Wallet.Utilities
                 data[i] ^= entropy[pos % 32];
                 pos++;
             }
-            entropy = Utils.Sha256(data);
+            entropy = SHA256.HashData(data);
             for (int i = 0; i < data.Length; i++)
             {
                 data[i] ^= entropy[pos % 32];
@@ -146,7 +146,7 @@ namespace Solnet.Wallet.Utilities
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
-            var entropy = Utils.Sha256(data);
+            var entropy = SHA256.HashData(data);
             if (_additionalEntropy == null)
                 _additionalEntropy = entropy;
             else
@@ -155,7 +155,7 @@ namespace Solnet.Wallet.Utilities
                 {
                     _additionalEntropy[i] ^= entropy[i];
                 }
-                _additionalEntropy = Utils.Sha256(_additionalEntropy);
+                _additionalEntropy = SHA256.HashData(_additionalEntropy);
             }
         }
     }
