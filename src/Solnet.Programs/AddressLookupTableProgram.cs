@@ -4,6 +4,9 @@ using Solnet.Wallet;
 
 namespace Solnet.Programs
 {
+    /// <summary>
+    /// Address lookup table program
+    /// </summary>
     public static class AddressLookupTableProgram
     {
         /// <summary>
@@ -21,6 +24,8 @@ namespace Solnet.Programs
         /// </summary>
         /// <param name="Authority"></param>
         /// <param name="Payer"></param>
+        /// <param name="ALT"></param>
+        /// <param name="bump"></param>
         /// <param name="RecentSlot"></param>
         /// <returns></returns>
         public static TransactionInstruction CreateAddressLookupTable(

@@ -11,9 +11,8 @@ namespace Solnet.Programs
         /// <summary>
         /// Encode transaction instruction data for the <see cref="AddressLookupTableProgramInstruction.Values.CreateLookupTable"/> method.
         /// </summary>
-        /// <param name="Authority">Who own this table </param>
-        /// <param name="Payer">Who pay for this table</param>
-        /// <param name="RecentSlot">For random seed</param>
+        /// <param name="RecentSlot"></param>
+        /// <param name="bump"></param>
         /// <returns></returns>
         internal static byte[] EncodeCreateAddressLookupTableData( ulong RecentSlot,byte bump)
         {
@@ -39,7 +38,7 @@ namespace Solnet.Programs
         /// <summary>
         /// Encode transaction instruction data for the <see cref="AddressLookupTableProgramInstruction.Values.ExtendLookupTable"/> method.
         /// </summary>
-        /// <param name="RecentSlot"></param>
+        /// <param name="KeyCounts"></param>
         /// <param name="Keys"></param>
         /// <returns></returns>
         internal static byte[] EncodeExtendLookupTableData(ulong KeyCounts,List<PublicKey> Keys)

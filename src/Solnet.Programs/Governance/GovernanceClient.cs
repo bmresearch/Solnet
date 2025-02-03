@@ -22,7 +22,8 @@ namespace Solnet.Programs.Governance
         /// <summary>
         /// Initialize the governance client.
         /// </summary>
-        /// <param name="rpcClient">An <see cref="IRpcClient"/> instance.</param>
+        /// <param name="rpcClient"></param>
+        /// <param name="governanceProgramID"></param>
         public GovernanceClient(IRpcClient rpcClient, PublicKey governanceProgramID) : base(rpcClient, null, governanceProgramID) { }
 
         /// <summary>
