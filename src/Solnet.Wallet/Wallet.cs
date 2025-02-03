@@ -1,6 +1,5 @@
 using Bifrost.Security;
 using Solnet.Wallet.Bip39;
-using Solnet.Wallet.Utilities;
 using System;
 using System.Linq;
 

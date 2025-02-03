@@ -3,7 +3,6 @@ using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Security.Principal;
 
 namespace Solnet.Wallet
 {

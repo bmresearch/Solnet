@@ -2,13 +2,9 @@
 using Solnet.Programs.Governance.Enums;
 using Solnet.Programs.Governance.Models;
 using Solnet.Rpc.Models;
-using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Solnet.Programs.Governance
 {
