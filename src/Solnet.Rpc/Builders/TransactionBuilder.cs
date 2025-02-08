@@ -76,11 +76,11 @@ namespace Solnet.Rpc.Builders
 
             _serializedMessage = _messageBuilder.Build();
 
-            foreach (Account signer in signers)
-            {
-                byte[] signatureBytes = signer.Sign(_serializedMessage);
-                _signatures.Add(Encoders.Base58.EncodeData(signatureBytes));
-            }
+           for(int i = 0;i<signers.Count;i++)
+             {
+               byte[] signatureBytes = signers[i].Sign(_serializedMessage);
+               _signatures.Add(Encoders.Base58.EncodeData(signatureBytes));
+             }
         }
 
         /// <summary>
