@@ -21,8 +21,8 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public ulong PostBalance { get; set; }
 
-        [JsonConverter(typeof(DynamicTypeConverter))]
-        public object RewardType {  get; set; }
+       
+        public RewardType RewardType {  get; set; }
     }
   
     /// <summary>
