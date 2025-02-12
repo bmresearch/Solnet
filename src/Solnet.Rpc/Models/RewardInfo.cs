@@ -1,4 +1,6 @@
-﻿namespace Solnet.Rpc.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Solnet.Rpc.Models
 {
     /// <summary>
     /// Represents the reward information related to a given account.
@@ -19,6 +21,8 @@
         /// </summary>
         public ulong PostBalance { get; set; }
 
+        [JsonConverter(typeof(DynamicTypeConverter))]
+        public object RewardType {  get; set; }
     }
   
     /// <summary>

@@ -42,7 +42,7 @@ namespace Solnet.Rpc.Models
         /// Transaction Version
         /// </summary>
         ///  [JsonPropertyName("value")]
-        [JsonConverter(typeof(VersionConverter))]
+        [JsonConverter(typeof(DynamicTypeConverter))]
         public object Version { get; set; }
     }
     /// <summary>
@@ -104,7 +104,7 @@ namespace Solnet.Rpc.Models
     /// <summary>
     /// Json Converter for handling string and integer version types
     /// </summary>
-    public class VersionConverter : JsonConverter<object>
+    public class DynamicTypeConverter : JsonConverter<object>
     {
 
         /// <summary>
