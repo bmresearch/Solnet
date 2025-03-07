@@ -73,24 +73,24 @@ namespace Solnet.Programs
         {
             List<DecodedInstruction> decodedInstructions = new();
 
-            for (int i = 0; i < txMetaInfo.Transaction.Message.Instructions.Length; i++)
+            for (int i = 0; i < ((TransactionInfo)txMetaInfo.Transaction).Message.Instructions.Length; i++)
             {
                 DecodedInstruction decodedInstruction = null;
-                InstructionInfo instructionInfo = txMetaInfo.Transaction.Message.Instructions[i];
-                string programKey = txMetaInfo.Transaction.Message.AccountKeys[instructionInfo.ProgramIdIndex];
+                InstructionInfo instructionInfo = ((TransactionInfo)txMetaInfo.Transaction).Message.Instructions[i];
+                string programKey = ((TransactionInfo)txMetaInfo.Transaction).Message.AccountKeys[instructionInfo.ProgramIdIndex];
                 bool registered = InstructionDictionary.TryGetValue(programKey, out DecodeMethodType method);
 
                 if (!registered)
                 {
                     decodedInstruction = AddUnknownInstruction(
-                        instructionInfo, programKey, txMetaInfo.Transaction.Message.AccountKeys,
-                        txMetaInfo.Transaction.Message.Instructions[i].Accounts);
+                        instructionInfo, programKey, ((TransactionInfo)txMetaInfo.Transaction).Message.AccountKeys,
+                        ((TransactionInfo)txMetaInfo.Transaction).Message.Instructions[i].Accounts);
                 }
                 else
                 {
                     decodedInstruction = method.Invoke(
                                         Encoders.Base58.DecodeData(instructionInfo.Data),
-                                        txMetaInfo.Transaction.Message.AccountKeys.Select(a => new PublicKey(a)).ToList(),
+                                        ((TransactionInfo)txMetaInfo.Transaction).Message.AccountKeys.Select(a => new PublicKey(a)).ToList(),
                                         instructionInfo.Accounts.Select(instr => (byte)instr).ToArray());
                 }
                 if (txMetaInfo.Meta.InnerInstructions != null)
@@ -102,20 +102,20 @@ namespace Solnet.Programs
                         foreach (InstructionInfo innerInstructionInfo in innerInstruction.Instructions)
                         {
                             DecodedInstruction innerDecodedInstruction = null;
-                            programKey = txMetaInfo.Transaction.Message.AccountKeys[innerInstructionInfo.ProgramIdIndex];
+                            programKey = ((TransactionInfo)txMetaInfo.Transaction).Message.AccountKeys[innerInstructionInfo.ProgramIdIndex];
                             registered = InstructionDictionary.TryGetValue(programKey, out method);
 
                             if (!registered)
                             {
                                 innerDecodedInstruction = AddUnknownInstruction(
-                                    innerInstructionInfo, programKey, txMetaInfo.Transaction.Message.AccountKeys,
-                                    txMetaInfo.Transaction.Message.Instructions[i].Accounts);
+                                    innerInstructionInfo, programKey, ((TransactionInfo)txMetaInfo.Transaction).Message.AccountKeys,
+                                    ((TransactionInfo)txMetaInfo.Transaction).Message.Instructions[i].Accounts);
                             }
                             else
                             {
                                 innerDecodedInstruction = method.Invoke(
                                     Encoders.Base58.DecodeData(innerInstructionInfo.Data),
-                                    txMetaInfo.Transaction.Message.AccountKeys.Select(a => new PublicKey(a)).ToList(),
+                                    ((TransactionInfo)txMetaInfo.Transaction).Message.AccountKeys.Select(a => new PublicKey(a)).ToList(),
                                     innerInstructionInfo.Accounts.Select(instr => (byte)instr).ToArray());
                             }
                             if (innerDecodedInstruction != null)

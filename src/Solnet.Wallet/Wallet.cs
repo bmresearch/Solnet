@@ -1,6 +1,5 @@
-using Chaos.NaCl;
+using Bifrost.Security;
 using Solnet.Wallet.Bip39;
-using Solnet.Wallet.Utilities;
 using System;
 using System.Linq;
 
@@ -175,7 +174,9 @@ namespace Solnet.Wallet
 
             string path = DerivationPath.Replace("x", index.ToString());
             (byte[] account, byte[] _) = _ed25519Bip32.DerivePath(path);
-            (byte[] privateKey, byte[] publicKey) = Utils.EdKeyPairFromSeed(account);
+            byte[] privateKey = Ed25519.ExpandedPrivateKeyFromSeed(account);
+            byte[] publicKey =  Ed25519.PublicKeyFromSeed(account);
+
             return new Account(privateKey, publicKey);
         }
 
@@ -206,7 +207,8 @@ namespace Solnet.Wallet
             }
             else
             {
-                (byte[] privateKey, byte[] publicKey) = Utils.EdKeyPairFromSeed(_seed[..32]);
+                byte[] privateKey = Ed25519.ExpandedPrivateKeyFromSeed(_seed[..32]);
+                byte[] publicKey = Ed25519.PublicKeyFromSeed(_seed[..32]);
                 Account = new Account(privateKey, publicKey);
             }
         }

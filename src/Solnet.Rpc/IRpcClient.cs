@@ -852,9 +852,10 @@ namespace Solnet.Rpc
         /// <param name="signature">Transaction signature as base-58 encoded string.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <param name="maxSupportedTransactionVersion">Max supported transaction version either LEGACY or 1</param>
+        /// <param name="encoding"></param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
         Task<RequestResult<TransactionMetaSlotInfo>> GetTransactionAsync(string signature,
-            Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0);
+            Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0, string encoding = "json");
 
         /// <summary>
         /// Returns transaction details for a confirmed transaction.
@@ -865,11 +866,12 @@ namespace Solnet.Rpc
         /// </para>
         /// </remarks>
         /// </summary>
-        /// <param name="signature">Transaction signature as base-58 encoded string.</param>
-        /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
-        /// <param name="maxSupportedTransactionVersion">Max supported transaction version either LEGACY or 1</param>
-        /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
-        RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature, Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0);
+        /// <param name="signature"></param>
+        /// <param name="commitment"></param>
+        /// <param name="maxSupportedTransactionVersion"></param>
+        /// <param name="encoding"></param>
+        /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
+        RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature, Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0, string encoding = "json");
 
         /// <summary>
         /// Gets the total transaction count of the ledger.

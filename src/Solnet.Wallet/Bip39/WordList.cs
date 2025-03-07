@@ -166,7 +166,7 @@ namespace Solnet.Wallet.Bip39
             if (result != null)
                 lock (LoadedLists)
                 {
-                    LoadedLists.AddOrReplace(name, result);
+                    LoadedLists[name] = result;
                 }
 
             return result;

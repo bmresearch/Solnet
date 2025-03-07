@@ -1,12 +1,9 @@
-using Org.BouncyCastle.Crypto.Digests;
-using Org.BouncyCastle.Crypto.Macs;
-using Org.BouncyCastle.Crypto.Parameters;
-using Solnet.Wallet.Utilities;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -82,18 +79,13 @@ namespace Solnet.Wallet
         /// <returns>A tuple consisting of the key and corresponding chain code.</returns>
         private static (byte[] Key, byte[] ChainCode) HmacSha512(byte[] keyBuffer, byte[] data)
         {
-            byte[] i = new byte[64];
-            Sha512Digest digest = new();
-            HMac hmac = new(digest);
-
-            hmac.Init(new KeyParameter(keyBuffer));
-            hmac.BlockUpdate(data, 0, data.Length);
-            hmac.DoFinal(i, 0);
-
-            byte[] il = i.Slice(0, 32);
-            byte[] ir = i.Slice(32);
-
-            return (Key: il, ChainCode: ir);
+            using (var hmacsha512 = new HMACSHA512(keyBuffer))
+            {
+                byte[] i = hmacsha512.ComputeHash(data);
+                byte[] il = i.AsSpan(0, 32).ToArray();
+                byte[] ir = i.AsSpan(32).ToArray();
+                return (Key: il, ChainCode: ir);
+            }
         }
 
         /// <summary>
@@ -109,8 +101,8 @@ namespace Solnet.Wallet
             if (!regex.IsMatch(path))
                 return false;
 
-            bool valid = !(path.Split('/')
-                .Slice(1)
+            bool valid = !(path.Split('/', StringSplitOptions.RemoveEmptyEntries)
+                .Skip(1)
                 .Select(a => a.Replace("'", ""))
                 .Any(a => !int.TryParse(a, out _)));
 
@@ -130,7 +122,7 @@ namespace Solnet.Wallet
 
             IEnumerable<uint> segments = path
                 .Split('/')
-                .Slice(1)
+                .Skip(1)
                 .Select(a => a.Replace("'", ""))
                 .Select(a => Convert.ToUInt32(a, 10));
 

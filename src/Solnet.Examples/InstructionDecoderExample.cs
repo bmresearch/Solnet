@@ -72,11 +72,11 @@ namespace Solnet.Examples
 
                 foreach (TransactionMetaInfo txMeta in block.Result.Transactions)
                 {
-                    if (txMeta.Transaction.Message.Instructions.Length == 1 && "Vote111111111111111111111111111111111111111" == txMeta.Transaction.Message.AccountKeys[txMeta.Transaction.Message.Instructions[0].ProgramIdIndex]) continue;
-                    if (txMeta.Transaction.Message.Instructions.Length < 2) continue;
-                    Console.WriteLine($"\n\t\tDECODING INSTRUCTIONS FROM TRANSACTION {txMeta.Transaction.Signatures[0]}");
+                    if (((TransactionInfo)txMeta.Transaction).Message.Instructions.Length == 1 && "Vote111111111111111111111111111111111111111" == ((TransactionInfo)txMeta.Transaction).Message.AccountKeys[((TransactionInfo)txMeta.Transaction).Message.Instructions[0].ProgramIdIndex]) continue;
+                    if (((TransactionInfo)txMeta.Transaction).Message.Instructions.Length < 2) continue;
+                    Console.WriteLine($"\n\t\tDECODING INSTRUCTIONS FROM TRANSACTION {((TransactionInfo)txMeta.Transaction).Signatures[0]}");
 
-                    Console.WriteLine($"Instructions: {txMeta.Transaction.Message.Instructions.Length}");
+                    Console.WriteLine($"Instructions: {((TransactionInfo)txMeta.Transaction).Message.Instructions.Length}");
                     Console.WriteLine($"InnerInstructions: {txMeta.Meta.InnerInstructions.Length}");
                     var decodedInstructions = InstructionDecoder.DecodeInstructions(txMeta);
 

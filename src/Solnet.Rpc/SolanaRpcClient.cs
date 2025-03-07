@@ -364,16 +364,16 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="IRpcClient.GetTransactionAsync"/>
         public async Task<RequestResult<TransactionMetaSlotInfo>> GetTransactionAsync(string signature,
-            Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0)
+            Commitment commitment = Commitment.Finalized,  int maxSupportedTransactionVersion = 0, string encoding = "json")
         {
             return await SendRequestAsync<TransactionMetaSlotInfo>("getTransaction",
                 Parameters.Create(signature,
-                    ConfigObject.Create(KeyValue.Create("encoding", "json"), HandleCommitment(commitment), KeyValue.Create("maxSupportedTransactionVersion", maxSupportedTransactionVersion))));
+                    ConfigObject.Create(KeyValue.Create("encoding", encoding), HandleCommitment(commitment), KeyValue.Create("maxSupportedTransactionVersion", maxSupportedTransactionVersion))));
         }
 
         /// <inheritdoc cref="IRpcClient.GetTransaction"/>
         public RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature,
-            Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0)
+            Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0, string encoding = "json")
             => GetTransactionAsync(signature, commitment, maxSupportedTransactionVersion).Result;
 
      
