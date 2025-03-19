@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Solnet.Rpc.Utilities
@@ -15,7 +16,15 @@ namespace Solnet.Rpc.Utilities
         /// <summary>
         /// Fire or block until we can fire.
         /// </summary>
+        [Obsolete]
         void Fire();
+
+        /// <summary>
+        /// Fire or block until we can fire.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task WaitFireAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Would a fire method succeed?
@@ -23,5 +32,5 @@ namespace Solnet.Rpc.Utilities
         /// <returns></returns>
         bool CanFire();
 
-     }
+    }
 }

@@ -52,6 +52,7 @@ namespace Solnet.Rpc.Utilities
         /// <summary>
         /// Pre-fire check - this will block if fire rates exceed defined limits until valid.
         /// </summary>
+        [Obsolete]
         public void Fire()
         {
 
@@ -65,6 +66,24 @@ namespace Solnet.Rpc.Utilities
             if (_duration_ms > 0)
                 _hit_list.Enqueue(DateTime.UtcNow);
 
+        }
+
+        /// <summary>
+        /// Pre-fire check - this will block if fire rates exceed defined limits until valid.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task WaitFireAsync(CancellationToken cancellationToken = default)
+        {
+            var checkTime = DateTime.UtcNow;
+            var resumeTime = NextFireAllowed(checkTime);
+            var snoozeMs = resumeTime.Subtract(checkTime).TotalMilliseconds;
+            while (DateTime.UtcNow <= resumeTime)
+                await Task.Delay(50, cancellationToken);
+
+            // record this trigger
+            if (_duration_ms > 0)
+                _hit_list.Enqueue(DateTime.UtcNow);
         }
 
         /// <summary>
