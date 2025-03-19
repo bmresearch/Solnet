@@ -78,8 +78,8 @@ namespace Solnet.Rpc.Core.Http
             try
             {
                 // pre-flight check with rate limiter if set
-                _rateLimiter?.Fire(); 
-                
+                await (_rateLimiter?.WaitFireAsync() ?? Task.CompletedTask);
+
                 // logging
                 _logger?.LogInformation(new EventId(req.Id, req.Method), $"Sending request: {requestJson}");
 
@@ -189,8 +189,8 @@ namespace Solnet.Rpc.Core.Http
             try
             {
                 // pre-flight check with rate limiter if set
-                _rateLimiter?.Fire(); 
-                
+                await (_rateLimiter?.WaitFireAsync() ?? Task.CompletedTask);
+
                 _logger?.LogInformation(new EventId(id_for_log, $"[batch of {reqs.Count}]"), $"Sending request: {requestsJson}");
 
                 // create byte buffer to avoid charset=utf-8 in content-type header
