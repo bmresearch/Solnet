@@ -252,6 +252,21 @@ namespace Solnet.Programs.Utilities
         }
 
         /// <summary>
+        /// Writes a byte[] as Vec<U8,Global> to the array
+        /// </summary>
+        /// <param name="data">The byte array to write data to</param>
+        /// <param name="buffer">The byte array to write </param>
+        /// <param name="offset">The offset at which to write the byte[]</param>
+        /// <returns>Returns the number of bytes written</returns>
+        public static int WriteBorshByteVector(this byte[] data, Span<byte>  buffer, int offset)
+        {
+            data.WriteU64( (ulong) buffer.Length , offset);
+            data.WriteSpan(buffer, offset + sizeof(ulong));
+            return sizeof(ulong) + buffer.Length;
+        }
+        
+        
+        /// <summary>
         /// Encodes a string for a transaction
         /// </summary>
         /// <param name="data"> the string to be encoded</param>
