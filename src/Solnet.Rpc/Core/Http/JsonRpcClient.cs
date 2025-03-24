@@ -52,7 +52,8 @@ namespace Solnet.Rpc.Core.Http
         {
             _logger = logger;
             NodeAddress = new Uri(url);
-            _httpClient = httpClient ?? new HttpClient { BaseAddress = NodeAddress };
+            _httpClient = httpClient ?? new HttpClient();
+            _httpClient.BaseAddress = NodeAddress;
             _rateLimiter = rateLimiter;
             _serializerOptions = new JsonSerializerOptions
             {
