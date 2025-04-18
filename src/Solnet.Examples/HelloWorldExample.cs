@@ -16,7 +16,7 @@ namespace Solnet.Examples
             Console.WriteLine("Hello World!");
             Console.WriteLine($"Mnemonic: {wallet.Mnemonic}");
             Console.WriteLine($"PubKey: {wallet.Account.PublicKey.Key}");
-            Console.WriteLine($"PrivateKey: {wallet.Account.PrivateKey.Key}");
+            //Console.WriteLine($"PrivateKey: {wallet.Account.PrivateKey.Key}");
 
             IRpcClient rpcClient = ClientFactory.GetClient(Cluster.TestNet);
 

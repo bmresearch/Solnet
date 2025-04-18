@@ -53,6 +53,8 @@ namespace Solnet.KeyStore
         /// <returns>A formatted string.</returns>
         public static string ToStringByteArray(this IEnumerable<byte> bytes) => "[" + string.Join(",", bytes) + "]";
 
+        public static string ToStringByteArray(this ReadOnlySpan<byte> bytes) { return "[" + string.Join(",", bytes.ToArray()) + "]"; }
+
         /// <summary>
         /// Formats a string into a byte array in order to be compatible with the original solana-keygen made in rust.
         /// </summary>
