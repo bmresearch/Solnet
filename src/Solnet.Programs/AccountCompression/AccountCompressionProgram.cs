@@ -10,11 +10,24 @@ using static Solnet.Programs.Models.Stake.State;
 
 namespace Solnet.Programs
 {
+    /// <summary>
+    /// Implements the Stake Program methods.
+    /// <remarks>
+    /// For more information see:
+    /// https://docs.rs/spl-account-compression/latest/spl_account_compression/instruction/index.html
+    /// https://github.com/solana-program/account-compression/blob/ac-mainnet-tag/account-compression/sdk/src/instructions/index.ts
+    /// </remarks>
+    /// </summary>
     public static class AccountCompressionProgram
     {
+        /// <summary>
+        /// The public key of the Stake Program.
+        /// </summary>
         public static PublicKey ProgramIdKey = new ("compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq");
 
-
+        /// <summary>
+        /// The public key of the account compression program.
+        /// </summary>
         public static readonly PublicKey ConfigKey = new("ComprConfig11111111111111111111111111111111");
         /// <summary>
         /// The program's name.
@@ -23,13 +36,19 @@ namespace Solnet.Programs
 
 
 
-
+        /// <summary>
+        /// Creates an instruction to append a leaf to a Merkle tree.
+        /// </summary>
+        /// <param name="merkleTree"></param>
+        /// <param name="authority"></param>
+        /// <param name="leaf"></param>
+        /// <returns></returns>
         public static TransactionInstruction Append(
             PublicKey merkleTree,
             PublicKey authority,
             byte[] leaf)
         {
-            List<AccountMeta> metas = new()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(authority, true),      // Authority (signer)                
                 AccountMeta.Writable(merkleTree, false),  // Merkle tree account (writable)
@@ -39,17 +58,24 @@ namespace Solnet.Programs
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
-                Keys = metas,
+                Keys = keys,
                 Data = AccountCompressionProgramData.EncodeAppendData(leaf)
             };
         }
+        /// <summary>
+        /// /// Creates an instruction to close an empty Merkle tree and transfer its lamports to a recipient.
+        /// </summary>
+        /// <param name="merkleTree"></param>
+        /// <param name="authority"></param>
+        /// <param name="recipient"></param>
+        /// <returns></returns>
         public static TransactionInstruction CloseEmptyTree(
             PublicKey merkleTree,
             PublicKey authority,
             PublicKey recipient
         )
         {
-            List<AccountMeta> metas = new()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(merkleTree, false),  // Merkle tree account (writable)
                 AccountMeta.Writable(authority, true),      // Authority (signer)          
@@ -60,17 +86,25 @@ namespace Solnet.Programs
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
-                Keys = metas,
+                Keys = keys,
                 Data = AccountCompressionProgramData.EncodeCloseEmptyTreeData()
             };
         }
+        /// <summary>
+        /// /// Creates an instruction to initialize an empty Merkle tree.
+        /// </summary>
+        /// <param name="merkleTree"></param>
+        /// <param name="authority"></param>
+        /// <param name="maxDepth"></param>
+        /// <param name="maxBufferSize"></param>
+        /// <returns></returns>
         public static TransactionInstruction InitEmptyMerkleTree(
             PublicKey merkleTree,
             PublicKey authority,
             byte maxDepth, byte maxBufferSize
         )
         {
-            List<AccountMeta> metas = new()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(merkleTree, false),  // Merkle tree account (writable)
                 AccountMeta.Writable(authority, true),      // Authority (signer)  
@@ -80,11 +114,20 @@ namespace Solnet.Programs
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
-                Keys = metas,
+                Keys = keys,
                 Data = AccountCompressionProgramData.EncodeInitEmptyMerkleTreeData(maxDepth, maxBufferSize)
             };
         }
-
+        /// <summary>
+        /// /// Creates an instruction to replace a leaf in a Merkle tree.
+        /// </summary>
+        /// <param name="merkleTree"></param>
+        /// <param name="authority"></param>
+        /// <param name="newLeaf"></param>
+        /// <param name="previousLeaf"></param>
+        /// <param name="root"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
         public static TransactionInstruction ReplaceLeaf(
             PublicKey merkleTree,
             PublicKey authority,
@@ -94,7 +137,7 @@ namespace Solnet.Programs
             uint index
        )
         {
-            List<AccountMeta> metas = new()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(merkleTree, false),  // Merkle tree account (writable)
                 AccountMeta.Writable(authority, true),      // Authority (signer)  
@@ -104,11 +147,19 @@ namespace Solnet.Programs
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
-                Keys = metas,
+                Keys = keys,
                 Data = AccountCompressionProgramData.EncodeReplaceLeafData(newLeaf, previousLeaf, root, index)
             };
         }
-
+        /// <summary>
+        /// /// Creates an instruction to insert or append a leaf to a Merkle tree.
+        /// </summary>
+        /// <param name="merkleTree"></param>
+        /// <param name="authority"></param>
+        /// <param name="Leaf"></param>
+        /// <param name="root"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
         public static TransactionInstruction InsertOrAppend(
             PublicKey merkleTree,
             PublicKey authority,
@@ -117,7 +168,7 @@ namespace Solnet.Programs
             uint index
        )
         {
-            List<AccountMeta> metas = new()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(merkleTree, false),  // Merkle tree account (writable)
                 AccountMeta.Writable(authority, true),      // Authority (signer)  
@@ -127,18 +178,24 @@ namespace Solnet.Programs
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
-                Keys = metas,
+                Keys = keys,
                 Data = AccountCompressionProgramData.EncodeInsertOrAppendData(Leaf, root, index)
             };
         }
-
+        /// <summary>
+        /// Creates an instruction to transfer authority of a Merkle tree.
+        /// </summary>
+        /// <param name="merkleTree"></param>
+        /// <param name="authority"></param>
+        /// <param name="newAuthority"></param>
+        /// <returns></returns>
         public static TransactionInstruction TransferAuthority(
             PublicKey merkleTree,
             PublicKey authority,
             PublicKey newAuthority
        )
         {
-            List<AccountMeta> metas = new()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(merkleTree, false),  // Merkle tree account (writable)
                 AccountMeta.Writable(authority, true),      // Authority (signer)  
@@ -150,18 +207,26 @@ namespace Solnet.Programs
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
-                Keys = metas,
+                Keys = keys,
                 Data = AccountCompressionProgramData.EncodeTransferAuthorityData(newAuthority)
             };
         }
-
+        /// <summary>
+        /// Creates an instruction to verify a leaf in a Merkle tree.
+        /// </summary>
+        /// <param name="merkleTree"></param>
+        /// <param name="authority"></param>
+        /// <param name="root"></param>
+        /// <param name="leaf"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
         public static TransactionInstruction VerifyLeaf(
             PublicKey merkleTree,
             PublicKey authority,
             byte[] root, byte[] leaf, uint index
        )
         {
-            List<AccountMeta> metas = new()
+            List<AccountMeta> keys = new()
             {
                 AccountMeta.Writable(merkleTree, false),  // Merkle tree account (writable)
                 AccountMeta.Writable(authority, true),      // Authority (signer) 
@@ -172,11 +237,17 @@ namespace Solnet.Programs
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
-                Keys = metas,
+                Keys = keys,
                 Data = AccountCompressionProgramData.EncodeVerifyLeafData(root, leaf, index)
             };
         }
-
+        /// <summary>
+        /// Decodes the instruction data for the <see cref="AccountCompressionProgram"/>.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="keys"></param>
+        /// <param name="keyIndices"></param>
+        /// <returns></returns>
         public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
             uint instruction = data.GetU32(AccountCompressionProgramData.MethodOffset);
@@ -192,7 +263,7 @@ namespace Solnet.Programs
                     InnerInstructions = new List<DecodedInstruction>()
                 };
             }
-
+            
             AccountCompressionProgramInstructions.Values instructionValue = (AccountCompressionProgramInstructions.Values)instruction;
 
             DecodedInstruction decodedInstruction = new()

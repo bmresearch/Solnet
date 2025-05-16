@@ -10,12 +10,15 @@ namespace Solnet.Programs
     /// Represents the instruction types for the <see cref="AccountCompressionProgram"/> ??? along with a friendly name so as not to use reflection ???.
     /// <remarks>
     /// For more information see:
-    /// https://docs.solana.com/developing/runtime-facilities/programs#stake-program
-    /// https://docs.rs/solana-sdk/1.7.14/solana_sdk/stake/instruction/enum.StakeInstruction.html
+    /// https://docs.rs/spl-account-compression/latest/spl_account_compression/instruction/index.html
+    /// https://github.com/solana-program/account-compression/blob/ac-mainnet-tag/account-compression/sdk/src/instructions/index.ts
     /// </remarks>
     /// </summary>
     internal static class AccountCompressionProgramInstructions
     {
+        /// <summary>
+        /// Represents the user-friendly names for the instruction types for the <see cref="AccountCompressionProgram"/>.
+        /// </summary>
         internal static readonly Dictionary<Values, string> Names = new()
         {
             { Values.Append, "Append Merkle Tree" },
@@ -26,8 +29,10 @@ namespace Solnet.Programs
             { Values.TransferAuthority, "Transfer Authority" },
             { Values.VerifyLeaf, "Verify Leaf" }
         };
-
-       internal enum Values: uint
+        /// <summary>
+        /// Represents the instruction types for the <see cref="AccountCompressionProgram"/>.
+        /// </summary>
+        internal enum Values: uint
         {
             Append = 0,
             CloseEmptyTree = 1,

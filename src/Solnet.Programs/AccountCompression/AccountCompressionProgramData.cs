@@ -12,11 +12,13 @@ using static Solnet.Programs.Models.Stake.State;
 namespace Solnet.Programs.AccountCompression
 {
     /// <summary>
-    /// Instruction data offsets:
-   
+    /// Represents the instruction data for the <see cref="AccountCompressionProgram"/>.
     /// </summary>
     internal static class AccountCompressionProgramData
     {
+        /// <summary>
+        /// The offset for the instruction discriminator in the instruction data.
+        /// </summary>
         internal const int MethodOffset = 0;
         /// <summary>
         /// Encode the Append instruction data
@@ -40,7 +42,10 @@ namespace Solnet.Programs.AccountCompression
 
             return data;
         }
-
+        /// <summary>
+        /// Encodes the CloseEmptyTree instruction data.
+        /// </summary>
+        /// <returns></returns>
         internal static byte[] EncodeCloseEmptyTreeData()
         {
             // Only the discriminator (first 4 bytes) is needed
@@ -53,7 +58,12 @@ namespace Solnet.Programs.AccountCompression
             data.WriteU32(discriminator, 0);
             return data;
         }
-
+        /// <summary>
+        /// Encodes the InitEmptyMerkleTree instruction data.
+        /// </summary>
+        /// <param name="maxDepth"></param>
+        /// <param name="maxBufferSize"></param>
+        /// <returns></returns>
         internal static byte[] EncodeInitEmptyMerkleTreeData(byte maxDepth, byte maxBufferSize)
         {
             // Total size = 4 (discriminator) + 1 (maxDepth) + 1 (maxBufferSize) = 6 bytes
@@ -73,7 +83,15 @@ namespace Solnet.Programs.AccountCompression
 
             return data;
         }
-
+        /// <summary>
+        /// Encodes the ReplaceLeaf instruction data.
+        /// </summary>
+        /// <param name="newLeaf"></param>
+        /// <param name="previousLeaf"></param>
+        /// <param name="root"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         internal static byte[] EncodeReplaceLeafData(
             byte[] newLeaf,
             byte[] previousLeaf,
@@ -113,6 +131,14 @@ namespace Solnet.Programs.AccountCompression
             return data;
         }
 
+        /// <summary>
+        /// Encodes the InsertOrAppend instruction data.
+        /// </summary>
+        /// <param name="Leaf"></param>
+        /// <param name="root"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         internal static byte[] EncodeInsertOrAppendData(
             byte[] Leaf,
             byte[] root,
@@ -145,7 +171,12 @@ namespace Solnet.Programs.AccountCompression
             return data;
         }
 
-
+        /// <summary>
+        /// Encodes the TransferAuthority instruction data.
+        /// </summary>
+        /// <param name="newAuthority"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         internal static byte[] EncodeTransferAuthorityData(PublicKey newAuthority)
         {
             if (newAuthority is null) throw new ArgumentNullException(nameof(newAuthority));
@@ -160,7 +191,14 @@ namespace Solnet.Programs.AccountCompression
 
             return data;
         }
-
+        /// <summary>
+        /// Encodes the VerifyLeaf instruction data.
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="leaf"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static byte[] EncodeVerifyLeafData(byte[] root, byte[] leaf, uint index)
         {
             if (root == null || root.Length != 32) throw new ArgumentException("Root must be 32 bytes", nameof(root));
@@ -187,6 +225,13 @@ namespace Solnet.Programs.AccountCompression
 
             return data;
         }
+        /// <summary>
+        /// Decodes the AppendLeaf instruction data.
+        /// </summary>
+        /// <param name="decodedInstruction"></param>
+        /// <param name="data"></param>
+        /// <param name="keys"></param>
+        /// <param name="keyIndices"></param>
         internal static void DecodeAppendLeafData(
             DecodedInstruction decodedInstruction,
             ReadOnlySpan<byte> data,
@@ -203,7 +248,14 @@ namespace Solnet.Programs.AccountCompression
             var leafBytes = data.GetBytes(4, 32);
             decodedInstruction.Values.Add("leaf", leafBytes);
         }
-
+        /// <summary>
+        /// Decodes the CloseEmptyTree instruction data.
+        /// </summary>
+        /// <param name="decodedInstruction"></param>
+        /// <param name="data"></param>
+        /// <param name="keys"></param>
+        /// <param name="keyIndices"></param>
+        /// <exception cref="ArgumentException"></exception>
         internal static void DecodeCloseEmptyTreeData(
             DecodedInstruction decodedInstruction,
             ReadOnlySpan<byte> data,
@@ -224,6 +276,13 @@ namespace Solnet.Programs.AccountCompression
             decodedInstruction.Values.Add("authority", keys[keyIndices[1]]);
             decodedInstruction.Values.Add("recipient", keys[keyIndices[2]]);
         }
+        /// <summary>
+        /// Decodes the InitEmptyMerkleTree instruction data.
+        /// </summary>
+        /// <param name="decodedInstruction"></param>
+        /// <param name="data"></param>
+        /// <param name="keys"></param>
+        /// <param name="keyIndices"></param>
         internal static void DecodeInitEmptyMerkleTreeData(
             DecodedInstruction decodedInstruction,
             ReadOnlySpan<byte> data,
@@ -238,7 +297,13 @@ namespace Solnet.Programs.AccountCompression
             decodedInstruction.Values.Add("max_depth", data[4]);
             decodedInstruction.Values.Add("max_buffer_size", data[5]);
         }
-
+        /// <summary>
+        /// Decodes the ReplaceLeaf instruction data.
+        /// </summary>
+        /// <param name="decodedInstruction"></param>
+        /// <param name="data"></param>
+        /// <param name="keys"></param>
+        /// <param name="keyIndices"></param>
         internal static void DecodeReplaceLeafData(
             DecodedInstruction decodedInstruction,
             ReadOnlySpan<byte> data,
@@ -261,7 +326,13 @@ namespace Solnet.Programs.AccountCompression
             decodedInstruction.Values.Add("new_leaf", data.GetBytes(68, 32));
             decodedInstruction.Values.Add("index", data.GetU32(100));
         }
-
+        /// <summary>
+        /// Decodes the InsertOrAppend instruction data.
+        /// </summary>
+        /// <param name="decodedInstruction"></param>
+        /// <param name="data"></param>
+        /// <param name="keys"></param>
+        /// <param name="keyIndices"></param>
         internal static void DecodeInsertOrAppendData(
             DecodedInstruction decodedInstruction,
             ReadOnlySpan<byte> data,
@@ -283,6 +354,13 @@ namespace Solnet.Programs.AccountCompression
             decodedInstruction.Values.Add("leaf", data.GetBytes(36,32));
             decodedInstruction.Values.Add("index", data.GetU32(68));
         }
+        /// <summary>
+        /// Decodes the TransferAuthority instruction data.
+        /// </summary>
+        /// <param name="decodedInstruction"></param>
+        /// <param name="data"></param>
+        /// <param name="keys"></param>
+        /// <param name="keyIndices"></param>
         internal static void DecodeTransferAuthorityInstruction(
             DecodedInstruction decodedInstruction,
             ReadOnlySpan<byte> data,
@@ -301,6 +379,14 @@ namespace Solnet.Programs.AccountCompression
             var newAuthority = data.GetPubKey(4);
             decodedInstruction.Values.Add("new_authority", newAuthority);
         }
+        /// <summary>
+        /// Decodes the VerifyLeaf instruction data.
+        /// </summary>
+        /// <param name="decodedInstruction"></param>
+        /// <param name="data"></param>
+        /// <param name="keys"></param>
+        /// <param name="keyIndices"></param>
+        /// <exception cref="ArgumentException"></exception>
         internal static void DecodeVerifyLeafData(
             DecodedInstruction decodedInstruction,
             ReadOnlySpan<byte> data,
