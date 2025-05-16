@@ -170,7 +170,8 @@ namespace Solnet.Programs.StakePool
         /// </summary>
         internal static void DecodeAddValidatorToPoolData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
-
+            // The seed is at offset 4 (after the 4-byte method discriminator)
+            decodedInstruction.Values.Add("Seed", data.GetU32(4));
         }
 
         /// <summary>
@@ -178,7 +179,7 @@ namespace Solnet.Programs.StakePool
         /// </summary>
         internal static void DecodeRemoveValidatorFromPoolData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
-
+            // No additional data to decode for this instruction
         }
 
         /// <summary>
@@ -186,7 +187,8 @@ namespace Solnet.Programs.StakePool
         /// </summary>
         internal static void DecodeDecreaseValidatorStakeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
-
+            decodedInstruction.Values.Add("Lamports", data.GetU64(4));
+            decodedInstruction.Values.Add("Transient Stake Seed", data.GetU64(12));
         }
 
         /// <summary>
@@ -194,7 +196,9 @@ namespace Solnet.Programs.StakePool
         /// </summary>
         internal static void DecodeDecreaseAdditionalValidatorStakeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
-
+            decodedInstruction.Values.Add("Lamports", data.GetU64(4));
+            decodedInstruction.Values.Add("Transient Stake Seed", data.GetU64(12));
+            decodedInstruction.Values.Add("Ephemeral Stake Seed", data.GetU64(20));
         }
 
         /// <summary>
@@ -202,7 +206,8 @@ namespace Solnet.Programs.StakePool
         /// </summary>
         internal static void DecodeDecreaseValidatorStakeWithReserveData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
-
+            decodedInstruction.Values.Add("Lamports", data.GetU64(4));
+            decodedInstruction.Values.Add("Transient Stake Seed", data.GetU64(12));
         }
 
         /// <summary>
@@ -210,7 +215,8 @@ namespace Solnet.Programs.StakePool
         /// </summary>
         internal static void DecodeIncreaseValidatorStakeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
-
+            decodedInstruction.Values.Add("Lamports", data.GetU64(4));
+            decodedInstruction.Values.Add("Transient Stake Seed", data.GetU64(12));
         }
 
         /// <summary>
@@ -218,7 +224,9 @@ namespace Solnet.Programs.StakePool
         /// </summary>
         internal static void DecodeIncreaseAdditionalValidatorStakeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
-
+            decodedInstruction.Values.Add("Lamports", data.GetU64(4));
+            decodedInstruction.Values.Add("Transient Stake Seed", data.GetU64(12));
+            decodedInstruction.Values.Add("Ephemeral Stake Seed", data.GetU64(20));
         }
 
         /// <summary>
@@ -226,7 +234,7 @@ namespace Solnet.Programs.StakePool
         /// </summary>
         internal static void DecodeRedelegateData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
-
+            // No additional data to decode for this instruction (based on encoding stub)
         }
 
         /// <summary>
@@ -234,7 +242,12 @@ namespace Solnet.Programs.StakePool
         /// </summary>
         internal static void DecodeSetPreferredValidatorData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
-            
+            decodedInstruction.Values.Add("Validator Type", (PreferredValidatorType)data.GetU32(4));
+            if (data.Length >= 8 + PublicKey.PublicKeyLength)
+            {
+                var keyBytes = data.Slice(8, PublicKey.PublicKeyLength).ToArray();
+                decodedInstruction.Values.Add("Validator Vote Address", new PublicKey(keyBytes));
+            }
         }
 
     }
