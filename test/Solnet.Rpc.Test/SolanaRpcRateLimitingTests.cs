@@ -17,13 +17,13 @@ namespace Solnet.Rpc.Test
             // allow unlimited fires instantly
             var limit = RateLimiter.Create();
             Assert.IsTrue(limit.CanFire());
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
+            limit.WaitFireAsync().Wait();
+            limit.WaitFireAsync().Wait();
+            limit.WaitFireAsync().Wait();
+            limit.WaitFireAsync().Wait();
+            limit.WaitFireAsync().Wait();
+            limit.WaitFireAsync().Wait();
+            limit.WaitFireAsync().Wait();
         }
 
         [TestMethod]
@@ -32,15 +32,15 @@ namespace Solnet.Rpc.Test
             // allow unlimited fires instantly
             var limit = RateLimiter.Create().AllowHits(100).PerSeconds(10);
             Assert.IsTrue(limit.CanFire());
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
+            limit.WaitFireAsync().Wait();
+            limit.WaitFireAsync().Wait();
+            limit.WaitFireAsync().Wait();
+            limit.WaitFireAsync().Wait();
+            limit.WaitFireAsync().Wait();
+            limit.WaitFireAsync().Wait();
+            limit.WaitFireAsync().Wait();
+            limit.WaitFireAsync().Wait();
+            limit.WaitFireAsync().Wait();
         }
 
         [TestMethod]
@@ -53,19 +53,19 @@ namespace Solnet.Rpc.Test
             Console.WriteLine(limit);
             Assert.IsTrue(limit.CanFire());
             Console.WriteLine(limit);
-            limit.Fire();
+            limit.WaitFireAsync().Wait();
             Console.WriteLine(limit);
-            limit.Fire();
+            limit.WaitFireAsync().Wait();
             Console.WriteLine(limit);
-            limit.Fire();
+            limit.WaitFireAsync().Wait();
             Console.WriteLine(limit);
-            limit.Fire();
+            limit.WaitFireAsync().Wait();
             Console.WriteLine(limit);
-            limit.Fire();
+            limit.WaitFireAsync().Wait();
             Console.WriteLine(limit);
-            limit.Fire();
+            limit.WaitFireAsync().Wait();
             Console.WriteLine(limit);
-            limit.Fire();
+            limit.WaitFireAsync().Wait();
             Console.WriteLine(limit);
 
             // observe why this may break the build
