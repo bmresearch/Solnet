@@ -12,39 +12,39 @@ namespace Solnet.Rpc.Test
     public class SolanaRpcRateLimitingTests
     {
         [TestMethod]
-        public void TestMaxSpeed_NoLimits()
+        public async Task TestMaxSpeed_NoLimits()
         {
             // allow unlimited fires instantly
             var limit = RateLimiter.Create();
             Assert.IsTrue(limit.CanFire());
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
+            await limit.WaitFireAsync();
+            await limit.WaitFireAsync();
+            await limit.WaitFireAsync();
+            await limit.WaitFireAsync();
+            await limit.WaitFireAsync();
+            await limit.WaitFireAsync();
+            await limit.WaitFireAsync();
         }
 
         [TestMethod]
-        public void TestMaxSpeed_WithinLimits()
+        public async Task TestMaxSpeed_WithinLimits()
         {
             // allow unlimited fires instantly
             var limit = RateLimiter.Create().AllowHits(100).PerSeconds(10);
             Assert.IsTrue(limit.CanFire());
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
-            limit.Fire();
+            await limit.WaitFireAsync();
+            await limit.WaitFireAsync();
+            await limit.WaitFireAsync();
+            await limit.WaitFireAsync();
+            await limit.WaitFireAsync();
+            await limit.WaitFireAsync();
+            await limit.WaitFireAsync();
+            await limit.WaitFireAsync();
+            await limit.WaitFireAsync();
         }
 
         [TestMethod]
-        public void TestTwoHitsPerSecond()
+        public async Task TestTwoHitsPerSecond()
         {
             // allow 2 hits per second
             var timeCheck = DateTime.UtcNow;
@@ -53,19 +53,19 @@ namespace Solnet.Rpc.Test
             Console.WriteLine(limit);
             Assert.IsTrue(limit.CanFire());
             Console.WriteLine(limit);
-            limit.Fire();
+            await limit.WaitFireAsync();
             Console.WriteLine(limit);
-            limit.Fire();
+            await limit.WaitFireAsync();
             Console.WriteLine(limit);
-            limit.Fire();
+            await limit.WaitFireAsync();
             Console.WriteLine(limit);
-            limit.Fire();
+            await limit.WaitFireAsync();
             Console.WriteLine(limit);
-            limit.Fire();
+            await limit.WaitFireAsync();
             Console.WriteLine(limit);
-            limit.Fire();
+            await limit.WaitFireAsync();
             Console.WriteLine(limit);
-            limit.Fire();
+            await limit.WaitFireAsync();
             Console.WriteLine(limit);
 
             // observe why this may break the build
@@ -74,7 +74,6 @@ namespace Solnet.Rpc.Test
             Console.WriteLine($"TimeCheck diff {finalTimeCheck.Subtract(twoSecondsLater).TotalMilliseconds}ms");
             Assert.IsTrue(finalTimeCheck.Subtract(timeCheck).TotalMilliseconds > 2000, $"ExecTime diff {finalTimeCheck.Subtract(timeCheck).TotalMilliseconds}ms");
         }
-
 
         [TestMethod]
         public async Task TestMaxSpeed_NoLimits_Async()
