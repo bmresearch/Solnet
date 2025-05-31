@@ -1,4 +1,5 @@
 ﻿using Solnet.Programs.StakePool.Models;
+using Solnet.Programs.StakePool.Models;
 using Solnet.Programs.TokenSwap.Models;
 using Solnet.Programs.Utilities;
 using Solnet.Wallet;
@@ -18,23 +19,26 @@ namespace Solnet.Programs.StakePool
         /// <summary>
         /// Encodes the 'Initialize' instruction data.
         /// </summary>
-        /// <param name="fees"></param>
+        /// <param name="fee"></param>
         /// <param name="withdrawalFee"></param>
         /// <param name="depositFee"></param>
         /// <param name="referralFee"></param>
         /// <param name="maxValidators"></param>
         /// <returns></returns>
-        internal static byte[] EncodeInitializeData(Fees fees, Fees withdrawalFee, Fees depositFee, Fees referralFee, uint? maxValidators)
+        internal static byte[] EncodeInitializeData(Fee fee, Fee withdrawalFee, Fee depositFee, Fee referralFee, uint? maxValidators)
         {
-            byte[] data = new byte[4];
+            byte[] data = new byte[72];
             data.WriteU32((uint)StakePoolProgramInstructions.Values.Initialize, MethodOffset);
-            data.WriteSpan(fees.Serialize(), MethodOffset + 4);
-            data.WriteSpan(withdrawalFee.Serialize(), MethodOffset + 12);
-            data.WriteSpan(depositFee.Serialize(), MethodOffset + 20);
-            data.WriteSpan(referralFee.Serialize(), MethodOffset + 28);
-            data.WriteU32(maxValidators ?? 0, MethodOffset + 36);
-            // Here you would implement the serialization of `initData` (e.g., using borsh or another method)
-            return data; // Example: return the serialized byte array
+            data.WriteU64(fee.Numerator, MethodOffset + 4); // Serialize Fee as Numerator and Denominator
+            data.WriteU64(fee.Denominator, MethodOffset + 12);
+            data.WriteU64(withdrawalFee.Numerator, MethodOffset + 20);
+            data.WriteU64(withdrawalFee.Denominator, MethodOffset + 28);
+            data.WriteU64(depositFee.Numerator, MethodOffset + 36);
+            data.WriteU64(depositFee.Denominator, MethodOffset + 44);
+            data.WriteU64(referralFee.Numerator, MethodOffset + 52);
+            data.WriteU64(referralFee.Denominator, MethodOffset + 60);
+            data.WriteU32(maxValidators ?? 0, MethodOffset + 68);
+            return data;
         }
 
 
@@ -45,7 +49,7 @@ namespace Solnet.Programs.StakePool
         /// <returns></returns>
         internal static byte[] EncodeAddValidatorToPoolData(uint? seed)
         {
-            byte[] data = new byte[4];
+            byte[] data = new byte[8];
             var seedValue = seed ?? 0;
             data.WriteU32((uint)StakePoolProgramInstructions.Values.AddValidatorToPool, MethodOffset);
             data.WriteU32(seedValue, MethodOffset + 4);
@@ -70,7 +74,7 @@ namespace Solnet.Programs.StakePool
         /// </summary>
         internal static byte[] EncodeDecreaseValidatorStakeData(ulong lamports, ulong transientStakeSeed)
         {
-            byte[] data = new byte[4];
+            byte[] data = new byte[20];
             data.WriteU32((uint)StakePoolProgramInstructions.Values.DecreaseValidatorStake, MethodOffset);
             data.WriteU64(lamports, MethodOffset + 4);
             data.WriteU64(transientStakeSeed, MethodOffset + 12);
@@ -84,7 +88,7 @@ namespace Solnet.Programs.StakePool
         /// </summary>
         internal static byte[] EncodeDecreaseAdditionalValidatorStakeData(ulong lamports, ulong transientStakeSeed, ulong ephemeralStakeSeed)
         {
-            byte[] data = new byte[4];
+            byte[] data = new byte[28];
             data.WriteU32((uint)StakePoolProgramInstructions.Values.DecreaseAdditionalValidatorStake, MethodOffset);
             data.WriteU64(lamports, MethodOffset + 4);
             data.WriteU64(transientStakeSeed, MethodOffset + 12);
@@ -98,7 +102,7 @@ namespace Solnet.Programs.StakePool
         /// </summary>
         internal static byte[] EncodeDecreaseValidatorStakeWithReserveData(ulong lamports, ulong transientStakeSeed)
         {
-            byte[] data = new byte[4];
+            byte[] data = new byte[20];
             data.WriteU32((uint)StakePoolProgramInstructions.Values.DecreaseValidatorStakeWithReserve, MethodOffset);
             data.WriteU64(lamports, MethodOffset + 4);
             data.WriteU64(transientStakeSeed, MethodOffset + 12);
@@ -112,7 +116,7 @@ namespace Solnet.Programs.StakePool
         /// <returns></returns>
         internal static byte[] EncodeIncreaseValidatorStakeData(ulong lamports, ulong transientStakeSeed)
         {
-            byte[] data = new byte[4];
+            byte[] data = new byte[28];
             data.WriteU32((uint)StakePoolProgramInstructions.Values.IncreaseValidatorStake, MethodOffset);
             data.WriteU64(lamports, MethodOffset + 4);
             data.WriteU64(transientStakeSeed, MethodOffset + 12);
@@ -125,7 +129,7 @@ namespace Solnet.Programs.StakePool
         /// </summary>
         internal static byte[] EncodeIncreaseAdditionalValidatorStakeData(ulong lamports, ulong transientStakeSeed, ulong ephemeralStakeSeed)
         {
-            byte[] data = new byte[4];
+            byte[] data = new byte[28];
             data.WriteU32((uint)StakePoolProgramInstructions.Values.IncreaseValidatorStake, MethodOffset);
             data.WriteU64(lamports, MethodOffset + 4);
             data.WriteU64(transientStakeSeed, MethodOffset + 12);
@@ -140,7 +144,7 @@ namespace Solnet.Programs.StakePool
         /// </summary>
         internal static byte[] EncodeSetPreferredValidatorData(PreferredValidatorType validatorType, PublicKey? validatorVoteAddress)
         {
-            byte[] data = new byte[4];
+            byte[] data = new byte[40];
             data.WriteU32((uint)StakePoolProgramInstructions.Values.SetPreferredValidator, MethodOffset);
             data.WriteU32((uint)validatorType, MethodOffset + 4);
             if (validatorVoteAddress != null)
@@ -150,6 +154,55 @@ namespace Solnet.Programs.StakePool
 
             // Implement the serialization of setPreferredValidatorData (e.g., using Borsh or another method)
             return data; // Example: return the serialized byte array
+        }
+
+        internal static byte[] EncodeSetFeeData(FeeType feeType)
+        {
+            // 4 bytes for method, 1 for discriminant, up to 16 for Fee, or 1 for byte
+            var buffer = new List<byte>();
+            buffer.AddRange(BitConverter.GetBytes((uint)StakePoolProgramInstructions.Values.SetFee));
+
+            // Discriminant and value
+            switch (feeType)
+            {
+                case FeeType.SolReferral solReferral:
+                    buffer.Add(0); // Discriminant for SolReferral
+                    buffer.Add(solReferral.Percentage);
+                    break;
+                case FeeType.StakeReferral stakeReferral:
+                    buffer.Add(1);
+                    buffer.Add(stakeReferral.Percentage);
+                    break;
+                case FeeType.Epoch epoch:
+                    buffer.Add(2);
+                    buffer.AddRange(BitConverter.GetBytes(epoch.Fee.Numerator));
+                    buffer.AddRange(BitConverter.GetBytes(epoch.Fee.Denominator));
+                    break;
+                case FeeType.StakeWithdrawal stakeWithdrawal:
+                    buffer.Add(3);
+                    buffer.AddRange(BitConverter.GetBytes(stakeWithdrawal.Fee.Numerator));
+                    buffer.AddRange(BitConverter.GetBytes(stakeWithdrawal.Fee.Denominator));
+                    break;
+                case FeeType.SolWithdrawal solWithdrawal:
+                    buffer.Add(4);
+                    buffer.AddRange(BitConverter.GetBytes(solWithdrawal.Fee.Numerator));
+                    buffer.AddRange(BitConverter.GetBytes(solWithdrawal.Fee.Denominator));
+                    break;
+                case FeeType.SolDeposit solDeposit:
+                    buffer.Add(5);
+                    buffer.AddRange(BitConverter.GetBytes(solDeposit.Fee.Numerator));
+                    buffer.AddRange(BitConverter.GetBytes(solDeposit.Fee.Denominator));
+                    break;
+                case FeeType.StakeDeposit stakeDeposit:
+                    buffer.Add(6);
+                    buffer.AddRange(BitConverter.GetBytes(stakeDeposit.Fee.Numerator));
+                    buffer.AddRange(BitConverter.GetBytes(stakeDeposit.Fee.Denominator));
+                    break;
+                default:
+                    throw new ArgumentException("Unknown FeeType variant");
+            }
+
+            return buffer.ToArray();
         }
 
         /// <summary>

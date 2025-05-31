@@ -2,7 +2,6 @@
 using Solnet.Wallet;
 using System.Collections.Generic;
 using Solnet.Programs.Abstract;
-using Solnet.Programs.TokenSwap.Models;
 using System;
 using System.Text;
 using Solnet.Programs.StakePool.Models;
@@ -102,10 +101,10 @@ namespace Solnet.Programs.StakePool
             PublicKey poolMint,
             PublicKey managerPoolAccount,
             PublicKey tokenProgramId,
-            Fees fee,
-            Fees withdrawalFee,
-            Fees depositFee,
-            Fees referralFee,
+            Fee fee,
+            Fee withdrawalFee,
+            Fee depositFee,
+            Fee referralFee,
             PublicKey depositAuthority = null,
             uint? maxValidators = null
         )
@@ -485,6 +484,8 @@ namespace Solnet.Programs.StakePool
                 Data = data
             };
         }
+
+
 
 #nullable enable
 

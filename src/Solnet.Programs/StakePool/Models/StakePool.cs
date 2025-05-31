@@ -3,6 +3,7 @@ using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using static Solnet.Programs.Models.Stake.State;
@@ -15,19 +16,39 @@ namespace Solnet.Programs.StakePool.Models
     public class StakePool
     {
         /// <summary>
+        /// Gets or sets the type of the account.
+        /// </summary>
+        public AccountType AccountType { get; set; }
+
+        /// <summary>
+        /// The public key of the stake pool.
+        /// </summary>
+        public PublicKey Manager { get; set; }
+
+        /// <summary>
         /// The public key of the staker.
         /// </summary>
         public PublicKey Staker { get; set; }
 
         /// <summary>
-        /// The public key of the reserve stake account.
+        /// The public key of the Deposit Authority.
         /// </summary>
-        public PublicKey ReserveStake { get; set; }
+        public PublicKey StakeDepositAuthority { get; set; }
+
+        /// <summary>
+        /// Gets or sets the bump seed associated with the stake withdrawal operation.
+        /// </summary>
+        public PublicKey StakeWithdrawBumpSeed { get; set; }
 
         /// <summary>
         /// The public key of the validator list.
         /// </summary>
         public PublicKey ValidatorList { get; set; }
+
+        /// <summary>
+        /// The public key of the reserve stake account.
+        /// </summary>
+        public PublicKey ReserveStake { get; set; }
 
         /// <summary>
         /// The public key of the pool mint.
@@ -67,12 +88,12 @@ namespace Solnet.Programs.StakePool.Models
         /// <summary>
         /// The fee for the current epoch.
         /// </summary>
-        public Fees EpochFee { get; set; }
+        public Fee EpochFee { get; set; }
 
         /// <summary>
         /// The fee for the next epoch.
         /// </summary>
-        public Fees NextEpochFee { get; set; }
+        public Fee NextEpochFee { get; set; }
 
         /// <summary>
         /// The preferred validator vote address for deposits.
@@ -87,22 +108,22 @@ namespace Solnet.Programs.StakePool.Models
         /// <summary>
         /// The fee for stake deposits.
         /// </summary>
-        public Fees StakeDepositFee { get; set; }
+        public Fee StakeDepositFee { get; set; }
 
         /// <summary>
         /// The fee for stake withdrawals.
         /// </summary>
-        public Fees StakeWithdrawalFee { get; set; }
+        public Fee StakeWithdrawalFee { get; set; }
 
         /// <summary>
         /// The fee for the next stake withdrawals.
         /// </summary>
-        public Fees NextStakeWithdrawalFees { get; set; }
+        public Fee NextStakeWithdrawalFees { get; set; }
 
         /// <summary>
         /// The referral fee for stake operations.
         /// </summary>
-        public byte StakeReferralFees { get; set; }
+        public byte StakeReferralFee { get; set; }
 
         /// <summary>
         /// The public key of the SOL deposit authority.
@@ -112,7 +133,7 @@ namespace Solnet.Programs.StakePool.Models
         /// <summary>
         /// The fee for SOL deposits.
         /// </summary>
-        public Fees SolDepositFee { get; set; }
+        public Fee SolDepositFee { get; set; }
 
         /// <summary>
         /// The referral fee for SOL operations.
@@ -127,12 +148,12 @@ namespace Solnet.Programs.StakePool.Models
         /// <summary>
         /// The fee for SOL withdrawals.
         /// </summary>
-        public Fees SolWithdrawalFee { get; set; }
+        public Fee SolWithdrawalFee { get; set; }
 
         /// <summary>
         /// The fee for the next SOL withdrawals.
         /// </summary>
-        public Fees NextSolWithdrawalFee { get; set; }
+        public Fee NextSolWithdrawalFee { get; set; }
 
         /// <summary>
         /// The pool token supply at the last epoch.
@@ -153,28 +174,155 @@ namespace Solnet.Programs.StakePool.Models
         }
 
         /// <summary>
-        /// Calculates the number of pool tokens for a given deposit of lamports.
+        /// Calculates the pool tokens that should be minted for a deposit of stake lamports.
         /// </summary>
-        /// <param name="stakeLamports">The amount of lamports to deposit.</param>
-        /// <returns>The calculated pool tokens.</returns>
-        public ulong CalcPoolTokensForDeposit(ulong stakeLamports)
+        public ulong? CalcPoolTokensForDeposit(ulong stakeLamports)
         {
             if (TotalLamports == 0 || PoolTokenSupply == 0)
-            {
                 return stakeLamports;
-            }
 
-            return (stakeLamports * PoolTokenSupply) / TotalLamports;
+            try
+            {
+                BigInteger tokens = (BigInteger)stakeLamports * PoolTokenSupply;
+                BigInteger result = tokens / TotalLamports;
+                if (result < 0 || result > ulong.MaxValue) return null;
+                return (ulong)result;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <summary>
-        /// Calculates the amount of lamports to withdraw for a given number of pool tokens.
+        /// Calculates the lamports amount on withdrawal.
         /// </summary>
-        /// <param name="poolTokens">The number of pool tokens to withdraw.</param>
-        /// <returns>The calculated lamports.</returns>
-        public ulong CalcLamportsWithdrawAmount(ulong poolTokens)
+        public ulong? CalcLamportsWithdrawAmount(ulong poolTokens)
         {
-            return (poolTokens * TotalLamports) / PoolTokenSupply;
+            BigInteger numerator = (BigInteger)poolTokens * TotalLamports;
+            BigInteger denominator = PoolTokenSupply;
+            if (denominator == 0 || numerator < denominator)
+                return 0;
+            try
+            {
+                BigInteger result = numerator / denominator;
+                if (result < 0 || result > ulong.MaxValue) return null;
+                return (ulong)result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Calculates pool tokens to be deducted as stake withdrawal fees.
+        /// </summary>
+        public ulong? CalcPoolTokensStakeWithdrawalFee(ulong poolTokens)
+        {
+            return StakeWithdrawalFee?.Apply(poolTokens);
+        }
+
+        /// <summary>
+        /// Calculates pool tokens to be deducted as SOL withdrawal fees.
+        /// </summary>
+        public ulong? CalcPoolTokensSolWithdrawalFee(ulong poolTokens)
+        {
+            return SolWithdrawalFee?.Apply(poolTokens);
+        }
+
+        /// <summary>
+        /// Calculates pool tokens to be deducted as stake deposit fees.
+        /// </summary>
+        public ulong? CalcPoolTokensStakeDepositFee(ulong poolTokensMinted)
+        {
+            return StakeDepositFee?.Apply(poolTokensMinted);
+        }
+
+        /// <summary>
+        /// Calculates pool tokens to be deducted from deposit fees as referral fees.
+        /// </summary>
+        public ulong? CalcPoolTokensStakeReferralFee(ulong stakeDepositFee)
+        {
+            try
+            {
+                BigInteger result = (BigInteger)stakeDepositFee * StakeReferralFee / 100;
+                if (result < 0 || result > ulong.MaxValue) return null;
+                return (ulong)result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Calculates pool tokens to be deducted as SOL deposit fees.
+        /// </summary>
+        public ulong? CalcPoolTokensSolDepositFee(ulong poolTokensMinted)
+        {
+            return SolDepositFee?.Apply(poolTokensMinted);
+        }
+
+        /// <summary>
+        /// Calculates pool tokens to be deducted from SOL deposit fees as referral fees.
+        /// </summary>
+        public ulong? CalcPoolTokensSolReferralFee(ulong solDepositFee)
+        {
+            try
+            {
+                BigInteger result = (BigInteger)solDepositFee * SolReferralFee / 100;
+                if (result < 0 || result > ulong.MaxValue) return null;
+                return (ulong)result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Calculates the fee in pool tokens that goes to the manager for a given reward lamports.
+        /// </summary>
+        public ulong? CalcEpochFeeAmount(ulong rewardLamports)
+        {
+            if (rewardLamports == 0)
+                return 0;
+
+            BigInteger totalLamports = (BigInteger)TotalLamports + rewardLamports;
+            var feeLamports = EpochFee?.Apply(rewardLamports) ?? 0;
+
+            if (totalLamports == feeLamports || PoolTokenSupply == 0)
+                return rewardLamports;
+
+            try
+            {
+                BigInteger result = (BigInteger)PoolTokenSupply * feeLamports /
+                                    (totalLamports - feeLamports);
+                if (result < 0 || result > ulong.MaxValue) return null;
+                return (ulong)result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the current value of pool tokens, rounded up.
+        /// </summary>
+        public ulong? GetLamportsPerPoolToken()
+        {
+            try
+            {
+                BigInteger result = ((BigInteger)TotalLamports + PoolTokenSupply - 1) / PoolTokenSupply;
+                if (result < 0 || result > ulong.MaxValue) return null;
+                return (ulong)result;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }
