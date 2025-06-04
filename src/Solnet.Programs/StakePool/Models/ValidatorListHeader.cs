@@ -20,5 +20,17 @@ namespace Solnet.Programs.StakePool.Models
         /// Maximum allowable number of validators.
         /// </summary>
         public uint MaxValidators { get; set; }
+
+        /// <summary>
+        /// Dynamically calculates the serialized length of the header.
+        /// </summary>
+        /// <returns>The length in bytes.</returns>
+        public int GetSerializedLength()
+        {
+            // For example, assume:
+            // AccountType: 1 byte
+            // MaxValidators: 4 bytes
+            return 1 + 4;
+        }
     }
 }

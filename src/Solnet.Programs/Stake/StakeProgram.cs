@@ -28,7 +28,7 @@ namespace Solnet.Programs
         /// <summary>
         /// Stake Config ID
         /// </summary>
-         public static readonly PublicKey ConfigKey = new("StakeConfig11111111111111111111111111111111");
+        public static readonly PublicKey ConfigKey = new("StakeConfig11111111111111111111111111111111");
         /// <summary>
         /// The program's name.
         /// </summary>

@@ -1,10 +1,9 @@
 ﻿using Solnet.Programs.StakePool.Models;
-using Solnet.Programs.StakePool.Models;
-using Solnet.Programs.TokenSwap.Models;
 using Solnet.Programs.Utilities;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Solnet.Programs.StakePool
 {
@@ -206,6 +205,355 @@ namespace Solnet.Programs.StakePool
         }
 
         /// <summary>
+        /// Encodes the 'SetFee' instruction data using a Fee object.
+        /// </summary>
+        /// <param name="fee">The fee to set.</param>
+        /// <returns>A byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeSetFee(Fee fee)
+        {
+            // Allocate 20 bytes: 4 bytes for the discriminator and 16 bytes for the fee (8 for numerator and 8 for denominator).
+            byte[] data = new byte[20];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.SetFee, MethodOffset);
+            data.WriteU64(fee.Numerator, MethodOffset + 4);
+            data.WriteU64(fee.Denominator, MethodOffset + 12);
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'Redelegate' instruction data.
+        /// </summary>
+        internal static byte[] EncodeRedelegateData(ulong lamports, ulong sourceTransientStakeSeed, ulong ephemeralStakeSeed, ulong destinationTransientStakeSeed)
+        {
+            // 4 bytes for discriminator + 8 bytes each for 4 fields = 36 bytes total.
+            byte[] data = new byte[36];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.Redelegate, MethodOffset);
+            data.WriteU64(lamports, MethodOffset + 4);
+            data.WriteU64(sourceTransientStakeSeed, MethodOffset + 12);
+            data.WriteU64(ephemeralStakeSeed, MethodOffset + 20);
+            data.WriteU64(destinationTransientStakeSeed, MethodOffset + 28);
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'UpdateStakePoolBalance' instruction data.
+        /// </summary>
+        internal static byte[] EncodeUpdateStakePoolBalance()
+        {
+            byte[] data = new byte[4];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.UpdateStakePoolBalance, MethodOffset);
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'UpdateValidatorListBalance' instruction data.
+        /// </summary>
+        /// <param name="startIndex">The starting index in the validator list.</param>
+        /// <param name="noMerge">If true, merging is disabled.</param>
+        /// <returns>A byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeUpdateValidatorListBalance(uint startIndex, bool noMerge)
+        {
+            // Allocate 9 bytes: 4 for the method discriminator,
+            // 4 for the start index, and 1 for the no-merge flag.
+            byte[] data = new byte[9];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.UpdateValidatorListBalance, MethodOffset);
+            data.WriteU32(startIndex, MethodOffset + 4);
+            data[MethodOffset + 8] = noMerge ? (byte)1 : (byte)0;
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'CleanupRemovedValidatorEntries' instruction data.
+        /// </summary>
+        /// <returns>A byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeCleanupRemovedValidatorEntries()
+        {
+            byte[] data = new byte[4];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.CleanupRemovedValidatorEntries, MethodOffset);
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'DepositStakeWithSlippage' instruction data.
+        /// </summary>
+        /// <param name="minimumPoolTokensOut">The minimum pool tokens expected on deposit (slippage constraint).</param>
+        /// <returns>A byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeDepositStakeWithSlippage(ulong minimumPoolTokensOut)
+        {
+            // Allocate 12 bytes:
+            // 4 bytes for the instruction discriminator and 8 bytes for the minimum pool tokens out value.
+            byte[] data = new byte[12];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.DepositStakeWithSlippage, MethodOffset);
+            data.WriteU64(minimumPoolTokensOut, MethodOffset + 4);
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'DepositStake' instruction data.
+        /// </summary>
+        /// <returns>A byte array containing the encoded instruction data for DepositStake.</returns>
+        internal static byte[] EncodeDepositStake()
+        {
+            // Allocate 4 bytes for the instruction discriminator.
+            byte[] data = new byte[4];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.DepositStake, MethodOffset);
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'DepositSol' instruction data (without slippage).
+        /// </summary>
+        /// <param name="lamportsIn">The amount of SOL lamports being deposited.</param>
+        /// <returns>A byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeDepositSol(ulong lamportsIn)
+        {
+            // Allocate 12 bytes: 4 for the discriminator and 8 for lamportsIn.
+            byte[] data = new byte[12];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.DepositSol, MethodOffset);
+            data.WriteU64(lamportsIn, MethodOffset + 4);
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'DepositSolWithSlippage' instruction data.
+        /// </summary>
+        /// <param name="lamportsIn">The amount of SOL lamports being deposited.</param>
+        /// <param name="minimumPoolTokensOut">The minimum pool tokens expected on deposit.</param>
+        /// <returns>A byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeDepositSolWithSlippage(ulong lamportsIn, ulong minimumPoolTokensOut)
+        {
+            // Allocate 20 bytes: 4 bytes for the discriminator, 8 for lamportsIn, 8 for minimumPoolTokensOut.
+            byte[] data = new byte[20];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.DepositSolWithSlippage, MethodOffset);
+            data.WriteU64(lamportsIn, MethodOffset + 4);
+            data.WriteU64(minimumPoolTokensOut, MethodOffset + 12);
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'CreateTokenMetadata' instruction data.
+        /// </summary>
+        /// <param name="name">The name of the token.</param>
+        /// <param name="symbol">The token symbol.</param>
+        /// <param name="uri">The URI for the token metadata.</param>
+        /// <returns>A byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeCreateTokenMetadata(string name, string symbol, string uri)
+        {
+            // Encode string fields as UTF8 byte arrays.
+            byte[] nameBytes = Encoding.UTF8.GetBytes(name);
+            byte[] symbolBytes = Encoding.UTF8.GetBytes(symbol);
+            byte[] uriBytes = Encoding.UTF8.GetBytes(uri);
+
+            // Total length:
+            // 4 bytes for discriminator +
+            // 4 bytes (name length) + name bytes +
+            // 4 bytes (symbol length) + symbol bytes +
+            // 4 bytes (uri length) + uri bytes.
+            int totalLength = 4 + (4 + nameBytes.Length) + (4 + symbolBytes.Length) + (4 + uriBytes.Length);
+            byte[] data = new byte[totalLength];
+
+            int offset = 0;
+            // Write the discriminator.
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.CreateTokenMetadata, offset);
+            offset += 4;
+
+            // Write the name.
+            data.WriteU32((uint)nameBytes.Length, offset);
+            offset += 4;
+            nameBytes.CopyTo(data, offset);
+            offset += nameBytes.Length;
+
+            // Write the symbol.
+            data.WriteU32((uint)symbolBytes.Length, offset);
+            offset += 4;
+            symbolBytes.CopyTo(data, offset);
+            offset += symbolBytes.Length;
+
+            // Write the URI.
+            data.WriteU32((uint)uriBytes.Length, offset);
+            offset += 4;
+            uriBytes.CopyTo(data, offset);
+
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'UpdateTokenMetadata' instruction data.
+        /// </summary>
+        /// <param name="name">The new name for the pool token.</param>
+        /// <param name="symbol">The new symbol for the pool token.</param>
+        /// <param name="uri">The new URI for the pool token metadata.</param>
+        /// <returns>A byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeUpdateTokenMetadata(string name, string symbol, string uri)
+        {
+            // Convert the string fields to UTF8 byte arrays.
+            byte[] nameBytes = Encoding.UTF8.GetBytes(name);
+            byte[] symbolBytes = Encoding.UTF8.GetBytes(symbol);
+            byte[] uriBytes = Encoding.UTF8.GetBytes(uri);
+
+            // Compute total length:
+            // 4 bytes for discriminator +
+            // 4 bytes (name length) + name bytes +
+            // 4 bytes (symbol length) + symbol bytes +
+            // 4 bytes (uri length) + uri bytes.
+            int totalLength = 4 + (4 + nameBytes.Length) + (4 + symbolBytes.Length) + (4 + uriBytes.Length);
+            byte[] data = new byte[totalLength];
+
+            int offset = 0;
+            // Write the discriminator. Ensure that your StakePoolProgramInstructions enum has a value for UpdateTokenMetadata.
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.UpdateTokenMetadata, offset);
+            offset += 4;
+
+            // Write 'name'.
+            data.WriteU32((uint)nameBytes.Length, offset);
+            offset += 4;
+            nameBytes.CopyTo(data, offset);
+            offset += nameBytes.Length;
+
+            // Write 'symbol'.
+            data.WriteU32((uint)symbolBytes.Length, offset);
+            offset += 4;
+            symbolBytes.CopyTo(data, offset);
+            offset += symbolBytes.Length;
+
+            // Write 'uri'.
+            data.WriteU32((uint)uriBytes.Length, offset);
+            offset += 4;
+            uriBytes.CopyTo(data, offset);
+
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'SetFundingAuthority' instruction data.
+        /// </summary>
+        /// <param name="fundingType">The funding type to be set.</param>
+        /// <param name="newAuthority">The new authority public key.</param>
+        /// <returns>A byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeSetFundingAuthority(FundingType fundingType, PublicKey newAuthority)
+        {
+            // Allocate 37 bytes:
+            // 4 bytes for the discriminator,
+            // 1 byte for the funding type (as a byte),
+            // 32 bytes for the new authority public key.
+            byte[] data = new byte[37];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.SetFundingAuthority, MethodOffset);
+
+            // Write funding type enum value as a byte.
+            data[MethodOffset + 4] = (byte)fundingType;
+
+            // Write the new authority public key.
+            newAuthority.KeyBytes.CopyTo(data, MethodOffset + 5);
+
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'SetFundingAuthority' instruction data.
+        /// </summary>
+        /// <param name="fundingType">The funding type.</param>
+        /// <returns>A byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeSetFundingAuthority(FundingType fundingType)
+        {
+            // Allocate 5 bytes: 4 bytes for the method discriminator and 1 byte for the funding type.
+            byte[] data = new byte[5];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.SetFundingAuthority, MethodOffset);
+            data[MethodOffset + 4] = (byte)fundingType;
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'SetStaker' instruction data.
+        /// </summary>
+        /// <param name="newStaker">The new staker public key.</param>
+        /// <returns>A byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeSetStaker(PublicKey newStaker)
+        {
+            // Allocate 36 bytes: 4 bytes for the discriminator and 32 bytes for the new staker public key.
+            byte[] data = new byte[36];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.SetStaker, MethodOffset);
+            newStaker.KeyBytes.CopyTo(data, MethodOffset + 4);
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'SetManager' instruction data.
+        /// </summary>
+        /// <returns>A byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeSetManager()
+        {
+            // Allocate 4 bytes for the instruction discriminator.
+            byte[] data = new byte[4];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.SetManager, MethodOffset);
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'WithdrawSolWithSlippage' instruction data.
+        /// </summary>
+        /// <param name="poolTokensIn">The amount of pool tokens being withdrawn.</param>
+        /// <param name="minimumLamportsOut">The minimum lamports expected on withdrawal.</param>
+        /// <returns>A byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeWithdrawSolWithSlippage(ulong poolTokensIn, ulong minimumLamportsOut)
+        {
+            // Allocate 20 bytes:
+            // 4 bytes for the instruction discriminator,
+            // 8 bytes for the poolTokensIn amount,
+            // 8 bytes for the minimum lamports out value.
+            byte[] data = new byte[20];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.WithdrawSolWithSlippage, MethodOffset);
+            data.WriteU64(poolTokensIn, MethodOffset + 4);
+            data.WriteU64(minimumLamportsOut, MethodOffset + 12);
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'WithdrawSol' instruction data (without slippage).
+        /// </summary>
+        /// <param name="poolTokensIn">The amount of pool tokens to be redeemed.</param>
+        /// <returns>a byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeWithdrawSol(ulong poolTokensIn)
+        {
+            // Allocate 12 bytes: 4 bytes for the instruction discriminator and 8 for poolTokensIn.
+            byte[] data = new byte[12];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.WithdrawSol, MethodOffset);
+            data.WriteU64(poolTokensIn, MethodOffset + 4);
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'WithdrawStake' instruction data (without slippage).
+        /// </summary>
+        /// <param name="poolTokensIn">The amount of pool tokens to redeem.</param>
+        /// <returns>A byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeWithdrawStake(ulong poolTokensIn)
+        {
+            // Allocate 12 bytes: 4 bytes for the instruction discriminator and 8 for poolTokensIn.
+            byte[] data = new byte[12];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.WithdrawStake, MethodOffset);
+            data.WriteU64(poolTokensIn, MethodOffset + 4);
+            return data;
+        }
+
+        /// <summary>
+        /// Encodes the 'WithdrawStakeWithSlippage' instruction data.
+        /// </summary>
+        /// <param name="poolTokensIn">The amount of pool tokens to redeem.</param>
+        /// <param name="minimumLamportsOut">The minimum lamports expected on withdrawal.</param>
+        /// <returns>A byte array containing the encoded instruction data.</returns>
+        internal static byte[] EncodeWithdrawStakeWithSlippage(ulong poolTokensIn, ulong minimumLamportsOut)
+        {
+            // Allocate 20 bytes:
+            // 4 bytes for the instruction discriminator,
+            // 8 bytes for poolTokensIn,
+            // 8 bytes for minimumLamportsOut.
+            byte[] data = new byte[20];
+            data.WriteU32((uint)StakePoolProgramInstructions.Values.WithdrawStakeWithSlippage, MethodOffset);
+            data.WriteU64(poolTokensIn, MethodOffset + 4);
+            data.WriteU64(minimumLamportsOut, MethodOffset + 12);
+            return data;
+        }
+
+        /// <summary>
         /// Decodes the 'initialize' instruction data.
         /// </summary>
         internal static void DecodeInitializeData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
@@ -225,14 +573,6 @@ namespace Solnet.Programs.StakePool
         {
             // The seed is at offset 4 (after the 4-byte method discriminator)
             decodedInstruction.Values.Add("Seed", data.GetU32(4));
-        }
-
-        /// <summary>
-        /// Decodes the 'RemoveValidatorFromPool' instruction data.
-        /// </summary>
-        internal static void DecodeRemoveValidatorFromPoolData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
-        {
-            // No additional data to decode for this instruction
         }
 
         /// <summary>
@@ -283,14 +623,6 @@ namespace Solnet.Programs.StakePool
         }
 
         /// <summary>
-        /// Decodes the 'Redelegate' instruction data.
-        /// </summary>
-        internal static void DecodeRedelegateData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
-        {
-            // No additional data to decode for this instruction (based on encoding stub)
-        }
-
-        /// <summary>
         /// Decodes the 'SetPreferredDepositValidator' instruction data.
         /// </summary>
         internal static void DecodeSetPreferredValidatorData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
@@ -303,5 +635,60 @@ namespace Solnet.Programs.StakePool
             }
         }
 
+        /// <summary>
+        /// Decodes the 'UpdateValidatorListBalance' instruction data.
+        /// </summary>
+        /// <param name="decodedInstruction">The <see cref="DecodedInstruction"/> to populate.</param>
+        /// <param name="data">The instruction data as a read-only span.</param>
+        /// <param name="keys">The list of account public keys associated with the instruction.</param>
+        /// <param name="keyIndices">Indices of the keys related to the instruction.</param>
+        internal static void DecodeUpdateValidatorListBalance(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            uint startIndex = data.GetU32(MethodOffset + 4);
+            bool noMerge = data[MethodOffset + 8] != 0;
+            decodedInstruction.Values.Add("Start Index", startIndex);
+            decodedInstruction.Values.Add("No Merge", noMerge);
+        }
+
+        /// <summary>
+        /// Decodes the 'DepositStakeWithSlippage' instruction data.
+        /// </summary>
+        /// <param name="decodedInstruction">The <see cref="DecodedInstruction"/> to populate.</param>
+        /// <param name="data">The instruction data as a read-only span.</param>
+        /// <param name="keys">The list of account public keys associated with the instruction.</param>
+        /// <param name="keyIndices">Indices of the keys related to the instruction.</param>
+        internal static void DecodeDepositStakeWithSlippage(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            // The minimum pool tokens out is stored 4 bytes after the discriminator.
+            ulong minimumPoolTokensOut = data.GetU64(MethodOffset + 4);
+            decodedInstruction.Values.Add("Minimum Pool Tokens Out", minimumPoolTokensOut);
+        }
+
+        /// <summary>
+        /// Decodes the 'SetFundingAuthority' instruction data.
+        /// </summary>
+        /// <param name="decodedInstruction">The <see cref="DecodedInstruction"/> to populate.</param>
+        /// <param name="data">The instruction data as a read-only span.</param>
+        /// <param name="keys">The list of account public keys associated with the instruction.</param>
+        /// <param name="keyIndices">Indices of the keys related to the instruction.</param>
+        internal static void DecodeSetFundingAuthority(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            // The funding type is stored at offset 4 (after the 4-byte discriminator)
+            decodedInstruction.Values.Add("Funding Type", (FundingType)data[MethodOffset + 4]);
+        }
+
+        /// <summary>
+        /// Decodes the 'SetStaker' instruction data.
+        /// </summary>
+        /// <param name="decodedInstruction">The <see cref="DecodedInstruction"/> to populate.</param>
+        /// <param name="data">The instruction data as a read-only span.</param>
+        /// <param name="keys">The list of account public keys associated with the instruction.</param>
+        /// <param name="keyIndices">Indices of the keys related to the instruction.</param>
+        internal static void DecodeSetStaker(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
+        {
+            // Extract the new staker public key from offset 4.
+            var keyBytes = data.Slice(MethodOffset + 4, PublicKey.PublicKeyLength).ToArray();
+            decodedInstruction.Values.Add("New Staker", new PublicKey(keyBytes));
+        }
     }
 }
