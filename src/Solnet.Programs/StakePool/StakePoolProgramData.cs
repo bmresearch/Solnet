@@ -141,18 +141,13 @@ namespace Solnet.Programs.StakePool
         /// <summary>
         /// Encodes the 'SetPreferredDepositValidator' instruction data.
         /// </summary>
-        internal static byte[] EncodeSetPreferredValidatorData(PreferredValidatorType validatorType, PublicKey? validatorVoteAddress)
+        internal static byte[] EncodeSetPreferredValidatorData(PreferredValidatorType validatorType)
         {
-            byte[] data = new byte[40];
+            // Allocate 8 bytes: 4 bytes for the discriminator and 4 bytes for the validator type.
+            byte[] data = new byte[8];
             data.WriteU32((uint)StakePoolProgramInstructions.Values.SetPreferredValidator, MethodOffset);
             data.WriteU32((uint)validatorType, MethodOffset + 4);
-            if (validatorVoteAddress != null)
-            {
-                data.WriteSpan(validatorVoteAddress.KeyBytes, MethodOffset + 8);
-            }
-
-            // Implement the serialization of setPreferredValidatorData (e.g., using Borsh or another method)
-            return data; // Example: return the serialized byte array
+            return data;
         }
 
         internal static byte[] EncodeSetFeeData(FeeType feeType)
@@ -464,14 +459,12 @@ namespace Solnet.Programs.StakePool
         /// <summary>
         /// Encodes the 'SetStaker' instruction data.
         /// </summary>
-        /// <param name="newStaker">The new staker public key.</param>
         /// <returns>A byte array containing the encoded instruction data.</returns>
-        internal static byte[] EncodeSetStaker(PublicKey newStaker)
+        internal static byte[] EncodeSetStaker()
         {
-            // Allocate 36 bytes: 4 bytes for the discriminator and 32 bytes for the new staker public key.
-            byte[] data = new byte[36];
+            // Allocate 4 bytes for the discriminator only.
+            byte[] data = new byte[4];
             data.WriteU32((uint)StakePoolProgramInstructions.Values.SetStaker, MethodOffset);
-            newStaker.KeyBytes.CopyTo(data, MethodOffset + 4);
             return data;
         }
 

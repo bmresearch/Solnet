@@ -626,27 +626,32 @@ namespace Solnet.Programs.StakePool
         /// <param name="staker"></param>
         /// <param name="validatorListAddress"></param>
         /// <param name="validatorType"></param>
-        /// <param name="validatorVoteAddress"></param>
+        /// <param name="validatorVoteAddress">Optional public key; if provided, it must be in the keys list.</param>
         /// <returns></returns>
         public virtual TransactionInstruction SetPreferredDepositValidator(
-           PublicKey stakePoolAddress,
-           PublicKey staker,
-           PublicKey validatorListAddress,
-           PreferredValidatorType validatorType,
-           PublicKey? validatorVoteAddress = null)
+            PublicKey stakePoolAddress,
+            PublicKey staker,
+            PublicKey validatorListAddress,
+            PreferredValidatorType validatorType,
+            PublicKey? validatorVoteAddress = null)
         {
-            // Prepare the instruction data for setting the preferred deposit validator
-            var data = StakePoolProgramData.EncodeSetPreferredValidatorData(validatorType, validatorVoteAddress);
-
-            // Prepare the accounts for the instruction
+            // Prepare Account Metas.
             var keys = new List<AccountMeta>
-           {
-               AccountMeta.Writable(stakePoolAddress, false),
-               AccountMeta.ReadOnly(staker, true),
-               AccountMeta.ReadOnly(validatorListAddress, false)
-           };
+            {
+                AccountMeta.Writable(stakePoolAddress, false),
+                AccountMeta.ReadOnly(staker, true),
+                AccountMeta.ReadOnly(validatorListAddress, false)
+            };
 
-            // Return the transaction instruction
+            // Fix: If a validator vote address is provided, add it to the keys list instead of encoding into data.
+            if (validatorVoteAddress != null)
+            {
+                keys.Add(AccountMeta.ReadOnly(validatorVoteAddress, false));
+            }
+
+            // Encode only the instruction discriminator and validator type.
+            var data = StakePoolProgramData.EncodeSetPreferredValidatorData(validatorType);
+
             return new TransactionInstruction
             {
                 ProgramId = StakePoolProgramIdKey.KeyBytes,
@@ -2379,11 +2384,12 @@ namespace Solnet.Programs.StakePool
                 AccountMeta.ReadOnly(newStaker, false)
             };
 
+            // Fix: Remove the public key from the data since it is provided in keys
             return new TransactionInstruction
             {
                 ProgramId = StakePoolProgramIdKey,
                 Keys = accounts,
-                Data = StakePoolProgramData.EncodeSetStaker(newStaker) // Pass the required 'newStaker' argument
+                Data = StakePoolProgramData.EncodeSetStaker() // now only encodes the discriminator
             };
         }
 
