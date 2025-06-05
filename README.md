@@ -6,9 +6,6 @@
     <a href="https://github.com/bmresearch/Solnet/actions/workflows/dotnet.yml">
         <img src="https://github.com/bmresearch/Solnet/actions/workflows/dotnet.yml/badge.svg"
             alt="Build" ></a>
-    <a href="https://coveralls.io/github/bmresearch/Solnet?branch=master">
-        <img src="https://coveralls.io/repos/github/bmresearch/Solnet/badge.svg?branch=master" 
-            alt="Coverage Status" ></a>
 <br/>
     <a href="">
         <img src="https://img.shields.io/github/license/bmresearch/Solnet?style=flat-square"
