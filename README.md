@@ -46,6 +46,10 @@ Solnet is Solana's C# SDK designed to integrate seamlessly with the .NET ecosyst
       - Stake Program
     - Solana Program Library (SPL)
       - Compute Budget Program
+      - Account Compression Program
+      - Governance Program
+      - StakePool Program
+      - Address Lookup Table Program
       - Memo Program
       - Token Program
       - Token Swap Program
