@@ -1,11 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Solnet.Programs.StakePool;
 using Solnet.Programs.StakePool.Models;
-using Solnet.Programs.TokenSwap.Models;
-using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Solnet.Programs.Test
 {
@@ -401,6 +400,53 @@ namespace Solnet.Programs.Test
                 CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
                 Assert.IsTrue(instr.Data.Length > 0);
             }
+        }
+    }
+
+    [TestClass]
+    public class StakePoolModelsTest
+    {
+        [TestMethod]
+        public void Fee_StoresCorrectValues()
+        {
+            // Arrange
+            var fee = new Fee(100, 1000);
+
+            // Act & Assert
+            Assert.AreEqual(100UL, fee.Numerator, "Fee numerator not stored correctly.");
+            Assert.AreEqual(1000UL, fee.Denominator, "Fee denominator not stored correctly.");
+        }
+
+        [TestMethod]
+        public void Fee_DefaultIsZero()
+        {
+            // Arrange
+            var fee = new Fee();
+
+            // Act & Assert
+            Assert.AreEqual(0UL, fee.Numerator, "Default fee numerator should be zero.");
+            Assert.AreEqual(0UL, fee.Denominator, "Default fee denominator should be zero.");
+        }
+
+        [TestMethod]
+        public void PreferredValidatorType_ValuesAreConsistent()
+        {
+            // Assuming that PreferredValidatorType is an enum with defined underlying values,
+            // you might for example have:
+            // Deposit = 0, Withdraw = 1 (adjust as per your actual enum definition).
+            uint depositValue = (uint)PreferredValidatorType.Deposit;
+            uint withdrawValue = (uint)PreferredValidatorType.Withdraw;
+
+            // Assert that they are different and non-negative.
+            Assert.AreNotEqual(depositValue, withdrawValue, "PreferredValidatorType values must differ.");
+            Assert.IsTrue(depositValue < withdrawValue, "Expected Deposit value to be less than Withdraw value.");
+        }
+
+        [TestMethod]
+        public void FundingType_ValuesAreConsistent()
+        {
+            byte solDeposit = (byte)FundingType.SolDeposit;
+            Assert.AreEqual(1, solDeposit, "FundingType.SolDeposit is expected to be 1.");
         }
     }
 }
