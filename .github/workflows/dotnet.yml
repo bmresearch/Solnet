@@ -26,8 +26,3 @@ jobs:
           dotnet tool install Cake.Tool --version 1.1.0
           dotnet tool restore
           dotnet cake --target=Report --verbosity=verbose
-      - name: Publish coverage report to coveralls.io
-        uses: coverallsapp/github-action@v1.1.2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: code_coverage/results.info 
