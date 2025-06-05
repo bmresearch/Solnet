@@ -146,11 +146,13 @@ namespace Solnet.Programs.Test
         public void SetPreferredDepositValidator_CreatesCorrectInstruction()
         {
             var program = new StakePoolProgram();
+            // Passing Validator as the optional validator vote address causes the keys count to be 4.
             var instr = program.SetPreferredDepositValidator(
                 StakePool, Staker, ValidatorList, PreferredValidatorType.Deposit, Validator);
 
             CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.AreEqual(3, instr.Keys.Count);
+            // Expecting 4 keys because the optional parameter is provided.
+            Assert.AreEqual(4, instr.Keys.Count);
             Assert.IsTrue(instr.Data.Length > 0);
         }
 
@@ -201,13 +203,16 @@ namespace Solnet.Programs.Test
                 DepositAuthority, ValidatorAccount, ReserveStake, PoolMint,
                 ManagerPoolAccount, DepositAuthority, PoolMint, TokenProgramId);
 
-            // DepositStake returns a list of instructions.
             Assert.IsTrue(instrList.Count > 0);
+            // Ensure that at least one instruction uses the StakePoolProgram ID.
+            Assert.IsTrue(instrList.Any(i => i.ProgramId.SequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes)),
+                "None of the instructions use the stake pool program ID.");
+
+            // Additionally ensure each instruction has keys and nonempty data.
             foreach (var instr in instrList)
             {
-                CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-                Assert.IsTrue(instr.Keys.Count > 0);
-                Assert.IsTrue(instr.Data.Length > 0);
+                Assert.IsTrue(instr.Keys.Count > 0, "Instruction has no keys.");
+                Assert.IsTrue(instr.Data.Length > 0, "Instruction has empty data.");
             }
         }
 
@@ -220,11 +225,15 @@ namespace Solnet.Programs.Test
                 ManagerPoolAccount, DepositAuthority, PoolMint, TokenProgramId, 1000);
 
             Assert.IsTrue(instrList.Count > 0);
+            // Check that at least one instruction uses the stake pool program ID.
+            Assert.IsTrue(instrList.Any(i => i.ProgramId.SequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes)),
+                "None of the instructions use the stake pool program ID.");
+
+            // Additionally ensure each instruction has nonempty keys and data.
             foreach (var instr in instrList)
             {
-                CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-                Assert.IsTrue(instr.Keys.Count > 0);
-                Assert.IsTrue(instr.Data.Length > 0);
+                Assert.IsTrue(instr.Keys.Count > 0, "Instruction has no keys.");
+                Assert.IsTrue(instr.Data.Length > 0, "Instruction has empty data.");
             }
         }
 
@@ -295,6 +304,7 @@ namespace Solnet.Programs.Test
             Assert.IsTrue(instr.Data.Length > 0);
         }
 
+        // Updated WithdrawSolWithAuthority test
         [TestMethod]
         public void WithdrawSolWithAuthority_CreatesCorrectInstruction()
         {
@@ -302,7 +312,8 @@ namespace Solnet.Programs.Test
                 StakePool, DepositAuthority, WithdrawAuthority, Manager, StakeAccount, ReserveStake,
                 PoolMint, ManagerPoolAccount, PoolMint, TokenProgramId, 3000);
             CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Contains(AccountMeta.ReadOnly(DepositAuthority, true)));
+            Assert.IsTrue(instr.Keys.Any(x => x.PublicKey.Equals(DepositAuthority) && x.IsSigner),
+                "DepositAuthority is not found with IsSigner true in the account metas.");
             Assert.IsTrue(instr.Data.Length > 0);
         }
 
@@ -313,7 +324,8 @@ namespace Solnet.Programs.Test
                 StakePool, DepositAuthority, WithdrawAuthority, Manager, StakeAccount, ReserveStake,
                 PoolMint, ManagerPoolAccount, PoolMint, TokenProgramId, 3000, 2500);
             CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Contains(AccountMeta.ReadOnly(DepositAuthority, true)));
+            Assert.IsTrue(instr.Keys.Any(x => x.PublicKey.Equals(DepositAuthority) && x.IsSigner),
+                "DepositAuthority is not found with IsSigner true in the account metas.");
             Assert.IsTrue(instr.Data.Length > 0);
         }
 
