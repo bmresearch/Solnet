@@ -5,7 +5,7 @@ using System.Linq;
 namespace Solnet.Programs.Test
 {
     [TestClass]
-    public class AccountCompressionTest
+    public class AccountCompressionProgramTest
     {
         private static readonly PublicKey MerkleTree = new("11111111111111111111111111111111");
         private static readonly PublicKey Authority = new("22222222222222222222222222222222");
