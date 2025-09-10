@@ -251,13 +251,14 @@ namespace Solnet.Programs.Utilities
             return stringBytes.Length + sizeof(uint);
         }
 
+
         /// <summary>
-        /// Writes a byte[] as Vec<U8,Global> to the array
+        /// Write a UTF8 byte vector to the byte array at the given offset.
         /// </summary>
-        /// <param name="data">The byte array to write data to</param>
-        /// <param name="buffer">The byte array to write </param>
-        /// <param name="offset">The offset at which to write the byte[]</param>
-        /// <returns>Returns the number of bytes written</returns>
+        /// <param name="data"></param>
+        /// <param name="buffer"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
         public static int WriteBorshByteVector(this byte[] data, Span<byte>  buffer, int offset)
         {
             data.WriteU64( (ulong) buffer.Length , offset);

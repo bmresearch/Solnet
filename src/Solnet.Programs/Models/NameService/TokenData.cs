@@ -53,8 +53,8 @@ namespace Solnet.Programs.Models.NameService
             var data = new ReadOnlySpan<byte>(input, 96, input.Length - 96);
             int offset = 0;
 
-            offset += data.GetBorshStringSize(0, out var name);
-            offset += data.GetBorshStringSize(offset, out var ticker);
+            offset += data.GetBorshString(0, out var name);
+            offset += data.GetBorshString(offset, out var ticker);
 
             var mint = data.GetPubKey(offset);
             offset += 32;
@@ -64,7 +64,7 @@ namespace Solnet.Programs.Models.NameService
             string website = null, logo = null;
 
             if (data.GetBool(offset++))
-                offset += data.GetBorshStringSize(offset, out website);
+                offset += data.GetBorshString(offset, out website);
 
             if (data.GetBool(offset++))
                 data.GetBorshString(offset, out logo);

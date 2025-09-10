@@ -3,6 +3,9 @@ using System;
 
 namespace Solnet.Programs;
 
+/// <summary>
+/// BPF Loader Program
+/// </summary>
 public class BPFLoaderProgramData
 {
     /// <summary>
