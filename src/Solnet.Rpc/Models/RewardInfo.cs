@@ -21,7 +21,9 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public ulong PostBalance { get; set; }
 
-       
+        /// <summary>
+        /// The epoch in which the reward was credited or debited.
+        /// </summary>
         public RewardType RewardType {  get; set; }
     }
   

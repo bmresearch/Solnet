@@ -2,17 +2,17 @@
   xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Product>Solnet</Product>
-    <Version>6.1.0</Version>
-    <Copyright>Copyright 2022 &#169; Solnet</Copyright>
-    <Authors>blockmountain</Authors>
-    <PublisherName>blockmountain</PublisherName>
+    <Version>8.5.0</Version>
+    <Copyright>Copyright 2025 &#169; Solnet</Copyright>
+    <Authors>blockmountain, Bifrost</Authors>
+    <PublisherName>Bifrost</PublisherName>
     <RepositoryUrl>https://github.com/bmresearch/Solnet</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latest</LangVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
     <PackageDescription>Solnet is Solana's .NET integration library.</PackageDescription>
-    <PackageTags>solana;solnet;sol;net5;spl</PackageTags>
+    <PackageTags>solana;solnet;sol;net8;spl</PackageTags>
     <PackageReleaseNotes>https://github.com/bmresearch/Solnet/releases</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>

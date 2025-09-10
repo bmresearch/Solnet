@@ -7,6 +7,9 @@ namespace Solnet.Programs.StakePool.Models
     /// </summary>
     public struct PodStakeStatus : IEquatable<PodStakeStatus>
     {
+        /// <summary>
+        /// The byte value representing the pod's stake status.
+        /// </summary>
         public byte Value;
 
         /// <summary>
@@ -108,8 +111,20 @@ namespace Solnet.Programs.StakePool.Models
         /// <returns>An integer that represents the hash code for the current object.</returns>
         public override int GetHashCode() => Value.GetHashCode();
 
+        /// <summary>
+        /// Determines whether two specified instances of <see cref="PodStakeStatus"/> are equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator ==(PodStakeStatus left, PodStakeStatus right) => left.Equals(right);
 
+        /// <summary>
+        /// Determines whether two specified instances of <see cref="PodStakeStatus"/> are not equal.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         public static bool operator !=(PodStakeStatus left, PodStakeStatus right) => !(left == right);
     }
 }

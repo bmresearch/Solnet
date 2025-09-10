@@ -14,8 +14,6 @@ own code:
 
 -   The `discussions`_ page
     can be used to discuss a number of different questions, including support.
--   The email blockmountainresearch(at)protonmail.com can be used for longer term
-    discussion or larger issues.
 		
 .. _discussions: https://github.com/bmresearch/Solnet/discussions
 

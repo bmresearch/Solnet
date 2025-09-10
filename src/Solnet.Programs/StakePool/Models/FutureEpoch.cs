@@ -28,7 +28,7 @@ namespace Solnet.Programs.StakePool.Models
             /// </summary>
             public T Value { get; }
             /// <summary>
-            /// Initializes a new instance of the <see cref="One{T}"/> class with the specified value.
+            /// Initializes a new instance of the <see cref="FutureEpoch{T}.One"/> class with the specified value.
             /// </summary>
             /// <param name="value">The value to be assigned to the instance.</param>
             public One(T value) => Value = value;
@@ -58,7 +58,7 @@ namespace Solnet.Programs.StakePool.Models
         /// <summary>
         /// Returns the value if it's ready (i.e., in the One state), otherwise null.
         /// </summary>
-        public T? Get()
+        public T Get()
         {
             return this is One one ? one.Value : default;
         }
@@ -80,7 +80,7 @@ namespace Solnet.Programs.StakePool.Models
         /// <summary>
         /// Converts the FutureEpoch to an Option-like value (null if None, value otherwise).
         /// </summary>
-        public T? ToOption()
+        public T ToOption()
         {
             return this switch
             {
