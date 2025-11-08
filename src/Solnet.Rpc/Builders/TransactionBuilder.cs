@@ -5,6 +5,7 @@ using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Solnet.Rpc.Builders
 {
@@ -76,10 +77,45 @@ namespace Solnet.Rpc.Builders
 
             _serializedMessage = _messageBuilder.Build();
 
-            foreach (Account signer in signers)
+            string[] orderedKeys = _messageBuilder.GetAccountMetaPublicKeys();
+
+            // Map: pubkey -> all provided signer accounts (preserve duplicates & input order).
+            var signersByKey = signers
+                .Where(a => a != null)
+                .GroupBy(a => a.PublicKey.Key, StringComparer.Ordinal)
+                .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.Ordinal);
+
+            // Per-key cursor: which signer instance to attribute next (purely bookkeeping).
+            var nextSignerIndexByKey = new Dictionary<string, int>(StringComparer.Ordinal);
+
+            // Per-key signature cache: we compute once per pubkey and reuse for later occurrences.
+            var signatureCacheByKey = new Dictionary<string, string>(StringComparer.Ordinal);
+
+            foreach (string pubkey in orderedKeys)
             {
-                byte[] signatureBytes = signer.Sign(_serializedMessage);
-                _signatures.Add(Encoders.Base58.EncodeData(signatureBytes));
+                // If no signer was provided for this key, skip.
+                if (!signersByKey.TryGetValue(pubkey, out var signerList) || signerList.Count == 0)
+                    continue;
+
+                // If we already signed this (same key, same message), just reuse the cached signature since Ed25519 is deterministic.
+                if (signatureCacheByKey.TryGetValue(pubkey, out var cachedSig))
+                {
+                    _signatures.Add(cachedSig);
+                    // Still advance the attribution cursor so duplicates in `signers` are "consumed" in order.
+                    nextSignerIndexByKey[pubkey] = (nextSignerIndexByKey.TryGetValue(pubkey, out var used) ? used : 0) + 1;
+                    continue;
+                }
+
+                // First time we encounter this key: pick the next signer (or the first if exhausted) and sign ONCE.
+                int idx = nextSignerIndexByKey.TryGetValue(pubkey, out var usedOnce) ? usedOnce : 0;
+                var signerToUse = (idx < signerList.Count) ? signerList[idx] : signerList[0];
+                nextSignerIndexByKey[pubkey] = idx + 1;
+
+                byte[] sigBytes = signerToUse.Sign(_serializedMessage);
+                string sigBase58 = Encoders.Base58.EncodeData(sigBytes);
+
+                signatureCacheByKey[pubkey] = sigBase58; // cache for subsequent occurrences
+                _signatures.Add(sigBase58);
             }
         }
 
