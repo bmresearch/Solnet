@@ -148,7 +148,7 @@ namespace Solnet.Programs.TokenSwap
             decodedInstruction.Values.Add("Owner Withraw Fee Denominator", data.GetU64(42));
             decodedInstruction.Values.Add("Host Fee Numerator", data.GetU64(50));
             decodedInstruction.Values.Add("Host Fee Denominator", data.GetU64(58));
-            decodedInstruction.Values.Add("Curve Type", data.GetU64(59));
+            decodedInstruction.Values.Add("Curve Type", data.GetU8(66));
             //nothing to show for calculator unless hardcoding the switch stmt
         }
 

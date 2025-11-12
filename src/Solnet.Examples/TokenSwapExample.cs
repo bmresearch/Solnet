@@ -213,8 +213,8 @@ namespace Solnet.Examples
                 .AddInstruction(SystemProgram.CreateAccount(
                     wallet.Account,
                     swap,
-                    RpcClient.GetMinimumBalanceForRentExemption((long)TokenSwapProgram.TokenSwapAccountDataSize).Result,
-                    TokenSwapProgram.TokenSwapAccountDataSize,
+                    RpcClient.GetMinimumBalanceForRentExemption((long)TokenSwapProgram.TokenSwapDataLength).Result,
+                    TokenSwapProgram.TokenSwapDataLength,
                     program.ProgramIdKey
                 ))
                 .AddInstruction(program.Initialize(
