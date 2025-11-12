@@ -101,7 +101,7 @@ namespace Solnet.Programs.Models.TokenProgram
             res.IsInitialized= data.GetBool(Layout.IsInitializedOffset);
 
             if (data.GetU32(Layout.FreezeAuthorityOptionOffset) == 1)
-                res.FreezeAuthority = data.GetPubKey(Layout.FreezeAuthorityOptionOffset);
+                res.FreezeAuthority = data.GetPubKey(Layout.FreezeAuthorityOffset);
 
             return res;
         }
