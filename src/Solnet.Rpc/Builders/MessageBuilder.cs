@@ -223,5 +223,14 @@ namespace Solnet.Rpc.Builders
 
             throw new Exception($"Something went wrong encoding this transaction. Account `{publicKey}` was not found among list of accounts. Should be impossible.");
         }
+
+        /// <summary>
+        /// Gets the public keys for the accounts present in the accounts list.
+        /// </summary>
+        /// <returns>The public keys</returns>
+        public string[] GetAccountMetaPublicKeys()
+        {
+            return GetAccountKeys().Select(x => x.PublicKey).ToArray();
+        }
     }
 }

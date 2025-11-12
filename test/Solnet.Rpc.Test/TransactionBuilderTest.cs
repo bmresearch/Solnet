@@ -35,9 +35,9 @@ namespace Solnet.Rpc.Test
 
         private const string ExpectedTransactionHashCreateInitializeAndMintTo =
             "A056qhN8bf9baCZ6SwzUlM6ge4X19TzoKANpDjg9CUGQTvIOYu27MvTcscgGov0aMkuiM9N8g" +
-            "1D2bMJSvYBpWwi2IP+9oPzCj4b0AWm6uLxLv+JrMwVB8gJBYf4JtXotWDY504QIm9IqEemgUK" +
-            "vWkb+9dNatYsR3d9xcqxQ14mAEAq147oIAH+FQbHj2PhdP61KXqTN7T0EclKQMJLyhkqeyREF" +
-            "10Ttg99bcwTuXMxfR5rstI/kg/0Cagr/Ua+SoAQMABAdHaauXIEuoP7DK7hf3ho8eB05SFYGg" +
+            "1D2bMJSvYBpWwgCrXjuggAf4VBsePY+F0/rUpepM3tPQRyUpAwkvKGSp7JEQXXRO2D31tzBO5" +
+            "czF9Hmuy0j+SD/QJqCv9Rr5KgBtiD/vaD8wo+G9AFpuri8S7/iazMFQfICQWH+CbV6LVg2OdO" +
+            "ECJvSKhHpoFCr1pG/vXTWrWLEd3fcXKsUNeJgBAMABAdHaauXIEuoP7DK7hf3ho8eB05SFYGg" +
             "2J2UN52qZbcXsk0+Jb2M++6vIpkqr8zv+aohVvbSqnzuJeRSoRYepWULT6cip03g/pgXJNLrh" +
             "xqTpZ3aHH1CxvB/iB89zlU8m8UAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVKU1" +
             "D4XciC1hSlVnJ4iilt3x6rq9CmBniISTL07vagBqfVFxksXFEhjMlMPUrxf1ja7gibof1E49v" +
