@@ -41,7 +41,12 @@ namespace Solnet.Programs.TokenSwap
         /// Token Swap account layout size.
         /// </summary>
         public static readonly ulong TokenSwapAccountDataSize = 323;
-        
+
+        /// <summary>
+        /// Token Swap data length. // 1 (for the SwapVersion enum) + 323 (TokenSwapAccountDataSize) 
+        /// </summary>
+        public static readonly ulong TokenSwapDataLength = 1 + TokenSwapAccountDataSize;
+
         /// <summary>
         /// Create a token swap program instance with the standard programid and program name
         /// </summary>
