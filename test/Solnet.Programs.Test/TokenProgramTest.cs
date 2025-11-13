@@ -1485,7 +1485,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual(6, tokenAcc.Decimals);
             Assert.AreEqual(4785000018865782UL, tokenAcc.Supply);
             Assert.AreEqual(true, tokenAcc.IsInitialized);
-            Assert.AreEqual("4uQeWAWUy4x6GCUnNvd25nPybRCHAYggWK88UyjUNXF", tokenAcc.FreezeAuthority);
+            Assert.AreEqual("3sNBr7kMccME5D55xNgsmYpZnzPgP2g12CixAajXypn6", tokenAcc.FreezeAuthority);
             Assert.AreEqual("2wmVCSfPxGPjrnMMn7rchp4uaeoTqN39mXFC2zhPdri9", tokenAcc.MintAuthority);
         }
 
