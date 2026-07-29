@@ -51,9 +51,9 @@ namespace Solnet.Programs.StakePool.Models
             try
             {
                 // Use BigInteger to avoid overflow
-                BigInteger amt = new BigInteger(amount);
-                BigInteger numerator = new BigInteger(Numerator);
-                BigInteger denominator = new BigInteger(Denominator);
+                BigInteger amt = new(amount);
+                BigInteger numerator = new(Numerator);
+                BigInteger denominator = new(Denominator);
 
                 BigInteger feeNumerator = amt * numerator;
                 // Ceiling division: (feeNumerator + denominator - 1) / denominator

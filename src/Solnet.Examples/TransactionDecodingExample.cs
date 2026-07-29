@@ -78,7 +78,7 @@ namespace Solnet.Examples
 
             Console.WriteLine($"Message: {Convert.ToBase64String(msgData)}");
             var txx = Transaction.Populate(Convert.ToBase64String(msgData),
-                new List<byte[]> { ownerAccount.Sign(msgData), mintAccount.Sign(msgData), initialAccount.Sign(msgData) });
+                [ownerAccount.Sign(msgData), mintAccount.Sign(msgData), initialAccount.Sign(msgData)]);
 
             byte[] txBytes = txx.Serialize();
 

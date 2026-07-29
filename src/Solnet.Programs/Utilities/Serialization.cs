@@ -24,8 +24,7 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
         public static void WriteU8(this byte[] data, byte value, int offset)
         {
-            if (offset > data.Length - sizeof(byte))
-                throw new ArgumentOutOfRangeException(nameof(offset));
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(offset, data.Length - sizeof(byte));
             data[offset] = value;
         }
         /// <summary>
@@ -37,8 +36,7 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
         public static unsafe void WriteBool(this byte[] data, bool value, int offset)
         {
-            if (offset > data.Length - sizeof(byte))
-                throw new ArgumentOutOfRangeException(nameof(offset));
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(offset, data.Length - sizeof(byte));
             data[offset] =  *((byte*)(&value));;
         }
 
@@ -93,8 +91,7 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the data array.</exception>
         public static void WriteS8(this byte[] data, sbyte value, int offset)
         {
-            if (offset > data.Length - sizeof(sbyte))
-                throw new ArgumentOutOfRangeException(nameof(offset));
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(offset, data.Length - sizeof(sbyte));
             data[offset] = (byte)value;
         }
 
@@ -184,7 +181,7 @@ namespace Solnet.Programs.Utilities
             bool isUnsigned = false, bool isBigEndian = false)
         {
             int byteCount = bigInteger.GetByteCount(isUnsigned);
-            if (byteCount > length) throw new ArgumentOutOfRangeException($"BigInt too big.");
+            ArgumentOutOfRangeException.ThrowIfLessThan(length, byteCount);
             if (length + offset > data.Length) throw new ArgumentOutOfRangeException(nameof(offset));
 
             bigInteger.TryWriteBytes(

@@ -36,9 +36,10 @@ namespace Solnet.Programs.Models.NameService
 
             var header = RecordHeader.Deserialize(input);
 
-            var res = new TokenNameRecord(header);
-
-            res.Value = TokenData.Deserialize(input);
+            var res = new TokenNameRecord(header)
+            {
+                Value = TokenData.Deserialize(input)
+            };
 
             return res;
         }

@@ -3,8 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Solnet.Extensions.Models
 {
@@ -27,7 +25,7 @@ namespace Solnet.Extensions.Models
         /// <param name="accounts">Some accounts to add to the list.</param>
         public TokenWalletFilterList(IEnumerable<TokenWalletAccount> accounts)
         {
-            _list = new List<TokenWalletAccount>(accounts ?? throw new ArgumentNullException(nameof(accounts)));
+            _list = [.. accounts ?? throw new ArgumentNullException(nameof(accounts))];
         }
 
         /// <summary>
@@ -55,7 +53,7 @@ namespace Solnet.Extensions.Models
         /// <returns>A filtered list of accounts that match the supplied TokenDef.</returns>
         public TokenWalletFilterList ForToken(TokenDef token)
         {
-            if (token == null) throw new ArgumentNullException(nameof(token));
+            ArgumentNullException.ThrowIfNull(token);
             return new TokenWalletFilterList(_list.Where(x => x.TokenMint == token.TokenMint));
         }
 
@@ -68,7 +66,11 @@ namespace Solnet.Extensions.Models
         /// <returns>A filtered list of accounts for the given token symbol.</returns>
         public TokenWalletFilterList WithSymbol(string symbol)
         {
-            if (string.IsNullOrWhiteSpace(symbol)) throw new ArgumentException(nameof(symbol));
+            if (string.IsNullOrWhiteSpace(symbol))
+            {
+                throw new ArgumentException(nameof(symbol));
+            }
+
             return new TokenWalletFilterList(_list.Where(x => x.Symbol == symbol));
         }
 
@@ -79,7 +81,11 @@ namespace Solnet.Extensions.Models
         /// <returns>The account with the matching public key or null if not found.</returns>
         public TokenWalletAccount WithPublicKey(string publicKey)
         {
-            if (string.IsNullOrWhiteSpace(publicKey)) throw new ArgumentException(nameof(publicKey));
+            if (string.IsNullOrWhiteSpace(publicKey))
+            {
+                throw new ArgumentException(nameof(publicKey));
+            }
+
             return new TokenWalletFilterList(_list.Where(x => x.PublicKey == publicKey)).FirstOrDefault();
         }
 
@@ -100,7 +106,7 @@ namespace Solnet.Extensions.Models
         /// <returns>A filtered list of accounts for the given mint.</returns>
         public TokenWalletFilterList WithMint(TokenDef tokenDef)
         {
-            if (tokenDef == null) throw new ArgumentNullException(nameof(tokenDef));
+            ArgumentNullException.ThrowIfNull(tokenDef);
             return WithMint(tokenDef.TokenMint);
         }
 
@@ -151,10 +157,14 @@ namespace Solnet.Extensions.Models
         public TokenWalletAccount AssociatedTokenAccount()
         {
             var list = WhichAreAssociatedTokenAccounts();
-            if (list.Count() >= 1)
+            if (list.Any())
+            {
                 return list.First();
+            }
             else
+            {
                 return null;
+            }
         }
 
         /// <summary>
@@ -164,7 +174,7 @@ namespace Solnet.Extensions.Models
         /// <returns>A filtered list that only contains matching.</returns>
         public TokenWalletFilterList WithCustomFilter(Predicate<TokenWalletAccount> filter)
         {
-            if (filter == null) throw new ArgumentNullException(nameof(filter));
+            ArgumentNullException.ThrowIfNull(filter);
             return new TokenWalletFilterList(_list.Where(x => filter.Invoke(x)));
         }
 

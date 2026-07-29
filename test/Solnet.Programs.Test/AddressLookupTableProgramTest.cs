@@ -55,7 +55,7 @@ namespace Solnet.Programs.Test
             TransactionInstruction txInstruction = AddressLookupTableProgram.ExtendLookupTable(
                 wallet.GetAccount(4).PublicKey,
                 authority.PublicKey,
-                new List<PublicKey> { addressOne.PublicKey, addressTwo.PublicKey });
+                [addressOne.PublicKey, addressTwo.PublicKey]);
 
             Assert.AreEqual(2, txInstruction.Keys.Count);
             Assert.AreEqual(2UL, Solnet.Programs.Utilities.Deserialization.GetU64(txInstruction.Data, 4));
@@ -77,14 +77,13 @@ namespace Solnet.Programs.Test
             DecodedInstruction decodedInstruction = InstructionDecoder.Decode(
                 AddressLookupTableProgram.ProgramIdKey,
                 txInstruction.Data,
-                new List<PublicKey>
-                {
+                [
                     new(txInstruction.Keys[0].PublicKey),
                     new(txInstruction.Keys[1].PublicKey),
                     new(txInstruction.Keys[2].PublicKey),
                     new(txInstruction.Keys[3].PublicKey)
-                },
-                new byte[] { 0, 1, 2, 3 });
+                ],
+                [0, 1, 2, 3]);
 
             Assert.IsNotNull(decodedInstruction);
             Assert.AreEqual("Create Lookup Table", decodedInstruction.InstructionName);

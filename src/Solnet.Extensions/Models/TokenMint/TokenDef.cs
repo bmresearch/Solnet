@@ -129,7 +129,7 @@ namespace Solnet.Extensions.TokenMint
         /// <returns>A new TokenDef instance.</returns>
         internal TokenDef CloneWithKnownDecimals(int decimalPlaces)
         {
-            if (decimalPlaces < 0) throw new ArgumentOutOfRangeException("Decimal places must be 0+");
+            ArgumentOutOfRangeException.ThrowIfNegative(decimalPlaces);
             return new TokenDef(this.TokenMint, this.TokenName, this.Symbol, decimalPlaces)
             {
                 CoinGeckoId = this.CoinGeckoId,

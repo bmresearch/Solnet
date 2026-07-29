@@ -48,9 +48,9 @@ namespace Solnet.Programs
         public string ToString(int indent)
         {
             var sb = new StringBuilder();
-            sb.Append($"{new string(Enumerable.Repeat(' ', indent * 4).ToArray())}[{indent}] {PublicKey}:{ProgramName}:{InstructionName}\n");
-            sb.Append($"{new string(Enumerable.Repeat(' ', indent * 4).ToArray())}[{indent}] [{string.Join(',', Values.Select(a=>a))}]\n");
-            sb.Append($"{new string(Enumerable.Repeat(' ', indent * 4).ToArray())}[{indent}] InnerInstructions ({InnerInstructions.Count})\n");
+            sb.Append($"{new string([.. Enumerable.Repeat(' ', indent * 4)])}[{indent}] {PublicKey}:{ProgramName}:{InstructionName}\n");
+            sb.Append($"{new string([.. Enumerable.Repeat(' ', indent * 4)])}[{indent}] [{string.Join(',', Values.Select(a=>a))}]\n");
+            sb.Append($"{new string([.. Enumerable.Repeat(' ', indent * 4)])}[{indent}] InnerInstructions ({InnerInstructions.Count})\n");
             foreach (var item in InnerInstructions)
                 sb.Append(item.ToString(indent + 1));
             return sb.ToString();

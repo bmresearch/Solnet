@@ -82,7 +82,7 @@ namespace Solnet.Programs.Governance.Models
         {
             ReadOnlySpan<byte> span = data.AsSpan();
 
-            List<VoteChoice> choices = new();
+            List<VoteChoice> choices = [];
             Vote vote = (Vote)Enum.Parse(typeof(Vote), span.GetU8(ExtraLayout.VoteOffset).ToString());
 
             if(vote == Vote.Approve)

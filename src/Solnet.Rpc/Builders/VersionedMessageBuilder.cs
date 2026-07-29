@@ -47,8 +47,7 @@ namespace Solnet.Rpc.Builders
                 _accountKeysList.Add(NonceInformation.Instruction.Keys);
                 _accountKeysList.Add(AccountMeta.ReadOnly(new PublicKey(NonceInformation.Instruction.ProgramId),
                     false));
-                List<TransactionInstruction> newInstructions = new() { NonceInformation.Instruction };
-                newInstructions.AddRange(Instructions);
+                List<TransactionInstruction> newInstructions = [NonceInformation.Instruction, .. Instructions];
                 Instructions = newInstructions;
             }
 
@@ -57,7 +56,7 @@ namespace Solnet.Rpc.Builders
             List<AccountMeta> keysList = GetAccountKeys();
             byte[] accountAddressesLength = ShortVectorEncoding.EncodeLength(keysList.Count);
             int compiledInstructionsLength = 0;
-            List<CompiledInstruction> compiledInstructions = new();
+            List<CompiledInstruction> compiledInstructions = [];
 
             foreach (TransactionInstruction instruction in Instructions)
             {
@@ -89,7 +88,7 @@ namespace Solnet.Rpc.Builders
             }
 
             int accountKeysBufferSize = _accountKeysList.AccountList.Count * 32;
-            MemoryStream accountKeysBuffer = new MemoryStream(accountKeysBufferSize);
+            MemoryStream accountKeysBuffer = new(accountKeysBufferSize);
             byte[] instructionsLength = ShortVectorEncoding.EncodeLength(compiledInstructions.Count);
 
             foreach (AccountMeta accountMeta in keysList)
@@ -113,7 +112,7 @@ namespace Solnet.Rpc.Builders
             int messageBufferSize = MessageHeader.Layout.HeaderLength + BlockHashLength +
                                     accountAddressesLength.Length +
                                     +instructionsLength.Length + compiledInstructionsLength + accountKeysBufferSize;
-            MemoryStream buffer = new MemoryStream(messageBufferSize);
+            MemoryStream buffer = new(messageBufferSize);
             byte[] messageHeaderBytes = _messageHeader.ToBytes();
 
             buffer.WriteByte((byte)(0x80 | Version));

@@ -18,85 +18,85 @@ namespace Solnet.Programs.Test
             "forward deal onion eight catalog surface unit card window walnut wealth medal";
 
         private static readonly byte[] TokenProgramIdBytes =
-        {
+        [
             6, 221, 246, 225, 215, 101, 161, 147, 217, 203,
             225, 70, 206, 235, 121, 172, 28, 180, 133, 237,
             95, 91, 55, 145, 58, 140, 245, 133, 126, 255, 0, 169
-        };
+        ];
 
         private static readonly byte[] ExpectedTransferData =
-        {
+        [
             3, 168, 97, 0, 0, 0, 0, 0, 0
-        };
+        ];
 
         private static readonly byte[] ExpectedTransferCheckedData =
-        {
+        [
             12, 168, 97, 0, 0, 0, 0, 0, 0, 2
-        };
+        ];
 
         private static readonly byte[] ExpectedInitializeMintData =
-        {
+        [
             0, 2, 71, 105, 171, 151, 32, 75, 168, 63, 176, 202, 238, 23, 247, 134, 143, 30, 7, 78, 82, 21, 129,
             160, 216, 157, 148, 55, 157, 170, 101, 183, 23, 178, 1, 71, 105, 171, 151, 32, 75, 168, 63, 176,
             202, 238, 23, 247, 134, 143, 30, 7, 78, 82, 21, 129, 160, 216, 157, 148, 55, 157, 170, 101, 183, 23, 178
-        };
+        ];
 
-        private static readonly byte[] ExpectedInitializeMultiSignatureData = { 2, 3 };
+        private static readonly byte[] ExpectedInitializeMultiSignatureData = [2, 3];
 
         private static readonly byte[] ExpectedMintToData =
-        {
+        [
             7, 168, 97, 0, 0, 0, 0, 0, 0
-        };
+        ];
         private static readonly byte[] ExpectedMintToCheckedData =
-        {
+        [
             14, 168, 97, 0, 0, 0, 0, 0, 0,2
-        };
+        ];
 
         private static readonly byte[] ExpectedBurnData =
-        {
+        [
             8, 168, 97, 0, 0, 0, 0, 0, 0
-        };
+        ];
         private static readonly byte[] ExpectedBurnCheckedData =
-        {
+        [
             15, 168, 97, 0, 0, 0, 0, 0, 0,2
-        };
+        ];
 
-        private static readonly byte[] ExpectedInitializeAccountData = { 1 };
+        private static readonly byte[] ExpectedInitializeAccountData = [1];
 
-        private static readonly byte[] ExpectedApproveData = { 4, 168, 97, 0, 0, 0, 0, 0, 0 };
-        private static readonly byte[] ExpectedApproveCheckedData = { 13, 168, 97, 0, 0, 0, 0, 0, 0, 2 };
+        private static readonly byte[] ExpectedApproveData = [4, 168, 97, 0, 0, 0, 0, 0, 0];
+        private static readonly byte[] ExpectedApproveCheckedData = [13, 168, 97, 0, 0, 0, 0, 0, 0, 2];
 
-        private static readonly byte[] ExpectedRevokeData = { 5 };
+        private static readonly byte[] ExpectedRevokeData = [5];
 
         private static readonly byte[] ExpectedSetAuthorityOwnerData =
-        {
+        [
             6, 2, 1, 33, 79, 28, 109, 23, 45, 121, 163, 226, 87, 237, 185,
             47, 29, 248, 108, 218, 51, 132, 22, 227, 114, 38, 230, 154, 241, 16,
             104, 196, 10, 219, 24
-        };
+        ];
         private static readonly byte[] ExpectedSetAuthorityCloseData =
-        {
+        [
             6, 3, 1, 33, 79, 28, 109, 23, 45, 121, 163, 226, 87, 237, 185,
             47, 29, 248, 108, 218, 51, 132, 22, 227, 114, 38, 230, 154, 241, 16,
             104, 196, 10, 219, 24
-        };
+        ];
         private static readonly byte[] ExpectedSetAuthorityFreezeData =
-        {
+        [
             6, 1, 1, 33, 79, 28, 109, 23, 45, 121, 163, 226, 87, 237, 185,
             47, 29, 248, 108, 218, 51, 132, 22, 227, 114, 38, 230, 154, 241, 16,
             104, 196, 10, 219, 24
-        };
+        ];
         private static readonly byte[] ExpectedSetAuthorityMintData =
-        {
+        [
             6, 0, 1, 33, 79, 28, 109, 23, 45, 121, 163, 226, 87, 237, 185,
             47, 29, 248, 108, 218, 51, 132, 22, 227, 114, 38, 230, 154, 241, 16,
             104, 196, 10, 219, 24
-        };
+        ];
 
-        private static readonly byte[] ExpectedCloseAccountData = { 9 };
-        private static readonly byte[] ExpectedFreezeAccountData = { 10 };
-        private static readonly byte[] ExpectedThawAccountData = { 11 };
-        private static readonly byte[] ExpectedSyncNativeData = { 17 };
+        private static readonly byte[] ExpectedCloseAccountData = [9];
+        private static readonly byte[] ExpectedFreezeAccountData = [10];
+        private static readonly byte[] ExpectedThawAccountData = [11];
+        private static readonly byte[] ExpectedSyncNativeData = [17];
 
         private const string InitializeMultisigMessage =
             "AwAJDEdpq5cgS6g/sMruF/eGjx4HTlIVgaDYnZQ3napltxeyeLALNX+Hq5QvYpjBUrxcE6c1OPFtuOsWTs" +

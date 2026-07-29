@@ -16,43 +16,43 @@ namespace Solnet.Programs.Test
             "forward deal onion eight catalog surface unit card window walnut wealth medal";
 
         private static readonly byte[] TokenSwapProgramIdBytes =
-        {
+        [
             6,165,58,174,54,191,72,111,181,217,56,38,
             78,230,69,215,75,96,22,224,244,122,235,
             179,236,22,67,139,247,191,251,225
-        };
+        ];
 
         private static readonly byte[] ExpectedInitializeData =
-        {
+        [
             0,254,1,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,1,0,0,0,0,0,
             0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,
             0,1,0,0,0,0,0,0,0,232,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-        };
+        ];
 
         private static readonly byte[] ExpectedSwapData =
-        {
+        [
             1,128,26,6,0,0,0,0,0,32,179,129,0,0,0,0,0
-        };
+        ];
 
         private static readonly byte[] ExpectedDepositAllTokenTypesData =
-        {
+        [
             2,4,0,0,0,0,0,0,0,32,179,129,0,0,0,0,0,160,15,0,0,0,0,0,0
-        };
+        ];
 
         private static readonly byte[] ExpectedWithdrawAllTokenTypesData =
-        {
+        [
             3,4,0,0,0,0,0,0,0,160,15,0,0,0,0,0,0,32,179,129,0,0,0,0,0
-        };
+        ];
 
         private static readonly byte[] ExpectedDepositSingleTokenTypeExactAmountInData =
-        {
+        [
             4,160,15,0,0,0,0,0,0,4,0,0,0,0,0,0,0
-        };
+        ];
         private static readonly byte[] ExpectedWithdrawSingleTokenTypeExactAmountOutData =
-        {
+        [
             5,160,15,0,0,0,0,0,0,4,0,0,0,0,0,0,0
-        };
+        ];
 
         private const string InitializeMessage =
             "AgAHC1MuM7pUYPM9siiE2WjcHJ6uhumh/A9CE2nvOtqmyft3/FflD5yxhXv/GyRPQxWneSI1" +

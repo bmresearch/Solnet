@@ -21,7 +21,7 @@ namespace Solnet.Programs
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.Values.Revoke"/> method.
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
-        internal static byte[] EncodeRevokeData() => new[] { (byte)TokenProgramInstructions.Values.Revoke };
+        internal static byte[] EncodeRevokeData() => [(byte)TokenProgramInstructions.Values.Revoke];
 
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.Values.Approve"/> method.
@@ -36,7 +36,7 @@ namespace Solnet.Programs
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
         internal static byte[] EncodeInitializeAccountData() =>
-            new[] { (byte)TokenProgramInstructions.Values.InitializeAccount };
+            [(byte)TokenProgramInstructions.Values.InitializeAccount];
 
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.Values.InitializeMint"/> method.
@@ -130,20 +130,20 @@ namespace Solnet.Programs
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.Values.CloseAccount"/> method.
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
-        internal static byte[] EncodeCloseAccountData() => new[] { (byte)TokenProgramInstructions.Values.CloseAccount };
+        internal static byte[] EncodeCloseAccountData() => [(byte)TokenProgramInstructions.Values.CloseAccount];
 
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.Values.FreezeAccount"/> method.
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
         internal static byte[] EncodeFreezeAccountData() =>
-            new[] { (byte)TokenProgramInstructions.Values.FreezeAccount };
+            [(byte)TokenProgramInstructions.Values.FreezeAccount];
 
         /// <summary>
         /// Encode the transaction instruction data for the <see cref="TokenProgramInstructions.Values.ThawAccount"/> method.
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
-        internal static byte[] EncodeThawAccountData() => new[] { (byte)TokenProgramInstructions.Values.ThawAccount };
+        internal static byte[] EncodeThawAccountData() => [(byte)TokenProgramInstructions.Values.ThawAccount];
 
         /// <summary>
         /// Encodes the transaction instruction data for the <see cref="TokenProgramInstructions.Values.ApproveChecked"/> method.
@@ -177,7 +177,7 @@ namespace Solnet.Programs
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
         internal static byte[] EncodeSyncNativeData() =>
-            new[] { (byte) TokenProgramInstructions.Values.SyncNative };
+            [(byte) TokenProgramInstructions.Values.SyncNative];
 
         /// <summary>
         /// Encodes the transaction instruction data for the <see cref="TokenProgramInstructions.Values.InitializeAccount2"/> method.
@@ -239,7 +239,7 @@ namespace Solnet.Programs
         /// <returns>The byte array with the encoded data.</returns>
         internal static byte[] EncodeGetAccountDataSizeData(IEnumerable<Token2022ExtensionType> extensionTypes)
         {
-            Token2022ExtensionType[] extensions = extensionTypes?.ToArray() ?? Array.Empty<Token2022ExtensionType>();
+            Token2022ExtensionType[] extensions = extensionTypes?.ToArray() ?? [];
             byte[] methodBuffer = new byte[1 + extensions.Length * 2];
 
             methodBuffer.WriteU8((byte)TokenProgramInstructions.Values.GetAccountDataSize, MethodOffset);
@@ -257,7 +257,7 @@ namespace Solnet.Programs
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
         internal static byte[] EncodeInitializeImmutableOwnerData()
-            => new[] { (byte)TokenProgramInstructions.Values.InitializeImmutableOwner };
+            => [(byte)TokenProgramInstructions.Values.InitializeImmutableOwner];
 
         /// <summary>
         /// Encodes the transaction instruction data for the <see cref="TokenProgramInstructions.Values.AmountToUiAmount"/> method.
@@ -292,7 +292,7 @@ namespace Solnet.Programs
         {
             if (closeAuthority == null)
             {
-                return new[] { (byte)TokenProgramInstructions.Values.InitializeMintCloseAuthority, (byte)0 };
+                return [(byte)TokenProgramInstructions.Values.InitializeMintCloseAuthority, (byte)0];
             }
 
             byte[] methodBuffer = new byte[34];
@@ -309,7 +309,7 @@ namespace Solnet.Programs
         /// <returns>The byte array with the encoded data.</returns>
         internal static byte[] EncodeReallocateData(IEnumerable<Token2022ExtensionType> extensionTypes)
         {
-            Token2022ExtensionType[] extensions = extensionTypes?.ToArray() ?? Array.Empty<Token2022ExtensionType>();
+            Token2022ExtensionType[] extensions = extensionTypes?.ToArray() ?? [];
             byte[] methodBuffer = new byte[1 + extensions.Length * 2];
 
             methodBuffer.WriteU8((byte)TokenProgramInstructions.Values.Reallocate, MethodOffset);
@@ -792,7 +792,7 @@ namespace Solnet.Programs
             IList<PublicKey> keys, byte[] keyIndices)
         {
             decodedInstruction.Values.Add("Mint", keys[keyIndices[0]]);
-            List<Token2022ExtensionType> extensions = new();
+            List<Token2022ExtensionType> extensions = [];
 
             for (int offset = 1; offset + 1 < data.Length; offset += 2)
             {
@@ -844,7 +844,7 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Payer", keys[keyIndices[1]]);
             decodedInstruction.Values.Add("Owner", keys[keyIndices[3]]);
 
-            List<Token2022ExtensionType> extensions = new();
+            List<Token2022ExtensionType> extensions = [];
             for (int offset = 1; offset + 1 < data.Length; offset += 2)
             {
                 ushort value = data.GetU16(offset);

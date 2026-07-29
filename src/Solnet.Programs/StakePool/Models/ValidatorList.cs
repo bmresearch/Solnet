@@ -36,7 +36,7 @@ namespace Solnet.Programs.StakePool.Models
                     AccountType = AccountType.ValidatorList,
                     MaxValidators = maxValidators
                 },
-                Validators = Enumerable.Repeat(new ValidatorStakeInfo(), (int)maxValidators).ToList()
+                Validators = [.. Enumerable.Repeat(new ValidatorStakeInfo(), (int)maxValidators)]
             };
         }
 

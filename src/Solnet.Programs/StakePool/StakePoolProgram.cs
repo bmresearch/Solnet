@@ -1,12 +1,12 @@
-﻿using Solnet.Rpc.Models;
-using Solnet.Wallet;
-using System.Collections.Generic;
-using Solnet.Programs.Abstract;
-using System;
-using System.Text;
+﻿using Solnet.Programs.Abstract;
 using Solnet.Programs.StakePool.Models;
-using static Solnet.Programs.Models.Stake.State;
+using Solnet.Rpc.Models;
+using Solnet.Wallet;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using static Solnet.Programs.Models.Stake.State;
 
 namespace Solnet.Programs.StakePool
 {
@@ -18,7 +18,7 @@ namespace Solnet.Programs.StakePool
     /// https://docs.rs/spl-stake-pool/latest/spl_stake_pool/
     /// </remarks>
     /// </summary>
-    public class StakePoolProgram: BaseProgram
+    public class StakePoolProgram : BaseProgram
     {
         /// <summary>
         /// SPL Stake Pool Program ID
@@ -95,12 +95,12 @@ namespace Solnet.Programs.StakePool
         /// protecting stakers from malicious users.
         /// If current fee is 0, WITHDRAWAL_BASELINE_FEE is used as the baseline.
         /// </summary>
-        public static readonly Fee MAX_WITHDRAWAL_FEE_INCREASE = new Fee(3, 2);
+        public static readonly Fee MAX_WITHDRAWAL_FEE_INCREASE = new(3, 2);
 
         /// <summary>
         /// Drop-in baseline fee when evaluating withdrawal fee increases when fee is 0.
         /// </summary>
-        public static readonly Fee WITHDRAWAL_BASELINE_FEE = new Fee(1, 1000);
+        public static readonly Fee WITHDRAWAL_BASELINE_FEE = new(1, 1000);
 
         /// <summary>
         /// The maximum number of transient stake accounts respecting transaction account limits.
@@ -215,14 +215,16 @@ namespace Solnet.Programs.StakePool
         {
             // dont allow zero seed values
             if (seed == 0)
+            {
                 throw new ArgumentException("Value must be nonzero.", nameof(seed));
+            }
 
             // Prepare the instruction data
             var data = StakePoolProgramData.EncodeAddValidatorToPoolData(seed);
 
             // Prepare the accounts for the instruction
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(stakePoolAccount, false),
                 AccountMeta.ReadOnly(staker, true),
                 AccountMeta.Writable(reserve, false),
@@ -235,7 +237,7 @@ namespace Solnet.Programs.StakePool
                 AccountMeta.ReadOnly(StakeProgram.ProgramIdKey, false),
                 AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
                 AccountMeta.ReadOnly(StakeProgram.ProgramIdKey, false),
-            };
+            ];
 
             return new TransactionInstruction
             {
@@ -268,8 +270,8 @@ namespace Solnet.Programs.StakePool
             var data = StakePoolProgramData.EncodeRemoveValidatorFromPoolData();
 
             // Prepare the accounts that will be involved in this instruction
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(stakePool, false),
                 AccountMeta.ReadOnly(staker, true),
                 AccountMeta.ReadOnly(stakePoolWithdraw, false),
@@ -278,7 +280,7 @@ namespace Solnet.Programs.StakePool
                 AccountMeta.Writable(transientStakeAccount, false),
                 AccountMeta.ReadOnly(SysVars.ClockKey, false),
                 AccountMeta.ReadOnly(StakeProgram.ProgramIdKey, false),
-            };
+            ];
 
             // Return the TransactionInstruction
             return new TransactionInstruction
@@ -473,7 +475,7 @@ namespace Solnet.Programs.StakePool
             ulong lamports,
             ulong transientStakeSeed
         )
-        { 
+        {
             var data = StakePoolProgramData.EncodeIncreaseValidatorStakeData(lamports, transientStakeSeed);
 
             var keys = new List<AccountMeta>
@@ -677,14 +679,20 @@ namespace Solnet.Programs.StakePool
         {
             // dont allow zero seed values
             if (seed == 0)
+            {
                 throw new ArgumentException("Value must be nonzero.", nameof(seed));
+            }
 
             // Find the program address for the withdraw authority
             if (!PublicKey.TryFindProgramAddress([stakePoolAddress.KeyBytes], ProgramIdKey, out var poolWithdrawalAuthority, out var nonce))
+            {
                 throw new InvalidProgramException();
+            }
             // Find the stake account address for the validator using the vote account and seed
             if (!PublicKey.TryFindProgramAddress([voteAccountAddress.KeyBytes], ProgramIdKey, out var stakeAccountAddress, out var _))
+            {
                 throw new InvalidProgramException();
+            }
 
             // Generate the instruction to add the validator to the pool
             return AddValidatorToPool(
@@ -718,19 +726,27 @@ namespace Solnet.Programs.StakePool
         {
             // dont allow zero seed values
             if (validatorStakeSeed == 0)
+            {
                 throw new ArgumentException("Value must be nonzero.", nameof(validatorStakeSeed));
+            }
 
             // Find the program address for the withdraw authority
             if (!PublicKey.TryFindProgramAddress([stakePoolAddress.KeyBytes], ProgramIdKey, out var poolWithdrawalAuthority, out var nonce))
+            {
                 throw new InvalidProgramException();
-            
+            }
+
             // Find the stake account address for the validator using the vote account and seed
             if (!PublicKey.TryFindProgramAddress([voteAccountAddress.KeyBytes], ProgramIdKey, out var stakeAccountAddress, out var _))
+            {
                 throw new InvalidProgramException();
+            }
 
             // Find the transient stake account using the vote account, stake pool address, and transient stake seed
             if (!PublicKey.TryFindProgramAddress([voteAccountAddress.KeyBytes], ProgramIdKey, out var transientStakeAccount, out var _))
+            {
                 throw new InvalidProgramException();
+            }
 
             // Create the RemoveValidatorFromPool instruction
             return RemoveValidatorFromPool(
@@ -755,7 +771,7 @@ namespace Solnet.Programs.StakePool
         /// <returns></returns>
         public static TransactionInstruction IncreaseValidatorStakeWithVote(
             Models.StakePool stakePool,
-            PublicKey stakePoolAddress,PublicKey voteAccountAddress,
+            PublicKey stakePoolAddress, PublicKey voteAccountAddress,
             ulong lamports,
             uint? validatorStakeSeed,
             ulong transientStakeSeed
@@ -763,7 +779,9 @@ namespace Solnet.Programs.StakePool
         {
             // dont allow zero seed values
             if (validatorStakeSeed == 0)
+            {
                 throw new ArgumentException("Value must be nonzero.", nameof(validatorStakeSeed));
+            }
 
             // Find the addresses using helper methods
             var poolWithdrawAuthority = FindWithdrawAuthorityProgramAddress(stakePoolAddress);
@@ -818,7 +836,9 @@ namespace Solnet.Programs.StakePool
         {
             // Ensure the optional validator stake seed is nonzero.
             if (validatorStakeSeed == 0)
+            {
                 throw new ArgumentException("Value must be nonzero.", nameof(validatorStakeSeed));
+            }
 
             // Find the pool withdrawal authority.
             var poolWithdrawalAuthority = FindWithdrawAuthorityProgramAddress(stakePoolAddress);
@@ -873,7 +893,7 @@ namespace Solnet.Programs.StakePool
         public static byte[] SerializeIncreaseValidatorStakeData(ulong lamports, ulong transientStakeSeed)
         {
             // Placeholder: actual serialization would be required based on your program's structure.
-            return new byte[] { (byte)lamports, (byte)transientStakeSeed };
+            return [(byte)lamports, (byte)transientStakeSeed];
         }
 
         /// <summary>
@@ -890,14 +910,19 @@ namespace Solnet.Programs.StakePool
         )
         {
             if (validatorStakeSeed.HasValue && validatorStakeSeed.Value == 0)
+            {
                 throw new ArgumentException("Seed must be non‑zero (Rust NonZeroU32).", nameof(validatorStakeSeed));
+            }
 
             // Convert the seed (if provided) to little‑endian bytes.
-            byte[] seedBytes = Array.Empty<byte>();
+            byte[] seedBytes = [];
             if (validatorStakeSeed.HasValue)
             {
                 seedBytes = BitConverter.GetBytes(validatorStakeSeed.Value);              // platform‑endian -> little‑endian
-                if (!BitConverter.IsLittleEndian) Array.Reverse(seedBytes); // ensure LE on big‑endian CPUs
+                if (!BitConverter.IsLittleEndian)
+                {
+                    Array.Reverse(seedBytes); // ensure LE on big‑endian CPUs
+                }
             }
 
             // Seeds must be passed in the exact order used in Rust.
@@ -932,7 +957,9 @@ namespace Solnet.Programs.StakePool
             // Convert the u64 seed to little‑endian bytes (8 bytes).
             byte[] seedBytes = BitConverter.GetBytes(transientStakeSeed);
             if (!BitConverter.IsLittleEndian)
+            {
                 Array.Reverse(seedBytes); // ensure LE on big‑endian machines
+            }
 
             // Build seed list in the exact order used in Rust.
             var seeds = new List<byte[]>
@@ -962,7 +989,10 @@ namespace Solnet.Programs.StakePool
             // Seeds must be in the exact order: stake pool address bytes followed by AUTHORITY_DEPOSIT.
             var seeds = new[] { stakePoolAddress.KeyBytes, AUTHORITY_DEPOSIT };
             if (!PublicKey.TryFindProgramAddress(seeds, StakePoolProgramIdKey, out PublicKey address, out byte bump))
+            {
                 throw new InvalidProgramException("Unable to find deposit authority program address");
+            }
+
             return (address, bump);
         }
 
@@ -1045,14 +1075,13 @@ namespace Solnet.Programs.StakePool
             ulong lamports,
             ulong ephemeralStakeSeed)
         {
-            var validatorInfo = validatorList.Find(voteAccountAddress);
-            if (validatorInfo == null)
-                throw new ArgumentException("Invalid instruction data: vote account was not found in the validator list.", nameof(voteAccountAddress));
-
-            ulong transientStakeSeed = (ulong)validatorInfo.TransientSeedSuffix;
+            var validatorInfo = validatorList.Find(voteAccountAddress) ?? throw new ArgumentException("Invalid instruction data: vote account was not found in the validator list.", nameof(voteAccountAddress));
+            ulong transientStakeSeed = validatorInfo.TransientSeedSuffix;
             uint? validatorStakeSeed = validatorInfo.ValidatorSeedSuffix; // assume this property returns a uint
             if (validatorStakeSeed == 0)
+            {
                 throw new ArgumentException("Invalid instruction data: validator stake seed cannot be zero.", nameof(validatorStakeSeed));
+            }
 
             return IncreaseAdditionalValidatorStakeWithVote(
                 stakePool,
@@ -1147,14 +1176,13 @@ namespace Solnet.Programs.StakePool
             ulong lamports,
             ulong ephemeralStakeSeed)
         {
-            var validatorInfo = validatorList.Find(voteAccountAddress);
-            if (validatorInfo == null)
-                throw new ArgumentException("Invalid instruction data: vote account was not found in the validator list.", nameof(voteAccountAddress));
-
+            var validatorInfo = validatorList.Find(voteAccountAddress) ?? throw new ArgumentException("Invalid instruction data: vote account was not found in the validator list.", nameof(voteAccountAddress));
             ulong transientStakeSeed = validatorInfo.TransientSeedSuffix;
             uint? validatorStakeSeed = validatorInfo.ValidatorSeedSuffix;
             if (validatorStakeSeed == 0)
+            {
                 throw new ArgumentException("Invalid instruction data: validator stake seed cannot be zero.", nameof(validatorStakeSeed));
+            }
 
             return DecreaseAdditionalValidatorStakeWithVote(
                 stakePool,
@@ -1273,8 +1301,8 @@ namespace Solnet.Programs.StakePool
                 var validatorStakeInfo = validatorList.Find(voteAccount);
                 if (validatorStakeInfo != null)
                 {
-                    uint? validatorSeed = validatorStakeInfo.ValidatorSeedSuffix != 0 
-                        ? (uint?)validatorStakeInfo.ValidatorSeedSuffix 
+                    uint? validatorSeed = validatorStakeInfo.ValidatorSeedSuffix != 0
+                        ? validatorStakeInfo.ValidatorSeedSuffix
                         : null;
                     PublicKey validatorStakeAccount = FindStakeProgramAddress(voteAccount, stakePool, validatorSeed);
                     PublicKey transientStakeAccount = FindTransientStakeProgramAddress(voteAccount, stakePool, validatorStakeInfo.TransientSeedSuffix);
@@ -1317,7 +1345,9 @@ namespace Solnet.Programs.StakePool
         {
             // Verify slice bounds.
             if (startIndex < 0 || startIndex + len > validatorList.Validators.Count)
+            {
                 throw new ArgumentException("Invalid instruction data: slice out of bounds", nameof(validatorList));
+            }
 
             // Build the fixed part of the accounts list.
             var accounts = new List<AccountMeta>
@@ -1338,14 +1368,16 @@ namespace Solnet.Programs.StakePool
                 // Ensure the validator stake seed is nonzero.
                 uint? seed = validator.ValidatorSeedSuffix;
                 if (seed == 0)
+                {
                     throw new ArgumentException("Invalid instruction data: validator stake seed cannot be zero", nameof(validator));
+                }
 
                 // Derive the validator stake account.
                 PublicKey validatorStakeAccount = FindStakeProgramAddress(
                     validator.VoteAccountAddress,
                     stakePool,
                     seed);
-                
+
                 // Derive the transient stake account.
                 PublicKey transientStakeAccount = FindTransientStakeProgramAddress(
                     validator.VoteAccountAddress,
@@ -1394,7 +1426,9 @@ namespace Solnet.Programs.StakePool
         {
             // Verify the requested range is within the validator list bounds.
             if (startIndex < 0 || startIndex + len > validatorList.Validators.Count)
+            {
                 throw new ArgumentException("Invalid instruction data: slice out of bounds", nameof(validatorList));
+            }
 
             // Get the sub-slice of validators.
             var subSlice = validatorList.Validators.GetRange(startIndex, len);
@@ -1706,8 +1740,8 @@ namespace Solnet.Programs.StakePool
             }
 
             // Append the remaining accounts.
-            accounts.AddRange(new List<AccountMeta>
-            {
+            accounts.AddRange(
+            [
                 AccountMeta.ReadOnly(stakePoolWithdrawAuthority, false),
                 AccountMeta.Writable(depositStakeAddress, false),
                 AccountMeta.Writable(validatorStakeAccount, false),
@@ -1720,7 +1754,7 @@ namespace Solnet.Programs.StakePool
                 AccountMeta.ReadOnly(SysVars.StakeHistoryKey, false),
                 AccountMeta.ReadOnly(tokenProgramId, false),
                 AccountMeta.ReadOnly(StakeProgram.ProgramIdKey, false)
-            });
+            ]);
 
             // Depending on whether a minimum pool token output is required, encode the appropriate instruction.
             TransactionInstruction depositInstruction;
@@ -2415,7 +2449,7 @@ namespace Solnet.Programs.StakePool
                 AccountMeta.ReadOnly(manager, true)
             };
 
-            if(newSolDepositAuthority != null)
+            if (newSolDepositAuthority != null)
             {
                 accounts.Add(AccountMeta.ReadOnly(newSolDepositAuthority, false));
             }
@@ -2494,10 +2528,10 @@ namespace Solnet.Programs.StakePool
         {
             // Derive the stake pool withdraw authority.
             PublicKey stakePoolWithdrawAuthority = FindWithdrawAuthorityProgramAddress(stakePool);
-            
+
             // Derive the metadata account for the pool mint.
             (PublicKey tokenMetadata, byte bump) = FindMetadataAccount(poolMint);
-            
+
             // Build the accounts as required by the MPL Token Metadata program.
             var accounts = new List<AccountMeta>
             {

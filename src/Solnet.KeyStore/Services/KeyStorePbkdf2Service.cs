@@ -45,8 +45,8 @@ namespace Solnet.KeyStore.Services
 
         public override byte[] DecryptKeyStore(string password, KeyStore<Pbkdf2Params> keyStore)
         {
-            if (password == null) throw new ArgumentNullException(nameof(password));
-            if (keyStore == null) throw new ArgumentNullException(nameof(keyStore));
+            ArgumentNullException.ThrowIfNull(password);
+            ArgumentNullException.ThrowIfNull(keyStore);
 
             return KeyStoreCrypto.DecryptPbkdf2Sha256(password, keyStore.Crypto.Mac.HexToByteArray(),
                 keyStore.Crypto.CipherParams.Iv.HexToByteArray(),

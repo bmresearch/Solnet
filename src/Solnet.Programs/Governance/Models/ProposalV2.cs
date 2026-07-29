@@ -64,13 +64,13 @@ namespace Solnet.Programs.Governance.Models
 
             // adjust offset, increase by 3 in case vote type is multi choice and 1 in case it is single choice
             offset += voteType == VoteType.MultiChoice ? 3 : 1;
-            List<ProposalOption> proposalOptions = new();
+            List<ProposalOption> proposalOptions = [];
             int numProposalOptions = (int)span.GetU32(offset);
             offset += sizeof(uint);
 
             for(int i = 0; i<numProposalOptions; i++)
             {
-                ProposalOption proposalOption = ProposalOption.Deserialize(span.Slice(offset));
+                ProposalOption proposalOption = ProposalOption.Deserialize(span[offset..]);
                 proposalOptions.Add(proposalOption);
                 // adjust offset by taking into account the proposal option's label length and the remainder of the structure
                 offset += proposalOption.LabelLength + ProposalOption.Layout.LengthWithoutLabel;

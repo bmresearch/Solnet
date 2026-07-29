@@ -54,10 +54,10 @@ namespace Solnet.KeyStore.Services
 
         public KeyStore<T> EncryptAndGenerateKeyStore(string password, byte[] privateKey, string address, T kdfParams)
         {
-            if (password == null) throw new ArgumentNullException(nameof(password));
-            if (privateKey == null) throw new ArgumentNullException(nameof(privateKey));
-            if (address == null) throw new ArgumentNullException(nameof(address));
-            if (kdfParams == null) throw new ArgumentNullException(nameof(kdfParams));
+            ArgumentNullException.ThrowIfNull(password);
+            ArgumentNullException.ThrowIfNull(privateKey);
+            ArgumentNullException.ThrowIfNull(address);
+            ArgumentNullException.ThrowIfNull(kdfParams);
 
             var salt = RandomBytesGenerator.GenerateRandomSalt();
 

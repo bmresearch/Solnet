@@ -15,34 +15,34 @@ namespace Solnet.Programs.Test
             "forward deal onion eight catalog surface unit card window walnut wealth medal";
 
         private static readonly byte[] SystemProgramIdBytes =
-        {
+        [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        };
+        ];
 
         private static readonly byte[] CreateAccountInstructionBytes =
-        {
+        [
             0, 0, 0, 0, 240, 29, 31, 0, 0, 0, 0, 0, 165,
             0, 0, 0, 0, 0, 0, 0, 6, 221, 246, 225, 215,
             101, 161, 147, 217, 203, 225, 70, 206,
             235, 121, 172, 28, 180, 133, 237, 95, 91,
             55, 145, 58, 140, 245, 133, 126, 255, 0, 169
-        };
+        ];
 
         private static readonly byte[] TransferInstructionBytes =
-        {
+        [
             2, 0, 0, 0, 128, 150, 152, 0, 0, 0, 0, 0
-        };
+        ];
 
         private static readonly byte[] AssignInstructionBytes =
-        {
+        [
             1, 0, 0, 0, 189, 31, 212, 204, 51, 65, 12, 40,
             137, 113, 214, 99, 175, 9, 119, 28, 19, 10, 56, 240,
             87, 136, 148, 225, 227, 13, 181, 127, 113, 230, 10, 186
-        };
+        ];
 
         private static readonly byte[] CreateAccountWithSeedInstructionBytes =
-        {
+        [
             3, 0, 0, 0, 244, 171, 249, 196, 62, 132, 245, 193, 114,
             19, 34, 7, 37, 207, 38, 98, 69, 136, 106, 149, 175, 110, 143, 211,
             108, 198, 5, 239, 231, 182, 7, 20, 8, 0, 0, 0, 0,0,0,0,116, 101, 115,
@@ -50,36 +50,36 @@ namespace Solnet.Programs.Test
             0, 0, 0, 0, 4, 23, 154, 206, 58, 166, 9, 125, 107, 80, 224, 57,
             235, 71, 51, 46, 27, 153, 48, 39, 162, 54, 144, 176, 6, 128, 214,
             189, 53, 152, 48, 38,
-        };
+        ];
 
-        private static readonly byte[] AdvanceNonceAccountInstructionBytes = { 4, 0, 0, 0 };
+        private static readonly byte[] AdvanceNonceAccountInstructionBytes = [4, 0, 0, 0];
 
         private static readonly byte[] WithdrawNonceAccountInstructionBytes =
-        {
+        [
             5, 0, 0, 0, 64, 66, 15, 0, 0, 0, 0, 0
-        };
+        ];
 
         private static readonly byte[] InitializeNonceAccountInstructionBytes =
-        {
+        [
             6, 0, 0, 0, 4, 23, 154, 206, 58, 166, 9, 125, 107, 80, 224, 57,
             235, 71, 51, 46, 27, 153, 48, 39, 162, 54, 144, 176, 6, 128, 214,
             189, 53, 152, 48, 38
-        };
+        ];
 
         private static readonly byte[] AuthorizeNonceAccountInstructionBytes =
-        {
+        [
             7, 0, 0, 0, 4, 23, 154, 206, 58, 166, 9, 125, 107, 80, 224, 57,
             235, 71, 51, 46, 27, 153, 48, 39, 162, 54, 144, 176, 6, 128, 214,
             189, 53, 152, 48, 38
-        };
+        ];
 
         private static readonly byte[] AllocateInstructionBytes =
-        {
+        [
             8, 0, 0, 0, 64, 66, 15, 0, 0, 0, 0, 0
-        };
+        ];
 
         private static readonly byte[] AllocateWithSeedInstructionBytes =
-        {
+        [
             9, 0, 0, 0, 244, 171, 249, 196, 62, 132, 245, 193, 114, 19,
             34, 7, 37, 207, 38, 98, 69, 136, 106, 149, 175, 110, 143,
             211, 108, 198, 5, 239, 231, 182, 7, 20, 8, 0, 0, 0, 0,0,0,0,116,
@@ -87,10 +87,10 @@ namespace Solnet.Programs.Test
             0, 4, 23, 154, 206, 58, 166, 9, 125, 107, 80, 224, 57, 235,
             71, 51, 46, 27, 153, 48, 39, 162, 54, 144, 176, 6, 128, 214,
             189, 53, 152, 48, 38
-        };
+        ];
 
         private static readonly byte[] AssignWithSeedInstructionBytes =
-        {
+        [
             10, 0, 0, 0, 244, 171, 249, 196, 62, 132, 245, 193, 114,
             19, 34, 7, 37, 207, 38, 98, 69, 136, 106, 149, 175, 110,
             143, 211, 108, 198, 5, 239, 231, 182, 7, 20, 8, 0, 0, 0,0,0,0,0,
@@ -98,15 +98,15 @@ namespace Solnet.Programs.Test
             58, 166, 9, 125, 107, 80, 224, 57, 235, 71, 51, 46, 27,
             153, 48, 39, 162, 54, 144, 176, 6, 128, 214, 189, 53,
             152, 48, 38
-        };
+        ];
 
         private static readonly byte[] TransferWithSeedInstructionBytes =
-        {
+        [
             11, 0, 0, 0, 64, 66, 15, 0, 0, 0, 0, 0, 8, 0, 0, 0,0,0,0,0, 116, 101, 115, 116,
             83, 101, 101, 100, 4, 23, 154, 206, 58, 166, 9, 125, 107, 80,
             224, 57, 235, 71, 51, 46, 27, 153, 48, 39, 162, 54, 144, 176,
             6, 128, 214, 189, 53, 152, 48, 38,
-        };
+        ];
 
         private const long BalanceForRentExemption = 2039280L;
 

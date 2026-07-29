@@ -24,9 +24,9 @@ namespace Solnet.Rpc.Builders
                                                     byte[] data)
         {
 
-            if (programId == null) throw new ArgumentNullException(nameof(programId));
-            if (keys == null) throw new ArgumentNullException(nameof(keys));
-            if (data == null) throw new ArgumentNullException(nameof(data));
+            ArgumentNullException.ThrowIfNull(programId);
+            ArgumentNullException.ThrowIfNull(keys);
+            ArgumentNullException.ThrowIfNull(data);
 
             return new TransactionInstruction
             {

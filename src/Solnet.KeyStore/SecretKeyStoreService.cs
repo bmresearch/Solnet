@@ -31,10 +31,8 @@ namespace Solnet.KeyStore
 
         public static string GetAddressFromKeyStore(string json)
         {
-            if (json == null) throw new ArgumentNullException(nameof(json));
-            var keyStoreDocument = JsonSerializer.Deserialize<JsonDocument>(json);
-            if (keyStoreDocument == null) throw new SerializationException("could not process json");
-
+            ArgumentNullException.ThrowIfNull(json);
+            var keyStoreDocument = JsonSerializer.Deserialize<JsonDocument>(json) ?? throw new SerializationException("could not process json");
             var addrExist = keyStoreDocument.RootElement.TryGetProperty("address", out var address);
             if (!addrExist) throw new JsonException("could not get address from json");
 
@@ -43,14 +41,14 @@ namespace Solnet.KeyStore
 
         public static string GenerateUtcFileName(string address)
         {
-            if (address == null) throw new ArgumentNullException(nameof(address));
+            ArgumentNullException.ThrowIfNull(address);
             return "utc--" + DateTime.UtcNow.ToString("O").Replace(":", "-") + "--" + address;
         }
 
         public byte[] DecryptKeyStoreFromFile(string password, string filePath)
         {
-            if (password == null) throw new ArgumentNullException(nameof(password));
-            if (filePath == null) throw new ArgumentNullException(nameof(filePath));
+            ArgumentNullException.ThrowIfNull(password);
+            ArgumentNullException.ThrowIfNull(filePath);
 
             using var file = File.OpenText(filePath);
             var json = file.ReadToEnd();
@@ -59,8 +57,8 @@ namespace Solnet.KeyStore
 
         public byte[] DecryptKeyStoreFromJson(string password, string json)
         {
-            if (password == null) throw new ArgumentNullException(nameof(password));
-            if (json == null) throw new ArgumentNullException(nameof(json));
+            ArgumentNullException.ThrowIfNull(password);
+            ArgumentNullException.ThrowIfNull(json);
 
             var type = KeyStoreKdfChecker.GetKeyStoreKdfType(json);
             return type switch
@@ -73,8 +71,8 @@ namespace Solnet.KeyStore
 
         public string EncryptAndGenerateDefaultKeyStoreAsJson(string password, byte[] key, string address)
         {
-            if (password == null) throw new ArgumentNullException(nameof(password));
-            if (address == null) throw new ArgumentNullException(nameof(address));
+            ArgumentNullException.ThrowIfNull(password);
+            ArgumentNullException.ThrowIfNull(address);
 
             return _keyStoreScryptService.EncryptAndGenerateKeyStoreAsJson(password, key, address);
         }

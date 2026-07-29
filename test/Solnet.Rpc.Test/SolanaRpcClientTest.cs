@@ -884,10 +884,10 @@ namespace Solnet.Rpc.Test
                 BaseAddress = TestnetUri,
             };
 
-            List<MemCmp> filters = new()
-            {
+            List<MemCmp> filters =
+            [
                 new MemCmp { Offset = 45, Bytes = "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5" },
-            };
+            ];
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetProgramAccounts("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", // serum program-id

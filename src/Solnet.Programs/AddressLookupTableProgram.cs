@@ -46,11 +46,11 @@ namespace Solnet.Programs
             byte[] recentSlotBytes = new byte[8];
             recentSlotBytes.WriteU64(recentSlot, 0);
 
-            return PublicKey.TryFindProgramAddress(new List<byte[]>
-            {
+            return PublicKey.TryFindProgramAddress(
+            [
                 authority.KeyBytes,
                 recentSlotBytes
-            }, ProgramIdKey, out address, out bump);
+            ], ProgramIdKey, out address, out bump);
         }
 
         /// <summary>
@@ -95,13 +95,13 @@ namespace Solnet.Programs
         public static TransactionInstruction CreateLookupTable(
             PublicKey authority, PublicKey payer, PublicKey lookupTable, byte bump, ulong recentSlot)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(lookupTable, false),
                 AccountMeta.ReadOnly(authority, false),
                 AccountMeta.Writable(payer, true),
                 AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -118,11 +118,11 @@ namespace Solnet.Programs
         /// <returns></returns>
         public static TransactionInstruction FreezeLookupTable(PublicKey LookupTable, PublicKey Authority)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(LookupTable, false),
                 AccountMeta.ReadOnly(Authority, true)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -160,11 +160,11 @@ namespace Solnet.Programs
         private static TransactionInstruction ExtendLookupTableInternal(PublicKey lookupTable, PublicKey authority,
             PublicKey payer, List<PublicKey> addresses)
         {
-            List<AccountMeta> meta = new()
-            {
+            List<AccountMeta> meta =
+            [
                 AccountMeta.Writable(lookupTable, false),
                 AccountMeta.ReadOnly(authority, true)
-            };
+            ];
 
             if (payer != null)
             {
@@ -188,11 +188,11 @@ namespace Solnet.Programs
         /// <returns></returns>
         public static TransactionInstruction DeactivateLookupTable(PublicKey LookupTable, PublicKey Authority)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(LookupTable, false),
                 AccountMeta.ReadOnly(Authority, true)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -210,12 +210,12 @@ namespace Solnet.Programs
         /// <returns></returns>
         public static TransactionInstruction CloseLookupTable(PublicKey LookupTable, PublicKey Authority, PublicKey Recipient)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(LookupTable, false),
                 AccountMeta.ReadOnly(Authority, true),
                 AccountMeta.Writable(Recipient, false)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -242,8 +242,8 @@ namespace Solnet.Programs
                     PublicKey = ProgramIdKey,
                     InstructionName = "Unknown Instruction",
                     ProgramName = ProgramName,
-                    Values = new Dictionary<string, object>(),
-                    InnerInstructions = new List<DecodedInstruction>()
+                    Values = [],
+                    InnerInstructions = []
                 };
             }
 
@@ -255,8 +255,8 @@ namespace Solnet.Programs
                 PublicKey = ProgramIdKey,
                 InstructionName = AddressLookupTableProgramInstruction.Names[instructionType],
                 ProgramName = ProgramName,
-                Values = new Dictionary<string, object>(),
-                InnerInstructions = new List<DecodedInstruction>()
+                Values = [],
+                InnerInstructions = []
             };
 
             switch (instructionType)

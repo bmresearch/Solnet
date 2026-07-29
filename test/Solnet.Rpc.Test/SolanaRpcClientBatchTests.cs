@@ -1,5 +1,4 @@
-﻿#pragma warning disable CS0618
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Solnet.Programs;
 using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
@@ -8,10 +7,8 @@ using Solnet.Rpc.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -22,9 +19,9 @@ namespace Solnet.Rpc.Test
     [TestClass]
     public class SolanaRpcClientBatchTests
     {
- // Type or member is obsolete
-      
-        
+        // Type or member is obsolete
+
+
         [TestMethod]
         public void TestCreateAndSerializeBatchTokenMintInfoRequest()
         {
@@ -60,7 +57,7 @@ namespace Solnet.Rpc.Test
             Assert.IsNotNull(res);
             Assert.AreEqual(5, res.Count);
         }
-        
+
         [TestMethod]
         public void TestDeserializeBatchTokenMintInfoResponse()
         {
@@ -165,10 +162,12 @@ namespace Solnet.Rpc.Test
         /// <returns></returns>
         public RequestResult<T> CreateMockRequestResult<T>(string req, string resp, HttpStatusCode status)
         {
-            var x = new RequestResult<T>();
-            x.HttpStatusCode = status;
-            x.RawRpcRequest = req;
-            x.RawRpcResponse = resp;
+            var x = new RequestResult<T>
+            {
+                HttpStatusCode = status,
+                RawRpcRequest = req,
+                RawRpcResponse = resp
+            };
 
             // deserialize resp
             if (status == HttpStatusCode.OK)
@@ -227,8 +226,6 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(expected_responses, catch_for_assert.RpcResult.RawRpcResponse);
 
         }
-
-#pragma warning restore CS0618 // Type or member is obsolete
     }
 
 

@@ -36,9 +36,10 @@ namespace Solnet.Programs.Models.NameService
         {
             var data = new ReadOnlySpan<byte>(input);
             var header = RecordHeader.Deserialize(input);
-            var res = new ReverseTokenNameRecord(header);
-
-            res.Value = data.GetPubKey(96);
+            var res = new ReverseTokenNameRecord(header)
+            {
+                Value = data.GetPubKey(96)
+            };
 
             return res;
         }

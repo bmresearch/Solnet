@@ -12,7 +12,7 @@ namespace Solnet.Wallet
     /// <summary>
     /// An implementation of Ed25519 based BIP32 key generation.
     /// </summary>
-    public class Ed25519Bip32
+    public partial class Ed25519Bip32
     {
         /// <summary>
         /// The seed for the Ed25519 BIP32 HMAC-SHA512 master key calculation.
@@ -62,7 +62,7 @@ namespace Solnet.Wallet
         {
             MemoryStream buffer = new();
 
-            buffer.Write(new byte[] { 0 });
+            buffer.Write([0]);
             buffer.Write(key);
             byte[] indexBytes = new byte[4];
             BinaryPrimitives.WriteUInt32BigEndian(indexBytes, index);
@@ -79,13 +79,11 @@ namespace Solnet.Wallet
         /// <returns>A tuple consisting of the key and corresponding chain code.</returns>
         private static (byte[] Key, byte[] ChainCode) HmacSha512(byte[] keyBuffer, byte[] data)
         {
-            using (var hmacsha512 = new HMACSHA512(keyBuffer))
-            {
-                byte[] i = hmacsha512.ComputeHash(data);
-                byte[] il = i.AsSpan(0, 32).ToArray();
-                byte[] ir = i.AsSpan(32).ToArray();
-                return (Key: il, ChainCode: ir);
-            }
+            using var hmacsha512 = new HMACSHA512(keyBuffer);
+            byte[] i = hmacsha512.ComputeHash(data);
+            byte[] il = i.AsSpan(0, 32).ToArray();
+            byte[] ir = i.AsSpan(32).ToArray();
+            return (Key: il, ChainCode: ir);
         }
 
         /// <summary>
@@ -96,10 +94,12 @@ namespace Solnet.Wallet
         /// <returns>A boolean.</returns>
         private static bool IsValidPath(string path)
         {
-            Regex regex = new("^m(\\/[0-9]+')+$");
+            Regex regex = PrecompileRegex();
 
             if (!regex.IsMatch(path))
+            {
                 return false;
+            }
 
             bool valid = !(path.Split('/', StringSplitOptions.RemoveEmptyEntries)
                 .Skip(1)
@@ -118,7 +118,9 @@ namespace Solnet.Wallet
         public (byte[] Key, byte[] ChainCode) DerivePath(string path)
         {
             if (!IsValidPath(path))
+            {
                 throw new FormatException("Invalid derivation path");
+            }
 
             IEnumerable<uint> segments = path
                 .Split('/')
@@ -134,5 +136,8 @@ namespace Solnet.Wallet
 
             return results;
         }
+
+        [GeneratedRegex("^m(\\/[0-9]+')+$")]
+        private static partial Regex PrecompileRegex();
     }
 }

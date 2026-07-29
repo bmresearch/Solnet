@@ -23,7 +23,7 @@ namespace Solnet.Rpc.Converters
                 JsonDocument doc = JsonDocument.ParseValue(ref reader);
                 var jsonAsString = doc.RootElement.ToString();
 
-                return new List<string>() { jsonAsString, "jsonParsed" };
+                return [jsonAsString, "jsonParsed"];
             }
 
             throw new JsonException("Unable to parse account data");

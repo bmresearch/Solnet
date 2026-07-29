@@ -62,8 +62,8 @@ namespace Solnet.Rpc.Models
             VersionedTransaction tx = new()
             {
                 RecentBlockHash = message.RecentBlockhash,
-                Signatures = new List<SignaturePubKeyPair>(),
-                Instructions = new List<TransactionInstruction>(),
+                Signatures = [],
+                Instructions = [],
                 AddressTableLookups = message.AddressTableLookups,
                 _accountKeys = message.AccountKeys
             };
@@ -158,8 +158,7 @@ namespace Solnet.Rpc.Models
         /// <exception cref="ArgumentNullException">Thrown when the given string is null.</exception>
         public static new VersionedTransaction Deserialize(string data)
         {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data));
+            ArgumentNullException.ThrowIfNull(data);
 
             byte[] decodedBytes;
 

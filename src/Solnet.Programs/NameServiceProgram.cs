@@ -1,6 +1,5 @@
 using Solnet.Programs.Utilities;
 using Solnet.Rpc.Models;
-using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
@@ -60,8 +59,7 @@ namespace Solnet.Programs
             PublicKey parentNameOwner = null, PublicKey parentName = null)
         {
             byte[] hashedName = ComputeHashedName(name.Key);
-            PublicKey nameAccountKey = DeriveNameAccountKey(hashedName, nameClass, parentName);
-            if (nameAccountKey == null) throw new Exception("could not derive an address for the name account");
+            PublicKey nameAccountKey = DeriveNameAccountKey(hashedName, nameClass, parentName) ?? throw new Exception("could not derive an address for the name account");
             return CreateNameRegistryInstruction(
                 nameAccountKey, nameOwner, payer, hashedName, lamports, space, nameClass, parentNameOwner, parentName);
         }
@@ -75,9 +73,7 @@ namespace Solnet.Programs
         {
             string prefixedName = HashPrefix + name;
             byte[] fullNameBytes = Encoding.UTF8.GetBytes(prefixedName);
-
-            using SHA256 sha = SHA256.Create();
-            return sha.ComputeHash(fullNameBytes, 0, fullNameBytes.Length);
+            return SHA256.HashData(fullNameBytes.AsSpan(0, fullNameBytes.Length));
         }
 
         /// <summary>
@@ -92,11 +88,18 @@ namespace Solnet.Programs
             byte[] nameClassKey = new byte[32];
             byte[] parentNameKeyBytes = new byte[32];
 
-            if (nameClass != null) nameClassKey = nameClass.KeyBytes;
-            if (parentName != null) parentNameKeyBytes = parentName.KeyBytes;
+            if (nameClass != null)
+            {
+                nameClassKey = nameClass.KeyBytes;
+            }
+
+            if (parentName != null)
+            {
+                parentNameKeyBytes = parentName.KeyBytes;
+            }
 
             bool success = PublicKey.TryFindProgramAddress(
-                new List<byte[]> { hashedName.ToArray(), nameClassKey, parentNameKeyBytes }, ProgramIdKey, out PublicKey nameAccountPublicKey, out _);
+                [hashedName.ToArray(), nameClassKey, parentNameKeyBytes], ProgramIdKey, out PublicKey nameAccountPublicKey, out _);
             return nameAccountPublicKey;
         }
 
@@ -118,8 +121,8 @@ namespace Solnet.Programs
             PublicKey nameKey, PublicKey nameOwner, PublicKey payer, ReadOnlySpan<byte> hashedName, ulong lamports, uint space,
             PublicKey nameClass = null, PublicKey parentNameOwner = null, PublicKey parentName = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
                 AccountMeta.Writable(payer, true),
                 AccountMeta.Writable(nameKey, false),
@@ -130,8 +133,12 @@ namespace Solnet.Programs
                 parentName != null
                     ? AccountMeta.ReadOnly(parentName, false)
                     : AccountMeta.ReadOnly(new PublicKey(new byte[32]), false)
-            };
-            if (parentNameOwner != null) keys.Add(AccountMeta.ReadOnly(parentNameOwner, false));
+            ];
+            if (parentNameOwner != null)
+            {
+                keys.Add(AccountMeta.ReadOnly(parentNameOwner, false));
+            }
+
             return new TransactionInstruction
             {
                 Keys = keys,
@@ -155,13 +162,17 @@ namespace Solnet.Programs
         public static TransactionInstruction UpdateNameRegistry(
             PublicKey nameKey, uint offset, ReadOnlySpan<byte> data, PublicKey nameOwner = null, PublicKey nameClass = null)
         {
-            List<AccountMeta> keys = new() { AccountMeta.Writable(nameKey, false) };
+            List<AccountMeta> keys = [AccountMeta.Writable(nameKey, false)];
 
             if (nameOwner != null)
+            {
                 keys.Add(AccountMeta.ReadOnly(nameOwner, true));
+            }
 
             if (nameClass != null)
+            {
                 keys.Add(AccountMeta.ReadOnly(nameClass, true));
+            }
 
             return new TransactionInstruction
             {
@@ -185,14 +196,16 @@ namespace Solnet.Programs
         public static TransactionInstruction TransferNameRegistry(
             PublicKey nameKey, PublicKey newOwner, PublicKey nameOwner, PublicKey nameClass = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(nameKey, false),
                 AccountMeta.ReadOnly(nameOwner, true),
-            };
+            ];
 
             if (nameClass != null)
+            {
                 keys.Add(AccountMeta.ReadOnly(nameClass, true));
+            }
 
             return new TransactionInstruction
             {
@@ -212,12 +225,12 @@ namespace Solnet.Programs
         public static TransactionInstruction DeleteNameRegistry(
             PublicKey nameKey, PublicKey nameOwner, PublicKey refundPublicKey)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(nameKey, false),
                 AccountMeta.ReadOnly(nameOwner, true),
                 AccountMeta.Writable(refundPublicKey, false)
-            };
+            ];
 
             return new TransactionInstruction
             {
@@ -307,13 +320,19 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Name Owner", keys[keyIndices[3]]);
 
             if (keyIndices.Length >= 5)
+            {
                 decodedInstruction.Values.Add("Name Class", keys[keyIndices[4]]);
+            }
 
             if (keyIndices.Length >= 6)
+            {
                 decodedInstruction.Values.Add("Parent Name", keys[keyIndices[5]]);
+            }
 
             if (keyIndices.Length >= 7)
+            {
                 decodedInstruction.Values.Add("Parent Name Owner", keys[keyIndices[6]]);
+            }
 
             uint nameLength = data.GetU32(1);
             decodedInstruction.Values.Add("Hashed Name Length", nameLength);
@@ -335,10 +354,14 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Name Account", keys[keyIndices[0]]);
 
             if (keyIndices.Length == 2)
+            {
                 decodedInstruction.Values.Add("Name Owner", keys[keyIndices[1]]);
+            }
 
             if (keyIndices.Length == 3)
+            {
                 decodedInstruction.Values.Add("Name Class", keys[keyIndices[2]]);
+            }
 
             decodedInstruction.Values.Add("Offset", data.GetU32(1));
             decodedInstruction.Values.Add("Data", data[5..].ToArray());
@@ -358,7 +381,9 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Name Owner", keys[keyIndices[1]]);
 
             if (keyIndices.Length == 3)
+            {
                 decodedInstruction.Values.Add("Name Class", keys[keyIndices[2]]);
+            }
 
             decodedInstruction.Values.Add("New Owner", data.GetPubKey(1));
         }
@@ -395,8 +420,8 @@ namespace Solnet.Programs
                     PublicKey = ProgramIdKey,
                     InstructionName = "Unknown Instruction",
                     ProgramName = ProgramName,
-                    Values = new Dictionary<string, object>(),
-                    InnerInstructions = new List<DecodedInstruction>()
+                    Values = [],
+                    InnerInstructions = []
                 };
             }
 
@@ -407,8 +432,8 @@ namespace Solnet.Programs
                 PublicKey = ProgramIdKey,
                 InstructionName = NameServiceInstructions.Names[instructionValue],
                 ProgramName = ProgramName,
-                Values = new Dictionary<string, object>(),
-                InnerInstructions = new List<DecodedInstruction>()
+                Values = [],
+                InnerInstructions = []
             };
 
             switch (instructionValue)

@@ -26,7 +26,7 @@ namespace Solnet.Programs.StakePool.Models
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-        public static PodStakeStatus FromStakeStatus(StakeStatus status) => new PodStakeStatus((byte)status);
+        public static PodStakeStatus FromStakeStatus(StakeStatus status) => new((byte)status);
 
         /// <summary>
         /// Converts the current value to a <see cref="StakeStatus"/> enumeration.

@@ -4,7 +4,6 @@ using Solnet.Rpc.Messages;
 using Solnet.Rpc.Utilities;
 using System;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -97,26 +96,28 @@ namespace Solnet.Rpc.Core.Http
                 };
 
                 // execute POST
-                using (var response = await _httpClient.SendAsync(httpReq).ConfigureAwait(false))
-                {
-                    var result = await HandleResult<T>(req, response).ConfigureAwait(false);
-                    result.RawRpcRequest = requestJson;
-                    return result;
-                }
+                using var response = await _httpClient.SendAsync(httpReq).ConfigureAwait(false);
+                var result = await HandleResult<T>(req, response).ConfigureAwait(false);
+                result.RawRpcRequest = requestJson;
+                return result;
 
 
             }
             catch (HttpRequestException e)
             {
-                var result = new RequestResult<T>(e.StatusCode ?? System.Net.HttpStatusCode.BadRequest, e.Message);
-                result.RawRpcRequest = requestJson;
+                var result = new RequestResult<T>(e.StatusCode ?? System.Net.HttpStatusCode.BadRequest, e.Message)
+                {
+                    RawRpcRequest = requestJson
+                };
                 _logger?.LogDebug(new EventId(req.Id, req.Method), $"Caught exception: {e.Message}");
                 return result;
             }
             catch (Exception e)
             {
-                var result = new RequestResult<T>(System.Net.HttpStatusCode.BadRequest, e.Message);
-                result.RawRpcRequest = requestJson;
+                var result = new RequestResult<T>(System.Net.HttpStatusCode.BadRequest, e.Message)
+                {
+                    RawRpcRequest = requestJson
+                };
                 _logger?.LogDebug(new EventId(req.Id, req.Method), $"Caught exception: {e.Message}");
                 return result;
             }
@@ -133,7 +134,7 @@ namespace Solnet.Rpc.Core.Http
         /// <returns>A task that represents the asynchronous operation that holds the request result.</returns>
         private async Task<RequestResult<T>> HandleResult<T>(JsonRpcRequest req, HttpResponseMessage response)
         {
-            RequestResult<T> result = new RequestResult<T>(response);
+            RequestResult<T> result = new(response);
             try
             {
                 result.RawRpcResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -155,7 +156,7 @@ namespace Solnet.Rpc.Core.Http
                         result.ServerErrorCode = errorRes.Error.Code;
                         result.ErrorData = errorRes.Error.Data;
                     }
-                    else if(errorRes is { ErrorMessage: { } })
+                    else if (errorRes is { ErrorMessage: { } })
                     {
                         result.Reason = errorRes.ErrorMessage;
                     }
@@ -182,8 +183,12 @@ namespace Solnet.Rpc.Core.Http
         /// <returns>A task that represents the asynchronous operation that holds the request result.</returns>
         public async Task<RequestResult<JsonRpcBatchResponse>> SendBatchRequestAsync(JsonRpcBatchRequest reqs)
         {
-            if (reqs == null) throw new ArgumentNullException(nameof(reqs));
-            if (reqs.Count == 0) throw new ArgumentException("Empty batch");
+            ArgumentNullException.ThrowIfNull(reqs);
+            if (reqs.Count == 0)
+            {
+                throw new ArgumentException("Empty batch");
+            }
+
             var id_for_log = reqs.Min(x => x.Id);
             var requestsJson = JsonSerializer.Serialize(reqs, _serializerOptions);
             try
@@ -207,25 +212,27 @@ namespace Solnet.Rpc.Core.Http
                 };
 
                 // execute POST
-                using (var response = await _httpClient.SendAsync(httpReq).ConfigureAwait(false))
-                {
-                    var result = await HandleBatchResult(reqs, response).ConfigureAwait(false);
-                    result.RawRpcRequest = requestsJson;
-                    return result;
-                }
+                using var response = await _httpClient.SendAsync(httpReq).ConfigureAwait(false);
+                var result = await HandleBatchResult(reqs, response).ConfigureAwait(false);
+                result.RawRpcRequest = requestsJson;
+                return result;
 
             }
             catch (HttpRequestException e)
             {
-                var result = new RequestResult<JsonRpcBatchResponse>(e.StatusCode ?? System.Net.HttpStatusCode.BadRequest, e.Message);
-                result.RawRpcRequest = requestsJson;
+                var result = new RequestResult<JsonRpcBatchResponse>(e.StatusCode ?? System.Net.HttpStatusCode.BadRequest, e.Message)
+                {
+                    RawRpcRequest = requestsJson
+                };
                 _logger?.LogDebug(new EventId(id_for_log, $"[batch of {reqs.Count}]"), $"Caught exception: {e.Message}");
                 return result;
             }
             catch (Exception e)
             {
-                var result = new RequestResult<JsonRpcBatchResponse>(System.Net.HttpStatusCode.BadRequest, e.Message);
-                result.RawRpcRequest = requestsJson;
+                var result = new RequestResult<JsonRpcBatchResponse>(System.Net.HttpStatusCode.BadRequest, e.Message)
+                {
+                    RawRpcRequest = requestsJson
+                };
                 _logger?.LogDebug(new EventId(id_for_log, $"[batch of {reqs.Count}]"), $"Caught exception: {e.Message}");
                 return result;
             }
@@ -243,7 +250,7 @@ namespace Solnet.Rpc.Core.Http
         private async Task<RequestResult<JsonRpcBatchResponse>> HandleBatchResult(JsonRpcBatchRequest reqs, HttpResponseMessage response)
         {
             var id_for_log = reqs.Min(x => x.Id);
-            RequestResult<JsonRpcBatchResponse> result = new RequestResult<JsonRpcBatchResponse>(response);
+            RequestResult<JsonRpcBatchResponse> result = new(response);
             try
             {
                 result.RawRpcResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);

@@ -25,8 +25,7 @@ namespace Solnet.Wallet.Bip39
         /// <exception cref="FormatException">Thrown when the word count of the mnemonic is invalid.</exception>
         public Mnemonic(string mnemonic, WordList wordList = null)
         {
-            if (mnemonic == null)
-                throw new ArgumentNullException(nameof(mnemonic));
+            ArgumentNullException.ThrowIfNull(mnemonic);
             _mnemonic = mnemonic.Trim();
 
             wordList ??= WordList.AutoDetect(mnemonic) ?? WordList.English;
@@ -57,7 +56,9 @@ namespace Solnet.Wallet.Bip39
 
             int i = Array.IndexOf(EntArray, entropy.Length * 8);
             if (i == -1)
+            {
                 throw new ArgumentException("The length for entropy should be " + string.Join(",", EntArray) + " bits", nameof(entropy));
+            }
 
             int cs = CsArray[i];
             byte[] checksum = SHA256.HashData(entropy);
@@ -87,7 +88,10 @@ namespace Solnet.Wallet.Bip39
         {
             int ms = (int)wordCount;
             if (!CorrectWordCount(ms))
+            {
                 throw new ArgumentException("Word count should be 12,15,18,21 or 24", nameof(wordCount));
+            }
+
             int i = Array.IndexOf(MsArray, (int)wordCount);
             return RandomUtils.GetBytes(EntArray[i] / 8);
         }
@@ -95,17 +99,17 @@ namespace Solnet.Wallet.Bip39
         /// <summary>
         /// The word count array.
         /// </summary>
-        private static readonly int[] MsArray = { 12, 15, 18, 21, 24 };
+        private static readonly int[] MsArray = [12, 15, 18, 21, 24];
 
         /// <summary>
         /// The bit count array.
         /// </summary>
-        private static readonly int[] CsArray = { 4, 5, 6, 7, 8 };
+        private static readonly int[] CsArray = [4, 5, 6, 7, 8];
 
         /// <summary>
         /// The entropy value array.
         /// </summary>
-        private static readonly int[] EntArray = { 128, 160, 192, 224, 256 };
+        private static readonly int[] EntArray = [128, 160, 192, 224, 256];
 
         /// <summary>
         /// Whether the checksum of the mnemonic is valid.
@@ -169,7 +173,7 @@ namespace Solnet.Wallet.Bip39
         /// <summary>
         /// Utf8 encoding.
         /// </summary>
-        private static readonly Encoding _noBomutf8 = new UTF8Encoding(false);
+        private static readonly UTF8Encoding _noBomutf8 = new(false);
 
         /// <summary>
         /// Derives the mnemonic seed.
@@ -193,10 +197,8 @@ namespace Solnet.Wallet.Bip39
         /// <returns>The derived key.</returns>
         private static byte[] GenerateSeed(byte[] password, byte[] salt)
         {
-            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 2048, HashAlgorithmName.SHA512))
-            {
-                return pbkdf2.GetBytes(64);
-            }
+            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 2048, HashAlgorithmName.SHA512);
+            return pbkdf2.GetBytes(64);
         }
 
         /// <summary>

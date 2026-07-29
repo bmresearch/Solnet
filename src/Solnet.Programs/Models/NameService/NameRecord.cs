@@ -37,9 +37,10 @@ namespace Solnet.Programs.Models.NameService
 
             var recordType = header.ParentName == NameServiceClient.SolTLD ? RecordType.NameRecord : RecordType.TwitterRecord;
 
-            var res = new NameRecord(header, recordType);
-
-            res.Value = input[96..];
+            var res = new NameRecord(header, recordType)
+            {
+                Value = input[96..]
+            };
 
             return res;
         }

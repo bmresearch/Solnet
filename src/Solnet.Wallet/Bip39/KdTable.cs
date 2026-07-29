@@ -82,21 +82,21 @@ namespace Solnet.Wallet.Bip39
         /// <summary>
         /// The supported characters.
         /// </summary>
-        private static readonly int[][] SupportedChars = {
-            new[]{0,1000},
-            new[]{12352,12447},
-            new[]{12448,12543},
-            new[]{19968,40959},
-            new[]{13312,19967},
-            new[]{131072,173791},
-            new[]{63744,64255},
-            new[]{194560,195103},
-            new[]{13056,13311},
-            new[]{12288,12351},
-            new[]{65280,65535},
-            new[]{8192,8303},
-            new[]{8352,8399},
-        };
+        private static readonly int[][] SupportedChars = [
+            [0,1000],
+            [12352,12447],
+            [12448,12543],
+            [19968,40959],
+            [13312,19967],
+            [131072,173791],
+            [63744,64255],
+            [194560,195103],
+            [13056,13311],
+            [12288,12351],
+            [65280,65535],
+            [8192,8303],
+            [8352,8399],
+        ];
 
         /// <summary>
         /// The substitution table for normalization.

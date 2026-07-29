@@ -291,7 +291,7 @@ namespace Solnet.Rpc.Test
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
             var result = sut.GetProgramAccounts("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T", dataSize: 500,
-                memCmpList: new List<MemCmp> { new() { Offset = 25, Bytes = "3Mc6vR" } });
+                memCmpList: [new() { Offset = 25, Bytes = "3Mc6vR" }]);
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
             Assert.IsTrue(result.WasSuccessful);
@@ -370,7 +370,7 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var result = sut.GetMultipleAccounts(new List<string> { "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu", "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5" });
+            var result = sut.GetMultipleAccounts(["Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu", "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5"]);
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
             Assert.IsTrue(result.WasSuccessful);
@@ -404,7 +404,7 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
-            var result = sut.GetMultipleAccounts(new List<string> { "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu", "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5" }, Types.Commitment.Confirmed);
+            var result = sut.GetMultipleAccounts(["Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu", "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5"], Types.Commitment.Confirmed);
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
             Assert.IsTrue(result.WasSuccessful);

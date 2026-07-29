@@ -36,7 +36,7 @@ namespace Solnet.Extensions
         /// </summary>
         public TokenMintResolver()
         {
-            _tokens = new Dictionary<string, TokenDef>();
+            _tokens = [];
         }
 
         /// <summary>
@@ -85,11 +85,9 @@ namespace Solnet.Extensions
         /// <returns>A task that will result in an instance of the TokenMintResolver populated with Solana token list definitions.</returns>
         public static async Task<TokenMintResolver> LoadAsync(string url)
         {
-            using (var wc = new HttpClient())
-            {
-                var json = await wc.GetStringAsync(url);
-                return ParseTokenList(json);
-            }
+            using var wc = new HttpClient();
+            var json = await wc.GetStringAsync(url);
+            return ParseTokenList(json);
         }
 
         /// <summary>
@@ -99,7 +97,7 @@ namespace Solnet.Extensions
         /// <returns>An instance of the TokenMintResolver populated with the deserialized JSON provided.</returns>
         public static TokenMintResolver ParseTokenList(string json)
         {
-            if (json is null) throw new ArgumentNullException(nameof(json));
+            ArgumentNullException.ThrowIfNull(json);
             var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
             var tokenList = JsonSerializer.Deserialize<TokenListDoc>(json, options);
             return new TokenMintResolver(tokenList);
@@ -121,7 +119,7 @@ namespace Solnet.Extensions
         /// <returns></returns>
         public TokenDef Resolve(string tokenMint)
         {
-            if (tokenMint == null) throw new ArgumentNullException(nameof(tokenMint));
+            ArgumentNullException.ThrowIfNull(tokenMint);
             if (_tokens.ContainsKey(tokenMint))
             {
                 return _tokens[tokenMint];
@@ -141,7 +139,7 @@ namespace Solnet.Extensions
         /// <param name="token">An instance of TokenDef to be added.</param>
         public void Add(TokenDef token)
         {
-            if (token is null) throw new ArgumentNullException(nameof(token));
+            ArgumentNullException.ThrowIfNull(token);
             _tokens[token.TokenMint] = token;
         }
 
@@ -151,18 +149,24 @@ namespace Solnet.Extensions
         /// <param name="tokenItem">A TokenListItem instance.</param>
         internal void Add(TokenListItem tokenItem)
         {
-            if (tokenItem is null) throw new ArgumentNullException(nameof(tokenItem));
+            ArgumentNullException.ThrowIfNull(tokenItem);
 
             // pick out the token logo or null
             string logoUrl = tokenItem.LogoUri;
 
             // pick out the coingecko identifier if available
             string coingeckoId = null;
-            if (tokenItem.Extensions?.ContainsKey("coingeckoId") ?? false) coingeckoId = ((JsonElement) tokenItem.Extensions["coingeckoId"]).GetString();
+            if (tokenItem.Extensions?.ContainsKey("coingeckoId") ?? false)
+            {
+                coingeckoId = ((JsonElement)tokenItem.Extensions["coingeckoId"]).GetString();
+            }
 
             // pick out the project website if available
             string projectUrl = null;
-            if (tokenItem.Extensions?.ContainsKey("website") ?? false) projectUrl = ((JsonElement)tokenItem.Extensions["website"]).GetString();
+            if (tokenItem.Extensions?.ContainsKey("website") ?? false)
+            {
+                projectUrl = ((JsonElement)tokenItem.Extensions["website"]).GetString();
+            }
 
             // construct the TokenDef instance
             var token = new TokenDef(tokenItem.Address, tokenItem.Name, tokenItem.Symbol, tokenItem.Decimals)

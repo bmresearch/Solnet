@@ -1,6 +1,4 @@
-﻿using Solnet.Programs.AccountCompression;
-using Solnet.Programs.TokenSwap;
-using Solnet.Rpc.Builders;
+﻿using Solnet.Programs.TokenSwap;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
@@ -18,7 +16,7 @@ namespace Solnet.Programs
         /// <summary>
         /// The dictionary which maps the program public keys to their decoding method.
         /// </summary>
-        private static readonly Dictionary<string, DecodeMethodType> InstructionDictionary = new();
+        private static readonly Dictionary<string, DecodeMethodType> InstructionDictionary = [];
 
         /// <summary>
         /// The method type which is used to perform instruction decoding.
@@ -75,7 +73,7 @@ namespace Solnet.Programs
         /// <returns>The decoded instructions data.</returns>
         public static List<DecodedInstruction> DecodeInstructions(TransactionMetaInfo txMetaInfo)
         {
-            List<DecodedInstruction> decodedInstructions = new();
+            List<DecodedInstruction> decodedInstructions = [];
 
             for (int i = 0; i < ((TransactionInfo)txMetaInfo.Transaction).Message.Instructions.Length; i++)
             {
@@ -94,14 +92,17 @@ namespace Solnet.Programs
                 {
                     decodedInstruction = method.Invoke(
                                         Encoders.Base58.DecodeData(instructionInfo.Data),
-                                        ((TransactionInfo)txMetaInfo.Transaction).Message.AccountKeys.Select(a => new PublicKey(a)).ToList(),
-                                        instructionInfo.Accounts.Select(instr => (byte)instr).ToArray());
+                                        [.. ((TransactionInfo)txMetaInfo.Transaction).Message.AccountKeys.Select(a => new PublicKey(a))],
+                                        [.. instructionInfo.Accounts.Select(instr => (byte)instr)]);
                 }
                 if (txMetaInfo.Meta.InnerInstructions != null)
                 {
                     foreach (InnerInstruction innerInstruction in txMetaInfo.Meta.InnerInstructions)
                     {
-                        if (innerInstruction.Index != i) continue;
+                        if (innerInstruction.Index != i)
+                        {
+                            continue;
+                        }
 
                         foreach (InstructionInfo innerInstructionInfo in innerInstruction.Instructions)
                         {
@@ -119,16 +120,20 @@ namespace Solnet.Programs
                             {
                                 innerDecodedInstruction = method.Invoke(
                                     Encoders.Base58.DecodeData(innerInstructionInfo.Data),
-                                    ((TransactionInfo)txMetaInfo.Transaction).Message.AccountKeys.Select(a => new PublicKey(a)).ToList(),
-                                    innerInstructionInfo.Accounts.Select(instr => (byte)instr).ToArray());
+                                    [.. ((TransactionInfo)txMetaInfo.Transaction).Message.AccountKeys.Select(a => new PublicKey(a))],
+                                    [.. innerInstructionInfo.Accounts.Select(instr => (byte)instr)]);
                             }
                             if (innerDecodedInstruction != null)
+                            {
                                 decodedInstruction.InnerInstructions.Add(innerDecodedInstruction);
+                            }
                         }
                     }
                 }
                 if (decodedInstruction != null)
+                {
                     decodedInstructions.Add(decodedInstruction);
+                }
             }
             return decodedInstructions;
         }
@@ -140,7 +145,7 @@ namespace Solnet.Programs
         /// <returns>The decoded instructions data.</returns>
         public static List<DecodedInstruction> DecodeInstructions(Message message)
         {
-            List<DecodedInstruction> decodedInstructions = new();
+            List<DecodedInstruction> decodedInstructions = [];
 
             foreach (CompiledInstruction compiledInstruction in message.Instructions)
             {
@@ -157,7 +162,7 @@ namespace Solnet.Programs
                         {
                             { "Data", Encoders.Base58.EncodeData(compiledInstruction.Data) }
                         },
-                        InnerInstructions = new List<DecodedInstruction>(),
+                        InnerInstructions = [],
                         PublicKey = message.AccountKeys[compiledInstruction.ProgramIdIndex]
                     };
                     for (int i = 0; i < compiledInstruction.KeyIndices.Length; i++)
@@ -180,7 +185,7 @@ namespace Solnet.Programs
         /// Adds an unknown instruction to the given list of decoded instructions, with the given instruction info.
         /// </summary>
         private static DecodedInstruction AddUnknownInstruction(
-            InstructionInfo instructionInfo, string programKey, IReadOnlyList<string> keys, IReadOnlyList<int> keyIndices)
+            InstructionInfo instructionInfo, string programKey, string[] keys, int[] keyIndices)
         {
             DecodedInstruction decodedInstruction = new()
             {
@@ -188,12 +193,12 @@ namespace Solnet.Programs
                 {
                     {"Data", instructionInfo.Data}
                 },
-                InnerInstructions = new List<DecodedInstruction>(),
+                InnerInstructions = [],
                 InstructionName = "Unknown",
                 ProgramName = "Unknown",
                 PublicKey = new PublicKey(programKey)
             };
-            for (int j = 0; j < keyIndices.Count; j++)
+            for (int j = 0; j < keyIndices.Length; j++)
             {
                 decodedInstruction.Values.Add($"Account {j + 1}", keys[keyIndices[j]]);
             }

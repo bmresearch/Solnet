@@ -4,11 +4,8 @@ using Solnet.Rpc.Builders;
 using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
-using Solnet.Rpc.Types;
 using Solnet.Wallet;
 using System;
-using System.Collections.Generic;
-using System.Threading;
 
 namespace Solnet.Examples
 {
@@ -23,7 +20,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             /*
              * The following region creates and initializes a mint account, it also creates a token account
@@ -79,7 +76,7 @@ namespace Solnet.Examples
                     1_000_000,
                     ownerAccount)).
                 AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net")).
-                Build(new List<Account> { ownerAccount, mintAccount, initialAccount });
+                Build([ownerAccount, mintAccount, initialAccount]);
 
             string createAndInitializeMintToTxSignature = Examples.SubmitTxSendAndLog(createAndInitializeMintToTx);
 
@@ -115,7 +112,7 @@ namespace Solnet.Examples
                     25000,
                     ownerAccount)).// the ownerAccount was set as the mint authority
                 AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net")).
-                Build(new List<Account> { ownerAccount });
+                Build([ownerAccount]);
 
             string createAssociatedTokenAccountTxSignature = Examples.SubmitTxSendAndLog(createAssociatedTokenAccountTx);
 

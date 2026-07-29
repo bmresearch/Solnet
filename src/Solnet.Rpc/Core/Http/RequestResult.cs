@@ -1,5 +1,4 @@
 ﻿using Solnet.Rpc.Models;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 
@@ -66,7 +65,7 @@ namespace Solnet.Rpc.Core.Http
         /// <param name="resultMsg">An http request result.</param>
         /// <param name="result">The type of the request result.</param>
         /// </summary>
-        public RequestResult(HttpResponseMessage resultMsg, T result = default(T))
+        public RequestResult(HttpResponseMessage resultMsg, T result = default)
         {
             HttpStatusCode = resultMsg.StatusCode;
             WasHttpRequestSuccessful = resultMsg.IsSuccessStatusCode;

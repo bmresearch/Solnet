@@ -118,11 +118,10 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetInflationReward(
-                new List<string>
-                {
+                [
                     "6dmNQ5jwLeLk5REvio1JcMshcbvkYMwy26sJ8pbkvStu",
                     "BGsqMegLpV6n6Ve146sSX2dTjUMj3M92HnU8BbNRMhF2"
-                }, 2);
+                ], 2);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -153,11 +152,10 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetInflationReward(
-                new List<string>
-                {
+                [
                     "6dmNQ5jwLeLk5REvio1JcMshcbvkYMwy26sJ8pbkvStu",
                     "BGsqMegLpV6n6Ve146sSX2dTjUMj3M92HnU8BbNRMhF2"
-                }, 2, Types.Commitment.Processed);
+                ], 2, Types.Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
@@ -188,11 +186,10 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetInflationReward(
-                new List<string>
-                {
+                [
                     "25xzEf8cqLLEm2wyZTEBtCDchsUFm3SVESjs6eEFHJWe",
                     "GPQdoUUDQXM1gWgRVwBbYmDqAgxoZN3bhVeKr1P8jd4c"
-                });
+                ]);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);

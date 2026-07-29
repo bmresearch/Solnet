@@ -21,7 +21,7 @@ namespace Solnet.Rpc.Models
         {
             get
             {
-                List<AccountMeta> res = _accounts.Select(acc => acc).ToList();
+                List<AccountMeta> res = [.. _accounts.Select(acc => acc)];
 
                 res.Sort((x, y) =>
                 {
@@ -48,7 +48,7 @@ namespace Solnet.Rpc.Models
         /// </summary>
         internal AccountKeysList()
         {
-            _accounts = new List<AccountMeta>();
+            _accounts = [];
         }
 
         /// <summary>

@@ -79,12 +79,18 @@ namespace Solnet.Programs.Test
         {
             string payload = File.ReadAllText(fileName);
 
-            RequestResult<ResponseValue<AccountInfo>> res = new RequestResult<ResponseValue<AccountInfo>>();
-            res.WasHttpRequestSuccessful = true;
-            res.WasRequestSuccessfullyHandled = true;
-            res.Result = new ResponseValue<AccountInfo>();
-            res.Result.Value = new();
-            res.Result.Value.Data = new List<string>();
+            RequestResult<ResponseValue<AccountInfo>> res = new()
+            {
+                WasHttpRequestSuccessful = true,
+                WasRequestSuccessfullyHandled = true,
+                Result = new ResponseValue<AccountInfo>
+                {
+                    Value = new()
+                    {
+                        Data = []
+                    }
+                }
+            };
             res.Result.Value.Data.Add(payload);
 
             rpc.Setup(_ => _.GetAccountInfoAsync(It.IsAny<string>(), It.IsAny<Commitment>(), It.IsAny<BinaryEncoding>()))

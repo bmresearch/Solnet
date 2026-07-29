@@ -252,7 +252,7 @@ namespace Solnet.Rpc.Test
                 (x) => resultNotification = x,
                 (x) => result = x,
                 subConfirmContent,
-                new byte[0]);
+                []);
 
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
@@ -282,7 +282,7 @@ namespace Solnet.Rpc.Test
                 (x) => resultNotification = x,
                 (x) => result = x,
                 subConfirmContent,
-                new byte[0]);
+                []);
 
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
@@ -450,19 +450,19 @@ namespace Solnet.Rpc.Test
             var result = new ReadOnlyMemory<byte>();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<AccountKeyPair>> action,
-                (x) => {},
+                (x) => { },
                 (x) => result = x,
-                Array.Empty<byte>(),
-                Array.Empty<byte>());
-            
+                [],
+                []);
+
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.ConnectAsync().Wait();
-            _ = sut.SubscribeProgram("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", (s, e) => {}, 
-                    dataSize:3228, memCmpList: new List<MemCmp>() { new MemCmp() {Offset = 45, Bytes = "CuieVDEDtLo7FypA9SbLM9saXFdb1dsshEkyErMqkRQq"}});
+            _ = sut.SubscribeProgram("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", (s, e) => { },
+                    dataSize: 3228, memCmpList: [new MemCmp() { Offset = 45, Bytes = "CuieVDEDtLo7FypA9SbLM9saXFdb1dsshEkyErMqkRQq" }]);
             _subConfirmEvent.Set();
-            
-            
+
+
             _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
                 WebSocketMessageType.Text,
                 true,
@@ -471,7 +471,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(expected, res);
         }
 
-        
+
         [TestMethod]
         public void SubscribeProgramMemcmpFilters()
         {
@@ -479,19 +479,19 @@ namespace Solnet.Rpc.Test
             var result = new ReadOnlyMemory<byte>();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<AccountKeyPair>> action,
-                (x) => {},
+                (x) => { },
                 (x) => result = x,
-                Array.Empty<byte>(),
-                Array.Empty<byte>());
-            
+                [],
+                []);
+
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.ConnectAsync().Wait();
-            _ = sut.SubscribeProgram("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", (s, e) => {}, 
-                memCmpList: new List<MemCmp>() { new MemCmp() {Offset = 45, Bytes = "CuieVDEDtLo7FypA9SbLM9saXFdb1dsshEkyErMqkRQq"}});
+            _ = sut.SubscribeProgram("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", (s, e) => { },
+                memCmpList: [new MemCmp() { Offset = 45, Bytes = "CuieVDEDtLo7FypA9SbLM9saXFdb1dsshEkyErMqkRQq" }]);
             _subConfirmEvent.Set();
-            
-            
+
+
             _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
                 WebSocketMessageType.Text,
                 true,
@@ -499,8 +499,8 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
         }
-        
-        
+
+
         [TestMethod]
         public void SubscribeProgramDataFilter()
         {
@@ -508,19 +508,19 @@ namespace Solnet.Rpc.Test
             var result = new ReadOnlyMemory<byte>();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<AccountKeyPair>> action,
-                (x) => {},
+                (x) => { },
                 (x) => result = x,
-                Array.Empty<byte>(),
-                Array.Empty<byte>());
-            
+                [],
+                []);
+
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.ConnectAsync().Wait();
-            _ = sut.SubscribeProgram("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", (s, e) => {}, 
-                dataSize:3228);
+            _ = sut.SubscribeProgram("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", (s, e) => { },
+                dataSize: 3228);
             _subConfirmEvent.Set();
-            
-            
+
+
             _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
                 WebSocketMessageType.Text,
                 true,
@@ -528,7 +528,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
         }
-        
+
         [TestMethod]
         public void SubscribeProgramConfirmed()
         {
@@ -640,7 +640,7 @@ namespace Solnet.Rpc.Test
             var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
             var notificationContents = File.ReadAllBytes("Resources/Streaming/Signature/SignatureSubscribeNotification.json");
             ResponseValue<ErrorResult> resultNotification = null;
-            AutoResetEvent subscriptionEvent = new AutoResetEvent(false);
+            AutoResetEvent subscriptionEvent = new(false);
             var result = new ReadOnlyMemory<byte>();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<ErrorResult>> action,
@@ -660,7 +660,9 @@ namespace Solnet.Rpc.Test
             {
                 evt = e;
                 if (e.Status == SubscriptionStatus.Unsubscribed)
+                {
                     subscriptionEvent.Set();
+                }
             };
             _subConfirmEvent.Set();
 
@@ -686,7 +688,7 @@ namespace Solnet.Rpc.Test
             var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
             var notificationContents = File.ReadAllBytes("Resources/Streaming/Signature/SignatureSubscribeErrorNotification.json");
             ResponseValue<ErrorResult> resultNotification = null;
-            AutoResetEvent subscriptionEvent = new AutoResetEvent(false);
+            AutoResetEvent subscriptionEvent = new(false);
             var result = new ReadOnlyMemory<byte>();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<ErrorResult>> action,
@@ -706,7 +708,9 @@ namespace Solnet.Rpc.Test
             {
                 evt = e;
                 if (e.Status == SubscriptionStatus.Unsubscribed)
+                {
                     subscriptionEvent.Set();
+                }
             };
             _subConfirmEvent.Set();
 
@@ -736,7 +740,7 @@ namespace Solnet.Rpc.Test
             var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
             var notificationContents = File.ReadAllBytes("Resources/Streaming/Signature/SignatureSubscribeNotification.json");
             ResponseValue<ErrorResult> resultNotification = null;
-            AutoResetEvent subscriptionEvent = new AutoResetEvent(false);
+            AutoResetEvent subscriptionEvent = new(false);
             var result = new ReadOnlyMemory<byte>();
 
             SetupAction(out Action<SubscriptionState, ResponseValue<ErrorResult>> action,
@@ -756,7 +760,9 @@ namespace Solnet.Rpc.Test
             {
                 evt = e;
                 if (e.Status == SubscriptionStatus.Unsubscribed)
+                {
                     subscriptionEvent.Set();
+                }
             };
             _subConfirmEvent.Set();
 
@@ -782,12 +788,12 @@ namespace Solnet.Rpc.Test
             var expected = File.ReadAllText("Resources/Streaming/Account/BadAccountSubscribe.json");
             var subConfirmContent = File.ReadAllBytes("Resources/Streaming/Account/BadAccountSubscribeResult.json");
             var result = new ReadOnlyMemory<byte>();
-            AutoResetEvent subscriptionEvent = new AutoResetEvent(false);
+            AutoResetEvent subscriptionEvent = new(false);
             SetupAction(out Action<SubscriptionState, ResponseValue<AccountInfo>> action,
                 _ => { },
                 (x) => result = x,
                 subConfirmContent,
-                new byte[0]);
+                []);
 
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
@@ -830,19 +836,19 @@ namespace Solnet.Rpc.Test
             var expectedDataContent = File.ReadAllText("Resources/Streaming/Account/BigAccountNotificationPayloadData.txt");
             var result = new ReadOnlyMemory<byte>();
 
-            AutoResetEvent signal = new AutoResetEvent(false);
+            AutoResetEvent signal = new(false);
             int currentMessageIdx = 0;
             //confirm + bigpayload divided in two read steps + empty payload
             var payloads = new Memory<byte>[]
             {
-                new Memory<byte>(subConfirmContent),
-                new Memory<byte>(notifContent, 0, 32768),
-                new Memory<byte>(notifContent, 32768, notifContent.Length - 32768),
+                new(subConfirmContent),
+                new(notifContent, 0, 32768),
+                new(notifContent, 32768, notifContent.Length - 32768),
                 Memory<byte>.Empty
 
             };
 
-            AutoResetEvent subscriptionEvent = new AutoResetEvent(false);
+            AutoResetEvent subscriptionEvent = new(false);
             ResponseValue<AccountInfo> notificationValue = null;
 
             var actionMock = new Mock<Action<SubscriptionState, ResponseValue<AccountInfo>>>();
@@ -862,13 +868,16 @@ namespace Solnet.Rpc.Test
                 Callback<Memory<byte>, CancellationToken>((mem, _) =>
                 {
                     if (currentMessageIdx == 0)
+                    {
                         signal.WaitOne();
+                    }
+
                     payloads[currentMessageIdx++].CopyTo(mem);
                 }).Returns(() => new ValueTask<ValueWebSocketReceiveResult>(
                     new ValueWebSocketReceiveResult(
                         payloads[currentMessageIdx - 1].Length,
                         payloads[currentMessageIdx - 1].Length == 0 ? WebSocketMessageType.Close : WebSocketMessageType.Text,
-                        currentMessageIdx == 2 ? false : true)));
+                        currentMessageIdx != 2)));
 
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 

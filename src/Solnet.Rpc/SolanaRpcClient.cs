@@ -23,7 +23,7 @@ namespace Solnet.Rpc
         /// <summary>
         /// Message Id generator.
         /// </summary>
-        private readonly IdGenerator _idGenerator = new IdGenerator();
+        private readonly IdGenerator _idGenerator = new();
 
         /// <summary>
         /// Initialize the Rpc Client with the passed url.
@@ -48,7 +48,7 @@ namespace Solnet.Rpc
         /// <typeparam name="T">The type of the request result.</typeparam>
         /// <returns>A task which may return a request result.</returns>
         private JsonRpcRequest BuildRequest<T>(string method, IList<object> parameters)
-            => new JsonRpcRequest(_idGenerator.GetNextId(), method, parameters);
+            => new(_idGenerator.GetNextId(), method, parameters);
 
         /// <summary>
         /// 
@@ -150,7 +150,7 @@ namespace Solnet.Rpc
             List<object> filters = Parameters.Create(ConfigObject.Create(KeyValue.Create("dataSize", dataSize)));
             if (memCmpList != null)
             {
-                filters ??= new List<object>();
+                filters ??= [];
                 filters.AddRange(memCmpList.Select(filter => ConfigObject.Create(KeyValue.Create("memcmp",
                     ConfigObject.Create(KeyValue.Create("offset", filter.Offset),
                         KeyValue.Create("bytes", filter.Bytes))))));
@@ -292,7 +292,7 @@ namespace Solnet.Rpc
             string identity = null, ulong? firstSlot = null, ulong? lastSlot = null,
             Commitment commitment = Commitment.Finalized)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            Dictionary<string, object> parameters = [];
 
             if (commitment != Commitment.Finalized)
             {
@@ -306,7 +306,7 @@ namespace Solnet.Rpc
 
             if (firstSlot.HasValue)
             {
-                Dictionary<string, object> range = new Dictionary<string, object> { { "firstSlot", firstSlot.Value } };
+                Dictionary<string, object> range = new() { { "firstSlot", firstSlot.Value } };
 
                 if (lastSlot.HasValue)
                 {
@@ -321,7 +321,7 @@ namespace Solnet.Rpc
                     "Range parameters are optional, but the lastSlot argument must be paired with a firstSlot.");
             }
 
-            List<object> args = parameters.Count > 0 ? new List<object> { parameters } : null;
+            List<object> args = parameters.Count > 0 ? [parameters] : null;
 
             return await SendRequestAsync<ResponseValue<BlockProductionInfo>>("getBlockProduction", args);
         }
@@ -596,7 +596,7 @@ namespace Solnet.Rpc
         public async Task<RequestResult<List<PerformanceSample>>> GetRecentPerformanceSamplesAsync(ulong limit = 720)
         {
             return await SendRequestAsync<List<PerformanceSample>>("getRecentPerformanceSamples",
-                new List<object> { limit });
+                [limit]);
         }
 
         /// <inheritdoc cref="IRpcClient.GetRecentPerformanceSamples"/>

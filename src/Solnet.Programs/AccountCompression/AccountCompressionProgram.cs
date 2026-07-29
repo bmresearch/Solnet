@@ -1,11 +1,9 @@
-﻿using Solnet.Programs.Abstract;
-using Solnet.Programs.AccountCompression;
+﻿using Solnet.Programs.AccountCompression;
 using Solnet.Programs.Utilities;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
-using static Solnet.Programs.Models.Stake.State;
 
 
 namespace Solnet.Programs
@@ -23,7 +21,7 @@ namespace Solnet.Programs
         /// <summary>
         /// The public key of the Stake Program.
         /// </summary>
-        public static PublicKey ProgramIdKey = new ("compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq");
+        public static PublicKey ProgramIdKey = new("compr6CUsB5m2jS4Y3831ztGSTnDpnKJTKS95d64XVq");
 
         /// <summary>
         /// The public key of the account compression program.
@@ -48,13 +46,13 @@ namespace Solnet.Programs
             PublicKey authority,
             byte[] leaf)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(authority, true),      // Authority (signer)                
                 AccountMeta.Writable(merkleTree, false),  // Merkle tree account (writable)
-            };
+            ];
 
-           
+
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -75,12 +73,12 @@ namespace Solnet.Programs
             PublicKey recipient
         )
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(merkleTree, false),  // Merkle tree account (writable)
                 AccountMeta.Writable(authority, true),      // Authority (signer)          
                 AccountMeta.ReadOnly(recipient, false)  // recipient
-            };
+            ];
 
 
             return new TransactionInstruction
@@ -104,11 +102,11 @@ namespace Solnet.Programs
             byte maxDepth, byte maxBufferSize
         )
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(merkleTree, false),  // Merkle tree account (writable)
                 AccountMeta.Writable(authority, true),      // Authority (signer)  
-            };
+            ];
 
 
             return new TransactionInstruction
@@ -137,11 +135,11 @@ namespace Solnet.Programs
             uint index
        )
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(merkleTree, false),  // Merkle tree account (writable)
                 AccountMeta.Writable(authority, true),      // Authority (signer)  
-            };
+            ];
 
 
             return new TransactionInstruction
@@ -168,11 +166,11 @@ namespace Solnet.Programs
             uint index
        )
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(merkleTree, false),  // Merkle tree account (writable)
                 AccountMeta.Writable(authority, true),      // Authority (signer)  
-            };
+            ];
 
 
             return new TransactionInstruction
@@ -195,13 +193,13 @@ namespace Solnet.Programs
             PublicKey newAuthority
        )
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(merkleTree, false),  // Merkle tree account (writable)
                 AccountMeta.Writable(authority, true),      // Authority (signer)  
                 AccountMeta.ReadOnly(newAuthority, false),      //new Authority  
 
-            };
+            ];
 
 
             return new TransactionInstruction
@@ -226,12 +224,12 @@ namespace Solnet.Programs
             byte[] root, byte[] leaf, uint index
        )
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(merkleTree, false),  // Merkle tree account (writable)
                 AccountMeta.Writable(authority, true),      // Authority (signer) 
 
-            };
+            ];
 
 
             return new TransactionInstruction
@@ -259,11 +257,11 @@ namespace Solnet.Programs
                     PublicKey = ProgramIdKey,
                     InstructionName = "Unknown Instruction",
                     ProgramName = ProgramName,
-                    Values = new Dictionary<string, object>(),
-                    InnerInstructions = new List<DecodedInstruction>()
+                    Values = [],
+                    InnerInstructions = []
                 };
             }
-            
+
             AccountCompressionProgramInstructions.Values instructionValue = (AccountCompressionProgramInstructions.Values)instruction;
 
             DecodedInstruction decodedInstruction = new()
@@ -271,8 +269,8 @@ namespace Solnet.Programs
                 PublicKey = ProgramIdKey,
                 InstructionName = AccountCompressionProgramInstructions.Names[instructionValue],
                 ProgramName = ProgramName,
-                Values = new Dictionary<string, object>() { },
-                InnerInstructions = new List<DecodedInstruction>()
+                Values = [],
+                InnerInstructions = []
             };
 
             switch (instructionValue)
@@ -298,7 +296,7 @@ namespace Solnet.Programs
                 case AccountCompressionProgramInstructions.Values.ReplaceLeaf:
                     AccountCompressionProgramData.DecodeReplaceLeafData(decodedInstruction, data, keys, keyIndices);
                     break;
-                
+
             }
             return decodedInstruction;
         }

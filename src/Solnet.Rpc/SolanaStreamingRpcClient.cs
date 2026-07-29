@@ -28,17 +28,17 @@ namespace Solnet.Rpc
         /// <summary>
         /// Message Id generator.
         /// </summary>
-        private readonly IdGenerator _idGenerator = new IdGenerator();
+        private readonly IdGenerator _idGenerator = new();
 
         /// <summary>
         /// Maps the internal ids to the unconfirmed subscription state objects.
         /// </summary>
-        private readonly Dictionary<int, SubscriptionState> unconfirmedRequests = new Dictionary<int, SubscriptionState>();
+        private readonly Dictionary<int, SubscriptionState> unconfirmedRequests = [];
 
         /// <summary>
         /// Maps the server ids to the confirmed subscription state objects.
         /// </summary>
-        private readonly Dictionary<int, SubscriptionState> confirmedSubscriptions = new Dictionary<int, SubscriptionState>();
+        private readonly Dictionary<int, SubscriptionState> confirmedSubscriptions = [];
 
         /// <summary>
         /// Internal constructor.
@@ -71,7 +71,7 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="StreamingRpcClient.HandleNewMessage(Memory{byte})"/>
         protected override void HandleNewMessage(Memory<byte> messagePayload)
         {
-            Utf8JsonReader jsonReader = new Utf8JsonReader(messagePayload.Span);
+            Utf8JsonReader jsonReader = new(messagePayload.Span);
             jsonReader.Read();
 
             if (_logger?.IsEnabled(LogLevel.Information) ?? false)
@@ -158,7 +158,7 @@ namespace Solnet.Rpc
         /// <param name="reader">The jsonReader that read the message so far.</param>
         private void HandleError(ref Utf8JsonReader reader)
         {
-            JsonSerializerOptions opts = new JsonSerializerOptions() { MaxDepth = 64, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            JsonSerializerOptions opts = new() { MaxDepth = 64, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
             var err = JsonSerializer.Deserialize<ErrorContent>(ref reader, opts);
 
             reader.Read();
@@ -270,7 +270,7 @@ namespace Solnet.Rpc
         /// <param name="subscriptionId">The subscriptionId for this message.</param>
         private void HandleDataMessage(ref Utf8JsonReader reader, string method, int subscriptionId)
         {
-            JsonSerializerOptions opts = new JsonSerializerOptions() { MaxDepth = 64, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            JsonSerializerOptions opts = new() { MaxDepth = 64, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
             var sub = RetrieveSubscription(subscriptionId);
 
@@ -299,7 +299,7 @@ namespace Solnet.Rpc
                     break;
                 case "programNotification":
                     var programNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<AccountKeyPair>>>(ref reader, opts);
-                    result = programNotification.Result; 
+                    result = programNotification.Result;
                     break;
                 case "signatureNotification":
                     var signatureNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<ErrorResult>>>(ref reader, opts);
@@ -450,19 +450,19 @@ namespace Solnet.Rpc
         /// <param name="dataSize"></param>
         /// <param name="memCmpList"></param>
         /// <returns></returns>
-        public async Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, 
-            ResponseValue<AccountKeyPair>> callback, Commitment commitment = Commitment.Finalized, int? dataSize = null, 
+        public async Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState,
+            ResponseValue<AccountKeyPair>> callback, Commitment commitment = Commitment.Finalized, int? dataSize = null,
             IList<MemCmp> memCmpList = null)
         {
             List<object> filters = Parameters.Create(ConfigObject.Create(KeyValue.Create("dataSize", dataSize)));
             if (memCmpList != null)
             {
-                filters ??= new List<object>();
+                filters ??= [];
                 filters.AddRange(memCmpList.Select(filter => ConfigObject.Create(KeyValue.Create("memcmp",
                     ConfigObject.Create(KeyValue.Create("offset", filter.Offset),
                         KeyValue.Create("bytes", filter.Bytes))))));
             }
-            
+
             List<object> parameters = Parameters.Create(
                 programPubkey,
                 ConfigObject.Create(
@@ -485,7 +485,7 @@ namespace Solnet.Rpc
         /// <param name="dataSize"></param>
         /// <param name="memCmpList"></param>
         /// <returns></returns>
-        public SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, 
+        public SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback,
             Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null)
             => SubscribeProgramAsync(programPubkey, callback, commitment, dataSize, memCmpList).Result;
         #endregion
@@ -545,7 +545,7 @@ namespace Solnet.Rpc
                 _logger?.LogInformation(new EventId(msg.Id, msg.Method), $"[Sending]{jsonString}");
             }
 
-            ReadOnlyMemory<byte> mem = new ReadOnlyMemory<byte>(json);
+            ReadOnlyMemory<byte> mem = new(json);
 
             try
             {
@@ -575,7 +575,7 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="IStreamingRpcClient.UnsubscribeAsync(SubscriptionState)"/>
         public async Task UnsubscribeAsync(SubscriptionState subscription)
         {
-            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), GetUnsubscribeMethodName(subscription.Channel), new List<object> { subscription.SubscriptionId });
+            var msg = new JsonRpcRequest(_idGenerator.GetNextId(), GetUnsubscribeMethodName(subscription.Channel), [subscription.SubscriptionId]);
 
             await Subscribe(subscription, msg).ConfigureAwait(false);
         }

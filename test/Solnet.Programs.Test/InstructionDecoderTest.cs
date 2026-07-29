@@ -113,8 +113,8 @@ namespace Solnet.Programs.Test
         {
             InstructionDecoder.Register(new PublicKey("11111111111111111111111111111112"), (_, _, _) => new DecodedInstruction());
 
-            Assert.IsNotNull(InstructionDecoder.Decode(new PublicKey("11111111111111111111111111111112"), Array.Empty<byte>(),
-                new List<PublicKey>(), Array.Empty<byte>()));
+            Assert.IsNotNull(InstructionDecoder.Decode(new PublicKey("11111111111111111111111111111112"), [],
+                [], []));
         }
 
         [TestMethod]
@@ -122,8 +122,8 @@ namespace Solnet.Programs.Test
         {
             InstructionDecoder.Register(new PublicKey("11111111111111111111111111111122"), (_, _, _) => new DecodedInstruction());
 
-            Assert.IsNull(InstructionDecoder.Decode(new PublicKey("11111111111111111111111111111123"), Array.Empty<byte>(),
-                new List<PublicKey>(), Array.Empty<byte>()));
+            Assert.IsNull(InstructionDecoder.Decode(new PublicKey("11111111111111111111111111111123"), [],
+                [], []));
         }
 
         [TestMethod]

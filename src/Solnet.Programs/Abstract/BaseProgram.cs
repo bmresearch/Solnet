@@ -10,7 +10,7 @@ namespace Solnet.Programs.Abstract
     /// <summary>
     /// A class to abstract some of the core program commonality
     /// </summary>
-    public abstract class BaseProgram : Program
+    public abstract class BaseProgram : IProgram
     {
         private PublicKey _programIdKey;
         private string _programName;

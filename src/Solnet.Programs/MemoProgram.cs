@@ -44,10 +44,10 @@ namespace Solnet.Programs
         /// <returns>The <see cref="TransactionInstruction"/> which includes the memo data.</returns>
         public static TransactionInstruction NewMemo(PublicKey account, string memo)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.ReadOnly(account, true)
-            };
+            ];
             byte[] memoBytes = Encoding.UTF8.GetBytes(memo);
 
             return new TransactionInstruction
@@ -66,7 +66,7 @@ namespace Solnet.Programs
         /// <returns>The <see cref="TransactionInstruction"/> which includes the memo data.</returns>
         public static TransactionInstruction NewMemoV2(string memo, PublicKey account = null)
         {
-            List<AccountMeta> keys = new();
+            List<AccountMeta> keys = [];
             if (account != null)
                 keys.Add(AccountMeta.ReadOnly(account, true));
 
@@ -94,8 +94,8 @@ namespace Solnet.Programs
                 PublicKey = keys.Any(x => x.Key == ProgramIdKey.Key) ? ProgramIdKey : ProgramIdKeyV2,
                 InstructionName = InstructionName,
                 ProgramName = ProgramName,
-                InnerInstructions = new List<DecodedInstruction>(),
-                Values = new Dictionary<string, object>()
+                InnerInstructions = [],
+                Values = []
             };
             if (keyIndices.Length > 0)
             {

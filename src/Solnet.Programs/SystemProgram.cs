@@ -40,11 +40,11 @@ namespace Solnet.Programs
         public static TransactionInstruction CreateAccount(
             PublicKey fromAccount, PublicKey newAccountPublicKey, ulong lamports, ulong space, PublicKey programId)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(fromAccount, true),
                 AccountMeta.Writable(newAccountPublicKey, true)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -61,7 +61,7 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Assign(PublicKey account, PublicKey programId)
         {
-            List<AccountMeta> keys = new() { AccountMeta.Writable(account, true) };
+            List<AccountMeta> keys = [AccountMeta.Writable(account, true)];
 
             return new TransactionInstruction
             {
@@ -80,11 +80,11 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Transfer(PublicKey fromPublicKey, PublicKey toPublicKey, ulong lamports)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(fromPublicKey, true),
                 AccountMeta.Writable(toPublicKey, false)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -109,12 +109,12 @@ namespace Solnet.Programs
             PublicKey fromPublicKey, PublicKey toPublicKey, PublicKey baseAccount,
             string seed, ulong lamports, ulong space, PublicKey owner)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(fromPublicKey, true),
                 AccountMeta.Writable(toPublicKey, false),
                 //AccountMeta.ReadOnly(baseAccount, true)
-            };
+            ];
             if (baseAccount != fromPublicKey)
             {
                 keys.Add(AccountMeta.ReadOnly(baseAccount, true));
@@ -137,12 +137,12 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction AdvanceNonceAccount(PublicKey nonceAccountPublicKey, PublicKey authorized)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(nonceAccountPublicKey, false),
                 AccountMeta.ReadOnly(SysVars.RecentBlockHashesKey, false),
                 AccountMeta.ReadOnly(authorized, true)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -162,14 +162,14 @@ namespace Solnet.Programs
         public static TransactionInstruction WithdrawNonceAccount(
             PublicKey nonceAccountPublicKey, PublicKey toPublicKey, PublicKey authorized, ulong lamports)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(nonceAccountPublicKey, false),
                 AccountMeta.Writable(toPublicKey, false),
                 AccountMeta.ReadOnly(SysVars.RecentBlockHashesKey, false),
                 AccountMeta.ReadOnly(SysVars.RentKey, false),
                 AccountMeta.ReadOnly(authorized, true)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -187,12 +187,12 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction InitializeNonceAccount(PublicKey nonceAccountPublicKey, PublicKey authorized)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(nonceAccountPublicKey, false),
                 AccountMeta.ReadOnly(SysVars.RecentBlockHashesKey, false),
                 AccountMeta.ReadOnly(SysVars.RentKey, false),
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -211,11 +211,11 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction AuthorizeNonceAccount(PublicKey nonceAccountPublicKey, PublicKey authorized, PublicKey newAuthority)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(nonceAccountPublicKey, false),
                 AccountMeta.ReadOnly(authorized, true),
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -233,10 +233,10 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Allocate(PublicKey account, ulong space)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(account, true)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -258,11 +258,11 @@ namespace Solnet.Programs
         public static TransactionInstruction AllocateWithSeed(
             PublicKey account, PublicKey baseAccount, string seed, ulong space, PublicKey owner)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(account, false),
                 AccountMeta.ReadOnly(baseAccount, true)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -283,11 +283,11 @@ namespace Solnet.Programs
         public static TransactionInstruction AssignWithSeed(
             PublicKey account, PublicKey baseAccount, string seed, PublicKey owner)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(account, false),
                 AccountMeta.ReadOnly(baseAccount, true)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -311,12 +311,12 @@ namespace Solnet.Programs
             PublicKey fromPublicKey, PublicKey fromBaseAccount, string seed, PublicKey fromOwner,
             PublicKey toPublicKey, ulong lamports)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(fromPublicKey, false),
                 AccountMeta.ReadOnly(fromBaseAccount, true),
                 AccountMeta.ReadOnly(toPublicKey, false)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -343,8 +343,8 @@ namespace Solnet.Programs
                     PublicKey = ProgramIdKey,
                     InstructionName = "Unknown Instruction",
                     ProgramName = ProgramName,
-                    Values = new Dictionary<string, object>(),
-                    InnerInstructions = new List<DecodedInstruction>()
+                    Values = [],
+                    InnerInstructions = []
                 };
             }
 
@@ -356,8 +356,8 @@ namespace Solnet.Programs
                 PublicKey = ProgramIdKey,
                 InstructionName = SystemProgramInstructions.Names[instructionValue],
                 ProgramName = ProgramName,
-                Values = new Dictionary<string, object>(),
-                InnerInstructions = new List<DecodedInstruction>()
+                Values = [],
+                InnerInstructions = []
             };
 
             switch (instructionValue)

@@ -7,7 +7,6 @@ using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
 using Solnet.Wallet;
-using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,13 +62,13 @@ namespace Solnet.Extensions
         /// </summary>
         private TokenWallet(ITokenWalletRpcProxy client, ITokenMintResolver mintResolver, PublicKey publicKey)
         {
-            if (client is null) throw new ArgumentNullException(nameof(client));
-            if (mintResolver is null) throw new ArgumentNullException(nameof(mintResolver));
-            if (publicKey is null) throw new ArgumentNullException(nameof(publicKey));
+            ArgumentNullException.ThrowIfNull(client);
+            ArgumentNullException.ThrowIfNull(mintResolver);
+            ArgumentNullException.ThrowIfNull(publicKey);
             RpcClient = client;
             MintResolver = mintResolver;
             PublicKey = publicKey;
-            _ataCache = new Dictionary<string, PublicKey>();
+            _ataCache = [];
         }
 
         /// <summary>
@@ -77,11 +76,11 @@ namespace Solnet.Extensions
         /// </summary>
         private TokenWallet(ITokenMintResolver mintResolver, PublicKey publicKey)
         {
-            if (mintResolver is null) throw new ArgumentNullException(nameof(mintResolver));
-            if (publicKey is null) throw new ArgumentNullException(nameof(publicKey));
+            ArgumentNullException.ThrowIfNull(mintResolver);
+            ArgumentNullException.ThrowIfNull(publicKey);
             MintResolver = mintResolver;
             PublicKey = publicKey;
-            _ataCache = new Dictionary<string, PublicKey>();
+            _ataCache = [];
         }
 
         #region Overloaded Load methods
@@ -133,7 +132,7 @@ namespace Solnet.Extensions
                                        string publicKey,
                                        Commitment commitment = Commitment.Finalized)
         {
-            if (publicKey == null) throw new ArgumentNullException(nameof(publicKey));
+            ArgumentNullException.ThrowIfNull(publicKey);
             var output = LoadAsync(client, mintResolver, new PublicKey(publicKey), commitment);
             return output.Result;
         }
@@ -184,10 +183,14 @@ namespace Solnet.Extensions
                                                         PublicKey publicKey,
                                                         Commitment commitment = Commitment.Finalized)
         {
-            if (client == null) throw new ArgumentNullException(nameof(client));
-            if (mintResolver == null) throw new ArgumentNullException(nameof(mintResolver));
-            if (publicKey == null) throw new ArgumentNullException(nameof(publicKey));
-            if (!publicKey.IsOnCurve()) throw new ArgumentException("PublicKey not valid - check this is native wallet address (not an ATA, PDA or aux account)");
+            ArgumentNullException.ThrowIfNull(client);
+            ArgumentNullException.ThrowIfNull(mintResolver);
+            ArgumentNullException.ThrowIfNull(publicKey);
+            if (!publicKey.IsOnCurve())
+            {
+                throw new ArgumentException("PublicKey not valid - check this is native wallet address (not an ATA, PDA or aux account)");
+            }
+
             var output = new TokenWallet(client, mintResolver, publicKey);
             var unused = await output.RefreshAsync(commitment);
             return output;
@@ -207,8 +210,12 @@ namespace Solnet.Extensions
                                                   PublicKey publicKey,
                                                   Commitment commitment = Commitment.Finalized)
         {
-            if (publicKey == null) throw new ArgumentNullException(nameof(publicKey));
-            if (!publicKey.IsOnCurve()) throw new ArgumentException("PublicKey not valid - check this is native wallet address (not an ATA, PDA or aux account)");
+            ArgumentNullException.ThrowIfNull(publicKey);
+            if (!publicKey.IsOnCurve())
+            {
+                throw new ArgumentException("PublicKey not valid - check this is native wallet address (not an ATA, PDA or aux account)");
+            }
+
             return LoadAsync(batch, mintResolver, publicKey.Key, commitment);
         }
 
@@ -225,9 +232,9 @@ namespace Solnet.Extensions
                                                   string publicKey,
                                                   Commitment commitment = Commitment.Finalized)
         {
-            if (batch == null) throw new ArgumentNullException(nameof(batch));
-            if (mintResolver == null) throw new ArgumentNullException(nameof(mintResolver));
-            if (publicKey == null) throw new ArgumentNullException(nameof(publicKey));
+            ArgumentNullException.ThrowIfNull(batch);
+            ArgumentNullException.ThrowIfNull(mintResolver);
+            ArgumentNullException.ThrowIfNull(publicKey);
 
             // create the task source
             var taskSource = new TaskCompletionSource<TokenWallet>();
@@ -237,18 +244,22 @@ namespace Solnet.Extensions
             List<TokenAccount> tokenAccounts = null;
 
             // function to create a token wallet when both callbacks have responsed (in any order)
-            Action<Exception> wrapUp = ex =>
+            void wrapUp(Exception ex)
             {
                 if (success == 2)
                 {
-                    var tokenWallet = new TokenWallet(mintResolver, new PublicKey(publicKey));
-                    tokenWallet.Lamports = lamports;
-                    tokenWallet._tokenAccounts = tokenAccounts;
+                    var tokenWallet = new TokenWallet(mintResolver, new PublicKey(publicKey))
+                    {
+                        Lamports = lamports,
+                        _tokenAccounts = tokenAccounts
+                    };
                     taskSource.SetResult(tokenWallet);
                 }
                 else if (fail + success == 2)
+                {
                     taskSource.SetException(new ApplicationException("Failed to load TokenWallet via Batch"));
-            };
+                }
+            }
 
             // get sol balance 
             batch.GetBalance(publicKey, commitment, callback: (x, ex) =>
@@ -262,11 +273,13 @@ namespace Solnet.Extensions
                         success += 1;
                     }
                     else
+                    {
                         fail += 1;
+                    }
                 }
 
                 // finished?
-                wrapUp.Invoke(ex);
+                wrapUp(ex);
             });
 
             // load token accounts
@@ -281,11 +294,13 @@ namespace Solnet.Extensions
                         success += 1;
                     }
                     else
+                    {
                         fail += 1;
+                    }
                 }
 
                 // finished?
-                wrapUp.Invoke(ex);
+                wrapUp(ex);
             });
 
             // return the task
@@ -318,15 +333,23 @@ namespace Solnet.Extensions
 
             // handle balance response
             if (balance.WasSuccessful)
+            {
                 Lamports = balance.Result.Value;
+            }
             else
+            {
                 throw new TokenWalletException($"Could not load balance for {PublicKey}", balance);
+            }
 
             // handle token accounts response
             if (tokenAccounts.WasSuccessful)
+            {
                 _tokenAccounts = tokenAccounts.Result.Value;
+            }
             else
+            {
                 throw new TokenWalletException($"Could not load tokenAccounts for {PublicKey}", tokenAccounts);
+            }
 
             return true;
 
@@ -353,18 +376,22 @@ namespace Solnet.Extensions
                     // have we gained knowledge about decimal places from token account
                     // where it was previously unknown?
                     if (tokenDef.DecimalPlaces == -1 && decimals >= 0)
+                    {
                         tokenDef = tokenDef.CloneWithKnownDecimals(decimals);
+                    }
 
                     // create initial wallet balance for this mint
                     mintBalances[mint] = new TokenWalletBalance(tokenDef, balancDecimal, balancRaw, lamportsRaw, 1);
 
                 }
                 else
+                {
                     mintBalances[mint] = mintBalances[mint].AddAccount(balancDecimal, balancRaw, lamportsRaw, 1);
+                }
             }
 
             // transfer to output array
-            return mintBalances.Values.OrderBy(x => x.TokenName).ToArray();
+            return [.. mintBalances.Values.OrderBy(x => x.TokenName)];
         }
 
         /// <summary>
@@ -394,7 +421,9 @@ namespace Solnet.Extensions
                 // have we gained knowledge about decimal places from token account
                 // where it was previously unknown?
                 if (tokenDef.DecimalPlaces == -1 && decimals >= 0)
+                {
                     tokenDef = tokenDef.CloneWithKnownDecimals(decimals);
+                }
 
                 // add the account instance
                 list.Add(new TokenWalletAccount(tokenDef, balanceDecimal, balanceRaw, lamportsRaw, account.PublicKey, owner, isAta));
@@ -483,17 +512,27 @@ namespace Solnet.Extensions
                                                             PublicKey destination, PublicKey feePayer,
                                                             Func<TransactionBuilder, byte[]> signTxCallback)
         {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            if (destination == null) throw new ArgumentNullException(nameof(destination));
-            if (feePayer == null) throw new ArgumentNullException(nameof(feePayer));
-            if (signTxCallback == null) throw new ArgumentNullException(nameof(signTxCallback));
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(destination);
+            ArgumentNullException.ThrowIfNull(feePayer);
+            ArgumentNullException.ThrowIfNull(signTxCallback);
 
             // are destination and feePayer valid publicKeys?
-            if (!destination.IsOnCurve()) throw new ArgumentException($"Destination PublicKey {destination.Key} is invalid wallet address.");
-            if (!feePayer.IsOnCurve()) throw new ArgumentException($"feePayer PublicKey {feePayer.Key} is invalid wallet address.");
+            if (!destination.IsOnCurve())
+            {
+                throw new ArgumentException($"Destination PublicKey {destination.Key} is invalid wallet address.");
+            }
+
+            if (!feePayer.IsOnCurve())
+            {
+                throw new ArgumentException($"feePayer PublicKey {feePayer.Key} is invalid wallet address.");
+            }
 
             // make sure source account originated from this wallet
-            if (source.Owner != this.PublicKey) throw new ApplicationException("Source account does not belong to this wallet.");
+            if (source.Owner != this.PublicKey)
+            {
+                throw new ApplicationException("Source account does not belong to this wallet.");
+            }
 
             // load destination wallet
             TokenWallet destWallet = await TokenWallet.LoadAsync(RpcClient, MintResolver, destination);
@@ -519,8 +558,7 @@ namespace Solnet.Extensions
                     targetAta, qtyRaw, PublicKey));
 
             // request callee sign the transaction
-            var tx = signTxCallback.Invoke(builder);
-            if (tx == null) throw new ApplicationException($"Result from {signTxCallback} was null");
+            var tx = signTxCallback.Invoke(builder) ?? throw new ApplicationException($"Result from {signTxCallback} was null");
 
             // execute
             return await RpcClient.SendTransactionAsync(tx);
@@ -540,14 +578,17 @@ namespace Solnet.Extensions
         /// <returns>The public key of the Associated Token Account that will be created.</returns>
         public PublicKey JitCreateAssociatedTokenAccount(TransactionBuilder builder, string mint, PublicKey feePayer)
         {
-            if (builder == null) throw new ArgumentNullException(nameof(builder));
-            if (mint == null) throw new ArgumentNullException(nameof(mint));
-            if (feePayer == null) throw new ArgumentNullException(nameof(feePayer));
-            if (!feePayer.IsOnCurve()) throw new ArgumentException($"feePayer PublicKey {feePayer.ToString()} is invalid wallet address.");
+            ArgumentNullException.ThrowIfNull(builder);
+            ArgumentNullException.ThrowIfNull(mint);
+            ArgumentNullException.ThrowIfNull(feePayer);
+            if (!feePayer.IsOnCurve())
+            {
+                throw new ArgumentException($"feePayer PublicKey {feePayer} is invalid wallet address.");
+            }
 
             // find ata for this mint
             var targets = TokenAccounts().WithMint(mint).WhichAreAssociatedTokenAccounts();
-            if (targets.Count() == 0)
+            if (!targets.Any())
             {
                 // derive ata address
                 var pubkey = GetAssociatedTokenAddressForMint(mint);
@@ -579,9 +620,11 @@ namespace Solnet.Extensions
         /// <returns>The public key of the Associated Token Account.</returns>
         private PublicKey GetAssociatedTokenAddressForMint(string mint)
         {
-            if (mint == null) throw new ArgumentNullException(nameof(mint));
+            ArgumentNullException.ThrowIfNull(mint);
             if (_ataCache.ContainsKey(mint))
+            {
                 return _ataCache[mint];
+            }
             else
             {
                 // derive deterministic associate token account
@@ -602,7 +645,7 @@ namespace Solnet.Extensions
         /// <returns>True if this sub-account exists in this wallet.</returns>
         public bool IsSubAccount(string pubkey)
         {
-            if (pubkey == null) throw new ArgumentNullException(nameof(pubkey));
+            ArgumentNullException.ThrowIfNull(pubkey);
             return this._tokenAccounts.Any(x => x.PublicKey == pubkey);
         }
 
@@ -613,7 +656,7 @@ namespace Solnet.Extensions
         /// <returns>True if this sub-account exists in this wallet.</returns>
         public bool IsSubAccount(PublicKey pubkey)
         {
-            if (pubkey == null) throw new ArgumentNullException(nameof(pubkey));
+            ArgumentNullException.ThrowIfNull(pubkey);
             return this._tokenAccounts.Any(x => x.PublicKey == pubkey.Key);
         }
 

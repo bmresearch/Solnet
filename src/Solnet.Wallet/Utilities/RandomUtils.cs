@@ -144,8 +144,7 @@ namespace Solnet.Wallet.Utilities
         /// <exception cref="ArgumentNullException">Thrown if the data array is null.</exception>
         public static void AddEntropy(byte[] data)
         {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data));
+            ArgumentNullException.ThrowIfNull(data);
             var entropy = SHA256.HashData(data);
             if (_additionalEntropy == null)
                 _additionalEntropy = entropy;

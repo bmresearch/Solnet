@@ -7,7 +7,6 @@ using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System;
-using System.Collections.Generic;
 
 namespace Solnet.Examples
 {
@@ -60,7 +59,7 @@ namespace Solnet.Examples
                     TokenProgram.ProgramIdKey))
                 .AddInstruction(TokenProgram.InitializeMultiSignature(
                     multiSignature,
-                    new List<PublicKey> { signerAccount1, signerAccount2, signerAccount3, signerAccount4, signerAccount5 },
+                    [signerAccount1, signerAccount2, signerAccount3, signerAccount4, signerAccount5],
                     3))
                 .AddInstruction(SystemProgram.CreateAccount(
                     ownerAccount.PublicKey,
@@ -79,12 +78,11 @@ namespace Solnet.Examples
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             Transaction tx = Transaction.Populate(msg,
-                new List<byte[]>
-                {
+                [
                     ownerAccount.Sign(msgData),
                     multiSignature.Sign(msgData),
                     mintAccount.Sign(msgData),
-                });
+                ]);
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -110,12 +108,11 @@ namespace Solnet.Examples
                     initialAccount.PublicKey,
                     25000,
                     multiSignature,
-                    new List<PublicKey>
-                    {
+                    [
                         signerAccount1,
                         signerAccount2,
                         signerAccount4
-                    }))
+                    ]))
                 .AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net"))
                 .CompileMessage();
 
@@ -123,14 +120,13 @@ namespace Solnet.Examples
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
-                new List<byte[]>
-                {
+                [
                     ownerAccount.Sign(msgData),
                     initialAccount.Sign(msgData),
                     signerAccount1.Sign(msgData),
                     signerAccount2.Sign(msgData),
                     signerAccount4.Sign(msgData),
-                });
+                ]);
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -184,12 +180,11 @@ namespace Solnet.Examples
                     multiSignature,
                     25000,
                     10,
-                    new List<PublicKey>
-                    {
+                    [
                         signerAccount1,
                         signerAccount2,
                         signerAccount4
-                    }))
+                    ]))
                 .AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net"))
                 .CompileMessage();
 
@@ -197,13 +192,12 @@ namespace Solnet.Examples
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             Transaction tx = Transaction.Populate(msg,
-                new List<byte[]>
-                {
+                [
                     ownerAccount.Sign(msgData),
                     signerAccount1.Sign(msgData),
                     signerAccount2.Sign(msgData),
                     signerAccount4.Sign(msgData),
-                });
+                ]);
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -266,14 +260,13 @@ namespace Solnet.Examples
                     TokenProgram.ProgramIdKey))
                 .AddInstruction(TokenProgram.InitializeMultiSignature(
                     tokenMultiSignature,
-                    new List<PublicKey>
-                    {
+                    [
                         tokenAccountSigner1,
                         tokenAccountSigner2,
                         tokenAccountSigner3,
                         tokenAccountSigner4,
                         tokenAccountSigner5
-                    },
+                    ],
                     3))
                 .AddInstruction(SystemProgram.CreateAccount(
                     ownerAccount.PublicKey,
@@ -297,12 +290,11 @@ namespace Solnet.Examples
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             Transaction tx = Transaction.Populate(msg,
-                new List<byte[]>
-                {
+                [
                     ownerAccount.Sign(msgData),
                     tokenMultiSignature.Sign(msgData),
                     tokenAccountWithMultisigOwner.Sign(msgData),
-                });
+                ]);
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -318,24 +310,22 @@ namespace Solnet.Examples
                     initialAccount,
                     10000,
                     tokenMultiSignature,
-                    new List<PublicKey>()
-                    {
+                    [
                         tokenAccountSigner3,
                         tokenAccountSigner4,
                         tokenAccountSigner5
-                    })).CompileMessage();
+                    ])).CompileMessage();
 
             msg = Examples.DecodeMessageFromWire(msgData);
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
-                new List<byte[]>
-                {
+                [
                     ownerAccount.Sign(msgData),
                     tokenAccountSigner3.Sign(msgData),
                     tokenAccountSigner4.Sign(msgData),
                     tokenAccountSigner5.Sign(msgData)
-                });
+                ]);
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -402,25 +392,23 @@ namespace Solnet.Examples
                     TokenProgram.ProgramIdKey))
                 .AddInstruction(TokenProgram.InitializeMultiSignature(
                     freezeMultiSignature,
-                    new List<PublicKey>
-                    {
+                    [
                         freezeSigner1,
                         freezeSigner2,
                         freezeSigner3,
                         freezeSigner4,
                         freezeSigner5
-                    }, 3))
+                    ], 3))
                 .CompileMessage();
 
             Message msg = Examples.DecodeMessageFromWire(msgData);
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             Transaction tx = Transaction.Populate(msg,
-                new List<byte[]>
-                {
+                [
                     ownerAccount.Sign(msgData),
                     freezeMultiSignature.Sign(msgData),
-                });
+                ]);
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -442,14 +430,13 @@ namespace Solnet.Examples
                     TokenProgram.ProgramIdKey))
                 .AddInstruction(TokenProgram.InitializeMultiSignature(
                     mintMultiSignature,
-                    new List<PublicKey>
-                    {
+                    [
                         mintSigner1,
                         mintSigner2,
                         mintSigner3,
                         mintSigner4,
                         mintSigner5
-                    }, 3))
+                    ], 3))
                 .AddInstruction(SystemProgram.CreateAccount(
                     ownerAccount,
                     mintAccount,
@@ -467,12 +454,11 @@ namespace Solnet.Examples
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
-                new List<byte[]>
-                {
+                [
                     ownerAccount.Sign(msgData),
                     mintMultiSignature.Sign(msgData),
                     mintAccount.Sign(msgData),
-                });
+                ]);
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -499,12 +485,11 @@ namespace Solnet.Examples
                     initialAccount,
                     25000,
                     mintMultiSignature,
-                    new List<PublicKey>
-                    {
+                    [
                         mintSigner1,
                         mintSigner2,
                         mintSigner4
-                    }))
+                    ]))
                 .AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net"))
                 .CompileMessage();
 
@@ -512,14 +497,13 @@ namespace Solnet.Examples
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
-                new List<byte[]>
-                {
+                [
                     ownerAccount.Sign(msgData),
                     initialAccount.Sign(msgData),
                     mintSigner1.Sign(msgData),
                     mintSigner2.Sign(msgData),
                     mintSigner4.Sign(msgData),
-                });
+                ]);
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -537,12 +521,11 @@ namespace Solnet.Examples
                         mintAccount,
                         freezeMultiSignature,
                         TokenProgram.ProgramIdKey,
-                        new List<PublicKey>
-                        {
+                        [
                             freezeSigner2,
                             freezeSigner3,
                             freezeSigner4,
-                        }))
+                        ]))
                 .AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net"))
                 .CompileMessage();
 
@@ -550,13 +533,12 @@ namespace Solnet.Examples
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
-                new List<byte[]>
-                {
+                [
                     ownerAccount.Sign(msgData),
                     freezeSigner2.Sign(msgData),
                     freezeSigner3.Sign(msgData),
                     freezeSigner4.Sign(msgData),
-                });
+                ]);
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -573,23 +555,21 @@ namespace Solnet.Examples
                     mintAccount,
                     freezeMultiSignature,
                     TokenProgram.ProgramIdKey,
-                    new List<PublicKey>
-                    {
+                    [
                         freezeSigner2,
                         freezeSigner3,
                         freezeSigner4,
-                    }))
+                    ]))
                 .AddInstruction(TokenProgram.SetAuthority(
                     mintAccount,
                     AuthorityType.FreezeAccount,
                     freezeMultiSignature,
                     null,
-                    new List<PublicKey>
-                    {
+                    [
                         freezeSigner2,
                         freezeSigner3,
                         freezeSigner4,
-                    }))
+                    ]))
                 .AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net"))
                 .CompileMessage();
 
@@ -597,13 +577,12 @@ namespace Solnet.Examples
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
-                new List<byte[]>
-                {
+                [
                     ownerAccount.Sign(msgData),
                     freezeSigner2.Sign(msgData),
                     freezeSigner3.Sign(msgData),
                     freezeSigner4.Sign(msgData),
-                });
+                ]);
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -676,14 +655,13 @@ namespace Solnet.Examples
                     TokenProgram.ProgramIdKey))
                 .AddInstruction(TokenProgram.InitializeMultiSignature(
                     tokenMultiSignature,
-                    new List<PublicKey>
-                    {
+                    [
                         tokenAccountSigner1,
                         tokenAccountSigner2,
                         tokenAccountSigner3,
                         tokenAccountSigner4,
                         tokenAccountSigner5
-                    },
+                    ],
                     3))
                 .AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net"))
                 .CompileMessage();
@@ -692,11 +670,10 @@ namespace Solnet.Examples
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             Transaction tx = Transaction.Populate(msg,
-                new List<byte[]>
-                {
+                [
                     ownerAccount.Sign(msgData),
                     tokenMultiSignature.Sign(msgData),
-                });
+                ]);
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -722,12 +699,11 @@ namespace Solnet.Examples
                     tokenAccountWithMultisigOwner,
                     25000,
                     mintMultiSignature,
-                    new List<PublicKey>
-                    {
+                    [
                         mintSigner1,
                         mintSigner2,
                         mintSigner4
-                    }))
+                    ]))
                 .AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net"))
                 .CompileMessage();
 
@@ -735,14 +711,13 @@ namespace Solnet.Examples
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
-                new List<byte[]>
-                {
+                [
                     ownerAccount.Sign(msgData),
                     tokenAccountWithMultisigOwner.Sign(msgData),
                     mintSigner1.Sign(msgData),
                     mintSigner2.Sign(msgData),
                     mintSigner4.Sign(msgData),
-                });
+                ]);
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -760,12 +735,11 @@ namespace Solnet.Examples
                         10,
                         tokenMultiSignature,
                         mintAccount,
-                        new List<PublicKey>
-                        {
+                        [
                             tokenAccountSigner1,
                             tokenAccountSigner2,
                             tokenAccountSigner3,
-                        }))
+                        ]))
                 .AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net"))
                 .CompileMessage();
 
@@ -773,13 +747,12 @@ namespace Solnet.Examples
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
-                new List<byte[]>
-                {
+                [
                     ownerAccount.Sign(msgData),
                     tokenAccountSigner1.Sign(msgData),
                     tokenAccountSigner2.Sign(msgData),
                     tokenAccountSigner3.Sign(msgData),
-                });
+                ]);
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -801,12 +774,11 @@ namespace Solnet.Examples
                 .AddInstruction(TokenProgram.Revoke(
                     tokenAccountWithMultisigOwner,
                     tokenMultiSignature,
-                    new List<PublicKey>
-                    {
+                    [
                         tokenAccountSigner1,
                         tokenAccountSigner2,
                         tokenAccountSigner3,
-                    }))
+                    ]))
                 .AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net"))
                 .CompileMessage();
 
@@ -814,13 +786,13 @@ namespace Solnet.Examples
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             tx = Transaction.Populate(msg,
-                new List<byte[]> {
+                [
                     ownerAccount.Sign(msgData),
                     delegateAccount.Sign(msgData),
                     tokenAccountSigner1.Sign(msgData),
                     tokenAccountSigner2.Sign(msgData),
                     tokenAccountSigner3.Sign(msgData)
-                });
+                ]);
 
             txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -887,24 +859,22 @@ namespace Solnet.Examples
                     mintMultiSignature,
                     1_000_000_000,
                     10,
-                    new List<PublicKey>()
-                    {
+                    [
                         mintSigner1,
                         mintSigner2,
                         mintSigner3
-                    }))
+                    ]))
                 .AddInstruction(TokenProgram.BurnChecked(
                     mintAccount,
                     tokenAccountWithMultisigOwner,
                     tokenMultiSignature,
                     500_000,
                     10,
-                    new List<PublicKey>()
-                    {
+                    [
                         tokenAccountSigner1,
                         tokenAccountSigner2,
                         tokenAccountSigner3
-                    }))
+                    ]))
                 .AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net"))
                 .CompileMessage();
 
@@ -912,8 +882,7 @@ namespace Solnet.Examples
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             Transaction tx = Transaction.Populate(msg,
-                new List<byte[]>
-                {
+                [
                     ownerAccount.Sign(msgData),
                     mintSigner1.Sign(msgData),
                     mintSigner2.Sign(msgData),
@@ -921,7 +890,7 @@ namespace Solnet.Examples
                     tokenAccountSigner1.Sign(msgData),
                     tokenAccountSigner2.Sign(msgData),
                     tokenAccountSigner3.Sign(msgData),
-                });
+                ]);
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -982,23 +951,21 @@ namespace Solnet.Examples
                     tokenMultiSignature,
                     balance.Result.Value.AmountUlong,
                     10,
-                    new List<PublicKey>()
-                    {
+                    [
                         tokenAccountSigner1,
                         tokenAccountSigner2,
                         tokenAccountSigner3
-                    }))
+                    ]))
                 .AddInstruction(TokenProgram.CloseAccount(
                     tokenAccountWithMultisigOwner,
                     ownerAccount,
                     tokenMultiSignature,
                     TokenProgram.ProgramIdKey,
-                    new List<PublicKey>()
-                    {
+                    [
                         tokenAccountSigner1,
                         tokenAccountSigner2,
                         tokenAccountSigner3
-                    }))
+                    ]))
                 .AddInstruction(MemoProgram.NewMemo(ownerAccount, "Hello from Sol.Net"))
                 .CompileMessage();
 
@@ -1006,13 +973,12 @@ namespace Solnet.Examples
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             Transaction tx = Transaction.Populate(msg,
-                new List<byte[]>
-                {
+                [
                     ownerAccount.Sign(msgData),
                     tokenAccountSigner1.Sign(msgData),
                     tokenAccountSigner2.Sign(msgData),
                     tokenAccountSigner3.Sign(msgData),
-                });
+                ]);
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
 

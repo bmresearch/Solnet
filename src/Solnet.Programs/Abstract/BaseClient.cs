@@ -59,7 +59,7 @@ namespace Solnet.Programs.Abstract
         {
             System.Reflection.MethodInfo m = typeof(T).GetMethod("Deserialize",
                 System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static,
-                null, new[] { typeof(byte[]) }, null);
+                null, [typeof(byte[])], null);
 
             if (m.IsGenericMethod)
             {
@@ -68,7 +68,7 @@ namespace Solnet.Programs.Abstract
 
             if (m == null)
                 return null;
-            return (T)m.Invoke(null, new object[] { data });
+            return (T)m.Invoke(null, [data]);
         }
 
         /// <summary>

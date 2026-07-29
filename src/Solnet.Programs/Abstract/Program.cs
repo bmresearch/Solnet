@@ -1,16 +1,11 @@
 ﻿using Solnet.Wallet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Solnet.Programs.Abstract
 {
     /// <summary>
     /// Base Program interface.
     /// </summary>
-    public interface Program
+    public interface IProgram
     {
         /// <summary>
         /// The program's key

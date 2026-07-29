@@ -64,10 +64,12 @@ namespace Solnet.Rpc.Types
 
         internal ConnectionStats()
         {
-            _timer = new Timer(1000);
-            _timer.AutoReset = true;
+            _timer = new Timer(1000)
+            {
+                AutoReset = true
+            };
             _timer.Elapsed += RemoveOutdatedData;
-            _historicData = new Dictionary<long, ulong>();
+            _historicData = [];
         }
 
         private void RemoveOutdatedData(object sender, ElapsedEventArgs e)

@@ -12,7 +12,7 @@ namespace Solnet.Programs.TokenSwap.Models
         /// <summary>
         /// The constant procuct curve
         /// </summary>
-        public static SwapCurve ConstantProduct => new SwapCurve() { CurveType = CurveType.ConstantProduct, Calculator = new ConstantProductCurve() };
+        public static SwapCurve ConstantProduct => new() { CurveType = CurveType.ConstantProduct, Calculator = new ConstantProductCurve() };
 
         /// <summary>
         /// The curve type.
@@ -22,7 +22,7 @@ namespace Solnet.Programs.TokenSwap.Models
         /// <summary>
         /// The calculator used
         /// </summary>
-        public CurveCalculator Calculator { get; set; }
+        public ICurveCalculator Calculator { get; set; }
 
         /// <summary>
         /// Create a swap curve class.  Protected as factory methods should be used to create

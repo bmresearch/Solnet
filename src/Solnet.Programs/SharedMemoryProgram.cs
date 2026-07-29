@@ -42,10 +42,10 @@ namespace Solnet.Programs
         /// <returns>The <see cref="TransactionInstruction"/> encoded that interacts with the shared memory program..</returns>
         public static TransactionInstruction Write(PublicKey dest, ReadOnlySpan<byte> payload, ulong offset)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(dest, false)
-            };
+            ];
 
             byte[] transactionData = new byte[payload.Length + 8];
 
@@ -79,7 +79,7 @@ namespace Solnet.Programs
                     {"Offset", data.GetU64(0)},
                     {"Data", data[8..].ToArray()}
                 },
-                InnerInstructions = new List<DecodedInstruction>()
+                InnerInstructions = []
             };
         }
     }

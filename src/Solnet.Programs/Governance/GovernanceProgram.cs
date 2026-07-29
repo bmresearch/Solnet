@@ -421,16 +421,15 @@ namespace Solnet.Programs.Governance
         public TransactionInstruction ExecuteInstruction(PublicKey governance, PublicKey proposal, PublicKey proposalInstruction,
             PublicKey instructionProgramId, List<AccountMeta> instructionAccounts)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.ReadOnly(governance, false),
                 AccountMeta.Writable(proposal, false),
                 AccountMeta.Writable(proposalInstruction, false),
                 AccountMeta.ReadOnly(SysVars.ClockKey, false),
-                AccountMeta.ReadOnly(instructionProgramId, false)
-            };
-
-            keys.AddRange(instructionAccounts);
+                AccountMeta.ReadOnly(instructionProgramId, false),
+                .. instructionAccounts,
+            ];
 
             return new TransactionInstruction
             {
@@ -559,7 +558,7 @@ namespace Solnet.Programs.Governance
         public static PublicKey GetRealmConfigAddress(PublicKey programId, PublicKey realm)
         {
             bool success = PublicKey.TryFindProgramAddress(
-                new List<byte[]> { Encoding.UTF8.GetBytes(RealmConfigSeed), realm },
+                [Encoding.UTF8.GetBytes(RealmConfigSeed), realm],
                 programId, out PublicKey realmConfigAddressBytes, out _);
 
             return success ? realmConfigAddressBytes : null;

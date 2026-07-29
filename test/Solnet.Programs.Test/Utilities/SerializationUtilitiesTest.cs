@@ -10,28 +10,28 @@ namespace Solnet.Programs.Test.Utilities
     public class SerializationUtilitiesTest
     {
         private static readonly byte[] PublicKeyBytes =
-        {
+        [
             6, 221, 246, 225, 215, 101, 161, 147, 217, 203,
             225, 70, 206, 235, 121, 172, 28, 180, 133, 237,
             95, 91, 55, 145, 58, 140, 245, 133, 126, 255, 0, 169
-        };
+        ];
 
         private static readonly byte[] DoubleBytes =
-        {
+        [
             108, 251, 85, 215, 136, 134, 245, 63
-        };
+        ];
 
         private static readonly byte[] SingleBytes =
-        {
+        [
             71, 52, 172, 63,
-        };
+        ];
 
         private static readonly byte[] EncodedStringBytes =
-        {
+        [
             21, 0, 0, 0, 0,0,0,0,116, 104, 105, 115, 32, 105, 115,
             32, 97, 32, 116, 101, 115, 116, 32, 115, 116, 114,
             105, 110, 103
-        };
+        ];
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]

@@ -6,8 +6,6 @@ using Solnet.Rpc.Types;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Solnet.Programs.Abstract
@@ -51,10 +49,10 @@ namespace Solnet.Programs.Abstract
         /// This delegate is called once for each <c>PublicKey</c> account that needs write permissions according to the transaction data.</param>
         /// <param name="commitment">The commitment parameter for the RPC request.</param>
         /// <returns></returns>
-        protected async Task<RequestResult<string>> SignAndSendTransaction(TransactionInstruction instruction, PublicKey feePayer, 
+        protected async Task<RequestResult<string>> SignAndSendTransaction(TransactionInstruction instruction, PublicKey feePayer,
             Func<byte[], PublicKey, byte[]> signingCallback, Commitment commitment = Commitment.Finalized)
         {
-            TransactionBuilder tb = new TransactionBuilder();
+            TransactionBuilder tb = new();
             tb.AddInstruction(instruction);
 
             var recentHash = await RpcClient.GetLatestBlockHashAsync();
@@ -81,16 +79,19 @@ namespace Solnet.Programs.Abstract
         /// <returns>The possible program error, if it was caused by this program.</returns>
         public ProgramError<TEnum> GetProgramError(SimulationLogs logs)
         {
-            if (logs is { Error: { InstructionError: { Type: InstructionErrorType.Custom } } })
+            if (logs is { Error.InstructionError.Type: InstructionErrorType.Custom })
             {
                 var id = logs.Error.InstructionError.CustomError.Value;
 
                 if (ProgramIdKey != null && logs.Logs?.Length > 2)
                 {
                     var progReturn = logs.Logs[logs.Logs.Length - 1];
-                    
+
                     //check if error came from this program, in case its a multiple prog tx
-                    if (!progReturn.StartsWith("Program " + ProgramIdKey.Key)) return null;
+                    if (!progReturn.StartsWith("Program " + ProgramIdKey.Key))
+                    {
+                        return null;
+                    }
                 }
 
                 ProgramErrors.TryGetValue(id, out var error);
@@ -106,7 +107,7 @@ namespace Solnet.Programs.Abstract
         /// <returns>The possible program error, if it was caused by this program.</returns>
         public ProgramError<TEnum> GetProgramError(TransactionError error)
         {
-            if (error is { InstructionError: { Type: InstructionErrorType.Custom } })
+            if (error is { InstructionError.Type: InstructionErrorType.Custom })
             {
                 var id = error.InstructionError.CustomError.Value;
 

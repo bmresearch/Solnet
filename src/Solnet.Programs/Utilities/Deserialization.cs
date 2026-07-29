@@ -1,7 +1,6 @@
 using Solnet.Wallet;
 using System;
 using System.Buffers.Binary;
-using System.Diagnostics;
 using System.Numerics;
 using System.Text;
 
@@ -21,8 +20,7 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static byte GetU8(this ReadOnlySpan<byte> data, int offset)
         {
-            if (offset > data.Length - sizeof(byte))
-                throw new ArgumentOutOfRangeException(nameof(offset));
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(offset, data.Length - sizeof(byte));
             return data[offset];
         }
 
@@ -36,7 +34,10 @@ namespace Solnet.Programs.Utilities
         public static ushort GetU16(this ReadOnlySpan<byte> data, int offset)
         {
             if (offset + sizeof(ushort) > data.Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
             return BinaryPrimitives.ReadUInt16LittleEndian(data.Slice(offset, sizeof(ushort)));
         }
 
@@ -50,7 +51,10 @@ namespace Solnet.Programs.Utilities
         public static uint GetU32(this ReadOnlySpan<byte> data, int offset)
         {
             if (offset + sizeof(uint) > data.Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
             return BinaryPrimitives.ReadUInt32LittleEndian(data.Slice(offset, sizeof(uint)));
         }
 
@@ -64,7 +68,10 @@ namespace Solnet.Programs.Utilities
         public static ulong GetU64(this ReadOnlySpan<byte> data, int offset)
         {
             if (offset + sizeof(ulong) > data.Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
             return BinaryPrimitives.ReadUInt64LittleEndian(data.Slice(offset, sizeof(ulong)));
         }
 
@@ -77,8 +84,7 @@ namespace Solnet.Programs.Utilities
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the offset is too big for the span.</exception>
         public static sbyte GetS8(this ReadOnlySpan<byte> data, int offset)
         {
-            if (offset > data.Length - sizeof(sbyte))
-                throw new ArgumentOutOfRangeException(nameof(offset));
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(offset, data.Length - sizeof(sbyte));
             return (sbyte)data[offset];
         }
 
@@ -92,7 +98,10 @@ namespace Solnet.Programs.Utilities
         public static short GetS16(this ReadOnlySpan<byte> data, int offset)
         {
             if (offset + sizeof(short) > data.Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
             return BinaryPrimitives.ReadInt16LittleEndian(data.Slice(offset, sizeof(short)));
         }
 
@@ -106,7 +115,10 @@ namespace Solnet.Programs.Utilities
         public static int GetS32(this ReadOnlySpan<byte> data, int offset)
         {
             if (offset + sizeof(int) > data.Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
             return BinaryPrimitives.ReadInt32LittleEndian(data.Slice(offset, sizeof(int)));
         }
 
@@ -120,7 +132,10 @@ namespace Solnet.Programs.Utilities
         public static long GetS64(this ReadOnlySpan<byte> data, int offset)
         {
             if (offset + sizeof(long) > data.Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
             return BinaryPrimitives.ReadInt64LittleEndian(data.Slice(offset, sizeof(long)));
         }
 
@@ -135,7 +150,10 @@ namespace Solnet.Programs.Utilities
         public static ReadOnlySpan<byte> GetSpan(this ReadOnlySpan<byte> data, int offset, int length)
         {
             if (offset + length > data.Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
             return data.Slice(offset, length);
         }
 
@@ -149,7 +167,10 @@ namespace Solnet.Programs.Utilities
         public static PublicKey GetPubKey(this ReadOnlySpan<byte> data, int offset)
         {
             if (offset + PublicKey.PublicKeyLength > data.Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
             return new PublicKey(data.Slice(offset, PublicKey.PublicKeyLength).ToArray());
         }
 
@@ -168,7 +189,10 @@ namespace Solnet.Programs.Utilities
             bool isUnsigned = false, bool isBigEndian = false)
         {
             if (offset + length > data.Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
             return new BigInteger(data.Slice(offset, length), isUnsigned, isBigEndian);
         }
 
@@ -182,7 +206,9 @@ namespace Solnet.Programs.Utilities
         public static double GetDouble(this ReadOnlySpan<byte> data, int offset)
         {
             if (offset + sizeof(double) > data.Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset));
+            }
 
             return BinaryPrimitives.ReadDoubleLittleEndian(data.Slice(offset, sizeof(double)));
         }
@@ -197,7 +223,9 @@ namespace Solnet.Programs.Utilities
         public static float GetSingle(this ReadOnlySpan<byte> data, int offset)
         {
             if (offset + sizeof(float) > data.Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset));
+            }
 
             return BinaryPrimitives.ReadSingleLittleEndian(data.Slice(offset, sizeof(float)));
         }
@@ -226,7 +254,9 @@ namespace Solnet.Programs.Utilities
         public static (string EncodedString, int Length) DecodeBincodeString(this ReadOnlySpan<byte> data, int offset)
         {
             if (offset + sizeof(ulong) > data.Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset));
+            }
 
             int stringLength = (int)data.GetU64(offset);
             byte[] stringBytes = data.GetSpan(offset + sizeof(ulong), stringLength).ToArray();
@@ -245,7 +275,9 @@ namespace Solnet.Programs.Utilities
         public static int GetBorshString(this ReadOnlySpan<byte> data, int offset, out string result)
         {
             if (offset + sizeof(uint) > data.Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset));
+            }
 
             int stringLength = (int)data.GetU32(offset);
             byte[] stringBytes = data.GetSpan(offset + sizeof(uint), stringLength).ToArray();
@@ -266,7 +298,10 @@ namespace Solnet.Programs.Utilities
         public static byte[] GetBytes(this ReadOnlySpan<byte> data, int offset, int length)
         {
             if (offset + length > data.Length)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
             return data.Slice(offset, length).ToArray();
         }
     }

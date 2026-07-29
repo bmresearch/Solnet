@@ -28,7 +28,7 @@ namespace Solnet.Examples
             var obj = TokenSwapAccount.Deserialize(Convert.FromBase64String(resp.Result.Value.Data[0]));
             Console.WriteLine($"Pool Mint: {obj.PoolMint}");
 
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             var tokenAMint = new Account();
             var tokenAUserAccount = new Account();
@@ -100,7 +100,7 @@ namespace Solnet.Examples
                     1_000_000_000_000,
                     wallet.Account
                 ))
-                .Build(new Account[] { wallet.Account, tokenAMint, tokenBMint, tokenAUserAccount, tokenBUserAccount });
+                .Build([wallet.Account, tokenAMint, tokenBMint, tokenAUserAccount, tokenBUserAccount]);
             var txSig = Examples.SubmitTxSendAndLog(tx);
             Examples.PollConfirmedTx(txSig);
 
@@ -152,7 +152,7 @@ namespace Solnet.Examples
                     5_000_000_000,
                     wallet.Account
                 ))
-                .Build(new Account[] { wallet.Account, swapTokenAAccount, swapTokenBAccount });
+                .Build([wallet.Account, swapTokenAAccount, swapTokenBAccount]);
             txSig = Examples.SubmitTxSendAndLog(tx);
             Examples.PollConfirmedTx(txSig);
 
@@ -201,7 +201,7 @@ namespace Solnet.Examples
                     poolMint,
                     program.OwnerKey
                 ))
-                .Build(new Account[] { wallet.Account, poolMint, poolUserAccount, poolFeeAccount });
+                .Build([wallet.Account, poolMint, poolUserAccount, poolFeeAccount]);
             txSig = Examples.SubmitTxSendAndLog(tx);
             Examples.PollConfirmedTx(txSig);
 
@@ -237,7 +237,7 @@ namespace Solnet.Examples
                     },
                     SwapCurve.ConstantProduct
                 ))
-                .Build(new Account[] { wallet.Account, swap });
+                .Build([wallet.Account, swap]);
             Console.WriteLine($"Swap Account: {swap}");
             Console.WriteLine($"Swap Auth Account: {swapAuthority}");
             Console.WriteLine($"Pool Mint Account: {poolMint}");

@@ -45,7 +45,7 @@ namespace Solnet.Examples
                      3 * minBalance,
                      200,
                      StakeProgram.ProgramIdKey))
-                .Build(new List<Account> { fromAccount });
+                .Build([fromAccount]);
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
             RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
 
@@ -88,7 +88,7 @@ namespace Solnet.Examples
                     toAccount,
                     StakeAuthorize.Staker,
                     fromAccount))
-                .Build(new List<Account> { fromAccount });
+                .Build([fromAccount]);
 
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
             RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
@@ -126,7 +126,7 @@ namespace Solnet.Examples
                     toAccount,
                     StakeAuthorize.Staker,
                     fromAccount))
-                .Build(new List<Account> { fromAccount });
+                .Build([fromAccount]);
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
             RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
 
@@ -179,7 +179,7 @@ namespace Solnet.Examples
                     stakeAccount,
                     authorized,
                     lockup))
-                .Build(new List<Account> { fromAccount });
+                .Build([fromAccount]);
 
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
             RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
@@ -233,7 +233,7 @@ namespace Solnet.Examples
                     stakeAccount.PublicKey,
                     authorized,
                     lockup))
-                .Build(new List<Account> { fromAccount, stakeAccount });
+                .Build([fromAccount, stakeAccount]);
             Console.WriteLine($"Tx base64: {Convert.ToBase64String(tx)}");
             RequestResult<ResponseValue<SimulationLogs>> txSim = rpcClient.SimulateTransaction(tx);
 

@@ -12,7 +12,7 @@ namespace Solnet.Rpc.Test
     public class SolanaRpcClientTestBase
     {
         protected const string TestnetUrl = "https://testnet.solana.com";
-        protected static readonly Uri TestnetUri = new Uri(TestnetUrl);
+        protected static readonly Uri TestnetUri = new(TestnetUrl);
 
         /// <summary>
         /// Finish the test by asserting the http request went as expected.

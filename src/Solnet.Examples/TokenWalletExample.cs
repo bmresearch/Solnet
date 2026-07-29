@@ -21,7 +21,7 @@ namespace Solnet.Examples
         public void Run()
         {
 
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
             Wallet.Account ownerAccount = wallet.GetAccount(10);
 
             // add TokenDef for a TestNet minted token created by Solnet examples

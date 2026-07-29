@@ -21,7 +21,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             Account fromAccount = wallet.GetAccount(10);
             Account toAccount = wallet.GetAccount(8);
@@ -55,7 +55,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
             ulong minBalanceForExemptionAcc =
@@ -102,7 +102,7 @@ namespace Solnet.Examples
                     25000,
                     ownerAccount.PublicKey))
                 .AddInstruction(MemoProgram.NewMemo(initialAccount.PublicKey, "Hello from Sol.Net"))
-                .Build(new List<Account> { ownerAccount, mintAccount, initialAccount });
+                .Build([ownerAccount, mintAccount, initialAccount]);
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
@@ -125,7 +125,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
             ulong minBalanceForExemptionAcc =
@@ -151,7 +151,7 @@ namespace Solnet.Examples
                     25000000,
                     ownerAccount.PublicKey))
                 .AddInstruction(MemoProgram.NewMemo(initialAccount.PublicKey, "Hello from Sol.Net"))
-                .Build(new List<Account> { ownerAccount, initialAccount });
+                .Build([ownerAccount, initialAccount]);
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
@@ -174,7 +174,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
             ulong minBalanceForExemptionAcc = rpcClient.GetMinimumBalanceForRentExemption(TokenProgram.TokenAccountDataSize).Result;
@@ -207,7 +207,7 @@ namespace Solnet.Examples
                     25000,
                     ownerAccount))
                 .AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net"))
-                .Build(new List<Account> { ownerAccount, newAccount, initialAccount });
+                .Build([ownerAccount, newAccount, initialAccount]);
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
@@ -230,7 +230,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
             ulong minBalanceForExemptionAcc =
@@ -269,7 +269,7 @@ namespace Solnet.Examples
                 .AddInstruction(MemoProgram.NewMemo(
                         initialAccount,
                         "Hello from Sol.Net"))
-                .Build(new List<Account> { ownerAccount, newAccount, initialAccount });
+                .Build([ownerAccount, newAccount, initialAccount]);
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
 
@@ -291,7 +291,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             RequestResult<ResponseValue<LatestBlockHash>> blockHash = rpcClient.GetLatestBlockHash();
             ulong minBalanceForExemptionAcc =
@@ -317,7 +317,7 @@ namespace Solnet.Examples
                 .AddInstruction(SystemProgram.InitializeNonceAccount(
                     nonceAccount,
                     ownerAccount))
-                .Build(new List<Account> { ownerAccount, nonceAccount });
+                .Build([ownerAccount, nonceAccount]);
 
 
             Console.WriteLine($"Tx: {Convert.ToBase64String(tx)}");
@@ -339,7 +339,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             Account ownerAccount = wallet.GetAccount(10);
             Console.WriteLine($"OwnerAccount: {ownerAccount}");
@@ -356,7 +356,7 @@ namespace Solnet.Examples
             Console.WriteLine($"NonceAccount Nonce: {nonceAccountData.Nonce.Key}");
 
             // Initialize the nonce information to be used with the transaction
-            NonceInformation nonceInfo = new NonceInformation()
+            NonceInformation nonceInfo = new()
             {
                 Nonce = nonceAccountData.Nonce,
                 Instruction = SystemProgram.AdvanceNonceAccount(
@@ -428,7 +428,7 @@ namespace Solnet.Examples
 
             Console.WriteLine("\n\tPOPULATING TRANSACTION WITH SIGNATURES\t");
             Transaction tx = Transaction.Populate(msg,
-                new List<byte[]> { ownerAccount.Sign(msgData) });
+                [ownerAccount.Sign(msgData)]);
 
             byte[] txBytes = Examples.LogTransactionAndSerialize(tx);
 
@@ -447,7 +447,7 @@ namespace Solnet.Examples
 
         public void Run()
         {
-            Wallet.Wallet wallet = new Wallet.Wallet(MnemonicWords);
+            Wallet.Wallet wallet = new(MnemonicWords);
 
             Account fromAccount = wallet.GetAccount(10);
             Account toAccount = wallet.GetAccount(8);

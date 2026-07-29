@@ -14,26 +14,26 @@ namespace Solnet.Programs.Test
         private const ulong Lamports = 25000UL;
 
         private static readonly byte[] NameServiceProgramIdBytes =
-        {
+        [
             11, 173, 81, 244, 19, 193, 243, 169, 148, 96, 217, 0, 216,
             191, 46, 214, 146, 126, 202, 52, 215, 183, 132, 43 , 248, 16,
             169, 115, 8, 45, 30, 220
-        };
+        ];
 
         private static readonly byte[] ExpectedCreateNameRegistryData =
-        {
+        [
             0, 32, 0, 0, 0, 96, 132, 162, 10, 103, 37, 156, 104, 198, 141, 215, 249, 118, 148, 76,
             232, 83, 82, 235, 177, 75, 58, 222, 245, 101, 180, 43, 77, 175, 113, 43, 12, 96,
             179, 25, 0, 0, 0, 0, 0, 72, 4, 0, 0
-        };
+        ];
         private static readonly byte[] ExpectedTransferNameRegistryData =
-        {
+        [
             2, 228, 196, 51, 162, 47, 134, 99, 156, 133, 96, 217, 183, 39, 10, 246,
             58, 117, 0, 198, 160, 46, 245, 35, 25, 58, 83, 127, 244, 97, 11, 79, 178
-        };
+        ];
 
         private static readonly PublicKey TwitterHandleRegistry =
-            new PublicKey("33zp4PEKByAevejja4wZNDpcEK3qz6k6cBHmM2gssW4P");
+            new("33zp4PEKByAevejja4wZNDpcEK3qz6k6cBHmM2gssW4P");
 
         private static ulong ReverseRegistryMinBalance = 1684320UL;
 
@@ -87,7 +87,7 @@ namespace Solnet.Programs.Test
             var txInstruction = NameServiceProgram.UpdateNameRegistry(
                 parentNameAccount.PublicKey,
                 5,
-                new byte[] { 0, 1, 2, 3, 4, 5 },
+                [0, 1, 2, 3, 4, 5],
                 ownerAccount, classAccount);
 
             Assert.AreEqual(3, txInstruction.Keys.Count);

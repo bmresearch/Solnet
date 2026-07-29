@@ -1,13 +1,10 @@
-﻿using Solnet.Rpc.Core;
-using Solnet.Rpc.Core.Http;
+﻿using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
-using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -57,7 +54,7 @@ namespace Solnet.Rpc
         public SolanaRpcBatchComposer(IRpcClient rpcClient)
         {
             _rpcClient = rpcClient ?? throw new ArgumentNullException(nameof(rpcClient));
-            _reqs = new List<RpcBatchReqRespItem>();
+            _reqs = [];
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -76,7 +73,7 @@ namespace Solnet.Rpc
         /// </summary>
         /// <param name="mode">The auto execute mode to use.</param>
         /// <param name="batchSizeTrigger">The number of requests that will trigger a batch execution.</param>
-        public void AutoExecute(BatchAutoExecuteMode mode, int batchSizeTrigger) 
+        public void AutoExecute(BatchAutoExecuteMode mode, int batchSizeTrigger)
         {
             this._autoMode = mode;
             this._autoBatchSize = batchSizeTrigger;
@@ -116,7 +113,7 @@ namespace Solnet.Rpc
         /// Batch failure execption will invoke callbacks with an exception.
         /// </summary>
         public async Task<JsonRpcBatchResponse> ExecuteAsync()
-        { 
+        {
             return await ExecuteAsync(_rpcClient);
         }
 
@@ -130,9 +127,13 @@ namespace Solnet.Rpc
             var reqs = this.CreateJsonRequests();
             var response = await client.SendBatchRequestAsync(reqs);
             if (response.WasSuccessful)
+            {
                 return ProcessBatchResponse(response);
+            }
             else
+            {
                 return ProcessBatchFailure(response);
+            }
         }
 
         /// <summary>
@@ -173,9 +174,13 @@ namespace Solnet.Rpc
             var reqs = this.CreateJsonRequests();
             var response = await client.SendBatchRequestAsync(reqs);
             if (response.WasSuccessful)
+            {
                 return ProcessBatchResponse(response);
+            }
             else
+            {
                 throw new ApplicationException($"Batch was unsuccessful: {response.Reason}");
+            }
         }
 
         /// <summary>
@@ -186,8 +191,11 @@ namespace Solnet.Rpc
         internal JsonRpcBatchResponse ProcessBatchResponse(RequestResult<JsonRpcBatchResponse> response)
         {
             // sanity check response matches request
-            if (response == null) throw new ArgumentNullException(nameof(response));
-            if (_reqs.Count != response.Result.Count) throw new ApplicationException($"Batch req/resp size mismatch {_reqs.Count}/{response.Result.Count}");
+            ArgumentNullException.ThrowIfNull(response);
+            if (_reqs.Count != response.Result.Count)
+            {
+                throw new ApplicationException($"Batch req/resp size mismatch {_reqs.Count}/{response.Result.Count}");
+            }
 
             // transfer expected type info to individual
             // batch response items
@@ -233,7 +241,7 @@ namespace Solnet.Rpc
 
             // reset ready for reuse
             Clear();
-            
+
             // pass back the JSON batch innards
             return response.Result;
         }
@@ -274,13 +282,15 @@ namespace Solnet.Rpc
         /// <returns></returns>
         public object MapJsonTypeToNativeType(object input, Type nativeType)
         {
-            if (input is JsonElement)
+            // serializes + deserializes the JSON into runtime type - suboptimal but expedient
+            if (input is JsonElement elem)
             {
-                // serializes + deserializes the JSON into runtime type - suboptimal but expedient
-                var elem = (JsonElement)input;
                 var bufferWriter = new ArrayBufferWriter<byte>();
                 using (var writer = new Utf8JsonWriter(bufferWriter))
+                {
                     elem.WriteTo(writer);
+                }
+
                 return JsonSerializer.Deserialize(bufferWriter.WrittenSpan, nativeType, _jsonOptions);
             }
             else
@@ -335,43 +345,59 @@ namespace Solnet.Rpc
             return taskSource.Task;
         }
 
-        internal void Add(RpcBatchReqRespItem task) 
+        internal void Add(RpcBatchReqRespItem task)
         {
             // add to batch
             _reqs.Add(task);
 
             // does this trigger an auto execute?
             if (_autoMode != BatchAutoExecuteMode.Manual && _reqs.Count >= _autoBatchSize)
+            {
                 Flush();
+            }
         }
 
         private static Action<JsonRpcBatchResponseItem, Exception> WrapCallback<T>(Action<T, Exception> callback)
         {
-            if (callback == null) return null;
+            if (callback == null)
+            {
+                return null;
+            }
 
             // wrap into common typed callback
-            Action<JsonRpcBatchResponseItem, Exception> wrapper = (item, ex) =>
+            void wrapper(JsonRpcBatchResponseItem item, Exception ex)
             {
-                T obj = default(T);
-                if (item != null) obj = item.ResultAs<T>();
+                T obj = default;
+                if (item != null)
+                {
+                    obj = item.ResultAs<T>();
+                }
+
                 callback.Invoke(obj, ex);
-            };
+            }
             return wrapper;
         }
 
         private static Action<JsonRpcBatchResponseItem, Exception> WrapTaskSource<T>(TaskCompletionSource<T> taskSource)
         {
-            if (taskSource == null) return null;
+            if (taskSource == null)
+            {
+                return null;
+            }
 
             // wrap into common typed callback
-            Action<JsonRpcBatchResponseItem, Exception> wrapper = (item, ex) =>
+            void wrapper(JsonRpcBatchResponseItem item, Exception ex)
             {
                 T obj = item.ResultAs<T>();
                 if (ex != null)
+                {
                     taskSource.SetException(ex);
+                }
                 else
+                {
                     taskSource.SetResult(obj);
-            };
+                }
+            }
             return wrapper;
         }
 

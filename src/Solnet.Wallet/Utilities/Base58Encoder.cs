@@ -21,7 +21,7 @@ namespace Solnet.Wallet.Utilities
         /// <summary>
         /// 
         /// </summary>
-        private static readonly int[] MapBase58 = {
+        private static readonly int[] MapBase58 = [
             -1,-1,-1,-1,-1,-1,-1,-1, -1,-1,-1,-1,-1,-1,-1,-1,
             -1,-1,-1,-1,-1,-1,-1,-1, -1,-1,-1,-1,-1,-1,-1,-1,
             -1,-1,-1,-1,-1,-1,-1,-1, -1,-1,-1,-1,-1,-1,-1,-1,
@@ -38,7 +38,7 @@ namespace Solnet.Wallet.Utilities
             -1,-1,-1,-1,-1,-1,-1,-1, -1,-1,-1,-1,-1,-1,-1,-1,
             -1,-1,-1,-1,-1,-1,-1,-1, -1,-1,-1,-1,-1,-1,-1,-1,
             -1,-1,-1,-1,-1,-1,-1,-1, -1,-1,-1,-1,-1,-1,-1,-1,
-        };
+        ];
 
         /// <summary>
         /// Encode the data.
@@ -50,8 +50,7 @@ namespace Solnet.Wallet.Utilities
         /// <exception cref="ArgumentNullException">Thrown if the data array is null.</exception>
         public override string EncodeData(byte[] data, int offset, int count)
         {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data));
+            ArgumentNullException.ThrowIfNull(data);
 
             // Skip & count leading zeroes.
             int zeroes = 0;
@@ -107,8 +106,7 @@ namespace Solnet.Wallet.Utilities
         /// <exception cref="FormatException">Thrown if the data is invalid.</exception>
         public override byte[] DecodeData(string encoded)
         {
-            if (encoded == null)
-                throw new ArgumentNullException(nameof(encoded));
+            ArgumentNullException.ThrowIfNull(encoded);
             int psz = 0;
 
             // Skip leading spaces.
@@ -171,7 +169,7 @@ namespace Solnet.Wallet.Utilities
         /// <exception cref="ArgumentNullException"></exception>
         public static bool IsValidWithoutWhitespace(string value)
         {
-            if (value == null) throw new ArgumentNullException(nameof(value));
+            ArgumentNullException.ThrowIfNull(value);
             for (var ix = 0; ix < value.Length; ix++)
                 if (!Validator.ContainsKey(value[ix]))
                     return false;

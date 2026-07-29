@@ -1,4 +1,3 @@
-using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -68,10 +67,13 @@ namespace Solnet.Wallet.Bip39
         /// <returns>A task which returns the word list.</returns>
         public Task<WordList> LoadAsync(string name)
         {
-            WordLists.TryGetValue(name,out string list);
+            WordLists.TryGetValue(name, out string list);
             if (list == null)
+            {
                 return null;
-            return Task.FromResult(new WordList(list.Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries),
+            }
+
+            return Task.FromResult(new WordList(list.Split(["\n"], StringSplitOptions.RemoveEmptyEntries),
                 name == "japanese" ? '　' : ' ', name
                 ));
         }

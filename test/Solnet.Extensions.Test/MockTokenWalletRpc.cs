@@ -59,11 +59,13 @@ namespace Solnet.Extensions.Test
             JsonRpcResponse<ResponseValue<T>> result = GetNextJsonResponse<ResponseValue<T>>();
 
             // package as a successful response
-            var reqResult = new RequestResult<ResponseValue<T>>();
-            reqResult.WasHttpRequestSuccessful = true;
-            reqResult.WasRequestSuccessfullyHandled = true;
-            reqResult.HttpStatusCode = HttpStatusCode.OK;
-            reqResult.Result = result.Result;
+            var reqResult = new RequestResult<ResponseValue<T>>
+            {
+                WasHttpRequestSuccessful = true,
+                WasRequestSuccessfullyHandled = true,
+                HttpStatusCode = HttpStatusCode.OK,
+                Result = result.Result
+            };
             return await Task.FromResult<RequestResult<ResponseValue<T>>>(reqResult);
 
         }
@@ -73,11 +75,13 @@ namespace Solnet.Extensions.Test
             JsonRpcResponse<T> result = GetNextJsonResponse<T>();
 
             // package as a successful response
-            var reqResult = new RequestResult<T>();
-            reqResult.WasHttpRequestSuccessful = true;
-            reqResult.WasRequestSuccessfullyHandled = true;
-            reqResult.HttpStatusCode = HttpStatusCode.OK;
-            reqResult.Result = result.Result;
+            var reqResult = new RequestResult<T>
+            {
+                WasHttpRequestSuccessful = true,
+                WasRequestSuccessfullyHandled = true,
+                HttpStatusCode = HttpStatusCode.OK,
+                Result = result.Result
+            };
             return await Task.FromResult<RequestResult<T>>(reqResult);
 
         }
@@ -98,8 +102,7 @@ namespace Solnet.Extensions.Test
             }
 
             // deserialize JSON RPC response
-            var result = JsonSerializer.Deserialize<JsonRpcResponse<T>>(json, _serializerOptions);
-            if (result == null) throw new ApplicationException("Mock response did not deserialize");
+            var result = JsonSerializer.Deserialize<JsonRpcResponse<T>>(json, _serializerOptions) ?? throw new ApplicationException("Mock response did not deserialize");
 
             // overwrite response id
             result.Id = id;

@@ -77,7 +77,7 @@ namespace Solnet.Programs.TokenSwap.Models
             var span = new Span<byte>(bytes);
             var f = new Fees()
             {
-                TradeFeeNumerator = BinaryPrimitives.ReadUInt64LittleEndian(span.Slice(0, 8)),
+                TradeFeeNumerator = BinaryPrimitives.ReadUInt64LittleEndian(span[..8]),
                 TradeFeeDenominator = BinaryPrimitives.ReadUInt64LittleEndian(span.Slice(8, 8)),
                 OwnerTradeFeeNumerator = BinaryPrimitives.ReadUInt64LittleEndian(span.Slice(16, 8)),
                 OwnerTradeFeeDenomerator = BinaryPrimitives.ReadUInt64LittleEndian(span.Slice(24, 8)),

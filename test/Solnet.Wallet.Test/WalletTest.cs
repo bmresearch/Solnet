@@ -9,26 +9,26 @@ namespace Solnet.Wallet.Test
     public class WalletTest
     {
         private static readonly byte[] SeedWithoutPassphrase =
-        {
+        [
             124,36,217,106,151,19,165,102,96,101,74,81,
             237,254,232,133,28,167,31,35,119,188,66,40,
             101,104,25,103,139,83,57,7,19,215,6,113,22,
             145,107,209,208,107,159,40,223,19,82,53,136,
             255,40,171,137,93,9,205,28,7,207,88,194,91,
             219,232
-        };
+        ];
         private static readonly byte[] SeedWithPassphrase =
-        {
+        [
             163,4,184,24,182,219,174,214,13,54,158,198,
             63,202,76,3,190,224,76,202,160,96,124,95,89,
             155,113,10,46,218,154,74,125,7,103,78,0,51,
             244,192,221,12,200,148,9,252,4,117,193,123,
             102,56,255,105,167,180,125,222,19,111,219,18,
             115,0
-        };
+        ];
 
         private static readonly byte[] SerializedMessage =
-        {
+        [
             1, 0, 2, 4, 138, 180, 156, 252, 109, 252, 108, 26, 186, 0,
             196, 69, 57, 102, 15, 151, 149, 242, 119, 181, 171, 113,
             120, 224, 0, 118, 155, 61, 246, 56, 178, 47, 173, 126, 102,
@@ -43,22 +43,22 @@ namespace Solnet.Wallet.Test
             248, 125, 83, 253, 85, 181, 215, 93, 2, 2, 2, 0, 1, 12, 2, 0, 0, 0,
             128, 150, 152, 0, 0, 0, 0, 0, 3, 1, 0, 21, 72, 101, 108, 108, 111,
             32, 102, 114, 111, 109, 32, 83, 111, 108, 46, 78, 101, 116, 32, 58, 41
-        };
+        ];
         private static readonly byte[] SerializedMessageSignature =
-        {
+        [
             234, 147, 144, 17, 200, 57, 8, 154, 139, 86, 156, 12, 7, 143, 144,
             85, 27, 151, 186, 223, 246, 231, 186, 81, 69, 107, 126, 76, 119,
             14, 112, 57, 38, 5, 28, 109, 99, 30, 249, 154, 87, 241, 28, 161,
             178, 165, 146, 73, 179, 4, 71, 133, 203, 145, 125, 252, 200, 249,
             38, 105, 30, 113, 73, 8
-        };
+        ];
         private static readonly byte[] SerializedMessageSignatureBip39 =
-        {
+        [
             28, 126, 243, 240, 127, 153, 168, 18, 202, 11, 27, 255, 242, 180, 193, 230, 100,
             109, 213, 104, 22, 230, 164, 231, 20, 10, 64, 213, 212, 108, 210, 59, 174, 106,
             61, 254, 120, 250, 15, 109, 254, 142, 88, 176, 145, 111, 0, 231, 29, 225, 10, 193,
             135, 130, 54, 21, 25, 48, 147, 4, 138, 171, 252, 15
-        };
+        ];
 
         private const string MnemonicWords =
             "lens scheme misery search address destroy shallow police picture gown apart rural cotton vivid cage disagree enrich govern history kit early near cloth alarm";
@@ -69,15 +69,15 @@ namespace Solnet.Wallet.Test
         /// <summary>
         /// Expected key pairs from wallet initialization using the above parameters, as output from sollet.io
         /// </summary>
-        private static readonly List<(string PublicKey, string PrivateKey)> ExpectedSolletKeys = new()
-        {
+        private static readonly List<(string PublicKey, string PrivateKey)> ExpectedSolletKeys =
+        [
             ("ALSzrjtGi8MZGmAZa6ZhtUZq3rwurWuJqWFdgcj9MMFL",
                 "5ZD7ntKtyHrnqMhfSuKBLdqHzT5N3a2aYnCGBcz4N78b84TKpjwQ4QBsapEnpnZFchM7F1BpqDkSuLdwMZwM8hLi"),
             ("CgFKZ1VLJvip93rh7qKqiGwZjxXb4XXC4GhBGBizuWUb",
                 "5hTHMuq5vKJachfenfKeAoDhMttXFfN77G51L8KiVRsZqRmzFvNLUdMFDRYgTfuX6yy9g6gCpatzray4XFX5B8xb"),
             ("C6jL32xjsGr9fmMdd56TF9oQURN19EfemFxkdpzRoyxm",
                 "UYhpZrPoRGvHur6ZunZT6VraiTC85NjGsFDrm8LLx3kZkThHEUGSkAuJhn2KUAt2o2Nf3EeFhEW52REzmD3iPgV")
-        };
+        ];
 
         /// <summary>
         /// Expected key pair from wallet initialization using the above parameters, as output from solana-keygen cli tool

@@ -48,8 +48,8 @@ namespace Solnet.KeyStore.Services
 
         public override byte[] DecryptKeyStore(string password, KeyStore<ScryptParams> keyStore)
         {
-            if (password == null) throw new ArgumentNullException(nameof(password));
-            if (keyStore == null) throw new ArgumentNullException(nameof(keyStore));
+            ArgumentNullException.ThrowIfNull(password);
+            ArgumentNullException.ThrowIfNull(keyStore);
 
             return KeyStoreCrypto.DecryptScrypt(password, keyStore.Crypto.Mac.HexToByteArray(),
                 keyStore.Crypto.CipherParams.Iv.HexToByteArray(),

@@ -39,11 +39,12 @@ namespace Solnet.Programs.Models.NameService
                 throw new IndexOutOfRangeException($"Record headers are 96 bytes. Found {input.Length} bytes in the current buffer.");
 
             var data = new ReadOnlySpan<byte>(input);
-            var res = new RecordHeader();
-
-            res.ParentName = data.GetPubKey(0);
-            res.Owner = data.GetPubKey(32);
-            res.Class = data.GetPubKey(64);
+            var res = new RecordHeader
+            {
+                ParentName = data.GetPubKey(0),
+                Owner = data.GetPubKey(32),
+                Class = data.GetPubKey(64)
+            };
 
             return res;
         }

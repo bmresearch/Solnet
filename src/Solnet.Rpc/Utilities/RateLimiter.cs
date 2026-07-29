@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -60,12 +58,15 @@ namespace Solnet.Rpc.Utilities
             var resumeTime = NextFireAllowed(checkTime);
             var snoozeMs = resumeTime.Subtract(checkTime).TotalMilliseconds;
             while (DateTime.UtcNow <= resumeTime)
+            {
                 Thread.Sleep(50);
+            }
 
             // record this trigger
             if (_duration_ms > 0)
+            {
                 _hit_list.Enqueue(DateTime.UtcNow);
-
+            }
         }
 
         /// <summary>
@@ -79,11 +80,15 @@ namespace Solnet.Rpc.Utilities
             var resumeTime = NextFireAllowed(checkTime);
             var snoozeMs = resumeTime.Subtract(checkTime).TotalMilliseconds;
             while (DateTime.UtcNow <= resumeTime)
+            {
                 await Task.Delay(50, cancellationToken);
+            }
 
             // record this trigger
             if (_duration_ms > 0)
+            {
                 _hit_list.Enqueue(DateTime.UtcNow);
+            }
         }
 
         /// <summary>
@@ -96,15 +101,23 @@ namespace Solnet.Rpc.Utilities
             DateTime resumeTime = checkTime;
 
             // sliding window not set, allow everything through immediately
-            if (_duration_ms == 0) return resumeTime;
+            if (_duration_ms == 0)
+            {
+                return resumeTime;
+            }
 
             // empty queue
-            if (_hit_list.Count == 0) return resumeTime;
+            if (_hit_list.Count == 0)
+            {
+                return resumeTime;
+            }
 
             // drop any hits before the time window
             var cutOff = checkTime.AddMilliseconds(-_duration_ms);
             while (_hit_list.Count > 0 && _hit_list.Peek().Subtract(cutOff).TotalMilliseconds < 0)
+            {
                 _hit_list.Dequeue();
+            }
 
             // are we left with more than we are allowed?
             // do we need to waste some time?
@@ -114,7 +127,9 @@ namespace Solnet.Rpc.Utilities
                 return oldestHit.AddMilliseconds(_duration_ms);
             }
             else
+            {
                 return checkTime;
+            }
         }
 
         /// <summary>
@@ -156,10 +171,14 @@ namespace Solnet.Rpc.Utilities
         /// <returns></returns>
         public override string ToString()
         {
-            if (_hit_list.Count>0)
-                return $"{_hit_list.Count}-{_hit_list.Peek().ToString("HH:mm:ss.fff")}";
+            if (_hit_list.Count > 0)
+            {
+                return $"{_hit_list.Count}-{_hit_list.Peek():HH:mm:ss.fff}";
+            }
             else
+            {
                 return $"(empty)";
+            }
         }
 
     }

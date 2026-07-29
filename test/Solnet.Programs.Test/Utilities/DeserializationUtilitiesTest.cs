@@ -10,103 +10,103 @@ namespace Solnet.Programs.Test.Utilities
     public class DeserializationUtilitiesTest
     {
         private static readonly byte[] PublicKeyBytes =
-        {
+        [
             6, 221, 246, 225, 215, 101, 161, 147, 217, 203,
             225, 70, 206, 235, 121, 172, 28, 180, 133, 237,
             95, 91, 55, 145, 58, 140, 245, 133, 126, 255, 0, 169
-        };
+        ];
 
         private static readonly byte[] BigIntBytes =
-        {
+        [
             153, 153, 153, 153, 153, 153, 153, 153,
             153, 153, 153, 153, 153, 153, 153, 25,
-        };
+        ];
 
         private static readonly byte[] DoubleBytes =
-        {
+        [
             108, 251, 85, 215, 136, 134, 245, 63
-        };
+        ];
 
         private static readonly byte[] SingleBytes =
-        {
+        [
             71, 52, 172, 63,
-        };
+        ];
 
         private static readonly byte[] EncodedStringBytes =
-        {
+        [
             21, 0, 0, 0,0,0,0,0, 116, 104, 105, 115, 32, 105, 115,
             32, 97, 32, 116, 101, 115, 116, 32, 115, 116, 114,
             105, 110, 103
-        };
+        ];
 
-        private byte[] OneNegBytes = new byte[]
-        {
+        private byte[] OneNegBytes =
+        [
             255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
             255,
-        };
+        ];
 
-        private byte[] OneBytes = new byte[]
-        {
+        private byte[] OneBytes =
+        [
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        };
+        ];
 
-        private byte[] OneNegBEBytes = new byte[]
-        {
+        private byte[] OneNegBEBytes =
+        [
             255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
             255,
-        };
+        ];
 
-        private byte[] OneBEBytes = new byte[]
-        {
+        private byte[] OneBEBytes =
+        [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
-        };
+        ];
 
-        private byte[] ZeroValueBytes = new byte[]
-        {
+        private byte[] ZeroValueBytes =
+        [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        };
+        ];
 
-        private byte[] NegValueBytes = new byte[]
-        {
+        private byte[] NegValueBytes =
+        [
             0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
 
-        };
-        private byte[] PosValueBytes = new byte[]
-        {
+        ];
+        private byte[] PosValueBytes =
+        [
             0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        };
+        ];
 
-        private byte[] LowNegValueBytes = new byte[]
-        {
+        private byte[] LowNegValueBytes =
+        [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255,
 
-        };
-        private byte[] HighPosValueBytes = new byte[]
-        {
+        ];
+        private byte[] HighPosValueBytes =
+        [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
-        };
+        ];
 
-        private byte[] LowNegValueBEBytes = new byte[]
-        {
+        private byte[] LowNegValueBEBytes =
+        [
             255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        };
-        private byte[] HighPosValueBEBytes = new byte[]
-        {
+        ];
+        private byte[] HighPosValueBEBytes =
+        [
             0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        };
+        ];
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadU8Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1];
             byte value = readSpan.GetU8(1);
         }
 
         [TestMethod]
         public void TestReadU8()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1];
             byte value = readSpan.GetU8(0);
 
             Assert.AreEqual(1, value);
@@ -116,14 +116,14 @@ namespace Solnet.Programs.Test.Utilities
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadU16Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1, 0];
             uint value = readSpan.GetU16(1);
         }
 
         [TestMethod]
         public void TestReadU16()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1, 0];
             uint value = readSpan.GetU16(0);
 
             Assert.AreEqual(1U, value);
@@ -133,14 +133,14 @@ namespace Solnet.Programs.Test.Utilities
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadU32Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1, 0, 0, 0];
             uint value = readSpan.GetU32(1);
         }
 
         [TestMethod]
         public void TestReadU32()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1, 0, 0, 0];
             uint value = readSpan.GetU32(0);
 
             Assert.AreEqual(1U, value);
@@ -150,14 +150,14 @@ namespace Solnet.Programs.Test.Utilities
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadU64Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0, 0, 0, 0, 0 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1, 0, 0, 0, 0, 0, 0, 0];
             ulong value = readSpan.GetU64(1);
         }
 
         [TestMethod]
         public void TestReadU64()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0, 0, 0, 0, 0 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1, 0, 0, 0, 0, 0, 0, 0];
             ulong value = readSpan.GetU64(0);
 
             Assert.AreEqual(1UL, value);
@@ -167,14 +167,14 @@ namespace Solnet.Programs.Test.Utilities
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadS8Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1];
             sbyte value = readSpan.GetS8(1);
         }
 
         [TestMethod]
         public void TestReadS8()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1];
             sbyte value = readSpan.GetS8(0);
 
             Assert.AreEqual(1, value);
@@ -184,14 +184,14 @@ namespace Solnet.Programs.Test.Utilities
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadS16Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1, 0];
             int value = readSpan.GetS16(1);
         }
 
         [TestMethod]
         public void TestReadS16()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1, 0];
             int value = readSpan.GetS16(0);
 
             Assert.AreEqual(1, value);
@@ -201,14 +201,14 @@ namespace Solnet.Programs.Test.Utilities
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadS32Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1, 0, 0, 0];
             int value = readSpan.GetS32(1);
         }
 
         [TestMethod]
         public void TestReadS32()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1, 0, 0, 0];
             int value = readSpan.GetS32(0);
 
             Assert.AreEqual(1, value);
@@ -218,14 +218,14 @@ namespace Solnet.Programs.Test.Utilities
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadS64Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0, 0, 0, 0, 0 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1, 0, 0, 0, 0, 0, 0, 0];
             long value = readSpan.GetS64(1);
         }
 
         [TestMethod]
         public void TestReadS64()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0, 0, 0, 0, 0 }.AsSpan();
+            ReadOnlySpan<byte> readSpan = [1, 0, 0, 0, 0, 0, 0, 0];
             long value = readSpan.GetS64(0);
 
             Assert.AreEqual(1L, value);
@@ -426,7 +426,7 @@ namespace Solnet.Programs.Test.Utilities
         [TestMethod]
         public void TestBigIntSerDes()
         {
-            BigInteger bi = new BigInteger(long.MinValue);
+            BigInteger bi = new(long.MinValue);
 
             byte[] buffer = new byte[16];
 

@@ -39,7 +39,7 @@ namespace Solnet.Programs
         /// <returns></returns>
         public static TransactionInstruction RequestHeapFrame(uint bytes)
         {
-            List<AccountMeta> keys = new();
+            List<AccountMeta> keys = [];
 
             byte[] instructionBytes = new byte[17];
             instructionBytes.WriteU8(1, 0);
@@ -59,7 +59,7 @@ namespace Solnet.Programs
         /// <returns></returns>
         public static TransactionInstruction SetComputeUnitLimit(uint units)
         {
-            List<AccountMeta> keys = new();
+            List<AccountMeta> keys = [];
 
             byte[] instructionBytes = new byte[9];
             instructionBytes.WriteU8(2, 0);
@@ -79,7 +79,7 @@ namespace Solnet.Programs
         /// <returns></returns>
         public static TransactionInstruction SetComputeUnitPrice(ulong priority_rate)
         {
-            List<AccountMeta> keys = new();
+            List<AccountMeta> keys = [];
             
             byte[] instructionBytes = new byte[9];
             instructionBytes.WriteU8(3, 0);

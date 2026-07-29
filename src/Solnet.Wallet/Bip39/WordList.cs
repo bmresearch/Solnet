@@ -1,4 +1,3 @@
-using Solnet.Wallet.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -138,7 +137,7 @@ namespace Solnet.Wallet.Bip39
         /// <summary>
         /// The loaded word lists.
         /// </summary>
-        private static readonly Dictionary<string, WordList> LoadedLists = new();
+        private static readonly Dictionary<string, WordList> LoadedLists = [];
 
         /// <summary>
         /// Loads a word list by name.
@@ -149,25 +148,31 @@ namespace Solnet.Wallet.Bip39
         /// <exception cref="InvalidOperationException">Thrown when the word list source is not initialized.</exception>
         private static async Task<WordList> LoadWordList(string name)
         {
-            if (name == null)
-                throw new ArgumentNullException(nameof(name));
+            ArgumentNullException.ThrowIfNull(name);
             WordList result;
             lock (LoadedLists)
             {
                 LoadedLists.TryGetValue(name, out result);
             }
             if (result != null)
+            {
                 return await Task.FromResult(result).ConfigureAwait(false);
+            }
 
             if (WordlistSource == null)
+            {
                 throw new InvalidOperationException("WordList.WordlistSource is not initialized, could not fetch word list.");
+            }
+
             result = await WordlistSource.LoadAsync(name).ConfigureAwait(false);
 
             if (result != null)
+            {
                 lock (LoadedLists)
                 {
                     LoadedLists[name] = result;
                 }
+            }
 
             return result;
         }
@@ -190,9 +195,7 @@ namespace Solnet.Wallet.Bip39
         /// <param name="name">The words to be used in the wordlist</param>
         public WordList(IEnumerable<string> words, char space, string name)
         {
-            _words = words
-                        .Select(Mnemonic.NormalizeString)
-                        .ToArray();
+            _words = [.. words.Select(Mnemonic.NormalizeString)];
             _name = name;
             Space = space;
         }
@@ -259,7 +262,7 @@ namespace Solnet.Wallet.Bip39
         /// <returns>The language.</returns>
         public static Language AutoDetectLanguage(IEnumerable<string> words)
         {
-            List<int> languageCount = new(new[] { 0, 0, 0, 0, 0, 0, 0, 0 });
+            List<int> languageCount = [.. new[] { 0, 0, 0, 0, 0, 0, 0, 0 }];
 
             foreach (string s in words)
             {
@@ -369,9 +372,7 @@ namespace Solnet.Wallet.Bip39
         public string[] GetWords(IEnumerable<int> indices)
         {
             return
-                indices
-                .Select(GetWordAtIndex)
-                .ToArray();
+                [.. indices.Select(GetWordAtIndex)];
         }
 
         /// <summary>
@@ -414,7 +415,10 @@ namespace Solnet.Wallet.Bip39
         public static BitArray ToBits(int[] values)
         {
             if (values.Any(v => v >= 2048))
+            {
                 throw new ArgumentException("values should be between 0 and 2048", nameof(values));
+            }
+
             BitArray result = new(values.Length * 11);
             int i = 0;
             foreach (int val in values)

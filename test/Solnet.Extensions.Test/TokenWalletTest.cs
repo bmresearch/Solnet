@@ -7,7 +7,6 @@ using Solnet.Rpc.Builders;
 using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Wallet;
-using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -447,7 +446,7 @@ namespace Solnet.Extensions.Test
             var pass = false;
             try
             {
-                list.WithPublicKey((string)null);
+                list.WithPublicKey(null);
             }
             catch (ArgumentException)
             {
@@ -471,7 +470,10 @@ namespace Solnet.Extensions.Test
             }
             var count = 0;
             foreach (var check in list)
+            {
                 count++;
+            }
+
             Assert.AreEqual(0, count);
             Assert.IsTrue(pass);
         }
@@ -502,10 +504,12 @@ namespace Solnet.Extensions.Test
         /// <returns></returns>
         public RequestResult<T> CreateMockRequestResult<T>(string req, string resp, HttpStatusCode status)
         {
-            var x = new RequestResult<T>();
-            x.HttpStatusCode = status;
-            x.RawRpcRequest = req;
-            x.RawRpcResponse = resp;
+            var x = new RequestResult<T>
+            {
+                HttpStatusCode = status,
+                RawRpcRequest = req,
+                RawRpcResponse = resp
+            };
 
             // deserialize resp
             if (status == HttpStatusCode.OK)

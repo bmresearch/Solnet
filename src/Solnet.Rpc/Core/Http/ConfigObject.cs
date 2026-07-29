@@ -41,7 +41,7 @@ namespace Solnet.Rpc.Core.Http
 
         internal static Dictionary<string, object> Create(KeyValue pair1, KeyValue pair2)
         {
-            var dict = Create(pair1) ?? new Dictionary<string, object>();
+            var dict = Create(pair1) ?? [];
 
             if (pair2 != null)
             {
@@ -53,7 +53,7 @@ namespace Solnet.Rpc.Core.Http
 
         internal static Dictionary<string, object> Create(KeyValue pair1, KeyValue pair2, KeyValue pair3)
         {
-            var dict = Create(pair1, pair2) ?? new Dictionary<string, object>();
+            var dict = Create(pair1, pair2) ?? [];
 
             if (pair3 != null)
             {
@@ -65,7 +65,7 @@ namespace Solnet.Rpc.Core.Http
 
         internal static Dictionary<string, object> Create(KeyValue pair1, KeyValue pair2, KeyValue pair3, KeyValue pair4)
         {
-            var dict = Create(pair1, pair2, pair3) ?? new Dictionary<string, object>();
+            var dict = Create(pair1, pair2, pair3) ?? [];
 
             if (pair4 != null)
             {
@@ -77,7 +77,7 @@ namespace Solnet.Rpc.Core.Http
 
         internal static Dictionary<string, object> Create(KeyValue pair1, KeyValue pair2, KeyValue pair3, KeyValue pair4, KeyValue pair5)
         {
-            var dict = Create(pair1, pair2, pair3, pair4) ?? new Dictionary<string, object>();
+            var dict = Create(pair1, pair2, pair3, pair4) ?? [];
 
             if (pair5 != null)
             {
@@ -97,14 +97,14 @@ namespace Solnet.Rpc.Core.Http
         {
             if (val1 != null)
             {
-                return new List<object> { val1 };
+                return [val1];
             }
             return null;
         }
 
         internal static List<object> Create(object val1, object val2)
         {
-            var list = Create(val1) ?? new List<object>();
+            var list = Create(val1) ?? [];
             if (val2 != null)
             {
                 list.Add(val2);
@@ -114,7 +114,7 @@ namespace Solnet.Rpc.Core.Http
 
         internal static List<object> Create(object val1, object val2, object val3)
         {
-            var list = Create(val1, val2) ?? new List<object>();
+            var list = Create(val1, val2) ?? [];
             if (val3 != null)
             {
                 list.Add(val3);

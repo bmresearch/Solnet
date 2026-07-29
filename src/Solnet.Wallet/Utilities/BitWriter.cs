@@ -1,4 +1,3 @@
-using Solnet.Wallet.Bip39;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,7 @@ namespace Solnet.Wallet.Utilities
         /// <summary>
         /// The values of the bit writer.
         /// </summary>
-        private readonly List<bool> _values = new();
+        private readonly List<bool> _values = [];
 
         /// <summary>
         /// The number of values.
@@ -74,7 +73,10 @@ namespace Solnet.Wallet.Utilities
         {
             int arrayLength = bits.Length / 8;
             if (bits.Length % 8 != 0)
+            {
                 arrayLength++;
+            }
+
             byte[] array = new byte[arrayLength];
 
             for (int i = 0; i < bits.Length; i++)
@@ -151,7 +153,7 @@ namespace Solnet.Wallet.Utilities
         public static int[] ToIntegers(BitArray bits)
         {
             return
-                bits
+                [.. bits
                     .OfType<bool>()
                     .Select((v, i) => new
                     {
@@ -159,8 +161,7 @@ namespace Solnet.Wallet.Utilities
                         Value = v ? 1 << (10 - (i % 11)) : 0
                     })
                     .GroupBy(_ => _.Group, _ => _.Value)
-                    .Select(g => g.Sum())
-                    .ToArray();
+                    .Select(g => g.Sum())];
         }
 
         /// <summary>
@@ -173,7 +174,10 @@ namespace Solnet.Wallet.Utilities
             for (int i = 0; i < Count; i++)
             {
                 if (i != 0 && i % 8 == 0)
+                {
                     builder.Append(' ');
+                }
+
                 builder.Append(_values[i] ? "1" : "0");
             }
             return builder.ToString();

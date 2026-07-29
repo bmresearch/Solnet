@@ -96,7 +96,7 @@ namespace Solnet.Programs.StakePool.Models
         public static bool ActiveLamportsGreaterThan(ReadOnlySpan<byte> data, ulong lamports)
         {
             // ActiveStakeLamports is at offset 0, length 8
-            ulong value = BitConverter.ToUInt64(data.Slice(0, 8));
+            ulong value = BitConverter.ToUInt64(data[..8]);
             return value > lamports;
         }
 

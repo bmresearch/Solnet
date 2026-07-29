@@ -179,7 +179,7 @@ namespace Solnet.Programs.AccountCompression
         /// <exception cref="ArgumentNullException"></exception>
         internal static byte[] EncodeTransferAuthorityData(PublicKey newAuthority)
         {
-            if (newAuthority is null) throw new ArgumentNullException(nameof(newAuthority));
+            ArgumentNullException.ThrowIfNull(newAuthority);
 
             byte[] data = new byte[36];
 
@@ -264,9 +264,9 @@ namespace Solnet.Programs.AccountCompression
         {
             if (data.Length < 4) throw new ArgumentException("Instruction data too short.");
 
-            uint discriminator = BitConverter.ToUInt32(data.Slice(0, 4));
+            uint discriminator = BitConverter.ToUInt32(data[..4]);
 
-            decodedInstruction.Values ??= new Dictionary<string, object>();
+            decodedInstruction.Values ??= [];
             decodedInstruction.Values.Add("instruction", discriminator);
 
             // Match accounts: [merkle_tree, authority, recipient]

@@ -42,11 +42,11 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Initialize(PublicKey stakePubkey, Authorized authorized, Lockup lockup)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(stakePubkey, false),
                 AccountMeta.ReadOnly(SysVars.RentKey,false)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -65,12 +65,12 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Authorize(PublicKey stakePubkey, PublicKey authorizedPubkey, PublicKey newAuthorizedPubkey, StakeAuthorize stakeAuthorize, PublicKey custodianPubkey)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(stakePubkey,false),
                 AccountMeta.ReadOnly(SysVars.ClockKey,false),
                 AccountMeta.ReadOnly(authorizedPubkey,true)
-            };
+            ];
             if (custodianPubkey != null)
             {
                 keys.Add(AccountMeta.ReadOnly(custodianPubkey, true));
@@ -91,15 +91,15 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction DelegateStake(PublicKey stakePubkey, PublicKey authorizedPubkey, PublicKey votePubkey)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(stakePubkey, false),
                 AccountMeta.ReadOnly(votePubkey, false),
                 AccountMeta.ReadOnly(SysVars.ClockKey, false),
                 AccountMeta.ReadOnly(SysVars.StakeHistoryKey, false),
                 AccountMeta.ReadOnly(ConfigKey, false),
                 AccountMeta.ReadOnly(authorizedPubkey, true)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -117,12 +117,12 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Split(PublicKey stakePubkey, PublicKey authorizedPubkey, ulong lamports, PublicKey splitStakePubkey)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(stakePubkey, false),
                 AccountMeta.Writable(splitStakePubkey, false),
                 AccountMeta.ReadOnly(authorizedPubkey, true)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -141,14 +141,14 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Withdraw(PublicKey stakePubkey, PublicKey withdrawerPubkey, PublicKey toPubkey, ulong lamports, PublicKey custodianPubkey)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(stakePubkey, false),
                 AccountMeta.Writable(toPubkey, false),
                 AccountMeta.ReadOnly(SysVars.ClockKey, false),
                 AccountMeta.ReadOnly(SysVars.StakeHistoryKey,false),
                 AccountMeta.ReadOnly(withdrawerPubkey,true)
-            };
+            ];
             if (custodianPubkey != null)
             {
                 keys.Add(AccountMeta.ReadOnly(custodianPubkey, true));
@@ -168,12 +168,12 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Deactivate(PublicKey stakePubkey, PublicKey authorizedPubkey)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(stakePubkey, false),
                 AccountMeta.ReadOnly(SysVars.ClockKey, false),
                 AccountMeta.ReadOnly(authorizedPubkey, true)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -192,11 +192,11 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction SetLockup(PublicKey stakePubkey, Lockup lockup, PublicKey custodianPubkey)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(stakePubkey, false),
                 AccountMeta.ReadOnly(custodianPubkey, true)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -230,14 +230,14 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction Merge(PublicKey destinationStakePubkey, PublicKey sourceStakePubkey, PublicKey authorizedPubkey)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(destinationStakePubkey, false),
                 AccountMeta.Writable(sourceStakePubkey, false),
                 AccountMeta.ReadOnly(SysVars.ClockKey, false),
                 AccountMeta.ReadOnly(SysVars.StakeHistoryKey, false),
                 AccountMeta.ReadOnly(authorizedPubkey, true)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -258,12 +258,12 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction AuthorizeWithSeed(PublicKey stakePubkey, PublicKey authorityBase, string authoritySeed, PublicKey authorityOwner, PublicKey newAuthorizedPubkey, StakeAuthorize stakeAuthorize, PublicKey custodianPubkey)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(stakePubkey, false),
                 AccountMeta.ReadOnly(authorityBase, true),
                 AccountMeta.ReadOnly(SysVars.ClockKey, false)
-            };
+            ];
             if (custodianPubkey != null && custodianPubkey != authorityBase)
             {
                 keys.Add(AccountMeta.ReadOnly(custodianPubkey, true));
@@ -287,13 +287,13 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction InitializeChecked(PublicKey stakePubkey, Authorized authorized)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(stakePubkey, false),
                 AccountMeta.ReadOnly(SysVars.RentKey, false),
                 AccountMeta.ReadOnly(authorized.Staker, false),
                 AccountMeta.ReadOnly(authorized.Withdrawer,true)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -316,13 +316,13 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction AuthorizeChecked(PublicKey stakePubkey, PublicKey authorizedPubkey, PublicKey newAuthorizedPubkey, StakeAuthorize stakeAuthorize, PublicKey custodianPubkey)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(stakePubkey, false),
                 AccountMeta.ReadOnly(SysVars.ClockKey, false),
                 AccountMeta.ReadOnly(authorizedPubkey, true),
                 AccountMeta.ReadOnly(newAuthorizedPubkey,true)
-            };
+            ];
             if (custodianPubkey != null)
             {
                 keys.Add(AccountMeta.ReadOnly(custodianPubkey, true));
@@ -351,13 +351,13 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction AuthorizeCheckedWithSeed(PublicKey stakePubkey, PublicKey authorityBase, string authoritySeed, PublicKey authorityOwner, PublicKey newAuthorizedPubkey, StakeAuthorize stakeAuthorize, PublicKey custodianPubkey)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(stakePubkey, false),
                 AccountMeta.ReadOnly(authorityBase, true),
                 AccountMeta.ReadOnly(SysVars.ClockKey, false),
                 AccountMeta.ReadOnly(newAuthorizedPubkey, true)
-            };
+            ];
             if (custodianPubkey != null)
             {
                 keys.Add(AccountMeta.ReadOnly(custodianPubkey, true));
@@ -383,16 +383,16 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction.</returns>
         public static TransactionInstruction SetLockupChecked(PublicKey stakePubkey, Lockup lockup, PublicKey custodianPubkey)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(stakePubkey, false),
                 AccountMeta.ReadOnly(custodianPubkey, true)
-            };
+            ];
             if (lockup.Custodian != null)
             {
                 keys.Add(AccountMeta.ReadOnly(lockup.Custodian, true));
             }
-            Lockup lockupChecked = new Lockup
+            Lockup lockupChecked = new()
             {
                 UnixTimestamp = lockup.UnixTimestamp,
                 Epoch = lockup.Epoch
@@ -422,8 +422,8 @@ namespace Solnet.Programs
                     PublicKey = ProgramIdKey,
                     InstructionName = "Unknown Instruction",
                     ProgramName = ProgramName,
-                    Values = new Dictionary<string, object>(),
-                    InnerInstructions = new List<DecodedInstruction>()
+                    Values = [],
+                    InnerInstructions = []
                 };
             }
 
@@ -434,8 +434,8 @@ namespace Solnet.Programs
                 PublicKey = ProgramIdKey,
                 InstructionName = StakeProgramInstructions.Names[instructionValue],
                 ProgramName = ProgramName,
-                Values = new Dictionary<string, object>(){},
-                InnerInstructions = new List<DecodedInstruction>()
+                Values = [],
+                InnerInstructions = []
             };
 
             switch (instructionValue)

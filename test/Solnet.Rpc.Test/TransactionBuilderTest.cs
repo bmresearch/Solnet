@@ -51,7 +51,7 @@ namespace Solnet.Rpc.Test
         private const string Nonce = "2S1kjspXLPs6jpNVXQfNMqZzzSrKLbGdr9Fxap5h1DLN";
 
         private static byte[] CompiledMessageBytes =
-        {
+        [
             1, 0, 2, 5, 71, 105, 171, 151, 32, 75, 168, 63, 176, 202, 238, 23, 247, 134, 143, 30, 7, 78, 82, 21,
             129, 160, 216, 157, 148, 55, 157, 170, 101, 183, 23, 178, 132, 220, 206, 171, 228, 52, 112, 149, 218,
             174, 194, 90, 142, 185, 112, 195, 57, 102, 90, 129, 121, 155, 30, 112, 20, 223, 14, 67, 131, 142, 36,
@@ -61,7 +61,7 @@ namespace Solnet.Rpc.Test
             151, 136, 207, 3, 92, 49, 69, 178, 26, 179, 68, 216, 6, 46, 169, 64, 0, 0, 21, 68, 15, 82, 0, 49, 0,
             146, 241, 176, 13, 84, 249, 55, 39, 9, 212, 80, 57, 8, 193, 89, 211, 49, 162, 144, 45, 140, 117, 21, 46,
             83, 2, 3, 3, 2, 4, 0, 4, 4, 0, 0, 0, 3, 2, 0, 1, 12, 2, 0, 0, 0, 0, 202, 154, 59, 0, 0, 0, 0
-        };
+        ];
 
         [TestMethod]
         public void TestTransactionBuilderBuild()
@@ -117,7 +117,7 @@ namespace Solnet.Rpc.Test
                 .SetRecentBlockHash(Blockhash)
                 .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
                 .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)"))
-                .Build(new List<Account>());
+                .Build([]);
         }
 
         [TestMethod]
@@ -178,7 +178,7 @@ namespace Solnet.Rpc.Test
                     25000,
                     ownerAccount))
                 .AddInstruction(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net"))
-                .Build(new List<Account> { ownerAccount, mintAccount, initialAccount });
+                .Build([ownerAccount, mintAccount, initialAccount]);
 
             var tx2 = Transaction.Deserialize(tx);
             var msg = tx2.CompileMessage();

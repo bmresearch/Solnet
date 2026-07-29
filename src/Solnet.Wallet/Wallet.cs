@@ -148,7 +148,7 @@ namespace Solnet.Wallet
             Account account = GetAccount(accountIndex);
             byte[] signature = account.Sign(message);
 
-            return signature.ToArray();
+            return [.. signature];
         }
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace Solnet.Wallet
         public byte[] Sign(byte[] message)
         {
             byte[] signature = Account.Sign(message);
-            return signature.ToArray();
+            return [.. signature];
         }
 
         /// <summary>

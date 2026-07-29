@@ -64,7 +64,7 @@ namespace Solnet.Rpc.Models
         /// <returns>The byte array.</returns>
         internal byte[] ToBytes()
         {
-            return new[] { RequiredSignatures, ReadOnlySignedAccounts, ReadOnlyUnsignedAccounts };
+            return [RequiredSignatures, ReadOnlySignedAccounts, ReadOnlyUnsignedAccounts];
         }
     }
 
@@ -233,8 +233,7 @@ namespace Solnet.Rpc.Models
         /// <exception cref="ArgumentNullException">Thrown when the given string is null.</exception>
         public static Message Deserialize(string data)
         {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data));
+            ArgumentNullException.ThrowIfNull(data);
 
             byte[] decodedBytes;
 
@@ -330,7 +329,7 @@ namespace Solnet.Rpc.Models
 
                 byte version = maskedPrefix;
 
-                data = data.Slice(1, data.Length - 1); // Remove the processed prefix byte
+                data = data[1..]; // Remove the processed prefix byte
 
                 // Read message header
                 byte numRequiredSignatures = data[MessageHeader.Layout.RequiredSignaturesOffset];
@@ -390,7 +389,7 @@ namespace Solnet.Rpc.Models
                     (accountAddressLength * PublicKey.PublicKeyLength) + PublicKey.PublicKeyLength +
                     instructionsLengthEncodedLength + instructionsDataLength;
 
-                List<MessageAddressTableLookup> addressTableLookups = new();
+                List<MessageAddressTableLookup> addressTableLookups = [];
                 if (tableLookupOffset >= data.Length)
                 {
                     return new VersionedMessage()
@@ -416,23 +415,23 @@ namespace Solnet.Rpc.Models
 
                 for (int i = 0; i < addressTableLookupsCount; i++)
                 {
-                    byte[] accountKeyBytes = tableLookupData.Slice(0, PublicKey.PublicKeyLength).ToArray();
+                    byte[] accountKeyBytes = tableLookupData[..PublicKey.PublicKeyLength].ToArray();
                     PublicKey accountKey = new(accountKeyBytes);
-                    tableLookupData = tableLookupData.Slice(PublicKey.PublicKeyLength);
+                    tableLookupData = tableLookupData[PublicKey.PublicKeyLength..];
 
                     (int writableIndexesLength, int writableIndexesEncodedLength) = ShortVectorEncoding.DecodeLength(tableLookupData);
                     List<byte> writableIndexes = tableLookupData.Slice(writableIndexesEncodedLength, writableIndexesLength).ToArray().ToList();
-                    tableLookupData = tableLookupData.Slice(writableIndexesEncodedLength + writableIndexesLength);
+                    tableLookupData = tableLookupData[(writableIndexesEncodedLength + writableIndexesLength)..];
 
                     (int readonlyIndexesLength, int readonlyIndexesEncodedLength) = ShortVectorEncoding.DecodeLength(tableLookupData);
                     List<byte> readonlyIndexes = tableLookupData.Slice(readonlyIndexesEncodedLength, readonlyIndexesLength).ToArray().ToList();
-                    tableLookupData = tableLookupData.Slice(readonlyIndexesEncodedLength + readonlyIndexesLength);
+                    tableLookupData = tableLookupData[(readonlyIndexesEncodedLength + readonlyIndexesLength)..];
 
                     addressTableLookups.Add(new MessageAddressTableLookup
                     {
                         AccountKey = accountKey,
-                        WritableIndexes = writableIndexes.ToArray(),
-                        ReadonlyIndexes = readonlyIndexes.ToArray()
+                        WritableIndexes = [.. writableIndexes],
+                        ReadonlyIndexes = [.. readonlyIndexes]
                     });
                 }
 
@@ -460,8 +459,7 @@ namespace Solnet.Rpc.Models
             /// <exception cref="ArgumentNullException">Thrown when the given string is null.</exception>
             public static new VersionedMessage Deserialize(string data)
             {
-                if (data == null)
-                    throw new ArgumentNullException(nameof(data));
+                ArgumentNullException.ThrowIfNull(data);
 
                 byte[] decodedBytes;
 
@@ -559,7 +557,7 @@ namespace Solnet.Rpc.Models
             /// <returns></returns>
             public static byte[] SerializeAddressTableLookups(List<MessageAddressTableLookup> addressTableLookups)
             {
-                addressTableLookups ??= new List<MessageAddressTableLookup>();
+                addressTableLookups ??= [];
 
                 MemoryStream buffer = new();
 

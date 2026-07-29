@@ -65,10 +65,12 @@ namespace Solnet.Wallet
         /// <param name="key">The public key as byte array.</param>
         public PublicKey(byte[] key)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
             if (key.Length != PublicKeyLength)
+            {
                 throw new ArgumentException("invalid key length", nameof(key));
+            }
+
             KeyBytes = new byte[PublicKeyLength];
             Array.Copy(key, KeyBytes, PublicKeyLength);
         }
@@ -79,8 +81,12 @@ namespace Solnet.Wallet
         /// <param name="key">The public key as base58 encoded string.</param>
         public PublicKey(string key)
         {
-            if (key == null) throw new ArgumentNullException(nameof(key));
-            if (!FastCheck(key)) throw new ArgumentException("publickey contains a non-base58 character");
+            ArgumentNullException.ThrowIfNull(key);
+            if (!FastCheck(key))
+            {
+                throw new ArgumentException("publickey contains a non-base58 character");
+            }
+
             Key = key;
         }
 
@@ -91,7 +97,10 @@ namespace Solnet.Wallet
         public PublicKey(ReadOnlySpan<byte> key)
         {
             if (key.Length != PublicKeyLength)
+            {
                 throw new ArgumentException("invalid key length", nameof(key));
+            }
+
             KeyBytes = new byte[PublicKeyLength];
             key.CopyTo(KeyBytes.AsSpan());
         }
@@ -110,7 +119,10 @@ namespace Solnet.Wallet
         /// <inheritdoc cref="Equals(object)"/>
         public override bool Equals(object obj)
         {
-            if (obj is PublicKey pk) return pk.Key == this.Key;
+            if (obj is PublicKey pk)
+            {
+                return pk.Key == this.Key;
+            }
 
             return false;
         }
@@ -207,10 +219,14 @@ namespace Solnet.Wallet
             {
                 try
                 {
-                    if (!FastCheck(key)) return false;
+                    if (!FastCheck(key))
+                    {
+                        return false;
+                    }
+
                     return IsValid(Encoders.Base58.DecodeData(key), validateCurve);
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     return false;
                 }
@@ -234,7 +250,7 @@ namespace Solnet.Wallet
         {
             return key != null && key.Length == PublicKeyLength && (!validateCurve || key.IsOnCurve());
         }
-        
+
         /// <summary>
         /// Checks if a given set of bytes forms a valid PublicKey.
         /// </summary>
@@ -317,7 +333,7 @@ namespace Solnet.Wallet
         public static bool TryFindProgramAddress(IEnumerable<byte[]> seeds, PublicKey programId, out PublicKey address, out byte bump)
         {
             byte seedBump = 255;
-            List<byte[]> buffer = seeds.ToList();
+            List<byte[]> buffer = [.. seeds];
             var bumpArray = new byte[1];
             buffer.Add(bumpArray);
 
@@ -361,11 +377,11 @@ namespace Solnet.Wallet
 
             var seeds = new ReadOnlySpan<byte>(buffer.GetBuffer(), 0, (int)buffer.Length);
 
-            if(seeds.Length >= ProgramDerivedAddressBytes.Length)
+            if (seeds.Length >= ProgramDerivedAddressBytes.Length)
             {
-                var slice = seeds.Slice(seeds.Length - ProgramDerivedAddressBytes.Length);
-                
-                if(slice.SequenceEqual(ProgramDerivedAddressBytes))
+                var slice = seeds[^ProgramDerivedAddressBytes.Length..];
+
+                if (slice.SequenceEqual(ProgramDerivedAddressBytes))
                 {
                     publicKeyOut = null;
                     return false;

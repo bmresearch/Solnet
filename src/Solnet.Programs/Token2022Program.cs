@@ -54,11 +54,11 @@ namespace Solnet.Programs
         public static TransactionInstruction Transfer(
             PublicKey source, PublicKey destination, ulong amount, PublicKey authority, IEnumerable<PublicKey> signers = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(source, false),
                 AccountMeta.Writable(destination, false),
-            };
+            ];
             keys = AddSigners(keys, authority, signers);
             return new TransactionInstruction
             {
@@ -83,12 +83,12 @@ namespace Solnet.Programs
             PublicKey source, PublicKey destination, ulong amount, int decimals, PublicKey authority, PublicKey tokenMint,
             IEnumerable<PublicKey> signers = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(source, false),
                 AccountMeta.ReadOnly(tokenMint, false),
                 AccountMeta.Writable(destination, false),
-            };
+            ];
             keys = AddSigners(keys, authority, signers);
             return new TransactionInstruction
             {
@@ -107,13 +107,13 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction to initialize the token account.</returns>
         public static TransactionInstruction InitializeAccount(PublicKey account, PublicKey mint, PublicKey authority)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(account, false),
                 AccountMeta.ReadOnly(mint, false),
                 AccountMeta.ReadOnly(authority, false),
                 AccountMeta.ReadOnly(SysVars.RentKey, false)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -132,12 +132,12 @@ namespace Solnet.Programs
         /// <returns></returns>
         public static TransactionInstruction InitializeAccount2(PublicKey account, PublicKey mint, PublicKey owner)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(account, false),
                 AccountMeta.ReadOnly(mint, false),
                 AccountMeta.ReadOnly(SysVars.RentKey, false)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -155,11 +155,11 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction to initialize the token account.</returns>
         public static TransactionInstruction InitializeAccount3(PublicKey account, PublicKey mint, PublicKey owner)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(account, false),
                 AccountMeta.ReadOnly(mint, false)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -178,12 +178,12 @@ namespace Solnet.Programs
         public static TransactionInstruction InitializeMultiSignature(PublicKey multiSignature,
             IEnumerable<PublicKey> signers, int m)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(multiSignature, false),
-                AccountMeta.ReadOnly(SysVars.RentKey, false)
-            };
-            keys.AddRange(signers.Select(signer => AccountMeta.ReadOnly(signer, false)));
+                AccountMeta.ReadOnly(SysVars.RentKey, false),
+                .. signers.Select(signer => AccountMeta.ReadOnly(signer, false)),
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -202,11 +202,10 @@ namespace Solnet.Programs
         public static TransactionInstruction InitializeMultiSignature2(PublicKey multiSignature,
             IEnumerable<PublicKey> signers, int m)
         {
-            List<AccountMeta> keys = new()
-            {
-                AccountMeta.Writable(multiSignature, false)
-            };
-            keys.AddRange(signers.Select(signer => AccountMeta.ReadOnly(signer, false)));
+            List<AccountMeta> keys =
+            [
+                AccountMeta.Writable(multiSignature, false), .. signers.Select(signer => AccountMeta.ReadOnly(signer, false))
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -226,11 +225,11 @@ namespace Solnet.Programs
         public static TransactionInstruction InitializeMint(PublicKey mint, int decimals, PublicKey mintAuthority,
             PublicKey freezeAuthority = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(mint, false),
                 AccountMeta.ReadOnly(SysVars.RentKey, false)
-            };
+            ];
 
             int freezeAuthorityOpt = freezeAuthority != null ? 1 : 0;
             return new TransactionInstruction
@@ -256,10 +255,10 @@ namespace Solnet.Programs
         public static TransactionInstruction InitializeMint2(PublicKey mint, int decimals, PublicKey mintAuthority,
             PublicKey freezeAuthority = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(mint, false)
-            };
+            ];
 
             int freezeAuthorityOpt = freezeAuthority != null ? 1 : 0;
             return new TransactionInstruction
@@ -286,11 +285,11 @@ namespace Solnet.Programs
         public static TransactionInstruction MintTo(PublicKey mint, PublicKey destination, ulong amount,
             PublicKey mintAuthority, IEnumerable<PublicKey> signers = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(mint, false),
                 AccountMeta.Writable(destination, false),
-            };
+            ];
             keys = AddSigners(keys, mintAuthority, signers);
 
             return new TransactionInstruction
@@ -313,11 +312,11 @@ namespace Solnet.Programs
             PublicKey source, PublicKey delegatePublicKey, PublicKey authority, ulong amount,
             IEnumerable<PublicKey> signers = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(source, false),
                 AccountMeta.ReadOnly(delegatePublicKey, false)
-            };
+            ];
 
             keys = AddSigners(keys, authority, signers);
 
@@ -339,10 +338,10 @@ namespace Solnet.Programs
         public static TransactionInstruction Revoke(PublicKey source, PublicKey authority,
             IEnumerable<PublicKey> signers = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(source, false),
-            };
+            ];
             keys = AddSigners(keys, authority, signers);
 
             return new TransactionInstruction
@@ -366,10 +365,10 @@ namespace Solnet.Programs
             PublicKey account, AuthorityType authority, PublicKey currentAuthority, PublicKey newAuthority = null,
             IEnumerable<PublicKey> signers = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(account, false),
-            };
+            ];
             keys = AddSigners(keys, currentAuthority, signers);
 
             int newAuthorityOpt = newAuthority != null ? 1 : 0;
@@ -395,11 +394,11 @@ namespace Solnet.Programs
         public static TransactionInstruction Burn(PublicKey source, PublicKey mint, ulong amount, PublicKey authority,
             IEnumerable<PublicKey> signers = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(source, false),
                 AccountMeta.Writable(mint, false),
-            };
+            ];
             keys = AddSigners(keys, authority, signers);
             return new TransactionInstruction()
             {
@@ -461,12 +460,12 @@ namespace Solnet.Programs
             PublicKey source, PublicKey delegatePublicKey, ulong amount, byte decimals, PublicKey authority, PublicKey mint,
             IEnumerable<PublicKey> signers = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(source, false),
                 AccountMeta.ReadOnly(mint, false),
                 AccountMeta.ReadOnly(delegatePublicKey, false),
-            };
+            ];
             keys = AddSigners(keys, authority, signers);
             return new TransactionInstruction
             {
@@ -488,11 +487,11 @@ namespace Solnet.Programs
         public static TransactionInstruction MintToChecked(PublicKey mint, PublicKey destination,
             PublicKey mintAuthority, ulong amount, int decimals, IEnumerable<PublicKey> signers = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(mint, false),
                 AccountMeta.Writable(destination, false),
-            };
+            ];
             keys = AddSigners(keys, mintAuthority, signers);
             return new TransactionInstruction
             {
@@ -514,11 +513,11 @@ namespace Solnet.Programs
         public static TransactionInstruction BurnChecked(PublicKey mint, PublicKey account, PublicKey authority,
             ulong amount, int decimals, IEnumerable<PublicKey> signers = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(account, false),
                 AccountMeta.Writable(mint, false),
-            };
+            ];
             keys = AddSigners(keys, authority, signers);
             return new TransactionInstruction
             {
@@ -534,10 +533,10 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction to synchronize the native token account.</returns>
         public static TransactionInstruction SyncNative(PublicKey account)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(account, false)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -552,10 +551,10 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction to initialize the token account with an immutable owner.</returns>
         public static TransactionInstruction InitializeImmutableOwner(PublicKey account)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(account, false)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -572,10 +571,10 @@ namespace Solnet.Programs
         public static TransactionInstruction GetAccountDataSize(PublicKey mint,
             IEnumerable<Token2022ExtensionType> extensionTypes)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.ReadOnly(mint, false)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -591,10 +590,10 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction to convert the amount to a UI amount.</returns>
         public static TransactionInstruction AmountToUiAmount(PublicKey mint, ulong amount)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.ReadOnly(mint, false)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -610,10 +609,10 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction to convert the UI amount to a token amount.</returns>
         public static TransactionInstruction UiAmountToAmount(PublicKey mint, string uiAmount)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.ReadOnly(mint, false)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -629,10 +628,10 @@ namespace Solnet.Programs
         /// <returns>The transaction instruction to initialize the mint close authority.</returns>
         public static TransactionInstruction InitializeMintCloseAuthority(PublicKey mint, PublicKey closeAuthority = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(mint, false)
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -652,12 +651,12 @@ namespace Solnet.Programs
         public static TransactionInstruction Reallocate(PublicKey account, PublicKey payer, PublicKey owner,
             IEnumerable<Token2022ExtensionType> extensionTypes, IEnumerable<PublicKey> signers = null)
         {
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(account, false),
                 AccountMeta.Writable(payer, true),
                 AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
-            };
+            ];
             keys = AddSigners(keys, owner, signers);
             return new TransactionInstruction
             {
@@ -706,8 +705,8 @@ namespace Solnet.Programs
                     PublicKey = ProgramIdKey,
                     InstructionName = "Unknown Instruction",
                     ProgramName = ProgramName,
-                    Values = new Dictionary<string, object>(),
-                    InnerInstructions = new List<DecodedInstruction>()
+                    Values = [],
+                    InnerInstructions = []
                 };
             }
 
@@ -718,8 +717,8 @@ namespace Solnet.Programs
                 PublicKey = ProgramIdKey,
                 InstructionName = TokenProgramInstructions.Names[instructionValue],
                 ProgramName = ProgramName,
-                Values = new Dictionary<string, object>(),
-                InnerInstructions = new List<DecodedInstruction>()
+                Values = [],
+                InnerInstructions = []
             };
 
             switch (instructionValue)

@@ -32,7 +32,7 @@ namespace Solnet.Programs.Governance
         {
             var filters = new List<MemCmp>
             {
-                new MemCmp{ Bytes = Encoders.Base58.EncodeData(new byte[]{ (byte)GovernanceAccountType.Realm }), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset }
+                new() { Bytes = Encoders.Base58.EncodeData([(byte)GovernanceAccountType.Realm]), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset }
             };
             return await GetProgramAccounts<Realm>(programId, filters);
         }
@@ -53,7 +53,7 @@ namespace Solnet.Programs.Governance
         {
             var filters = new List<MemCmp>
             {
-                new MemCmp{ Bytes = realm, Offset = GovernanceAccount.ExtraLayout.RealmOffset }
+                new() { Bytes = realm, Offset = GovernanceAccount.ExtraLayout.RealmOffset }
             };
             return await GetProgramAccounts<GovernanceAccount>(programId, filters);
         }
@@ -77,8 +77,8 @@ namespace Solnet.Programs.Governance
         {
             var filters = new List<MemCmp>
             {
-                new MemCmp{ Bytes = Encoders.Base58.EncodeData(new byte[]{ (byte)GovernanceAccountType.MintGovernance }), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset },
-                new MemCmp{ Bytes = realm, Offset = GovernanceAccount.ExtraLayout.RealmOffset }
+                new() { Bytes = Encoders.Base58.EncodeData([(byte)GovernanceAccountType.MintGovernance]), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset },
+                new() { Bytes = realm, Offset = GovernanceAccount.ExtraLayout.RealmOffset }
             };
             return await GetProgramAccounts<GovernanceAccount>(programId, filters);
         }
@@ -102,8 +102,8 @@ namespace Solnet.Programs.Governance
         {
             var filters = new List<MemCmp>
             {
-                new MemCmp{ Bytes = Encoders.Base58.EncodeData(new byte[]{ (byte)GovernanceAccountType.ProgramGovernance }), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset },
-                new MemCmp{ Bytes = realm, Offset = GovernanceAccount.ExtraLayout.RealmOffset }
+                new() { Bytes = Encoders.Base58.EncodeData([(byte)GovernanceAccountType.ProgramGovernance]), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset },
+                new() { Bytes = realm, Offset = GovernanceAccount.ExtraLayout.RealmOffset }
             };
             return await GetProgramAccounts<GovernanceAccount>(programId, filters);
         }
@@ -127,8 +127,8 @@ namespace Solnet.Programs.Governance
         {
             var filters = new List<MemCmp>
             {
-                new MemCmp{ Bytes = Encoders.Base58.EncodeData(new byte[]{ (byte)GovernanceAccountType.TokenGovernance }), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset },
-                new MemCmp{ Bytes = realm, Offset = GovernanceAccount.ExtraLayout.RealmOffset }
+                new() { Bytes = Encoders.Base58.EncodeData([(byte)GovernanceAccountType.TokenGovernance]), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset },
+                new() { Bytes = realm, Offset = GovernanceAccount.ExtraLayout.RealmOffset }
             };
             return await GetProgramAccounts<GovernanceAccount>(programId, filters);
         }
@@ -152,8 +152,8 @@ namespace Solnet.Programs.Governance
         {
             var filters = new List<MemCmp>
             {
-                new MemCmp{ Bytes = Encoders.Base58.EncodeData(new byte[]{ (byte)GovernanceAccountType.AccountGovernance }), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset },
-                new MemCmp{ Bytes = realm, Offset = GovernanceAccount.ExtraLayout.RealmOffset }
+                new() { Bytes = Encoders.Base58.EncodeData([(byte)GovernanceAccountType.AccountGovernance]), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset },
+                new() { Bytes = realm, Offset = GovernanceAccount.ExtraLayout.RealmOffset }
             };
             return await GetProgramAccounts<GovernanceAccount>(programId, filters);
         }
@@ -177,9 +177,9 @@ namespace Solnet.Programs.Governance
         {
             var filters = new List<MemCmp>
             {
-                new MemCmp{ Bytes = Encoders.Base58.EncodeData(new byte[]{ (byte)GovernanceAccountType.TokenOwnerRecord }), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset },
-                new MemCmp{ Bytes = realm, Offset = TokenOwnerRecord.ExtraLayout.RealmOffset },
-                new MemCmp{ Bytes = owner, Offset = TokenOwnerRecord.ExtraLayout.GoverningTokenOwnerOffset }
+                new() { Bytes = Encoders.Base58.EncodeData([(byte)GovernanceAccountType.TokenOwnerRecord]), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset },
+                new() { Bytes = realm, Offset = TokenOwnerRecord.ExtraLayout.RealmOffset },
+                new() { Bytes = owner, Offset = TokenOwnerRecord.ExtraLayout.GoverningTokenOwnerOffset }
             };
             return await GetProgramAccounts<TokenOwnerRecord>(programId, filters);
         }
@@ -203,8 +203,8 @@ namespace Solnet.Programs.Governance
         {
             var filters = new List<MemCmp>
             {
-                new MemCmp{ Bytes = Encoders.Base58.EncodeData(new byte[]{ (byte)GovernanceAccountType.ProposalV1 }), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset },
-                new MemCmp{ Bytes = governance, Offset = ProposalV2.ExtraLayout.GovernanceOffset },
+                new() { Bytes = Encoders.Base58.EncodeData([(byte)GovernanceAccountType.ProposalV1]), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset },
+                new() { Bytes = governance, Offset = ProposalV2.ExtraLayout.GovernanceOffset },
             };
             return await GetProgramAccounts<ProposalV1>(programId, filters);
         }
@@ -227,8 +227,8 @@ namespace Solnet.Programs.Governance
         {
             var filters = new List<MemCmp>
             {
-                new MemCmp{ Bytes = Encoders.Base58.EncodeData(new byte[]{ (byte)GovernanceAccountType.ProposalV1 }), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset },
-                new MemCmp{ Bytes = governance, Offset = ProposalV2.ExtraLayout.GovernanceOffset },
+                new() { Bytes = Encoders.Base58.EncodeData([(byte)GovernanceAccountType.ProposalV1]), Offset = GovernanceProgramAccount.Layout.AccountTypeOffset },
+                new() { Bytes = governance, Offset = ProposalV2.ExtraLayout.GovernanceOffset },
             };
             return await GetProgramAccounts<ProposalV2>(programId, filters);
         }

@@ -76,7 +76,7 @@ namespace Solnet.Programs.Models.TokenProgram
             if (data.Length != Layout.Length)
                 throw new ArgumentException($"{nameof(data)} has wrong size. Expected {Layout.Length} bytes, actual {data.Length} bytes.");
 
-            List<PublicKey> signers = new();
+            List<PublicKey> signers = [];
 
             for(int i= 0; i < MaxSigners; i++)
             {

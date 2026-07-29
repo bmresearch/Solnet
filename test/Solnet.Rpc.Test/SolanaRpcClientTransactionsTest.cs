@@ -219,7 +219,7 @@ namespace Solnet.Rpc.Test
                          "GeIhJMvTu9qCKNNRNmSFNMnUzw5\u002BFDszWV6YvuvspBr0qlIoAdeg67wICAgABDAIAAACAlpgAAAAAAAMBA" +
                          "BVIZWxsbyBmcm9tIFNvbC5OZXQgOik=";
 
-            var result = sut.SimulateTransaction(txData, true, Commitment.Confirmed, false, new List<string> { "6bhhceZToGG9RsTe1nfNFXEMjavhj6CV55EsvearAt2z" });
+            var result = sut.SimulateTransaction(txData, true, Commitment.Confirmed, false, ["6bhhceZToGG9RsTe1nfNFXEMjavhj6CV55EsvearAt2z"]);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result.Value);
@@ -254,7 +254,7 @@ namespace Solnet.Rpc.Test
 
             var bytes = Convert.FromBase64String(txData);
 
-            var result = sut.SimulateTransaction(bytes, true, Commitment.Confirmed, false, new List<string> { "6bhhceZToGG9RsTe1nfNFXEMjavhj6CV55EsvearAt2z" });
+            var result = sut.SimulateTransaction(bytes, true, Commitment.Confirmed, false, ["6bhhceZToGG9RsTe1nfNFXEMjavhj6CV55EsvearAt2z"]);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result.Value);

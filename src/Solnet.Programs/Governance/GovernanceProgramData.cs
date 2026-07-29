@@ -10,6 +10,6 @@
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
         public static byte[] EncodeExecuteInstructionData()
-            => new[] { (byte)GovernanceProgramInstructions.Values.ExecuteInstruction };
+            => [(byte)GovernanceProgramInstructions.Values.ExecuteInstruction];
     }
 }

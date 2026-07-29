@@ -65,7 +65,7 @@ namespace Solnet.Programs.TokenSwap
         /// <exception cref="InvalidProgramException">No program account could be found (exhausted nonces)</exception>
         public virtual (PublicKey pubkey, byte nonce) CreateAuthority(PublicKey tokenSwapAccount)
         {
-            if (!PublicKey.TryFindProgramAddress(new[] { tokenSwapAccount.KeyBytes }, ProgramIdKey, out var auth, out var nonce))
+            if (!PublicKey.TryFindProgramAddress([tokenSwapAccount.KeyBytes], ProgramIdKey, out var auth, out var nonce))
                 throw new InvalidProgramException();
             return (auth, nonce);
         }
@@ -92,8 +92,8 @@ namespace Solnet.Programs.TokenSwap
             Fees fees, SwapCurve swapCurve)
         {
             var (swapAuthority, nonce) = CreateAuthority(tokenSwapAccount);
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(tokenSwapAccount, true),
                 AccountMeta.ReadOnly(swapAuthority, false),
                 AccountMeta.ReadOnly(tokenAAccount, false),
@@ -102,7 +102,7 @@ namespace Solnet.Programs.TokenSwap
                 AccountMeta.ReadOnly(poolTokenFeeAccount, false),
                 AccountMeta.Writable(userPoolTokenAccount, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false),
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -139,8 +139,8 @@ namespace Solnet.Programs.TokenSwap
             ulong amountIn, ulong amountOut)
         {
             var (swapAuthority, nonce) = CreateAuthority(tokenSwapAccount);
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.ReadOnly(tokenSwapAccount, false),
                 AccountMeta.ReadOnly(swapAuthority, false),
                 AccountMeta.ReadOnly(userTransferAuthority, false),
@@ -151,7 +151,7 @@ namespace Solnet.Programs.TokenSwap
                 AccountMeta.Writable(poolTokenMint, false),
                 AccountMeta.Writable(poolTokenFeeAccount, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false),
-            };
+            ];
             if (poolTokenHostFeeAccount != null)
             {
                 keys.Add(AccountMeta.Writable(poolTokenHostFeeAccount, false));
@@ -193,8 +193,8 @@ namespace Solnet.Programs.TokenSwap
             ulong poolTokenAmount, ulong maxTokenA, ulong maxTokenB)
         {
             var (swapAuthority, nonce) = CreateAuthority(tokenSwapAccount);
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.ReadOnly(tokenSwapAccount, false),
                 AccountMeta.ReadOnly(swapAuthority, false),
                 AccountMeta.ReadOnly(userTransferAuthority, false),
@@ -205,7 +205,7 @@ namespace Solnet.Programs.TokenSwap
                 AccountMeta.Writable(poolTokenMint, false),
                 AccountMeta.Writable(poolTokenUserAccount, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false),
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -245,8 +245,8 @@ namespace Solnet.Programs.TokenSwap
             ulong poolTokenAmount, ulong minTokenA, ulong minTokenB)
         {
             var (swapAuthority, nonce) = CreateAuthority(tokenSwapAccount);
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.ReadOnly(tokenSwapAccount, false),
                 AccountMeta.ReadOnly(swapAuthority, false),
                 AccountMeta.ReadOnly(userTransferAuthority, false),
@@ -258,7 +258,7 @@ namespace Solnet.Programs.TokenSwap
                 AccountMeta.Writable(tokenBUserAccount, false),
                 AccountMeta.Writable(feeAccount, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false),
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -293,8 +293,8 @@ namespace Solnet.Programs.TokenSwap
             ulong sourceTokenAmount, ulong minPoolTokenAmount)
         {
             var (swapAuthority, nonce) = CreateAuthority(tokenSwapAccount);
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.ReadOnly(tokenSwapAccount, false),
                 AccountMeta.ReadOnly(swapAuthority, false),
                 AccountMeta.ReadOnly(userTransferAuthority, false),
@@ -304,7 +304,7 @@ namespace Solnet.Programs.TokenSwap
                 AccountMeta.Writable(poolMintAccount, false),
                 AccountMeta.Writable(poolTokenUserAccount, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false),
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -340,8 +340,8 @@ namespace Solnet.Programs.TokenSwap
             ulong destTokenAmount, ulong maxPoolTokenAmount)
         {
             var (swapAuthority, nonce) = CreateAuthority(tokenSwapAccount);
-            List<AccountMeta> keys = new()
-            {
+            List<AccountMeta> keys =
+            [
                 AccountMeta.ReadOnly(tokenSwapAccount, false),
                 AccountMeta.ReadOnly(swapAuthority, false),
                 AccountMeta.ReadOnly(userTransferAuthority, false),
@@ -352,7 +352,7 @@ namespace Solnet.Programs.TokenSwap
                 AccountMeta.Writable(tokenUserAccount, false),
                 AccountMeta.Writable(feeAccount, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false),
-            };
+            ];
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -379,8 +379,8 @@ namespace Solnet.Programs.TokenSwap
                     PublicKey = TokenSwapProgramIdKey,
                     InstructionName = "Unknown Instruction",
                     ProgramName = TokenSwapProgramName,
-                    Values = new Dictionary<string, object>(),
-                    InnerInstructions = new List<DecodedInstruction>()
+                    Values = [],
+                    InnerInstructions = []
                 };
             }
 
@@ -391,8 +391,8 @@ namespace Solnet.Programs.TokenSwap
                 PublicKey = TokenSwapProgram.TokenSwapProgramIdKey,
                 InstructionName = TokenSwapProgramInstructions.Names[instructionValue],
                 ProgramName = TokenSwapProgram.TokenSwapProgramName,
-                Values = new Dictionary<string, object>(),
-                InnerInstructions = new List<DecodedInstruction>()
+                Values = [],
+                InnerInstructions = []
             };
 
             switch (instructionValue)

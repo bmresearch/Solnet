@@ -35,7 +35,7 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// The metadata information.
         /// </summary>
-      
+
         public TransactionMeta Meta { get; set; }
 
         /// <summary>
@@ -138,13 +138,13 @@ namespace Solnet.Rpc.Models
         /// <exception cref="JsonException"></exception>
         public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
         {
-            if (value is int)
+            if (value is int v)
             {
-                writer.WriteNumberValue((int)value);
+                writer.WriteNumberValue(v);
             }
-            else if (value is string)
+            else if (value is string s)
             {
-                writer.WriteStringValue((string)value);
+                writer.WriteStringValue(s);
             }
             else
             {
@@ -270,10 +270,10 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// Transaction addresses loaded from address lookup tables.
         /// </summary>
-   
+
         public loadedAddresses LoadedAddresses { get; set; }
-    }   
-    
+    }
+
     /// <summary>
     /// Represents an inner instruction. Inner instruction are cross-program instructions that are invoked during transaction processing.
     /// </summary>
@@ -337,7 +337,7 @@ namespace Solnet.Rpc.Models
         public TokenBalance UiTokenAmount { get; set; }
     }
 
- 
+
     /// <summary>
     /// Transaction addresses loaded from address lookup tables.
     /// </summary>

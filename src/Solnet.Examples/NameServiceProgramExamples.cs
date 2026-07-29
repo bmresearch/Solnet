@@ -17,12 +17,12 @@ namespace Solnet.Examples
         /// <summary>
         /// The public key of the Twitter Verification Authority.
         /// </summary>
-        public static readonly PublicKey TwitterVerificationAuthorityKey = new PublicKey("867BLob5b52i81SNaV9Awm5ejkZV6VGSv9SxLcwukDDJ");
+        public static readonly PublicKey TwitterVerificationAuthorityKey = new("867BLob5b52i81SNaV9Awm5ejkZV6VGSv9SxLcwukDDJ");
 
         /// <summary>
         /// The public key of the Twitter Root Parent Registry.
         /// </summary>
-        public static readonly PublicKey TwitterRootParentRegistryKey = new PublicKey("AFrGkxNmVLBn3mKhvfJJABvm8RJkTtRhHDoaF97pQZaA");
+        public static readonly PublicKey TwitterRootParentRegistryKey = new("AFrGkxNmVLBn3mKhvfJJABvm8RJkTtRhHDoaF97pQZaA");
 
         /// <summary>
         /// Get the derived account address for the reverse lookup.
@@ -87,7 +87,7 @@ namespace Solnet.Examples
                     NameServiceProgram.UpdateNameRegistry(
                         reverseRegistry,
                         125,
-                        new byte[] { 0, 0, 1, 1 },
+                        [0, 0, 1, 1],
                         ownerAccount.PublicKey,
                         (PublicKey)"8ZhEweTBhjTVzuRyoJteCqNU7AiHdpYTfreD1y9FvoFu")
                 ).AddInstruction(MemoProgram.NewMemo(payerAccount, "Hello from Sol.Net")).CompileMessage();

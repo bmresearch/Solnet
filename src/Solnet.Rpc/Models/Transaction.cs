@@ -90,8 +90,15 @@ namespace Solnet.Rpc.Models
         {
             MessageBuilder messageBuilder = new() { FeePayer = FeePayer };
 
-            if (RecentBlockHash != null) messageBuilder.RecentBlockHash = RecentBlockHash;
-            if (NonceInformation != null) messageBuilder.NonceInformation = NonceInformation;
+            if (RecentBlockHash != null)
+            {
+                messageBuilder.RecentBlockHash = RecentBlockHash;
+            }
+
+            if (NonceInformation != null)
+            {
+                messageBuilder.NonceInformation = NonceInformation;
+            }
 
             foreach (TransactionInstruction instruction in Instructions)
             {
@@ -134,7 +141,7 @@ namespace Solnet.Rpc.Models
         /// <param name="signers">The signer accounts.</param>
         public bool Sign(IList<Account> signers)
         {
-            Signatures ??= new List<SignaturePubKeyPair>();
+            Signatures ??= [];
             IEnumerable<Account> uniqueSigners = DeduplicateSigners(signers);
             byte[] serializedMessage = CompileMessage();
 
@@ -165,7 +172,7 @@ namespace Solnet.Rpc.Models
         /// </remarks>
         /// </summary>
         /// <param name="signer">The signer account.</param>
-        public bool Sign(Account signer) => Sign(new List<Account> { signer });
+        public bool Sign(Account signer) => Sign([signer]);
 
         /// <summary>
         /// Partially sign a transaction with the specified accounts.
@@ -174,7 +181,7 @@ namespace Solnet.Rpc.Models
         /// <param name="signers">The signer accounts.</param>
         public void PartialSign(IList<Account> signers)
         {
-            Signatures ??= new List<SignaturePubKeyPair>();
+            Signatures ??= [];
             IEnumerable<Account> uniqueSigners = DeduplicateSigners(signers);
             byte[] serializedMessage = CompileMessage();
 
@@ -192,12 +199,15 @@ namespace Solnet.Rpc.Models
         /// <returns>The signer accounts with removed duplicates</returns>
         private static IEnumerable<Account> DeduplicateSigners(IEnumerable<Account> signers)
         {
-            List<Account> uniqueSigners = new();
-            HashSet<Account> seen = new();
+            List<Account> uniqueSigners = [];
+            HashSet<Account> seen = [];
 
             foreach (Account account in signers)
             {
-                if (seen.Contains(account)) continue;
+                if (seen.Contains(account))
+                {
+                    continue;
+                }
 
                 seen.Add(account);
                 uniqueSigners.Add(account);
@@ -211,7 +221,7 @@ namespace Solnet.Rpc.Models
         /// The account must correspond to either the fee payer or a signer account in the transaction instructions.
         /// </summary>
         /// <param name="signer">The signer account.</param>
-        public void PartialSign(Account signer) => PartialSign(new List<Account> { signer });
+        public void PartialSign(Account signer) => PartialSign([signer]);
 
         /// <summary>
         /// Signs the transaction's message with the passed signer and add it to the transaction, serializing it.
@@ -220,7 +230,7 @@ namespace Solnet.Rpc.Models
         /// <returns>The serialized transaction.</returns>
         public byte[] Build(Account signer)
         {
-            return Build(new List<Account> { signer });
+            return Build([signer]);
         }
 
         /// <summary>
@@ -243,7 +253,7 @@ namespace Solnet.Rpc.Models
         /// <param name="signature">The transaction signature.</param>
         public void AddSignature(PublicKey publicKey, byte[] signature)
         {
-            Signatures ??= new List<SignaturePubKeyPair>();
+            Signatures ??= [];
             Signatures.Add(new SignaturePubKeyPair { PublicKey = publicKey, Signature = signature });
         }
 
@@ -254,7 +264,7 @@ namespace Solnet.Rpc.Models
         /// <returns>The transaction instance.</returns>
         public Transaction Add(IEnumerable<TransactionInstruction> instructions)
         {
-            Instructions ??= new List<TransactionInstruction>();
+            Instructions ??= [];
             Instructions.AddRange(instructions);
             return this;
         }
@@ -265,7 +275,7 @@ namespace Solnet.Rpc.Models
         /// <param name="instruction">The instruction to add.</param>
         /// <returns>The transaction instance.</returns>
         public Transaction Add(TransactionInstruction instruction) =>
-            Add(new List<TransactionInstruction> { instruction });
+            Add([instruction]);
 
         /// <summary>
         /// Serializes the transaction into wire format.
@@ -299,8 +309,8 @@ namespace Solnet.Rpc.Models
             Transaction tx = new()
             {
                 RecentBlockHash = message.RecentBlockhash,
-                Signatures = new List<SignaturePubKeyPair>(),
-                Instructions = new List<TransactionInstruction>(),
+                Signatures = [],
+                Instructions = [],
                 _accountKeys = message.AccountKeys
             };
 
@@ -312,7 +322,7 @@ namespace Solnet.Rpc.Models
             if (signatures != null)
             {
                 int i = 0;
-                foreach(byte[] signature in signatures)
+                foreach (byte[] signature in signatures)
                 {
                     byte[] messageBytes = message.Serialize();
                     bool validSig = Ed25519.Verify(signature, messageBytes, message.AccountKeys[i].KeyBytes);
@@ -408,8 +418,9 @@ namespace Solnet.Rpc.Models
 
             // If the transaction is a VersionedTransaction, use VersionedTransaction.Deserialize instead.
             if (prefix != maskedPrefix)
+            {
                 return VersionedTransaction.Deserialize(data);
-
+            }
 
             return Populate(
                 Message.Deserialize(data[
@@ -425,8 +436,7 @@ namespace Solnet.Rpc.Models
         /// <exception cref="ArgumentNullException">Thrown when the given string is null.</exception>
         public static Transaction Deserialize(string data)
         {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data));
+            ArgumentNullException.ThrowIfNull(data);
 
             byte[] decodedBytes;
 

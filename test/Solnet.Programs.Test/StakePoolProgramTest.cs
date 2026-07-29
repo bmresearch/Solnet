@@ -34,7 +34,7 @@ namespace Solnet.Programs.Test
         private static readonly PublicKey UserPoolTokenAccount = new("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab");
 
 
-        private static Fee DummyFee() => new Fee(1, 100); // use a dummy fee with nonzero values
+        private static Fee DummyFee() => new(1, 100); // use a dummy fee with nonzero values
 
 
         [TestMethod]
@@ -334,12 +334,12 @@ namespace Solnet.Programs.Test
             // For update test, we simulate a validator list with dummy validators.
             var dummyValidatorList = new ValidatorList
             {
-                Validators = new System.Collections.Generic.List<ValidatorStakeInfo>
-                {
+                Validators =
+                [
                     new ValidatorStakeInfo { VoteAccountAddress = new PublicKey("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1"), ValidatorSeedSuffix = 1, TransientSeedSuffix = 10 },
                     new ValidatorStakeInfo { VoteAccountAddress = new PublicKey("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa2"), ValidatorSeedSuffix = 2, TransientSeedSuffix = 20 },
                     new ValidatorStakeInfo { VoteAccountAddress = new PublicKey("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa3"), ValidatorSeedSuffix = 3, TransientSeedSuffix = 30 }
-                }
+                ]
             };
 
             var instr = StakePoolProgram.UpdateValidatorListBalanceChunk(
@@ -376,11 +376,11 @@ namespace Solnet.Programs.Test
             // Create a dummy validator list with one outdated validator.
             var dummyValidatorList = new ValidatorList
             {
-                Validators = new System.Collections.Generic.List<ValidatorStakeInfo>
-                {
+                Validators =
+                [
                     new ValidatorStakeInfo { VoteAccountAddress = new PublicKey("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1"), ValidatorSeedSuffix = 1, TransientSeedSuffix = 10, LastUpdateEpoch = 10 },
                     new ValidatorStakeInfo { VoteAccountAddress = new PublicKey("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa2"), ValidatorSeedSuffix = 2, TransientSeedSuffix = 20, LastUpdateEpoch = 5 }
-                }
+                ]
             };
 
             var result = StakePoolProgram.UpdateStaleStakePool(

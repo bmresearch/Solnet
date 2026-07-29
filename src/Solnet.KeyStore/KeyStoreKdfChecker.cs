@@ -21,10 +21,16 @@ namespace Solnet.KeyStore
         private static string GetKdfTypeFromJson(JsonDocument keyStoreDocument)
         {
             var cryptoObjExist = keyStoreDocument.RootElement.TryGetProperty("crypto", out var cryptoObj);
-            if (!cryptoObjExist) throw new JsonException("could not get crypto params object from json");
+            if (!cryptoObjExist)
+            {
+                throw new JsonException("could not get crypto params object from json");
+            }
 
             var kdfObjExist = cryptoObj.TryGetProperty("kdf", out var kdfObj);
-            if (!kdfObjExist) throw new JsonException("could not get kdf object from json");
+            if (!kdfObjExist)
+            {
+                throw new JsonException("could not get kdf object from json");
+            }
 
             return kdfObj.GetString();
         }
@@ -40,13 +46,10 @@ namespace Solnet.KeyStore
         /// <exception cref="InvalidKdfException">Throws exception when the <c>kdf</c> json property has an invalid <see cref="KdfType"/> value.</exception>
         public static KdfType GetKeyStoreKdfType(string json)
         {
-            if (json == null) throw new ArgumentNullException(nameof(json));
-            var keyStoreDocument = JsonSerializer.Deserialize<JsonDocument>(json);
-            if (keyStoreDocument == null) throw new SerializationException("could not process json");
+            ArgumentNullException.ThrowIfNull(json);
+            var keyStoreDocument = JsonSerializer.Deserialize<JsonDocument>(json) ?? throw new SerializationException("could not process json");
 
-            var kdfString = GetKdfTypeFromJson(keyStoreDocument);
-
-            if (kdfString == null) throw new JsonException("could not get kdf type from json");
+            var kdfString = GetKdfTypeFromJson(keyStoreDocument) ?? throw new JsonException("could not get kdf type from json");
             return kdfString switch
             {
                 KeyStorePbkdf2Service.KdfType => KdfType.Pbkdf2,

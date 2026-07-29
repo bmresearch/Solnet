@@ -64,7 +64,7 @@ namespace Solnet.Wallet
                 throw new ArgumentException("Not a secret key");
             }
 
-            Account acc = new Account(skeyBytes, skeyBytes.AsSpan(32, 32).ToArray());
+            Account acc = new(skeyBytes, skeyBytes.AsSpan(32, 32).ToArray());
 
             return acc;
         }
@@ -97,7 +97,10 @@ namespace Solnet.Wallet
         /// <inheritdoc cref="Equals(object)"/>
         public override bool Equals(object obj)
         {
-            if (obj is Account account) return account.PublicKey == this.PublicKey;
+            if (obj is Account account)
+            {
+                return account.PublicKey == this.PublicKey;
+            }
 
             return false;
         }
@@ -124,7 +127,7 @@ namespace Solnet.Wallet
 
         public static List<Account> ImportMany(List<string> Keys)
         {
-            List<Account> accounts = new List<Account>();
+            List<Account> accounts = [];
             foreach (string key in Keys)
             {
                 accounts.Add(FromSecretKey(key));
@@ -134,7 +137,7 @@ namespace Solnet.Wallet
 
         public static List<Account> ImportMany(List<byte[]> Keys)
         {
-            List<Account> accounts = new List<Account>();
+            List<Account> accounts = [];
             foreach (byte[] key in Keys)
             {
                 accounts.Add(new Account(key, key.AsSpan(32, 32).ToArray()));

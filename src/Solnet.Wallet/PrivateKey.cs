@@ -60,8 +60,7 @@ namespace Solnet.Wallet
         /// <param name="key">The public key as byte array.</param>
         public PrivateKey(byte[] key)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
             if (key.Length != PrivateKeyLength)
                 throw new ArgumentException("invalid key length", nameof(key));
             KeyBytes = new byte[PrivateKeyLength];

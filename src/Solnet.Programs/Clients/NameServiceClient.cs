@@ -59,13 +59,13 @@ namespace Solnet.Programs.Clients
         public async Task<List<RecordBase>> GetAllNamesByOwnerAsync(string address)
         {
             var res = await RpcClient.GetProgramAccountsAsync(ProgramIdKey, Rpc.Types.Commitment.Confirmed, null,
-                new List<MemCmp>() { new MemCmp() { Bytes = address, Offset = 32 } });
+                [new MemCmp() { Bytes = address, Offset = 32 }]);
 
-            List<RecordBase> result = new();
+            List<RecordBase> result = [];
 
             if(!res.WasSuccessful || res.Result == null || res.Result.Count == 0) return result;
 
-            Dictionary<string, NameRecord> nameToRecordMap = new Dictionary<string, NameRecord>();
+            Dictionary<string, NameRecord> nameToRecordMap = [];
 
             foreach (var add in res.Result)
             {
@@ -118,7 +118,7 @@ namespace Solnet.Programs.Clients
             }
 
             var reverseNameAddresses = nameToRecordMap.Keys.ToList();
-            List<AccountInfo> accInfos = new();
+            List<AccountInfo> accInfos = [];
 
             var addressesCopy = new List<string>(reverseNameAddresses);
 
@@ -127,12 +127,12 @@ namespace Solnet.Programs.Clients
                 List<string> currentReq = null;
                 if (addressesCopy.Count > 100)
                 {
-                    currentReq = addressesCopy.Take(100).ToList();
-                    addressesCopy = addressesCopy.Skip(100).ToList();
+                    currentReq = [.. addressesCopy.Take(100)];
+                    addressesCopy = [.. addressesCopy.Skip(100)];
                 }
                 else
                 {
-                    currentReq = new(addressesCopy);
+                    currentReq = [.. addressesCopy];
                     addressesCopy.Clear();
                 }
 
@@ -255,7 +255,7 @@ namespace Solnet.Programs.Clients
         {
             if (name.EndsWith(".sol"))
             {
-                name = name.Substring(0, name.Length - 4);
+                name = name[..^4];
             }
 
             var hashedName = NameServiceProgram.ComputeHashedName(name);
@@ -274,12 +274,12 @@ namespace Solnet.Programs.Clients
         {
 
             var res = await RpcClient.GetProgramAccountsAsync(ProgramIdKey, Rpc.Types.Commitment.Confirmed, null,
-                new List<MemCmp>() { new MemCmp() { Bytes = SolTLD, Offset = 0 }, new MemCmp() { Bytes = address, Offset = 32 } });
+                [new MemCmp() { Bytes = SolTLD, Offset = 0 }, new MemCmp() { Bytes = address, Offset = 32 }]);
 
-            List<ReverseNameRecord> ret = new();
+            List<ReverseNameRecord> ret = [];
             if(!res.WasSuccessful || res.Result == null || res.Result.Count == 0) return ret;
 
-            Dictionary<string, NameRecord> nameToRecordMap = new Dictionary<string, NameRecord>();
+            Dictionary<string, NameRecord> nameToRecordMap = [];
             foreach (var add in res.Result)
             {
                 var name = NameRecord.Deserialize(Convert.FromBase64String(add.Account.Data[0]));
@@ -291,7 +291,7 @@ namespace Solnet.Programs.Clients
             }
 
             var reverseNameAddresses = nameToRecordMap.Keys.ToList();
-            List<AccountInfo> accInfos = new();
+            List<AccountInfo> accInfos = [];
 
             var addressesCopy = new List<string>(reverseNameAddresses);
 
@@ -300,12 +300,12 @@ namespace Solnet.Programs.Clients
                 List<string> currentReq = null;
                 if (addressesCopy.Count > 100)
                 {
-                    currentReq = addressesCopy.Take(100).ToList();
-                    addressesCopy = addressesCopy.Skip(100).ToList();
+                    currentReq = [.. addressesCopy.Take(100)];
+                    addressesCopy = [.. addressesCopy.Skip(100)];
                 }
                 else
                 {
-                    currentReq = new(addressesCopy);
+                    currentReq = [.. addressesCopy];
                     addressesCopy.Clear();
                 }
 

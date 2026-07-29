@@ -1,12 +1,9 @@
 // unset
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json.Linq;
 using Solnet.Wallet.Bip39;
-using Solnet.Wallet.Utilities;
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
 
@@ -63,10 +60,9 @@ namespace Solnet.Wallet.Test
         {
             var lang = WordList.English;
             var words = lang.GetWords();
-            int i;
             foreach (var word in words)
             {
-                Assert.IsTrue(lang.WordExists(word, out i));
+                Assert.IsTrue(lang.WordExists(word, out int i));
                 Assert.IsTrue(i >= 0);
             }
         }
@@ -100,43 +96,43 @@ namespace Solnet.Wallet.Test
         [TestMethod]
         public void TestKnownEnglish()
         {
-            Assert.AreEqual(Language.English, WordList.AutoDetectLanguage(new string[] { "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "about" }));
+            Assert.AreEqual(Language.English, WordList.AutoDetectLanguage(["abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "abandon", "about"]));
         }
 
         [TestMethod]
         public void TestKnownJapenese()
         {
-            Assert.AreEqual(Language.Japanese, WordList.AutoDetectLanguage(new string[] { "あいこくしん", "あいさつ", "あいだ", "あおぞら", "あかちゃん", "あきる", "あけがた", "あける", "あこがれる", "あさい", "あさひ", "あしあと", "あじわう", "あずかる", "あずき", "あそぶ", "あたえる", "あたためる", "あたりまえ", "あたる", "あつい", "あつかう", "あっしゅく", "あつまり", "あつめる", "あてな", "あてはまる", "あひる", "あぶら", "あぶる", "あふれる", "あまい", "あまど", "あまやかす", "あまり", "あみもの", "あめりか" }));
+            Assert.AreEqual(Language.Japanese, WordList.AutoDetectLanguage(["あいこくしん", "あいさつ", "あいだ", "あおぞら", "あかちゃん", "あきる", "あけがた", "あける", "あこがれる", "あさい", "あさひ", "あしあと", "あじわう", "あずかる", "あずき", "あそぶ", "あたえる", "あたためる", "あたりまえ", "あたる", "あつい", "あつかう", "あっしゅく", "あつまり", "あつめる", "あてな", "あてはまる", "あひる", "あぶら", "あぶる", "あふれる", "あまい", "あまど", "あまやかす", "あまり", "あみもの", "あめりか"]));
         }
 
         [TestMethod]
         public void TestKnownSpanish()
         {
-            Assert.AreEqual(Language.Spanish, WordList.AutoDetectLanguage(new string[] { "yoga", "yogur", "zafiro", "zanja", "zapato", "zarza", "zona", "zorro", "zumo", "zurdo" }));
+            Assert.AreEqual(Language.Spanish, WordList.AutoDetectLanguage(["yoga", "yogur", "zafiro", "zanja", "zapato", "zarza", "zona", "zorro", "zumo", "zurdo"]));
         }
 
         [TestMethod]
         public void TestKnownFrench()
         {
-            Assert.AreEqual(Language.French, WordList.AutoDetectLanguage(new string[] { "abusif", "antidote" }));
+            Assert.AreEqual(Language.French, WordList.AutoDetectLanguage(["abusif", "antidote"]));
         }
 
         [TestMethod]
         public void TestKnownChineseSimplified()
         {
-            Assert.AreEqual(Language.ChineseSimplified, WordList.AutoDetectLanguage(new string[] { "的", "一", "是", "在", "不", "了", "有", "和", "人", "这" }));
+            Assert.AreEqual(Language.ChineseSimplified, WordList.AutoDetectLanguage(["的", "一", "是", "在", "不", "了", "有", "和", "人", "这"]));
         }
 
         [TestMethod]
         public void TestKnownChineseTraditional()
         {
-            Assert.AreEqual(Language.ChineseTraditional, WordList.AutoDetectLanguage(new string[] { "的", "一", "是", "在", "不", "了", "有", "和", "載" }));
+            Assert.AreEqual(Language.ChineseTraditional, WordList.AutoDetectLanguage(["的", "一", "是", "在", "不", "了", "有", "和", "載"]));
         }
 
         [TestMethod]
         public void TestKnownUnknown()
         {
-            Assert.AreEqual(Language.Unknown, WordList.AutoDetectLanguage(new string[] { "gffgfg", "khjkjk", "kjkkj" }));
+            Assert.AreEqual(Language.Unknown, WordList.AutoDetectLanguage(["gffgfg", "khjkjk", "kjkkj"]));
         }
     }
 }

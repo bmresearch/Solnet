@@ -43,7 +43,7 @@ namespace Solnet.KeyStore
         /// <returns>The string as hex.</returns>
         public static string ToHex(this byte[] value)
         {
-            return string.Concat(value.Select(b => b.ToString("x2")).ToArray());
+            return string.Concat([.. value.Select(b => b.ToString("x2"))]);
         }
 
         /// <summary>

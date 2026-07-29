@@ -33,7 +33,7 @@ namespace Solnet.Rpc.Builders
         /// <summary>
         /// The list of instructions contained within this transaction.
         /// </summary>
-       internal List<TransactionInstruction> Instructions { get; private protected set; }
+        internal List<TransactionInstruction> Instructions { get; private protected set; }
 
         /// <summary>
         /// The hash of a recent block.
@@ -56,7 +56,7 @@ namespace Solnet.Rpc.Builders
         internal MessageBuilder()
         {
             _accountKeysList = new AccountKeysList();
-            Instructions = new List<TransactionInstruction>();
+            Instructions = [];
         }
 
         /// <summary>
@@ -79,9 +79,14 @@ namespace Solnet.Rpc.Builders
         internal virtual byte[] Build()
         {
             if (RecentBlockHash == null && NonceInformation == null)
+            {
                 throw new Exception("recent block hash or nonce information is required");
+            }
+
             if (Instructions == null)
+            {
                 throw new Exception("no instructions provided in the transaction");
+            }
 
             // In case the user specified nonce information, we'll use it.
             if (NonceInformation != null)
@@ -90,8 +95,7 @@ namespace Solnet.Rpc.Builders
                 _accountKeysList.Add(NonceInformation.Instruction.Keys);
                 _accountKeysList.Add(AccountMeta.ReadOnly(new PublicKey(NonceInformation.Instruction.ProgramId),
                     false));
-                List<TransactionInstruction> newInstructions = new() { NonceInformation.Instruction };
-                newInstructions.AddRange(Instructions);
+                List<TransactionInstruction> newInstructions = [NonceInformation.Instruction, .. Instructions];
                 Instructions = newInstructions;
             }
 
@@ -100,7 +104,7 @@ namespace Solnet.Rpc.Builders
             List<AccountMeta> keysList = GetAccountKeys();
             byte[] accountAddressesLength = ShortVectorEncoding.EncodeLength(keysList.Count);
             int compiledInstructionsLength = 0;
-            List<CompiledInstruction> compiledInstructions = new();
+            List<CompiledInstruction> compiledInstructions = [];
 
             foreach (TransactionInstruction instruction in Instructions)
             {
@@ -124,7 +128,7 @@ namespace Solnet.Rpc.Builders
             }
 
             int accountKeysBufferSize = _accountKeysList.AccountList.Count * 32;
-            MemoryStream accountKeysBuffer = new MemoryStream(accountKeysBufferSize);
+            MemoryStream accountKeysBuffer = new(accountKeysBufferSize);
             byte[] instructionsLength = ShortVectorEncoding.EncodeLength(compiledInstructions.Count);
 
             foreach (AccountMeta accountMeta in keysList)
@@ -134,12 +138,16 @@ namespace Solnet.Rpc.Builders
                 {
                     _messageHeader.RequiredSignatures += 1;
                     if (!accountMeta.IsWritable)
+                    {
                         _messageHeader.ReadOnlySignedAccounts += 1;
+                    }
                 }
                 else
                 {
                     if (!accountMeta.IsWritable)
+                    {
                         _messageHeader.ReadOnlyUnsignedAccounts += 1;
+                    }
                 }
             }
 
@@ -148,7 +156,7 @@ namespace Solnet.Rpc.Builders
             int messageBufferSize = MessageHeader.Layout.HeaderLength + BlockHashLength +
                                     accountAddressesLength.Length +
                                     +instructionsLength.Length + compiledInstructionsLength + accountKeysBufferSize;
-            MemoryStream buffer = new MemoryStream(messageBufferSize);
+            MemoryStream buffer = new(messageBufferSize);
             byte[] messageHeaderBytes = _messageHeader.ToBytes();
 
             buffer.Write(messageHeaderBytes);
@@ -177,7 +185,7 @@ namespace Solnet.Rpc.Builders
         /// <returns>The list of <see cref="AccountMeta"/>.</returns>
         protected List<AccountMeta> GetAccountKeys()
         {
-            List<AccountMeta> newList = new();
+            List<AccountMeta> newList = [];
             var keysList = _accountKeysList.AccountList;
             int feePayerIndex = keysList.FindIndex(x => x.PublicKey == FeePayer.Key);
 
@@ -218,7 +226,10 @@ namespace Solnet.Rpc.Builders
         {
             for (byte index = 0; index < accountMetas.Count; index++)
             {
-                if (accountMetas[index].PublicKey == publicKey) return index;
+                if (accountMetas[index].PublicKey == publicKey)
+                {
+                    return index;
+                }
             }
 
             throw new Exception($"Something went wrong encoding this transaction. Account `{publicKey}` was not found among list of accounts. Should be impossible.");
@@ -230,7 +241,7 @@ namespace Solnet.Rpc.Builders
         /// <returns>The public keys</returns>
         public string[] GetAccountMetaPublicKeys()
         {
-            return GetAccountKeys().Select(x => x.PublicKey).ToArray();
+            return [.. GetAccountKeys().Select(x => x.PublicKey)];
         }
     }
 }

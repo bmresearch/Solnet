@@ -1,7 +1,5 @@
 using Solnet.Rpc.Models;
-using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
-using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -57,10 +55,13 @@ namespace Solnet.Programs
         {
             PublicKey associatedTokenAddress = DeriveAssociatedTokenAccount(owner, mint, tokenProgramId);
 
-            if (associatedTokenAddress == null) return null;
-
-            List<AccountMeta> keys = new()
+            if (associatedTokenAddress == null)
             {
+                return null;
+            }
+
+            List<AccountMeta> keys =
+            [
                 AccountMeta.Writable(payer, true),
                 AccountMeta.Writable(associatedTokenAddress, false),
                 AccountMeta.ReadOnly(owner, false),
@@ -68,13 +69,13 @@ namespace Solnet.Programs
                 AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
                 AccountMeta.ReadOnly(tokenProgramId, false),
                 AccountMeta.ReadOnly(SysVars.RentKey, false)
-            };
+            ];
 
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = Array.Empty<byte>()
+                Data = []
             };
         }
 
@@ -99,7 +100,7 @@ namespace Solnet.Programs
         public static PublicKey DeriveAssociatedTokenAccount(PublicKey owner, PublicKey mint, PublicKey tokenProgramId)
         {
             bool success = PublicKey.TryFindProgramAddress(
-                new List<byte[]> { owner.KeyBytes, tokenProgramId.KeyBytes, mint.KeyBytes },
+                [owner.KeyBytes, tokenProgramId.KeyBytes, mint.KeyBytes],
                 ProgramIdKey, out PublicKey derivedAssociatedTokenAddress, out _);
             return derivedAssociatedTokenAddress;
         }
@@ -125,7 +126,7 @@ namespace Solnet.Programs
                     {"Owner", keys[keyIndices[2]]},
                     {"Mint", keys[keyIndices[3]]},
                 },
-                InnerInstructions = new List<DecodedInstruction>(),
+                InnerInstructions = [],
             };
 
             return decodedInstruction;

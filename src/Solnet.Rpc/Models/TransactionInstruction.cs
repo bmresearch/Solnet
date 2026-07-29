@@ -119,7 +119,7 @@ namespace Solnet.Rpc.Models
             ReadOnlySpan<byte> encodedDataLength =
                 data.Length > instructionLength + ShortVectorEncoding.SpanLength ?
                     data.Slice(instructionLength, ShortVectorEncoding.SpanLength)
-                    : data.Slice(instructionLength, data.Length - instructionLength);
+                    : data[instructionLength..];
 
             (int dataLength, int dataLengthEncodedLength) = ShortVectorEncoding.DecodeLength(encodedDataLength);
             instructionLength += dataLengthEncodedLength;

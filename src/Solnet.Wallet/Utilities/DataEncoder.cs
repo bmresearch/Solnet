@@ -12,17 +12,11 @@ namespace Solnet.Wallet.Utilities
         /// <returns>True if it is, otherwise false.</returns>
         public static bool IsSpace(char c)
         {
-            switch (c)
+            return c switch
             {
-                case ' ':
-                case '\t':
-                case '\n':
-                case '\v':
-                case '\f':
-                case '\r':
-                    return true;
-            }
-            return false;
+                ' ' or '\t' or '\n' or '\v' or '\f' or '\r' => true,
+                _ => false,
+            };
         }
 
         /// <summary>

@@ -18,7 +18,7 @@ namespace Solnet.Rpc.Test
             "forward deal onion eight catalog surface unit card window walnut wealth medal";
 
         private static byte[] CompiledMessageBytes =
-        {
+        [
             1, 0, 2, 5, 71, 105, 171, 151, 32, 75, 168, 63, 176, 202, 238, 23, 247, 134, 143, 30, 7, 78, 82, 21,
             129, 160, 216, 157, 148, 55, 157, 170, 101, 183, 23, 178, 132, 220, 206, 171, 228, 52, 112, 149, 218,
             174, 194, 90, 142, 185, 112, 195, 57, 102, 90, 129, 121, 155, 30, 112, 20, 223, 14, 67, 131, 142, 36,
@@ -28,10 +28,10 @@ namespace Solnet.Rpc.Test
             151, 136, 207, 3, 92, 49, 69, 178, 26, 179, 68, 216, 6, 46, 169, 64, 0, 0, 21, 68, 15, 82, 0, 49, 0,
             146, 241, 176, 13, 84, 249, 55, 39, 9, 212, 80, 57, 8, 193, 89, 211, 49, 162, 144, 45, 140, 117, 21, 46,
             83, 2, 3, 3, 2, 4, 0, 4, 4, 0, 0, 0, 3, 2, 0, 1, 12, 2, 0, 0, 0, 0, 202, 154, 59, 0, 0, 0, 0
-        };
+        ];
 
         private static byte[] CompiledAndSignedBytes =
-        {
+        [
             1, 13, 18, 225, 68, 176, 254, 183, 157, 106, 29, 87, 152, 179, 104, 244, 139, 151, 193, 221, 38, 99,
             232, 152, 59, 58, 18, 54, 171, 174, 187, 41, 186, 131, 84, 185, 215, 182, 192, 38, 72, 229, 186, 195,
             119, 94, 63, 210, 160, 176, 79, 194, 101, 224, 221, 6, 127, 153, 218, 31, 223, 31, 118, 4, 6, 1, 0, 2,
@@ -44,10 +44,10 @@ namespace Solnet.Rpc.Test
             207, 3, 92, 49, 69, 178, 26, 179, 68, 216, 6, 46, 169, 64, 0, 0, 21, 68, 15, 82, 0, 49, 0, 146, 241,
             176, 13, 84, 249, 55, 39, 9, 212, 80, 57, 8, 193, 89, 211, 49, 162, 144, 45, 140, 117, 21, 46, 83, 2, 3,
             3, 2, 4, 0, 4, 4, 0, 0, 0, 3, 2, 0, 1, 12, 2, 0, 0, 0, 0, 202, 154, 59, 0, 0, 0, 0
-        };
+        ];
 
         private static byte[] CraftTransactionBytes =
-        {
+        [
             3, 230, 155, 244, 7, 138, 48, 69, 134, 17, 31, 188, 153, 121, 114, 199, 185, 236, 232, 115, 176, 139, 
             150, 72, 167, 98, 110, 93, 170, 237, 95, 49, 204, 1, 100, 43, 189, 169, 146, 230, 50, 24, 217, 145, 178, 
             114, 72, 186, 85, 3, 184, 2, 122, 27, 231, 100, 58, 113, 159, 65, 161, 136, 77, 147, 5, 232, 59, 124, 
@@ -77,7 +77,7 @@ namespace Solnet.Rpc.Test
             133, 126, 255, 0, 169, 6, 4, 1, 2, 0, 5, 1, 1, 6, 3, 2, 1, 0, 9, 7, 64, 66, 15, 0, 0, 0, 0, 0, 4, 1, 1, 18, 
             72, 101, 108, 108, 111, 32, 102, 114, 111, 109, 32, 83, 111, 108, 46, 78, 101, 116
 
-        };
+        ];
 
         private const string InvalidBase64Transaction =
             "AQ0S4USBAYBAAIFR2mrlyBLqD+wyu4X94aPHgdOUhWBoNidlDedqmW3F7KE3M6r5DRwldquwlqOuXDDOWZagXmbHnAU3w5Dg44kot" +
@@ -177,12 +177,12 @@ namespace Solnet.Rpc.Test
         [TestMethod]
         public void PopulateTest()
         {
-            Transaction tx = Transaction.Populate(Base64Message, new List<byte[]>()
-            {
+            Transaction tx = Transaction.Populate(Base64Message,
+            [
                 Encoders.Base58.DecodeData("5cR7atqKv6zc73VFCK5iF58ytoaGMa9fFrY1JG95yn5QyyFPDxCtBmuBLvpZXF5o79YZ1phSoDD4ELqnJy468Ktg"),
                 Encoders.Base58.DecodeData("5eJHTqGiAq4AGdJDT35A8zxJv9FjYfFd4YM1KivWYxxSVUmc9f5iFLbGbJiup7EhuMuYRHNXuV12BbWe1bcivLKN"),
                 Encoders.Base58.DecodeData("5H8vKk6PGJKJxYxFfRkUnNwwJv9HaaZzmPfBSxJkvMpAgknm3JakR77WchVfHMTCHdG9mCWULjc8jEvHJb7wwXQG"),
-            });
+            ]);
 
             byte[] txBytes = tx.Serialize();
 
@@ -339,7 +339,7 @@ namespace Solnet.Rpc.Test
                 .Add(MemoProgram.NewMemo(initialAccount, "Hello from Sol.Net"))
                 .CompileMessage();
 
-            tx.PartialSign(new List<Account> { ownerAccount, ownerAccount });
+            tx.PartialSign([ownerAccount, ownerAccount]);
             tx.PartialSign(mintAccount);
 
             tx.AddSignature(initialAccount.PublicKey, initialAccount.Sign(txBytes));
@@ -360,19 +360,19 @@ namespace Solnet.Rpc.Test
             {
                 FeePayer = ownerAccount,
                 RecentBlockHash = "6dpApBv7syEswXqBMkyHqETN3MGY5x4ZW2cnLzRSSLJ4",
-                Instructions = new List<TransactionInstruction>
-                {
+                Instructions =
+                [
                     MemoProgram.NewMemo(ownerAccount, "v0 alt")
-                },
-                AddressTableLookups = new List<MessageAddressTableLookup>
-                {
+                ],
+                AddressTableLookups =
+                [
                     new()
                     {
                         AccountKey = AddressLookupTableProgram.ProgramIdKey,
-                        WritableIndexes = new byte[] { 0 },
-                        ReadonlyIndexes = new byte[] { 1, 2, 3 }
+                        WritableIndexes = [0],
+                        ReadonlyIndexes = [1, 2, 3]
                     }
-                }
+                ]
             };
 
             byte[] compiled = tx.CompileMessage();
@@ -396,11 +396,11 @@ namespace Solnet.Rpc.Test
                 Version = 1,
                 FeePayer = ownerAccount,
                 RecentBlockHash = "6dpApBv7syEswXqBMkyHqETN3MGY5x4ZW2cnLzRSSLJ4",
-                Instructions = new List<TransactionInstruction>
-                {
+                Instructions =
+                [
                     MemoProgram.NewMemo(ownerAccount, "v1")
-                },
-                AddressTableLookups = new List<MessageAddressTableLookup>()
+                ],
+                AddressTableLookups = []
             };
 
             byte[] compiled = tx.CompileMessage();

@@ -196,7 +196,7 @@ namespace Solnet.Programs.StakePool
                     throw new ArgumentException("Unknown FeeType variant");
             }
 
-            return buffer.ToArray();
+            return [.. buffer];
         }
 
         /// <summary>

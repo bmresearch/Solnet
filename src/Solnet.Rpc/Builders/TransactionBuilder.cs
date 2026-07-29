@@ -40,7 +40,7 @@ namespace Solnet.Rpc.Builders
         public TransactionBuilder()
         {
             _messageBuilder = new MessageBuilder();
-            _signatures = new List<string>();
+            _signatures = [];
         }
 
         /// <summary>
@@ -49,8 +49,7 @@ namespace Solnet.Rpc.Builders
         public byte[] Serialize()
         {
             byte[] signaturesLength = ShortVectorEncoding.EncodeLength(_signatures.Count);
-            if (_serializedMessage == null)
-                _serializedMessage = _messageBuilder.Build();
+            _serializedMessage ??= _messageBuilder.Build();
             MemoryStream buffer = new(signaturesLength.Length + _signatures.Count * SignatureLength + _serializedMessage.Length);
 
             buffer.Write(signaturesLength);
@@ -70,10 +69,15 @@ namespace Solnet.Rpc.Builders
         /// <exception cref="Exception">Throws exception when the list of signers is null or empty or when the fee payer hasn't been set.</exception>
         private void Sign(IList<Account> signers)
         {
-            if (signers == null || signers.Count == 0) throw new Exception("no signers for the transaction");
+            if (signers == null || signers.Count == 0)
+            {
+                throw new Exception("no signers for the transaction");
+            }
 
             if (_messageBuilder.FeePayer == null)
+            {
                 throw new Exception("fee payer is required");
+            }
 
             _serializedMessage = _messageBuilder.Build();
 
@@ -95,7 +99,9 @@ namespace Solnet.Rpc.Builders
             {
                 // If no signer was provided for this key, skip.
                 if (!signersByKey.TryGetValue(pubkey, out var signerList) || signerList.Count == 0)
+                {
                     continue;
+                }
 
                 // If we already signed this (same key, same message), just reuse the cached signature since Ed25519 is deterministic.
                 if (signatureCacheByKey.TryGetValue(pubkey, out var cachedSig))
@@ -197,7 +203,7 @@ namespace Solnet.Rpc.Builders
         /// <returns>The serialized transaction.</returns>
         public byte[] Build(Account signer)
         {
-            return Build(new List<Account> { signer });
+            return Build([signer]);
         }
 
         /// <summary>

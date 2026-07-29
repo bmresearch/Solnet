@@ -13,45 +13,45 @@ namespace Solnet.Wallet.Test
     {
         private const string PrivateKeyString = "5ZD7ntKtyHrnqMhfSuKBLdqHzT5N3a2aYnCGBcz4N78b84TKpjwQ4QBsapEnpnZFchM7F1BpqDkSuLdwMZwM8hLi";
         private static readonly byte[] ExpectedPrivateKeyBytes =
-        {
+        [
             227, 215, 255, 79, 160, 83, 24, 167, 124, 73, 168, 45,
             235, 105, 253, 165, 194, 54, 12, 95, 5, 47, 21, 158, 120,
             155, 199, 182, 101, 212, 80, 173, 138, 180, 156, 252, 109,
             252, 108, 26, 186, 0, 196, 69, 57, 102, 15, 151, 149, 242,
             119, 181, 171, 113, 120, 224, 0, 118, 155, 61, 246, 56, 178, 47
-        };
+        ];
         private const string ExpectedPrivateKey =
             "c1BzdtL4RByNQnzcaUq3WuNLuyY4tQogGT7JWwy4YGBE8FGSgWUH8eNJFyJgXNYtwTKq4emhC4V132QX9REwujm";
         private static readonly byte[] PrivateKeyBytes =
-        {
+        [
             30, 47, 124, 64, 115, 181, 108, 148, 133, 204, 66, 60, 190,
             64, 208, 182, 169, 19, 112, 20, 186, 227, 179, 134, 96, 155,
             90, 163, 54, 6, 152, 33, 123, 172, 114, 217, 192, 233, 194,
             40, 233, 234, 173, 25, 163, 56, 237, 112, 216, 151, 21, 209,
             120, 79, 46, 85, 162, 195, 155, 97, 136, 88, 16, 64
-        };
+        ];
         private static readonly byte[] InvalidPrivateKeyBytes =
-        {
+        [
             30, 47, 124, 64, 115, 181, 108, 148, 133, 204, 66, 60, 190,
             64, 208, 182, 169, 19, 112, 20, 186, 227, 179, 134, 96, 155,
             90, 163, 54, 6, 152, 33, 123, 172, 114, 217, 192, 233, 194,
             40, 233, 234, 173, 25, 163, 56, 237, 112, 216, 151, 21, 209,
             120, 79, 46, 85, 162, 195, 155, 97, 136, 88, 16, 64, 0
-        };
+        ];
 
         private const string PublicKeyString = "9KmfMX4Ne5ocb8C7PwjmJTWTpQTQcPhkeD2zY35mawhq";
         private static readonly byte[] PublicKeyBytes =
-        {
+        [
             123, 172, 114, 217, 192, 233, 194, 40, 233, 234, 173, 25,
             163, 56, 237, 112, 216, 151, 21, 209, 120, 79, 46, 85,
             162, 195, 155, 97, 136, 88, 16, 64
-        };
+        ];
         private static readonly byte[] InvalidPublicKeyBytes =
-        {
+        [
             123, 172, 114, 217, 192, 233, 194, 40, 233, 234, 173, 25,
             163, 56, 237, 112, 216, 151, 21, 209, 120, 79, 46, 85,
             162, 195, 155, 97, 136, 88, 16, 64, 0
-        };
+        ];
 
         [TestMethod]
         public void TestPrivateKey()
@@ -240,7 +240,7 @@ namespace Solnet.Wallet.Test
 
         }
 
-        private readonly PublicKey LoaderProgramId = new PublicKey("BPFLoader1111111111111111111111111111111111");
+        private readonly PublicKey LoaderProgramId = new("BPFLoader1111111111111111111111111111111111");
 
 
         [TestMethod]
@@ -248,7 +248,7 @@ namespace Solnet.Wallet.Test
         public void TestCreateProgramAddressException()
         {
             _ = PublicKey.TryCreateProgramAddress(
-                new[] { Encoding.UTF8.GetBytes("SeedPubey1111111111111111111111111111111111") }, LoaderProgramId, out _);
+                [Encoding.UTF8.GetBytes("SeedPubey1111111111111111111111111111111111")], LoaderProgramId, out _);
         }
 
         [TestMethod]
@@ -257,19 +257,19 @@ namespace Solnet.Wallet.Test
             var b58 = new Base58Encoder();
 
             var success = PublicKey.TryCreateProgramAddress(
-                new[] { b58.DecodeData("SeedPubey1111111111111111111111111111111111") }, LoaderProgramId, out PublicKey pubKey);
+                [b58.DecodeData("SeedPubey1111111111111111111111111111111111")], LoaderProgramId, out PublicKey pubKey);
 
             Assert.IsTrue(success);
             Assert.AreEqual("GUs5qLUfsEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K", pubKey.Key);
 
             success = PublicKey.TryCreateProgramAddress(
-                new[] { Encoding.UTF8.GetBytes(""), new byte[] { 1 } }, LoaderProgramId, out pubKey);
+                [Encoding.UTF8.GetBytes(""), [1]], LoaderProgramId, out pubKey);
 
             Assert.IsTrue(success);
             Assert.AreEqual("3gF2KMe9KiC6FNVBmfg9i267aMPvK37FewCip4eGBFcT", pubKey.Key);
 
             success = PublicKey.TryCreateProgramAddress(
-                new[] { Encoding.UTF8.GetBytes("☉") }, LoaderProgramId, out pubKey);
+                [Encoding.UTF8.GetBytes("☉")], LoaderProgramId, out pubKey);
 
             Assert.IsTrue(success);
             Assert.AreEqual("7ytmC1nT1xY4RfxCV2ZgyA7UakC93do5ZdyhdF3EtPj7", pubKey.Key);
@@ -278,13 +278,13 @@ namespace Solnet.Wallet.Test
         [TestMethod]
         public void TestFindProgramAddress()
         {
-            var tryFindSuccess = PublicKey.TryFindProgramAddress(new[] { Encoding.UTF8.GetBytes("") },
+            var tryFindSuccess = PublicKey.TryFindProgramAddress([Encoding.UTF8.GetBytes("")],
                 LoaderProgramId, out PublicKey derivedAddress, out byte derivationNonce);
 
             Assert.IsTrue(tryFindSuccess);
 
             var createProgSuccess = PublicKey.TryCreateProgramAddress(
-                new[] { Encoding.UTF8.GetBytes(""), new[] { derivationNonce } }, LoaderProgramId, out PublicKey pubKey);
+                [Encoding.UTF8.GetBytes(""), [derivationNonce]], LoaderProgramId, out PublicKey pubKey);
 
             Assert.IsTrue(createProgSuccess);
             Assert.AreEqual(derivedAddress.Key, pubKey.Key);

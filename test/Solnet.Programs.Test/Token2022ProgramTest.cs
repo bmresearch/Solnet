@@ -46,7 +46,7 @@ namespace Solnet.Programs.Test
             Account mint = wallet.GetAccount(1);
 
             var instruction = Token2022Program.GetAccountDataSize(mint.PublicKey,
-                new[] { Token2022ExtensionType.ImmutableOwner, Token2022ExtensionType.MemoTransfer });
+                [Token2022ExtensionType.ImmutableOwner, Token2022ExtensionType.MemoTransfer]);
 
             CollectionAssert.AreEqual(new byte[] { 21, 7, 0, 8, 0 }, instruction.Data);
         }
@@ -59,7 +59,7 @@ namespace Solnet.Programs.Test
 
             var instruction = Token2022Program.InitializeImmutableOwner(account.PublicKey);
             var decoded = InstructionDecoder.Decode(Token2022Program.ProgramIdKey, instruction.Data,
-                new List<PublicKey> { account.PublicKey }, new byte[] { 0 });
+                [account.PublicKey], [0]);
 
             Assert.IsNotNull(decoded);
             Assert.AreEqual("Token 2022 Program", decoded.ProgramName);
