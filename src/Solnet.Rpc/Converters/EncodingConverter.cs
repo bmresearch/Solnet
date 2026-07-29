@@ -21,7 +21,7 @@ namespace Solnet.Rpc.Converters
         /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, BinaryEncoding value, JsonSerializerOptions options)
         {
-            if(value == BinaryEncoding.JsonParsed)
+            if (value == BinaryEncoding.JsonParsed)
             {
                 writer.WriteStringValue("jsonParsed");
             }

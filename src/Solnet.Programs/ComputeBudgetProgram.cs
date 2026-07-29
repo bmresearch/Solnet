@@ -9,29 +9,29 @@ using System.Threading.Tasks;
 
 namespace Solnet.Programs
 {
-        /// <summary>
-        /// Implements the ComputeBudget Program methods.
-        /// <remarks>
-        /// For more information see: https://spl.solana.com/memo
-        /// </remarks>
-        /// </summary>
- 
+    /// <summary>
+    /// Implements the ComputeBudget Program methods.
+    /// <remarks>
+    /// For more information see: https://spl.solana.com/memo
+    /// </remarks>
+    /// </summary>
+
     public class ComputeBudgetProgram
     {
-        
-            /// <summary>
-            /// The public key of the ComputeBudget Program.
-            /// </summary>
-            public static readonly PublicKey ProgramIdKey = new("ComputeBudget111111111111111111111111111111");
+
+        /// <summary>
+        /// The public key of the ComputeBudget Program.
+        /// </summary>
+        public static readonly PublicKey ProgramIdKey = new("ComputeBudget111111111111111111111111111111");
 
 
-            /// <summary>
-            /// The program's name.
-            /// </summary>
-            private const string ProgramName = "Compute Budget Program";
+        /// <summary>
+        /// The program's name.
+        /// </summary>
+        private const string ProgramName = "Compute Budget Program";
 
 
-  
+
         /// <summary>
         /// Request HeapFrame Instruction related to Priority Fees
         /// </summary>
@@ -80,7 +80,7 @@ namespace Solnet.Programs
         public static TransactionInstruction SetComputeUnitPrice(ulong priority_rate)
         {
             List<AccountMeta> keys = [];
-            
+
             byte[] instructionBytes = new byte[9];
             instructionBytes.WriteU8(3, 0);
             instructionBytes.WriteU64(priority_rate, 1);

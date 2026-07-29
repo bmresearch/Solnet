@@ -177,7 +177,7 @@ namespace Solnet.Programs
         /// </summary>
         /// <returns>The byte array with the encoded data.</returns>
         internal static byte[] EncodeSyncNativeData() =>
-            [(byte) TokenProgramInstructions.Values.SyncNative];
+            [(byte)TokenProgramInstructions.Values.SyncNative];
 
         /// <summary>
         /// Encodes the transaction instruction data for the <see cref="TokenProgramInstructions.Values.InitializeAccount2"/> method.
@@ -337,9 +337,9 @@ namespace Solnet.Programs
             decodedInstruction.Values.Add("Mint Authority", data.GetPubKey(2));
 
             var hasFreezeAuthority = data.GetBool(34);
-            
+
             decodedInstruction.Values.Add("Freeze Authority Option", hasFreezeAuthority);
-            if(hasFreezeAuthority)
+            if (hasFreezeAuthority)
                 decodedInstruction.Values.Add("Freeze Authority", data.GetPubKey(35));
         }
 

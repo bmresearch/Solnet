@@ -175,7 +175,7 @@ namespace Solnet.Wallet
             string path = DerivationPath.Replace("x", index.ToString());
             (byte[] account, byte[] _) = _ed25519Bip32.DerivePath(path);
             byte[] privateKey = Ed25519.ExpandedPrivateKeyFromSeed(account);
-            byte[] publicKey =  Ed25519.PublicKeyFromSeed(account);
+            byte[] publicKey = Ed25519.PublicKeyFromSeed(account);
 
             return new Account(privateKey, publicKey);
         }

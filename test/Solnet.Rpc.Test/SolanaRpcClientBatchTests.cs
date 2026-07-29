@@ -263,5 +263,3 @@ namespace Solnet.Rpc.Test
     }
 
 }
-
-

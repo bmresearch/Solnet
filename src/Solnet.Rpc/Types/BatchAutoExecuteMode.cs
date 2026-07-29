@@ -10,7 +10,7 @@ namespace Solnet.Rpc.Types
     /// Represents the different auto execute modes for an `SolanaRpcBatchComposer`
     /// </summary>
     public enum BatchAutoExecuteMode
-    {  
+    {
         /// <summary>
         /// No auto execution.
         /// </summary>

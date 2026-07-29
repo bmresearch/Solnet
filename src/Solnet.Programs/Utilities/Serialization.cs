@@ -37,7 +37,7 @@ namespace Solnet.Programs.Utilities
         public static unsafe void WriteBool(this byte[] data, bool value, int offset)
         {
             ArgumentOutOfRangeException.ThrowIfGreaterThan(offset, data.Length - sizeof(byte));
-            data[offset] =  *((byte*)(&value));;
+            data[offset] = *((byte*)(&value)); ;
         }
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace Solnet.Programs.Utilities
                 isUnsigned,
                 isBigEndian);
 
-            if(!isUnsigned && bigInteger.Sign < 0)
+            if (!isUnsigned && bigInteger.Sign < 0)
             {
                 while (written < length) data[offset + written++] = 0xFF;
             }
@@ -239,7 +239,7 @@ namespace Solnet.Programs.Utilities
         {
             byte[] stringBytes = Encoding.UTF8.GetBytes(value);
 
-            if(offset + sizeof(uint) + stringBytes.Length > data.Length)
+            if (offset + sizeof(uint) + stringBytes.Length > data.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
 
             data.WriteU32((uint)stringBytes.Length, offset);
@@ -256,14 +256,14 @@ namespace Solnet.Programs.Utilities
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        public static int WriteBorshByteVector(this byte[] data, Span<byte>  buffer, int offset)
+        public static int WriteBorshByteVector(this byte[] data, Span<byte> buffer, int offset)
         {
-            data.WriteU64( (ulong) buffer.Length , offset);
+            data.WriteU64((ulong)buffer.Length, offset);
             data.WriteSpan(buffer, offset + sizeof(ulong));
             return sizeof(ulong) + buffer.Length;
         }
-        
-        
+
+
         /// <summary>
         /// Encodes a string for a transaction
         /// </summary>
@@ -272,12 +272,12 @@ namespace Solnet.Programs.Utilities
         public static byte[] EncodeBincodeString(string data)
         {
             byte[] stringBytes = Encoding.UTF8.GetBytes(data);
-          
-            byte[] encoded = new byte[stringBytes.Length+sizeof(ulong)];
+
+            byte[] encoded = new byte[stringBytes.Length + sizeof(ulong)];
 
             encoded.WriteU64((ulong)stringBytes.Length, 0);
             encoded.WriteSpan(stringBytes, 8);
-          
+
             return encoded;
         }
     }

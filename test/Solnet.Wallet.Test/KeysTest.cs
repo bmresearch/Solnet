@@ -226,7 +226,7 @@ namespace Solnet.Wallet.Test
 
             Assert.AreEqual("9h1HyLCW5dZnBVap8C5egQ9Z6pHyjsh5MNy83iPqqRuq", res.Key);
         }
-        
+
 
         [TestMethod]
         public void TryCreateWithSeed_False()
@@ -303,20 +303,20 @@ namespace Solnet.Wallet.Test
         {
             Assert.IsFalse(PublicKey.IsValid("GUs5qLUfsEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K", true));
         }
-        
+
         [TestMethod]
         public void TestIsValidOnCurve_True()
         {
             Assert.IsTrue(PublicKey.IsValid("oaksGKfwkFZwCniyCF35ZVxHDPexQ3keXNTiLa7RCSp", true));
         }
 
-        
+
         [TestMethod]
         public void TestIsValidOnCurveSpan_False()
         {
             Assert.IsFalse(PublicKey.IsValid(new ReadOnlySpan<byte>(Encoders.Base58.DecodeData("GUs5qLUfsEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K")), true));
         }
-        
+
         [TestMethod]
         public void TestIsValidOnCurveSpan_True()
         {

@@ -27,10 +27,10 @@ namespace Solnet.Rpc.Messages
         /// <summary>
         /// The RPC result of a given request cast as T
         /// </summary>
-        public T ResultAs<T>() 
-        { 
-            return (T) Result;
-        } 
+        public T ResultAs<T>()
+        {
+            return (T)Result;
+        }
 
     }
 }

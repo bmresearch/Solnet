@@ -12,7 +12,7 @@ namespace Solnet.Programs
     /// https://docs.rs/solana-sdk/1.9.13/solana_sdk/loader_upgradeable_instruction/enum.UpgradeableLoaderInstruction.html
     /// </remarks>
     /// </summary>
-    public static class BPFLoaderProgram 
+    public static class BPFLoaderProgram
     {
         /// <summary>
         /// The public key of the BPF Loader Program.
@@ -30,19 +30,19 @@ namespace Solnet.Programs
         /// <param name="sourceAccount">public key of the account to init</param>
         /// <param name="authority">public key of the authority over the account</param>
         /// <returns>The transaction instruction</returns>
-        public static TransactionInstruction InitializeBuffer(PublicKey  sourceAccount  , PublicKey authority = null)
+        public static TransactionInstruction InitializeBuffer(PublicKey sourceAccount, PublicKey authority = null)
         {
-          var keys = new  List<AccountMeta> ()
+            var keys = new List<AccountMeta>()
             {
                 AccountMeta.Writable(sourceAccount, false),
             };
-          if (authority !=null) keys.Add( AccountMeta.ReadOnly(authority,false));
-          return new TransactionInstruction
-          {
-              ProgramId = ProgramIdKey.KeyBytes,
-              Keys = keys,
-              Data = BPFLoaderProgramData.EncodeInitializeBuffer().ToArray()
-          };
+            if (authority != null) keys.Add(AccountMeta.ReadOnly(authority, false));
+            return new TransactionInstruction
+            {
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = keys,
+                Data = BPFLoaderProgramData.EncodeInitializeBuffer().ToArray()
+            };
         }
 
         /// <summary>
@@ -53,9 +53,9 @@ namespace Solnet.Programs
         /// <param name="data">data to write to the buffer account (Serialized program data)</param>
         /// <param name="offset">offset at which to write the given data.</param>
         /// <returns>The transaction instruction</returns>
-        public static TransactionInstruction Write(PublicKey bufferAccount, PublicKey bufferAuthority,   Span<byte> data, uint offset)
+        public static TransactionInstruction Write(PublicKey bufferAccount, PublicKey bufferAuthority, Span<byte> data, uint offset)
         {
-            var keys = new  List<AccountMeta> ()
+            var keys = new List<AccountMeta>()
             {
                 AccountMeta.Writable(bufferAccount, false),
                 AccountMeta.ReadOnly(bufferAuthority, true),
@@ -82,7 +82,7 @@ namespace Solnet.Programs
         public static TransactionInstruction DeployWithMaxDataLen(PublicKey payer, PublicKey programDataAccount,
             PublicKey programAccount, PublicKey bufferAccount, PublicKey authority, ulong maxDataLenght)
         {
-            var keys = new  List<AccountMeta> ()
+            var keys = new List<AccountMeta>()
             {
                 AccountMeta.ReadOnly(payer, true),
                 AccountMeta.Writable(programDataAccount, false),
@@ -114,7 +114,7 @@ namespace Solnet.Programs
         public static TransactionInstruction Upgrade(PublicKey programDataAccount, PublicKey programAccount,
             PublicKey bufferAccount, PublicKey spillAccount, PublicKey authority)
         {
-            var keys = new  List<AccountMeta> ()
+            var keys = new List<AccountMeta>()
             {
                 AccountMeta.Writable(programDataAccount, false),
                 AccountMeta.Writable(programAccount, false),
@@ -142,12 +142,12 @@ namespace Solnet.Programs
         public static TransactionInstruction SetAuthority(PublicKey bufferOrProgramDataaccount, PublicKey authority,
             PublicKey newAuthority = null)
         {
-            var keys = new  List<AccountMeta> ()
+            var keys = new List<AccountMeta>()
             {
                 AccountMeta.Writable(bufferOrProgramDataaccount, false),
                 AccountMeta.ReadOnly(authority, true),
             };
-            if (newAuthority != null) keys.Add(AccountMeta.ReadOnly(newAuthority,false));
+            if (newAuthority != null) keys.Add(AccountMeta.ReadOnly(newAuthority, false));
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -166,13 +166,13 @@ namespace Solnet.Programs
         public static TransactionInstruction Close(PublicKey accountToClose, PublicKey depositAccount,
             PublicKey associatedProgramAccount = null, PublicKey authority = null)
         {
-            var keys = new  List<AccountMeta> ()
+            var keys = new List<AccountMeta>()
             {
                 AccountMeta.Writable(accountToClose, false),
                 AccountMeta.Writable(depositAccount, false),
             };
             if (authority != null) keys.Add(AccountMeta.ReadOnly(authority, true));
-            if (associatedProgramAccount != null) keys.Add(AccountMeta.Writable(associatedProgramAccount,false));
+            if (associatedProgramAccount != null) keys.Add(AccountMeta.Writable(associatedProgramAccount, false));
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -182,4 +182,3 @@ namespace Solnet.Programs
         }
     }
 }
-

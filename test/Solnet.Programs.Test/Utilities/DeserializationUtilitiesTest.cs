@@ -369,7 +369,7 @@ namespace Solnet.Programs.Test.Utilities
             Assert.AreEqual(-1, bi);
         }
 
-            [TestMethod]
+        [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadDoubleException()
         {

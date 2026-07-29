@@ -9,7 +9,7 @@ namespace Solnet.Programs.StakePool.Models
     // TODO: This needs to be implemented after Token2022
     //public static class StakePoolExtensions
     //{
-    
+
     //public static bool IsExtensionSupportedForMint(ExtensionType extensionType)
     //{
     //    // Note: This list must match the Rust SUPPORTED_EXTENSIONS array.

@@ -23,8 +23,8 @@ internal static class BPFLoaderProgramInstructions
         DeployWithMaxDataLen = 2,
         Upgrade = 3,
         SetAuthority = 4,
-        Close =5,
-        
+        Close = 5,
+
     }
-    
+
 }

@@ -24,8 +24,8 @@ namespace Solnet.Programs
             CreateLookupTable = 0,
             FreezeLookupTable = 1,
             ExtendLookupTable = 2,
-            DeactivateLookupTable =3,
-            CloseLookupTable =4
+            DeactivateLookupTable = 3,
+            CloseLookupTable = 4
         }
     }
 }

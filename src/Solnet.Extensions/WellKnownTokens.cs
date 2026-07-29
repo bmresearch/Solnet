@@ -42,7 +42,7 @@ namespace Solnet.Extensions
         /// Create a TokenMintResolver pre-loaded with well known tokens.
         /// </summary>
         /// <returns>An instance of the TokenMintResolver bootstrapped with the well known tokens.</returns>
-        public static TokenMintResolver CreateTokenMintResolver() 
+        public static TokenMintResolver CreateTokenMintResolver()
         {
             var resolver = new TokenMintResolver();
             foreach (var token in _tokens)

@@ -20,10 +20,10 @@ namespace Solnet.Rpc.Models
         /// </summary>
         public List<MessageAddressTableLookup> AddressTableLookups { get; set; }
 
-    /// <summary>
-    /// The message version to use when compiling the versioned transaction.
-    /// </summary>
-    public byte Version { get; set; }
+        /// <summary>
+        /// The message version to use when compiling the versioned transaction.
+        /// </summary>
+        public byte Version { get; set; }
 
 
         /// <summary>
@@ -175,4 +175,3 @@ namespace Solnet.Rpc.Models
         }
     }
 }
-

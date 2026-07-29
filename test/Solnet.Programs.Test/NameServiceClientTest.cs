@@ -1,17 +1,17 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Solnet.Programs.Clients;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Moq;
+using Solnet.Programs.Clients;
 using Solnet.Rpc;
 using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
-using System.IO;
 using Solnet.Rpc.Types;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Solnet.Programs.Test
 {

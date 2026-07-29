@@ -1,6 +1,6 @@
-﻿using Solnet.Wallet;
+﻿using Solnet.Programs.Utilities;
+using Solnet.Wallet;
 using System;
-using Solnet.Programs.Utilities;
 
 namespace Solnet.Programs.Models.TokenProgram
 {
@@ -98,7 +98,7 @@ namespace Solnet.Programs.Models.TokenProgram
 
             res.Supply = data.GetU64(Layout.SupplyOffset);
             res.Decimals = data.GetU8(Layout.DecimalsOffset);
-            res.IsInitialized= data.GetBool(Layout.IsInitializedOffset);
+            res.IsInitialized = data.GetBool(Layout.IsInitializedOffset);
 
             if (data.GetU32(Layout.FreezeAuthorityOptionOffset) == 1)
                 res.FreezeAuthority = data.GetPubKey(Layout.FreezeAuthorityOffset);

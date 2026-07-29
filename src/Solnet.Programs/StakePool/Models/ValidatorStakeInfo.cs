@@ -1,5 +1,5 @@
-﻿using System;
-using Solnet.Wallet;
+﻿using Solnet.Wallet;
+using System;
 
 namespace Solnet.Programs.StakePool.Models
 {

@@ -68,7 +68,7 @@ namespace Solnet.Rpc.Models
                 accMeta.IsSigner = true;
                 accMeta.IsWritable = accMeta.IsWritable || accountMeta.IsWritable;
             }
-            else if(!accMeta.IsWritable && accountMeta.IsWritable)
+            else if (!accMeta.IsWritable && accountMeta.IsWritable)
             {
                 accMeta.IsWritable = true;
             }

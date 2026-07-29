@@ -184,7 +184,7 @@ namespace Solnet.Programs.AccountCompression
             byte[] data = new byte[36];
 
             // 1. Add instruction discriminator
-            data.WriteU32((uint)AccountCompressionProgramInstructions.Values.TransferAuthority,MethodOffset);
+            data.WriteU32((uint)AccountCompressionProgramInstructions.Values.TransferAuthority, MethodOffset);
 
             // 2. Add new authority public key (32 bytes)
             data.WritePubKey(newAuthority, 4);
@@ -350,8 +350,8 @@ namespace Solnet.Programs.AccountCompression
             // 68..100 = newLeaf
             // 100..104 = index (uint32)
 
-            decodedInstruction.Values.Add("root", data.GetBytes(4,32));
-            decodedInstruction.Values.Add("leaf", data.GetBytes(36,32));
+            decodedInstruction.Values.Add("root", data.GetBytes(4, 32));
+            decodedInstruction.Values.Add("leaf", data.GetBytes(36, 32));
             decodedInstruction.Values.Add("index", data.GetU32(68));
         }
         /// <summary>
@@ -399,8 +399,8 @@ namespace Solnet.Programs.AccountCompression
             // Decode data
             if (data.Length < 72) throw new ArgumentException("Invalid data length for VerifyLeaf");
 
-            var root = data.GetBytes(4,32);
-            var leaf = data.GetBytes(36,32);
+            var root = data.GetBytes(4, 32);
+            var leaf = data.GetBytes(36, 32);
             var index = data.GetU32(68);
 
             decodedInstruction.Values.Add("root", root);

@@ -57,7 +57,7 @@ namespace Solnet.Programs.Governance.Models
             VoteType voteType = (VoteType)Enum.Parse(typeof(VoteType), span.GetU8(offset).ToString());
             ushort multiChoiceMaxOpts = 0;
 
-            if(voteType == VoteType.MultiChoice)
+            if (voteType == VoteType.MultiChoice)
             {
                 multiChoiceMaxOpts = span.GetU16(offset + 1);
             }
@@ -68,14 +68,14 @@ namespace Solnet.Programs.Governance.Models
             int numProposalOptions = (int)span.GetU32(offset);
             offset += sizeof(uint);
 
-            for(int i = 0; i<numProposalOptions; i++)
+            for (int i = 0; i < numProposalOptions; i++)
             {
                 ProposalOption proposalOption = ProposalOption.Deserialize(span[offset..]);
                 proposalOptions.Add(proposalOption);
                 // adjust offset by taking into account the proposal option's label length and the remainder of the structure
                 offset += proposalOption.LabelLength + ProposalOption.Layout.LengthWithoutLabel;
             }
-            
+
             // the following data is predominantly optional so we'll have to check if it exists and adjust offsets accordingly
             bool denyVoteWeightExists = span.GetBool(offset);
             ulong denyVoteWeight = 0;

@@ -41,7 +41,7 @@ namespace Solnet.Programs.Governance.Models
             /// </summary>
             public const int VoteOffset = 74;
         }
-        
+
         /// <summary>
         /// Proposal the signatory is assigned for.
         /// </summary>
@@ -85,10 +85,10 @@ namespace Solnet.Programs.Governance.Models
             List<VoteChoice> choices = [];
             Vote vote = (Vote)Enum.Parse(typeof(Vote), span.GetU8(ExtraLayout.VoteOffset).ToString());
 
-            if(vote == Vote.Approve)
+            if (vote == Vote.Approve)
             {
                 int numChoices = (int)span.GetU32(ExtraLayout.VoteOffset + 1);
-                for(int i = 0; i < numChoices; i++)
+                for (int i = 0; i < numChoices; i++)
                 {
                     var choiceBytes = span.GetSpan(ExtraLayout.VoteOffset + 5 + (i * 2), 2);
                     choices.Add(new VoteChoice

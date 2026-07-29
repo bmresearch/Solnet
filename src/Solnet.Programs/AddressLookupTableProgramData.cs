@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using Solnet.Programs.Utilities;
 using Solnet.Wallet;
 using System;
+using System.Collections.Generic;
 
 namespace Solnet.Programs
 {
@@ -17,7 +17,7 @@ namespace Solnet.Programs
         /// <param name="RecentSlot"></param>
         /// <param name="bump"></param>
         /// <returns></returns>
-        internal static byte[] EncodeCreateAddressLookupTableData( ulong RecentSlot,byte bump)
+        internal static byte[] EncodeCreateAddressLookupTableData(ulong RecentSlot, byte bump)
         {
             byte[] data = new byte[13];
             data.WriteU32((uint)AddressLookupTableProgramInstruction.Values.CreateLookupTable, MethodOffset);
@@ -44,7 +44,7 @@ namespace Solnet.Programs
         /// <param name="KeyCounts"></param>
         /// <param name="Keys"></param>
         /// <returns></returns>
-        internal static byte[] EncodeExtendLookupTableData(ulong KeyCounts,List<PublicKey> Keys)
+        internal static byte[] EncodeExtendLookupTableData(ulong KeyCounts, List<PublicKey> Keys)
         {
             byte[] data = new byte[12 + Keys.Count * 32];
             data.WriteU32((uint)AddressLookupTableProgramInstruction.Values.ExtendLookupTable, MethodOffset);

@@ -108,7 +108,7 @@ namespace Solnet.Examples
             var program = new TokenSwapProgram();
             var swapAuthority = program.CreateAuthority(swap).pubkey;
 
-            var swapTokenAAccount= new Account();
+            var swapTokenAAccount = new Account();
             var swapTokenBAccount = new Account();
 
             //init the swap authority's token accounts

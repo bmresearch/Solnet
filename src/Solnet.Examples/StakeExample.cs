@@ -1,4 +1,5 @@
-﻿using Solnet.Programs;
+﻿using Solnet.KeyStore;
+using Solnet.Programs;
 using Solnet.Programs.Utilities;
 using Solnet.Rpc;
 using Solnet.Rpc.Builders;
@@ -6,15 +7,14 @@ using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
+using Solnet.Wallet.Bip39;
+using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Solnet.Programs.Models.Stake.State;
-using Solnet.KeyStore;
-using Solnet.Wallet.Bip39;
-using Solnet.Wallet.Utilities;
 
 namespace Solnet.Examples
 {

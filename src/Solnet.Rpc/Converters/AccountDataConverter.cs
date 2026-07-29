@@ -18,7 +18,7 @@ namespace Solnet.Rpc.Converters
             if (reader.TokenType == JsonTokenType.StartArray)
                 return JsonSerializer.Deserialize<List<string>>(ref reader, options);
 
-            if(reader.TokenType == JsonTokenType.StartObject)
+            if (reader.TokenType == JsonTokenType.StartObject)
             {
                 JsonDocument doc = JsonDocument.ParseValue(ref reader);
                 var jsonAsString = doc.RootElement.ToString();

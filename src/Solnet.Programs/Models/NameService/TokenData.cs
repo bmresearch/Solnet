@@ -1,10 +1,10 @@
-﻿using Solnet.Wallet;
+﻿using Solnet.Programs.Utilities;
+using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Solnet.Programs.Utilities;
 
 namespace Solnet.Programs.Models.NameService
 {

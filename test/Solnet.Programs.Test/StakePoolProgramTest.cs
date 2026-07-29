@@ -3,8 +3,8 @@ using Solnet.Programs.StakePool;
 using Solnet.Programs.StakePool.Models;
 using Solnet.Wallet;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Solnet.Programs.Test
 {

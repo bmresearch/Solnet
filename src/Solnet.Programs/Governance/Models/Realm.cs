@@ -108,7 +108,7 @@ namespace Solnet.Programs.Governance.Models
 
             return new Realm
             {
-                AccountType = (GovernanceAccountType)Enum.Parse(typeof(GovernanceAccountType), span.GetU8(Layout.AccountTypeOffset).ToString()), 
+                AccountType = (GovernanceAccountType)Enum.Parse(typeof(GovernanceAccountType), span.GetU8(Layout.AccountTypeOffset).ToString()),
                 CommunityMint = span.GetPubKey(ExtraLayout.CommunityMintOffset),
                 Config = config,
                 Authority = authorityExists ? authority : null,

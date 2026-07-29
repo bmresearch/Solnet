@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Solnet.Programs.Utilities;
+using System;
 using System.Buffers.Binary;
-using Solnet.Programs.Utilities;
 
 namespace Solnet.Programs.TokenSwap.Models
 {
@@ -48,7 +48,7 @@ namespace Solnet.Programs.TokenSwap.Models
         /// Host trading fee denominator.
         /// </summary>
         public ulong HostFeeDenomerator;
-        
+
         /// <summary>
         /// Serialize the Fees
         /// </summary>

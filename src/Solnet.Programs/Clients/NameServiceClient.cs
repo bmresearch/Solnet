@@ -63,7 +63,7 @@ namespace Solnet.Programs.Clients
 
             List<RecordBase> result = [];
 
-            if(!res.WasSuccessful || res.Result == null || res.Result.Count == 0) return result;
+            if (!res.WasSuccessful || res.Result == null || res.Result.Count == 0) return result;
 
             Dictionary<string, NameRecord> nameToRecordMap = [];
 
@@ -145,7 +145,7 @@ namespace Solnet.Programs.Clients
 
                 multipleAccs.Result.Value.ForEach(x => accInfos.Add(x));
             }
-            
+
             for (int i = 0; i < accInfos.Count; i++)
             {
                 var nr = nameToRecordMap[reverseNameAddresses[i]];
@@ -277,7 +277,7 @@ namespace Solnet.Programs.Clients
                 [new MemCmp() { Bytes = SolTLD, Offset = 0 }, new MemCmp() { Bytes = address, Offset = 32 }]);
 
             List<ReverseNameRecord> ret = [];
-            if(!res.WasSuccessful || res.Result == null || res.Result.Count == 0) return ret;
+            if (!res.WasSuccessful || res.Result == null || res.Result.Count == 0) return ret;
 
             Dictionary<string, NameRecord> nameToRecordMap = [];
             foreach (var add in res.Result)

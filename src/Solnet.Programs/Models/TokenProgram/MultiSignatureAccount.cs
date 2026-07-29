@@ -78,7 +78,7 @@ namespace Solnet.Programs.Models.TokenProgram
 
             List<PublicKey> signers = [];
 
-            for(int i= 0; i < MaxSigners; i++)
+            for (int i = 0; i < MaxSigners; i++)
             {
                 var signer = data.GetPubKey(Layout.SignersOffset + i * PublicKey.PublicKeyLength);
                 if (signer != SystemProgram.ProgramIdKey)

@@ -51,7 +51,7 @@ namespace Solnet.Programs
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = StakeProgramData.EncodeInitializeData(authorized,lockup)
+                Data = StakeProgramData.EncodeInitializeData(authorized, lockup)
             };
         }
         /// <summary>
@@ -104,7 +104,7 @@ namespace Solnet.Programs
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data=StakeProgramData.EncodeDelegateStakeData()
+                Data = StakeProgramData.EncodeDelegateStakeData()
             };
         }
         /// <summary>
@@ -428,8 +428,8 @@ namespace Solnet.Programs
             }
 
             StakeProgramInstructions.Values instructionValue = (StakeProgramInstructions.Values)instruction;
-                        
-            DecodedInstruction decodedInstruction = new ()
+
+            DecodedInstruction decodedInstruction = new()
             {
                 PublicKey = ProgramIdKey,
                 InstructionName = StakeProgramInstructions.Names[instructionValue],

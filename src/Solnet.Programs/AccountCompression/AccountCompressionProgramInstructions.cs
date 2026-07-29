@@ -32,7 +32,7 @@ namespace Solnet.Programs
         /// <summary>
         /// Represents the instruction types for the <see cref="AccountCompressionProgram"/>.
         /// </summary>
-        internal enum Values: uint
+        internal enum Values : uint
         {
             Append = 0,
             CloseEmptyTree = 1,

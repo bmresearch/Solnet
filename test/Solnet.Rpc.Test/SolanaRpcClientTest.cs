@@ -891,7 +891,7 @@ namespace Solnet.Rpc.Test
 
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
             var result = sut.GetProgramAccounts("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", // serum program-id
-                dataSize:3228, memCmpList:filters ); 
+                dataSize: 3228, memCmpList: filters);
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result);

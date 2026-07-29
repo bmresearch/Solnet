@@ -20,9 +20,9 @@ public class BPFLoaderProgramData
     /// <returns>The encoded data</returns>
     internal static Span<byte> EncodeWrite(uint offset, Span<byte> buffer)
     {
-        byte[] data = new byte[sizeof(uint) + sizeof(uint)  +sizeof(ulong) + buffer.Length];
-        data.WriteU32( (uint) BPFLoaderProgramInstructions.Values.Write, MethodOffset);
-        data.WriteU32(  offset, MethodOffset + sizeof(uint));
+        byte[] data = new byte[sizeof(uint) + sizeof(uint) + sizeof(ulong) + buffer.Length];
+        data.WriteU32((uint)BPFLoaderProgramInstructions.Values.Write, MethodOffset);
+        data.WriteU32(offset, MethodOffset + sizeof(uint));
         data.WriteBorshByteVector(buffer, sizeof(uint) + sizeof(uint) + MethodOffset);
         return data;
     }

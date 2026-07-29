@@ -83,14 +83,15 @@ namespace Solnet.Programs.Test
 
             var txInstruction = StakeProgram.Initialize(
                 baseAccount.PublicKey,
-                new Authorized 
-                { 
-                    Staker = staker, 
-                    Withdrawer = withdrawer 
+                new Authorized
+                {
+                    Staker = staker,
+                    Withdrawer = withdrawer
                 },
-                new Lockup { 
-                    Custodian = custodian.PublicKey, 
-                    Epoch = 0, 
+                new Lockup
+                {
+                    Custodian = custodian.PublicKey,
+                    Epoch = 0,
                     UnixTimestamp = 0
                 });
 
@@ -110,10 +111,10 @@ namespace Solnet.Programs.Test
             var custodian = wallet.GetAccount(3);
 
             var txInstruction = StakeProgram.Authorize(
-                baseAccount.PublicKey, 
-                authorizedAccount.PublicKey, 
+                baseAccount.PublicKey,
+                authorizedAccount.PublicKey,
                 newAuthorizedAccount.PublicKey,
-                StakeAuthorize.Staker, 
+                StakeAuthorize.Staker,
                 custodian.PublicKey);
 
             Assert.AreEqual(4, txInstruction.Keys.Count);
@@ -132,7 +133,7 @@ namespace Solnet.Programs.Test
 
             var txInstruction = StakeProgram.DelegateStake(
                 baseAccount.PublicKey,
-                authorizedAccount.PublicKey, 
+                authorizedAccount.PublicKey,
                 voteAccount.PublicKey);
 
             Assert.AreEqual(6, txInstruction.Keys.Count);
@@ -176,7 +177,7 @@ namespace Solnet.Programs.Test
                 custodian.PublicKey);
 
             Assert.AreEqual(6, txInstruction.Keys.Count);
-            
+
             CollectionAssert.AreEqual(WithdrawInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }
@@ -207,11 +208,11 @@ namespace Solnet.Programs.Test
 
             var txInstruction = StakeProgram.SetLockup(
                 baseAccount.PublicKey,
-                new Lockup 
-                { 
-                    Custodian = custodian.PublicKey, 
-                    Epoch = 0, 
-                    UnixTimestamp = 0 
+                new Lockup
+                {
+                    Custodian = custodian.PublicKey,
+                    Epoch = 0,
+                    UnixTimestamp = 0
                 },
                 custodian.PublicKey);
 
@@ -333,7 +334,7 @@ namespace Solnet.Programs.Test
 
             var txInstruction = StakeProgram.SetLockupChecked(
                 baseAccount.PublicKey,
-                new Lockup {Custodian = custodian.PublicKey, Epoch = 0, UnixTimestamp = 0 },
+                new Lockup { Custodian = custodian.PublicKey, Epoch = 0, UnixTimestamp = 0 },
                 custodian.PublicKey);
 
             Assert.AreEqual(3, txInstruction.Keys.Count);

@@ -53,7 +53,7 @@ namespace Solnet.Programs.StakePool
         /// Represents the instruction types for the <see cref="StakePoolProgram"/>.
         /// </summary>
         internal enum Values : uint
-        {            
+        {
             /// <summary>
             /// Initializes a new StakePool.
             /// </summary>

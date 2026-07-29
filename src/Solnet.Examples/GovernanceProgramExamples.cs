@@ -23,7 +23,7 @@ namespace Solnet.Examples
         {
             var realms = governanceClient.GetRealms(GovernanceProgram.MangoGovernanceProgramIdKey);
 
-            for(int i = 0; i < realms.ParsedResult.Count; i++)
+            for (int i = 0; i < realms.ParsedResult.Count; i++)
             {
                 Console.WriteLine($"--------------------------------------\n" +
                     $"Realm: {realms.ParsedResult[i].Name}\n" +
@@ -37,16 +37,16 @@ namespace Solnet.Examples
                 var tokenGovernances = governanceClient.GetTokenGovernanceAccounts(GovernanceProgram.MangoGovernanceProgramIdKey, realms.OriginalRequest.Result[i].PublicKey);
                 var genericGovernances = governanceClient.GetGenericGovernanceAccounts(GovernanceProgram.MangoGovernanceProgramIdKey, realms.OriginalRequest.Result[i].PublicKey);
                 Console.WriteLine($"Program Governance Accounts: {progGovernances.ParsedResult?.Count}\n" +
-                    $"Mint Governance Accounts: {mintGovernances.ParsedResult?.Count}\n" + 
+                    $"Mint Governance Accounts: {mintGovernances.ParsedResult?.Count}\n" +
                     $"Token Governance Accounts: {tokenGovernances.ParsedResult?.Count}\n" +
                     $"Generic Governance Accounts: {genericGovernances.ParsedResult?.Count}\n");
 
-                for(int j = 0; j < progGovernances.ParsedResult?.Count; j++)
+                for (int j = 0; j < progGovernances.ParsedResult?.Count; j++)
                 {
                     var proposals = governanceClient.GetProposalsV1(GovernanceProgram.MangoGovernanceProgramIdKey, progGovernances.OriginalRequest.Result[j].PublicKey);
                     Console.WriteLine($"Program Governance: {progGovernances.OriginalRequest.Result[j].PublicKey}\n" +
                         $"Proposals: {proposals.OriginalRequest.Result.Count}");
-                    for(int k = 0; k < proposals.ParsedResult?.Count; k++)
+                    for (int k = 0; k < proposals.ParsedResult?.Count; k++)
                     {
                         Console.WriteLine($"Proposal: {proposals.ParsedResult[k].Name}\n" +
                             $"Link: {proposals.ParsedResult[k].DescriptionLink}");

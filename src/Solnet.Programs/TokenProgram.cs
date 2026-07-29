@@ -635,7 +635,7 @@ namespace Solnet.Programs
         {
             byte instruction = data.GetU8(TokenProgramData.MethodOffset);
 
-            if(!Enum.IsDefined(typeof(TokenProgramInstructions.Values), instruction))
+            if (!Enum.IsDefined(typeof(TokenProgramInstructions.Values), instruction))
             {
                 return new()
                 {

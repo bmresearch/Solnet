@@ -29,7 +29,7 @@ namespace Solnet.Programs.TokenSwap
         /// </summary>
         public static readonly string TokenSwapProgramName = "Token Swap Program";
 
-        
+
         //instance vars
 
         /// <summary>

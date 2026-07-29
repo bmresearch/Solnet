@@ -6,7 +6,7 @@ namespace Solnet.Programs.TokenSwap.Models
     /// <summary>
     /// TokenSwap program state
     /// </summary>
-    public class TokenSwapAccount 
+    public class TokenSwapAccount
     {
         /// <summary>
         /// the size of this account in bytes
@@ -16,12 +16,12 @@ namespace Solnet.Programs.TokenSwap.Models
         /// <summary>
         /// Versions of this state account
         /// </summary>
-        public enum SwapVersion 
-        { 
+        public enum SwapVersion
+        {
             /// <summary>
             /// Version 1.
             /// </summary>
-            SwapV1 = 1 
+            SwapV1 = 1
         }
 
         /// <summary>

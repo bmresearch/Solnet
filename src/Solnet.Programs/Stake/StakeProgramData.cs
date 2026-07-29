@@ -46,7 +46,7 @@ namespace Solnet.Programs
             data.WriteU32((uint)StakeProgramInstructions.Values.Authorize, MethodOffset);
             data.WritePubKey(newAuthorizedPubkey, 4);
             data.WriteU32((uint)stakeAuthorize, 36);
-            
+
             return data;
         }
 
@@ -222,7 +222,7 @@ namespace Solnet.Programs
             (string authoritySeed, int seedLength) = data.DecodeBincodeString(37);
             decodedInstruction.Values.Add("Authority Seed", authoritySeed);
             decodedInstruction.Values.Add("Authority Owner Account", data.GetPubKey(37 + seedLength));
-        }  
+        }
         internal static void DecodeInitializeCheckedStakeData(DecodedInstruction decodedInstruction,
                                                   ReadOnlySpan<byte> data,
                                                   IList<PublicKey> keys,

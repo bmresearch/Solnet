@@ -71,19 +71,19 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(1, ((TransactionInfo)first.Transaction).Signatures.Length);
             Assert.AreEqual("2Hh35eZPP1wZLYQ1HHv8PqGoRo73XirJeKFpBVc19msi6qeJHk3yUKqS1viRtqkdb545CerTWeywPFXxjKEhDWTK", ((TransactionInfo)first.Transaction).Signatures[0]);
 
-            Assert.AreEqual(5,((TransactionInfo)first.Transaction).Message.AccountKeys.Length);
-            Assert.AreEqual("DjuMPGThkGdyk2vDvDDYjTFSyxzTumdapnDNbvVZbYQE",((TransactionInfo)first.Transaction).Message.AccountKeys[0]);
+            Assert.AreEqual(5, ((TransactionInfo)first.Transaction).Message.AccountKeys.Length);
+            Assert.AreEqual("DjuMPGThkGdyk2vDvDDYjTFSyxzTumdapnDNbvVZbYQE", ((TransactionInfo)first.Transaction).Message.AccountKeys[0]);
 
-            Assert.AreEqual(0,((TransactionInfo)first.Transaction).Message.Header.NumReadonlySignedAccounts);
-            Assert.AreEqual(3,((TransactionInfo)first.Transaction).Message.Header.NumReadonlyUnsignedAccounts);
-            Assert.AreEqual(1,((TransactionInfo)first.Transaction).Message.Header.NumRequiredSignatures);
+            Assert.AreEqual(0, ((TransactionInfo)first.Transaction).Message.Header.NumReadonlySignedAccounts);
+            Assert.AreEqual(3, ((TransactionInfo)first.Transaction).Message.Header.NumReadonlyUnsignedAccounts);
+            Assert.AreEqual(1, ((TransactionInfo)first.Transaction).Message.Header.NumRequiredSignatures);
 
-            Assert.AreEqual(1,((TransactionInfo)first.Transaction).Message.Instructions.Length);
-            Assert.AreEqual(4,((TransactionInfo)first.Transaction).Message.Instructions[0].Accounts.Length);
-            Assert.AreEqual("2ZjTR1vUs2pHXyTLxtFDhN2tsm2HbaH36cAxzJcwaXf8y5jdTESsGNBLFaxGuWENxLa2ZL3cX9foNJcWbRq",((TransactionInfo)first.Transaction).Message.Instructions[0].Data);
-            Assert.AreEqual(4,((TransactionInfo)first.Transaction).Message.Instructions[0].ProgramIdIndex);
+            Assert.AreEqual(1, ((TransactionInfo)first.Transaction).Message.Instructions.Length);
+            Assert.AreEqual(4, ((TransactionInfo)first.Transaction).Message.Instructions[0].Accounts.Length);
+            Assert.AreEqual("2ZjTR1vUs2pHXyTLxtFDhN2tsm2HbaH36cAxzJcwaXf8y5jdTESsGNBLFaxGuWENxLa2ZL3cX9foNJcWbRq", ((TransactionInfo)first.Transaction).Message.Instructions[0].Data);
+            Assert.AreEqual(4, ((TransactionInfo)first.Transaction).Message.Instructions[0].ProgramIdIndex);
 
-            Assert.AreEqual("D8qh6AeX4KaTe6ZBpsZDdntTQUyPy7x6Xjp7NnEigCWH",((TransactionInfo)first.Transaction).Message.RecentBlockhash);
+            Assert.AreEqual("D8qh6AeX4KaTe6ZBpsZDdntTQUyPy7x6Xjp7NnEigCWH", ((TransactionInfo)first.Transaction).Message.RecentBlockhash);
             FinishTest(messageHandlerMock, TestnetUri);
         }
 
@@ -286,7 +286,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual("5as3w4KMpY23MP5T1nkPVksjXjN7hnjHKqiDxRMxUNcw5XsCGtStayZib1kQdyR2D9w8dR11Ha9Xk38KP3kbAwM1", ((TransactionInfo)first.Transaction).Signatures[0]);
 
             Assert.AreEqual(5, ((TransactionInfo)first.Transaction).Message.AccountKeys.Length);
-            Assert.AreEqual("EvVrzsxoj118sxxSTrcnc9u3fRdQfCc7d4gRzzX6TSqj",((TransactionInfo)first.Transaction).Message.AccountKeys[0]);
+            Assert.AreEqual("EvVrzsxoj118sxxSTrcnc9u3fRdQfCc7d4gRzzX6TSqj", ((TransactionInfo)first.Transaction).Message.AccountKeys[0]);
 
             Assert.AreEqual(0, ((TransactionInfo)first.Transaction).Message.Header.NumReadonlySignedAccounts);
             Assert.AreEqual(3, ((TransactionInfo)first.Transaction).Message.Header.NumReadonlyUnsignedAccounts);
@@ -300,7 +300,7 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual(4, ((TransactionInfo)first.Transaction).Message.Instructions[0].ProgramIdIndex);
 
-            Assert.AreEqual("6XGYfEJ5CGGBA5E8E7Gw4ToyDLDNNAyUCb7CJj1rLk21",((TransactionInfo)first.Transaction).Message.RecentBlockhash);
+            Assert.AreEqual("6XGYfEJ5CGGBA5E8E7Gw4ToyDLDNNAyUCb7CJj1rLk21", ((TransactionInfo)first.Transaction).Message.RecentBlockhash);
             FinishTest(messageHandlerMock, TestnetUri);
         }
 

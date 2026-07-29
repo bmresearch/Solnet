@@ -21,22 +21,22 @@ namespace Solnet.Programs
         /// The public key of the Rent System Variable.
         /// </summary>
         public static readonly PublicKey RentKey = new("SysvarRent111111111111111111111111111111111");
-        
+
         /// <summary>
         /// The public key of the Clock System Variable.
         /// </summary>
         public static readonly PublicKey ClockKey = new("SysvarC1ock11111111111111111111111111111111");
-        
+
         /// <summary>
         /// The public key of the Stake History System Variable.
         /// </summary>
         public static readonly PublicKey StakeHistoryKey = new("SysvarStakeHistory1111111111111111111111111");
-        
+
         /// <summary>
         /// The public key of the Slot Hashes Systen Variable
         /// </summary>
         public static readonly PublicKey SlotHashesKey = new("SysvarS1otHashes111111111111111111111111111");
-        
+
         /// <summary>
         /// The public key of the Instructions System Variable
         /// </summary>

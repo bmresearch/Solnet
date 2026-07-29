@@ -24,9 +24,9 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// The epoch in which the reward was credited or debited.
         /// </summary>
-        public RewardType RewardType {  get; set; }
+        public RewardType RewardType { get; set; }
     }
-  
+
     /// <summary>
     /// The type of the reward.
     /// </summary>

@@ -15,10 +15,10 @@ namespace Solnet.Rpc.Builders
     /// </summary>
     public class VersionedMessageBuilder : MessageBuilder
     {
-    /// <summary>
-    /// The version to encode in the message prefix.
-    /// </summary>
-    public byte Version { get; set; }
+        /// <summary>
+        /// The version to encode in the message prefix.
+        /// </summary>
+        public byte Version { get; set; }
 
         /// <summary>
         /// Address Table Lookups

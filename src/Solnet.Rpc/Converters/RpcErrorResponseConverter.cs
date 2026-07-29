@@ -42,11 +42,11 @@ namespace Solnet.Rpc.Converters
                 }
                 else if ("error" == prop)
                 {
-                    if(reader.TokenType == JsonTokenType.String)
+                    if (reader.TokenType == JsonTokenType.String)
                     {
                         err.ErrorMessage = reader.GetString();
                     }
-                    else if(reader.TokenType == JsonTokenType.StartObject)
+                    else if (reader.TokenType == JsonTokenType.StartObject)
                     {
                         err.Error = JsonSerializer.Deserialize<ErrorContent>(ref reader, options);
                     }

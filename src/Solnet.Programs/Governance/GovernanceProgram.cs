@@ -502,8 +502,8 @@ namespace Solnet.Programs.Governance
         /// <param name="councilTokenMint"></param>
         /// <param name="communityVoterWeightAddin"></param>
         /// <returns></returns>
-        public TransactionInstruction SetRealmConfig(PublicKey realm, PublicKey realmAuthority, PublicKey payer, 
-            ulong minCommunityTokensToCreateGovernance, MintMaxVoteWeightSource communityMintMaxVoteWeightSource, 
+        public TransactionInstruction SetRealmConfig(PublicKey realm, PublicKey realmAuthority, PublicKey payer,
+            ulong minCommunityTokensToCreateGovernance, MintMaxVoteWeightSource communityMintMaxVoteWeightSource,
             PublicKey councilTokenMint = null, PublicKey communityVoterWeightAddin = null)
         {
 

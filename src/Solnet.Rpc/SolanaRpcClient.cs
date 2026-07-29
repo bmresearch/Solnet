@@ -33,7 +33,7 @@ namespace Solnet.Rpc
         /// <param name="httpClient">An http client.</param>
 
         /// <param name="rateLimiter">A rate limiting strategy or null.</param>
-        internal SolanaRpcClient(string url, ILogger logger, HttpClient httpClient = default, IRateLimiter rateLimiter = null) 
+        internal SolanaRpcClient(string url, ILogger logger, HttpClient httpClient = default, IRateLimiter rateLimiter = null)
             : base(url, logger, httpClient, rateLimiter)
         {
         }
@@ -364,7 +364,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="IRpcClient.GetTransactionAsync"/>
         public async Task<RequestResult<TransactionMetaSlotInfo>> GetTransactionAsync(string signature,
-            Commitment commitment = Commitment.Finalized,  int maxSupportedTransactionVersion = 0, string encoding = "json")
+            Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0, string encoding = "json")
         {
             return await SendRequestAsync<TransactionMetaSlotInfo>("getTransaction",
                 Parameters.Create(signature,
@@ -376,7 +376,7 @@ namespace Solnet.Rpc
             Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0, string encoding = "json")
             => GetTransactionAsync(signature, commitment, maxSupportedTransactionVersion).Result;
 
-     
+
         /// <inheritdoc cref="IRpcClient.GetBlockHeightAsync"/>
         public async Task<RequestResult<ulong>> GetBlockHeightAsync(Commitment commitment = Commitment.Finalized)
         {
@@ -437,7 +437,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="IRpcClient.GetEpochSchedule"/>
         public RequestResult<EpochScheduleInfo> GetEpochSchedule() => GetEpochScheduleAsync().Result;
-        
+
         /// <inheritdoc cref="IRpcClient.GetFeeForMessageAsync(string, Commitment)"/>
         public async Task<RequestResult<ResponseValue<ulong>>> GetFeeForMessageAsync(
             string message, Commitment commitment = Commitment.Finalized)

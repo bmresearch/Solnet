@@ -43,7 +43,7 @@ namespace Solnet.Programs
         {
             Initialize = 0,
             Authorize = 1,
-            DelegateStake =2,
+            DelegateStake = 2,
             Split = 3,
             Withdraw = 4,
             Deactivate = 5,
