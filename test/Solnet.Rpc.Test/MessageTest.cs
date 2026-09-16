@@ -169,6 +169,7 @@ namespace Solnet.Rpc.Test
         {
             Message.VersionedMessage.MessageV1 msg = new()
             {
+                Version = 1,
                 Header = new MessageHeader
                 {
                     RequiredSignatures = 1,
@@ -181,7 +182,13 @@ namespace Solnet.Rpc.Test
                     new("7y62LXLwANaN9g3KJPxQFYwMxSdZraw5PkqwtqY9zLDF")
                 },
                 Instructions = new List<CompiledInstruction>(),
-                AddressTableLookups = new List<MessageAddressTableLookup>()
+                TransactionConfig = new TransactionConfig
+                {
+                    PriorityFee = 20000,
+                    ComputeUnitLimit = 5000,
+                    LoadedAccountsDataSizeLimit = (64 * 1024),
+                    HeapSize = (64 * 1024)
+                }
             };
 
             byte[] serialized = msg.Serialize();
@@ -189,6 +196,10 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual(129, serialized[0]);
             Assert.AreEqual(1, deserialized.Version);
+            Assert.AreEqual((ulong)20000, deserialized.TransactionConfig.PriorityFee.Value);
+            Assert.AreEqual((uint)5000, deserialized.TransactionConfig.ComputeUnitLimit.Value);
+            Assert.AreEqual((uint)(64 * 1024), deserialized.TransactionConfig.LoadedAccountsDataSizeLimit.Value);
+            Assert.AreEqual((uint)(64 * 1024), deserialized.TransactionConfig.HeapSize.Value);
         }
     }
 }
