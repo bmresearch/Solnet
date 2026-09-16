@@ -142,7 +142,7 @@ namespace Solnet.Rpc.Test
                         ProgramIdIndex = 1
                     }
                 },
-                AddressTableLookups = new List<MessageAddressTableLookup>
+                AddressLookupTable = new List<MessageAddressLookupTable>
                 {
                     new()
                     {
@@ -158,10 +158,10 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual(128, serialized[0]);
             Assert.AreEqual(0, deserialized.Version);
-            Assert.AreEqual(1, deserialized.AddressTableLookups.Count);
-            Assert.AreEqual("AddressLookupTab1e1111111111111111111111111", deserialized.AddressTableLookups[0].AccountKey.Key);
-            CollectionAssert.AreEqual(new byte[] { 0 }, deserialized.AddressTableLookups[0].WritableIndexes);
-            CollectionAssert.AreEqual(new byte[] { 1, 2 }, deserialized.AddressTableLookups[0].ReadonlyIndexes);
+            Assert.AreEqual(1, deserialized.AddressLookupTable.Count);
+            Assert.AreEqual("AddressLookupTab1e1111111111111111111111111", deserialized.AddressLookupTable[0].AccountKey.Key);
+            CollectionAssert.AreEqual(new byte[] { 0 }, deserialized.AddressLookupTable[0].WritableIndexes);
+            CollectionAssert.AreEqual(new byte[] { 1, 2 }, deserialized.AddressLookupTable[0].ReadonlyIndexes);
         }
 
         [TestMethod]

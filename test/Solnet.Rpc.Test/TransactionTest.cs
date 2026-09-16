@@ -364,7 +364,7 @@ namespace Solnet.Rpc.Test
                 {
                     MemoProgram.NewMemo(ownerAccount, "v0 alt")
                 },
-                AddressTableLookups = new List<MessageAddressTableLookup>
+                AddressLookupTable = new List<MessageAddressLookupTable>
                 {
                     new()
                     {
@@ -380,9 +380,9 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual(128, compiled[0]);
             Assert.AreEqual(0, msg.Version);
-            Assert.AreEqual(1, msg.AddressTableLookups.Count);
-            CollectionAssert.AreEqual(new byte[] { 0 }, msg.AddressTableLookups[0].WritableIndexes);
-            CollectionAssert.AreEqual(new byte[] { 1, 2, 3 }, msg.AddressTableLookups[0].ReadonlyIndexes);
+            Assert.AreEqual(1, msg.AddressLookupTable.Count);
+            CollectionAssert.AreEqual(new byte[] { 0 }, msg.AddressLookupTable[0].WritableIndexes);
+            CollectionAssert.AreEqual(new byte[] { 1, 2, 3 }, msg.AddressLookupTable[0].ReadonlyIndexes);
         }
 
         [TestMethod]
@@ -400,7 +400,7 @@ namespace Solnet.Rpc.Test
                 {
                     MemoProgram.NewMemo(ownerAccount, "v1")
                 },
-                AddressTableLookups = new List<MessageAddressTableLookup>()
+                AddressLookupTable = new List<MessageAddressLookupTable>()
             };
 
             byte[] compiled = tx.CompileMessage();

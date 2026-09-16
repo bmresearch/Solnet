@@ -21,9 +21,9 @@ namespace Solnet.Rpc.Builders
         public byte Version { get; set; }
 
         /// <summary>
-        /// Address Table Lookups
+        /// The address lookup table for the message. This is used to resolve addresses in the message.
         /// </summary>
-        public List<MessageAddressTableLookup> AddressTableLookups { get; set; }
+        private List<MessageAddressLookupTable> _addressLookupTable = new();
 
         /// <summary>
         /// Transaction Config
@@ -38,6 +38,15 @@ namespace Solnet.Rpc.Builders
         {
             get => _transactionConfig;
             set => _transactionConfig = value;
+        }
+
+        /// <summary>
+        /// Address Lookup Table
+        /// </summary>
+        public override List<MessageAddressLookupTable> AddressLookupTable
+        {
+            get => _addressLookupTable;
+            set => _addressLookupTable = value;
         }
 
         /// <summary>
@@ -158,7 +167,7 @@ namespace Solnet.Rpc.Builders
                     RecentBlockhash = RecentBlockHash,
                     AccountKeys = accountKeys,
                     Instructions = compiledInstructions,
-                    AddressTableLookups = AddressTableLookups
+                    AddressLookupTable = AddressLookupTable
                 };
 
             return message.SerializeV0();

@@ -15,9 +15,9 @@ namespace Solnet.Rpc.Models
     {
 
         /// <summary>
-        /// Address Table Lookups
+        /// Address Lookup Table for the message. This is used to resolve addresses in the message.
         /// </summary>
-        public List<MessageAddressTableLookup> AddressTableLookups { get; set; }
+        public List<MessageAddressLookupTable> AddressLookupTable { get; set; }
 
         /// <summary>
         /// The transaction configuration to use when compiling the versioned transaction.
@@ -52,8 +52,8 @@ namespace Solnet.Rpc.Models
             if(TransactionConfig != null) 
                 messageBuilder.TransactionConfig = TransactionConfig;
             
-            if(AddressTableLookups != null)
-                messageBuilder.AddressTableLookups = AddressTableLookups;
+            if(AddressLookupTable != null)
+                messageBuilder.AddressLookupTable = AddressLookupTable ;
 
             return messageBuilder.Build();
         }
@@ -140,7 +140,7 @@ namespace Solnet.Rpc.Models
                 RecentBlockHash = message.RecentBlockhash,
                 Signatures = new List<SignaturePubKeyPair>(),
                 Instructions = new List<TransactionInstruction>(),
-                AddressTableLookups = message.AddressTableLookups,
+                AddressLookupTable = message.AddressLookupTable,
                 TransactionConfig = message.TransactionConfig,
                 _accountKeys = message.AccountKeys
             };

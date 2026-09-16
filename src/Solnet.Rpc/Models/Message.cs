@@ -269,7 +269,7 @@ namespace Solnet.Rpc.Models
             /// <summary>
             /// Address table lookup
             /// </summary>
-            public List<MessageAddressTableLookup> AddressTableLookups { get; set; }
+            public List<MessageAddressLookupTable> AddressLookupTable { get; set; }
 
             /// <summary>
             /// The transaction configuration for the versioned message.
@@ -293,10 +293,10 @@ namespace Solnet.Rpc.Models
                     accountKeysBuffer.Write(key.KeyBytes);
                 }
 
-                byte[] addressTableLookupBytes = AddressTableLookupUtils.SerializeAddressTableLookups(AddressTableLookups);
+                byte[] addressLookupTableBytes = AddressTableLookupUtils.SerializeAddressLookupTable(AddressLookupTable);
                 int messageBufferSize = 1 + MessageHeader.Layout.HeaderLength + PublicKey.PublicKeyLength +
                                         accountAddressesLength.Length + instructionsLength.Length + Instructions.Count +
-                                        accountKeysBufferSize + addressTableLookupBytes.Length;
+                                        accountKeysBufferSize + addressLookupTableBytes.Length;
                 MemoryStream buffer = new(messageBufferSize);
                 byte[] messageHeaderBytes = Header.ToBytes();
 
@@ -316,7 +316,7 @@ namespace Solnet.Rpc.Models
                     buffer.Write(compiledInstruction.Data);
                 }
 
-                buffer.Write(addressTableLookupBytes);
+                buffer.Write(addressLookupTableBytes);
                 return buffer.ToArray();
             }
             /// <summary>
@@ -751,7 +751,7 @@ namespace Solnet.Rpc.Models
                     (accountAddressLength * PublicKey.PublicKeyLength) + PublicKey.PublicKeyLength +
                     instructionsLengthEncodedLength + instructionsDataLength;
 
-                List<MessageAddressTableLookup> addressTableLookups = new();
+                List<MessageAddressLookupTable> addressLookupTable = new();
                 if (tableLookupOffset >= data.Length)
                 {
                     return new VersionedMessage()
@@ -766,16 +766,16 @@ namespace Solnet.Rpc.Models
                         RecentBlockhash = blockHash,
                         AccountKeys = accountKeys,
                         Instructions = instructions,
-                        AddressTableLookups = addressTableLookups
+                        AddressLookupTable = addressLookupTable
                     };
                 }
 
                 ReadOnlySpan<byte> tableLookupData = data[tableLookupOffset..];
 
-                (int addressTableLookupsCount, int addressTableLookupsEncodedCount) = ShortVectorEncoding.DecodeLength(tableLookupData);
-                tableLookupData = tableLookupData[addressTableLookupsEncodedCount..];
+                (int addressLookupTableCount, int addressLookupTableEncodedCount) = ShortVectorEncoding.DecodeLength(tableLookupData);
+                tableLookupData = tableLookupData[addressLookupTableEncodedCount..];
 
-                for (int i = 0; i < addressTableLookupsCount; i++)
+                for (int i = 0; i < addressLookupTableCount; i++)
                 {
                     byte[] accountKeyBytes = tableLookupData.Slice(0, PublicKey.PublicKeyLength).ToArray();
                     PublicKey accountKey = new(accountKeyBytes);
@@ -789,7 +789,7 @@ namespace Solnet.Rpc.Models
                     List<byte> readonlyIndexes = tableLookupData.Slice(readonlyIndexesEncodedLength, readonlyIndexesLength).ToArray().ToList();
                     tableLookupData = tableLookupData.Slice(readonlyIndexesEncodedLength + readonlyIndexesLength);
 
-                    addressTableLookups.Add(new MessageAddressTableLookup
+                    addressLookupTable.Add(new MessageAddressLookupTable
                     {
                         AccountKey = accountKey,
                         WritableIndexes = writableIndexes.ToArray(),
@@ -809,7 +809,7 @@ namespace Solnet.Rpc.Models
                     RecentBlockhash = blockHash,
                     AccountKeys = accountKeys,
                     Instructions = instructions,
-                    AddressTableLookups = addressTableLookups
+                    AddressLookupTable = addressLookupTable
                 };
             }
 
@@ -914,7 +914,7 @@ namespace Solnet.Rpc.Models
         /// <summary>
         /// Message Address Lookup table
         /// </summary>
-        public class MessageAddressTableLookup
+        public class MessageAddressLookupTable
         {
             /// <summary>
             /// Account Key
@@ -940,18 +940,18 @@ namespace Solnet.Rpc.Models
             /// <summary>
             /// Serialize the address table lookups
             /// </summary>
-            /// <param name="addressTableLookups"></param>
+            /// <param name="addressLookupTable"></param>
             /// <returns></returns>
-            public static byte[] SerializeAddressTableLookups(List<MessageAddressTableLookup> addressTableLookups)
+            public static byte[] SerializeAddressLookupTable(List<MessageAddressLookupTable> addressLookupTable)
             {
-                addressTableLookups ??= new List<MessageAddressTableLookup>();
+                addressLookupTable ??= new List<MessageAddressLookupTable>();
 
                 MemoryStream buffer = new();
 
-                var encodedAddressTableLookupsLength = ShortVectorEncoding.EncodeLength(addressTableLookups.Count);
-                buffer.Write(encodedAddressTableLookupsLength, 0, encodedAddressTableLookupsLength.Length);
+                var encodedAddressLookupTableLength = ShortVectorEncoding.EncodeLength(addressLookupTable.Count);
+                buffer.Write(encodedAddressLookupTableLength, 0, encodedAddressLookupTableLength.Length);
 
-                foreach (var lookup in addressTableLookups)
+                foreach (var lookup in addressLookupTable)
                 {
                     // Write the Account Key
                     buffer.Write(lookup.AccountKey, 0, PublicKey.PublicKeyLength);

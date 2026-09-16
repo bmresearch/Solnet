@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static Solnet.Rpc.Models.Message;
 
 namespace Solnet.Rpc.Builders
 {
@@ -226,6 +227,16 @@ namespace Solnet.Rpc.Builders
             return this;
         }
 
+        /// <summary>
+        /// Sets the address lookup table for the transaction.
+        /// </summary>
+        /// <param name="addressLookupTable">The address lookup table to set.</param>
+        /// <returns>The transaction builder, so instruction addition can be chained.</returns>
+        public TransactionBuilder SetAddressLookupTable(List<MessageAddressLookupTable> addressLookupTable)
+        {
+            _messageBuilder.AddressLookupTable = addressLookupTable;
+            return this;
+        }
         /// <summary>
         /// Adds a new instruction to the transaction.
         /// </summary>

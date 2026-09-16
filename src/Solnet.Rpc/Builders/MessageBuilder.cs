@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static Solnet.Rpc.Models.Message;
 
 namespace Solnet.Rpc.Builders
 {
@@ -58,6 +59,16 @@ namespace Solnet.Rpc.Builders
                 get => null;
                 set => throw new NotSupportedException(
                     "TransactionConfig is only supported by versioned messages.");
+        }
+
+        /// <summary>
+        /// The address table lookups for the message. This property is only supported by versioned messages.
+        /// </summary>
+        public virtual List<MessageAddressLookupTable> AddressLookupTable
+        {
+            get => null;
+            set => throw new NotSupportedException(
+                "AddressLookupTable is only supported by versioned messages.");
         }
 
         /// <summary>

@@ -463,6 +463,42 @@ var lookupReference = new Message.MessageAddressTableLookup
 
 This pattern is useful when a later transaction needs more account addresses than fit comfortably in the legacy message format. In Solnet, you typically create and populate the ALT with `TransactionBuilder`, wait for confirmation, and then reference it from a `VersionedTransaction` when building the larger v0 message.
 
+### v0 Transaction Execution
+```csharp
+using static Solnet.Rpc.Models.Message;
+
+var rpc = ClientFactory.GetClient(Cluster.MainNet, logger: LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("Solnet"));
+var wallet = Account.FromSecretKey("YOUR_SECRET_KEY"); // Replace with your
+var from = wallet;
+
+// Get balance
+var bal = rpc.GetBalance(from.PublicKey);
+Console.WriteLine($"Balance: {bal.Result.Value} lamports");
+
+// Create a transaction with a custom TransactionConfig
+
+var alt = new List<MessageAddressLookupTable>();
+alt!.Add(new MessageAddressLookupTable { AccountKey = new PublicKey("PUBLIC_KEY"), ReadonlyIndexes = { }, WritableIndexes = { } }); // Add your lookup tables here
+
+var blockhash = rpc.GetLatestBlockHash();
+var tx = new TransactionBuilder(TransactionVersion.V0)
+    .SetRecentBlockHash(blockhash.Result.Value.Blockhash)
+    .SetFeePayer(from)
+    .SetAddressLookupTable(alt)
+    .AddInstruction(ComputeBudgetProgram.SetComputeUnitLimit(1_000_000)) 
+    .AddInstruction(ComputeBudgetProgram.SetComputeUnitPrice(10_000)) 
+    .AddInstruction(SystemProgram.Transfer(wallet.PublicKey, wallet.PublicKey, 1000)) // Sending 1000 lamports to self
+    .Build(from);
+
+var sig = rpc.SendTransaction(tx);
+Console.WriteLine($"tx: {sig.Result}");
+Console.WriteLine($"link: https://explorer.solana.com/tx/{sig.Result}?cluster=mainnet");
+
+var _tx = VersionedTransaction.Deserialize(tx);
+
+var _msg = Message.VersionedMessage.Deserialize(_tx.CompileMessage());
+```
+
 ### v1 Transaction Execution 
 v1 Transactions no longer require the computebudget program, but instead require TransactionConfig. For more details on v1 can be found here: [Sending v1 Transactions](https://solana.com/upgrades/larger-transaction-sizes#sending-v1-transactions)
 ```csharp
