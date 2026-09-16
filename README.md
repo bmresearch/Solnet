@@ -463,6 +463,41 @@ var lookupReference = new Message.MessageAddressTableLookup
 
 This pattern is useful when a later transaction needs more account addresses than fit comfortably in the legacy message format. In Solnet, you typically create and populate the ALT with `TransactionBuilder`, wait for confirmation, and then reference it from a `VersionedTransaction` when building the larger v0 message.
 
+### v1 Transaction Execution 
+v1 Transactions no longer require the computebudget program, but instead require TransactionConfig. For more details on v1 can be found here: [Sending v1 Transactions](https://solana.com/upgrades/larger-transaction-sizes#sending-v1-transactions)
+```csharp
+var rpc = ClientFactory.GetClient(Cluster.MainNet, logger: LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("Solnet"));
+var wallet = Account.FromSecretKey("YOUR_SECRET_KEY");
+var from = wallet;
+
+// Get balance
+var bal = rpc.GetBalance(from.PublicKey);
+Console.WriteLine($"Balance: {bal.Result.Value} lamports");
+
+// Create a transaction with a custom TransactionConfig
+var config = new TransactionConfig { ComputeUnitLimit = 20000, PriorityFee = 5000, HeapSize = (64 * 1024), LoadedAccountsDataSizeLimit = (64 * 1024) };
+
+var blockhash = rpc.GetLatestBlockHash();
+var tx = new TransactionBuilder(TransactionVersion.V1)
+    .SetRecentBlockHash(blockhash.Result.Value.Blockhash)
+    .SetFeePayer(from)
+    .SetTransactionConfig(config)
+    .AddInstruction(SystemProgram.Transfer(wallet.PublicKey, wallet.PublicKey, 1000)) // Sending 1000 lamports to self
+    .Build(from);
+
+var sig = rpc.SendTransaction(tx);
+Console.WriteLine($"tx: {sig.Result}");
+Console.WriteLine($"link: https://explorer.solana.com/tx/{sig.Result}?cluster=mainnet");
+
+var _tx = VersionedTransaction.Deserialize(tx);
+
+var _msg = Message.VersionedMessage.Deserialize(_tx.CompileMessage());
+
+Console.WriteLine("Deserialize Tx ComputeUnitLimit:" + _tx.TransactionConfig.ComputeUnitLimit!.Value);
+Console.WriteLine("Deserialize Tx PriorityFee:" + _tx.TransactionConfig.PriorityFee!.Value);
+Console.WriteLine("Deserialize Msg Version:" + _msg.Version);
+```
+
 ### Instruction decoding
 ```csharp
 var msg = Message.Deserialize(msgBase64);
