@@ -134,7 +134,7 @@ namespace Solnet.Rpc
         /// <param name="maxSupportedTransactionVersion">Transaction Version</param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
         Task<RequestResult<BlockInfo>> GetBlockAsync(ulong slot, Commitment commitment = Commitment.Finalized,
-            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false, int maxSupportedTransactionVersion = 0);
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false, int maxSupportedTransactionVersion = 1);
 
         /// <summary>
         /// Returns identity and transaction information about a block in the ledger.
@@ -158,7 +158,7 @@ namespace Solnet.Rpc
         /// <param name="maxSupportedTransactionVersion">Max supported transaction version either LEGACY or 1</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<BlockInfo> GetBlock(ulong slot, Commitment commitment = Commitment.Finalized,
-            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false, int maxSupportedTransactionVersion = 0);
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full, bool blockRewards = false, int maxSupportedTransactionVersion = 1);
 
         /// <summary>
         /// Gets the block commitment of a certain block, identified by slot.
@@ -855,7 +855,7 @@ namespace Solnet.Rpc
         /// <param name="encoding"></param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
         Task<RequestResult<TransactionMetaSlotInfo>> GetTransactionAsync(string signature,
-            Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0, string encoding = "json");
+            Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 1, string encoding = "json");
 
         /// <summary>
         /// Returns transaction details for a confirmed transaction.
@@ -871,7 +871,7 @@ namespace Solnet.Rpc
         /// <param name="maxSupportedTransactionVersion"></param>
         /// <param name="encoding"></param>
         /// <returns>Returns a task that holds the asynchronous operation result and state.</returns>
-        RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature, Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0, string encoding = "json");
+        RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature, Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 1, string encoding = "json");
 
         /// <summary>
         /// Gets the total transaction count of the ledger.

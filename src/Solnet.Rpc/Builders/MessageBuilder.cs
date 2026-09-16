@@ -49,6 +49,16 @@ namespace Solnet.Rpc.Builders
         /// The transaction fee payer.
         /// </summary>
         internal PublicKey FeePayer { get; set; }
+        
+        /// <summary>
+        /// The transaction config for the message. This property is only supported by versioned messages.
+        /// </summary>
+        public virtual TransactionConfig TransactionConfig
+        {
+                get => null;
+                set => throw new NotSupportedException(
+                    "TransactionConfig is only supported by versioned messages.");
+        }
 
         /// <summary>
         /// Initialize the message builder.

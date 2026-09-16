@@ -211,7 +211,7 @@ namespace Solnet.Rpc
         public async Task<RequestResult<BlockInfo>> GetBlockAsync(ulong slot,
             Commitment commitment = Commitment.Finalized,
             TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full,
-            bool blockRewards = false, int maxSupportedTransactionVersion = 0)
+            bool blockRewards = false, int maxSupportedTransactionVersion = 1)
         {
             if (commitment == Commitment.Processed)
             {
@@ -230,7 +230,7 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="IRpcClient.GetBlock"/>
         public RequestResult<BlockInfo> GetBlock(ulong slot, Commitment commitment = Commitment.Finalized,
             TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full,
-            bool blockRewards = false, int maxSupportedTransactionVersion = 0)
+            bool blockRewards = false, int maxSupportedTransactionVersion = 1)
             => GetBlockAsync(slot, commitment, transactionDetails, blockRewards, maxSupportedTransactionVersion).Result;
 
 
@@ -364,7 +364,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="IRpcClient.GetTransactionAsync"/>
         public async Task<RequestResult<TransactionMetaSlotInfo>> GetTransactionAsync(string signature,
-            Commitment commitment = Commitment.Finalized,  int maxSupportedTransactionVersion = 0, string encoding = "json")
+            Commitment commitment = Commitment.Finalized,  int maxSupportedTransactionVersion = 1, string encoding = "json")
         {
             return await SendRequestAsync<TransactionMetaSlotInfo>("getTransaction",
                 Parameters.Create(signature,
@@ -373,7 +373,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="IRpcClient.GetTransaction"/>
         public RequestResult<TransactionMetaSlotInfo> GetTransaction(string signature,
-            Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 0, string encoding = "json")
+            Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 1, string encoding = "json")
             => GetTransactionAsync(signature, commitment, maxSupportedTransactionVersion).Result;
 
      

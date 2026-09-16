@@ -15,15 +15,31 @@ namespace Solnet.Rpc.Builders
     /// </summary>
     public class VersionedMessageBuilder : MessageBuilder
     {
-    /// <summary>
-    /// The version to encode in the message prefix.
-    /// </summary>
-    public byte Version { get; set; }
+        /// <summary>
+        /// The version to encode in the message prefix.
+        /// </summary>
+        public byte Version { get; set; }
 
         /// <summary>
         /// Address Table Lookups
         /// </summary>
         public List<MessageAddressTableLookup> AddressTableLookups { get; set; }
+
+        /// <summary>
+        /// Transaction Config
+        /// </summary>
+
+        private TransactionConfig _transactionConfig = new();
+
+        /// <summary>
+        /// Transaction Config
+        /// </summary>
+        public override TransactionConfig TransactionConfig
+        {
+            get => _transactionConfig;
+            set => _transactionConfig = value;
+        }
+
         /// <summary>
         /// Account Keys
         /// </summary>
@@ -33,40 +49,63 @@ namespace Solnet.Rpc.Builders
         /// Builds the message into the wire format.
         /// </summary>
         /// <returns>The encoded message.</returns>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="NotSupportedException"></exception>
         internal override byte[] Build()
         {
             if (RecentBlockHash == null && NonceInformation == null)
                 throw new Exception("recent block hash or nonce information is required");
+
             if (Instructions == null)
                 throw new Exception("no instructions provided in the transaction");
 
-            // In case the user specified nonce information, we'll use it.
             if (NonceInformation != null)
             {
                 RecentBlockHash = NonceInformation.Nonce;
+
                 _accountKeysList.Add(NonceInformation.Instruction.Keys);
-                _accountKeysList.Add(AccountMeta.ReadOnly(new PublicKey(NonceInformation.Instruction.ProgramId),
-                    false));
+
+                _accountKeysList.Add(
+                    AccountMeta.ReadOnly(
+                        new PublicKey(NonceInformation.Instruction.ProgramId), false));
+
                 List<TransactionInstruction> newInstructions = new() { NonceInformation.Instruction };
+
                 newInstructions.AddRange(Instructions);
+
                 Instructions = newInstructions;
             }
 
+            switch (Version)
+            {
+                case 0:
+                    return BuildV0();
+
+                case 1:
+                    return BuildV1();
+
+                default:
+                    throw new NotSupportedException(
+                        $"Unsupported version {Version}");
+            }
+        }
+        private byte[] BuildV0()
+        {
             _messageHeader = new MessageHeader();
 
             List<AccountMeta> keysList = GetAccountKeys();
-            byte[] accountAddressesLength = ShortVectorEncoding.EncodeLength(keysList.Count);
-            int compiledInstructionsLength = 0;
+
             List<CompiledInstruction> compiledInstructions = new();
 
             foreach (TransactionInstruction instruction in Instructions)
             {
                 int keyCount = instruction.Keys.Count;
+
                 byte[] keyIndices = new byte[keyCount];
 
-                if (instruction.GetType() == typeof(VersionedTransactionInstruction))
+                if (instruction is VersionedTransactionInstruction vtx)
                 {
-                    keyIndices = ((VersionedTransactionInstruction)instruction).KeyIndices;
+                    keyIndices = vtx.KeyIndices;
                 }
                 else
                 {
@@ -76,69 +115,128 @@ namespace Solnet.Rpc.Builders
                     }
                 }
 
-                CompiledInstruction compiledInstruction = new()
-                {
-                    ProgramIdIndex = FindAccountIndex(keysList, instruction.ProgramId),
-                    KeyIndicesCount = ShortVectorEncoding.EncodeLength(keyIndices.Length),
-                    KeyIndices = keyIndices,
-                    DataLength = ShortVectorEncoding.EncodeLength(instruction.Data.Length),
-                    Data = instruction.Data
-                };
-                compiledInstructions.Add(compiledInstruction);
-                compiledInstructionsLength += compiledInstruction.Length();
+                compiledInstructions.Add(
+                    new CompiledInstruction
+                    {
+                        ProgramIdIndex = FindAccountIndex(keysList,instruction.ProgramId),
+
+                        KeyIndicesCount = ShortVectorEncoding.EncodeLength(keyIndices.Length),
+
+                        KeyIndices = keyIndices,
+
+                        DataLength = ShortVectorEncoding.EncodeLength(instruction.Data.Length),
+
+                        Data = instruction.Data
+                    });
             }
 
-            int accountKeysBufferSize = _accountKeysList.AccountList.Count * 32;
-            MemoryStream accountKeysBuffer = new MemoryStream(accountKeysBufferSize);
-            byte[] instructionsLength = ShortVectorEncoding.EncodeLength(compiledInstructions.Count);
+            List<PublicKey> accountKeys = new(keysList.Count);
 
             foreach (AccountMeta accountMeta in keysList)
             {
-                accountKeysBuffer.Write(accountMeta.PublicKeyBytes, 0, accountMeta.PublicKeyBytes.Length);
+                accountKeys.Add(new PublicKey(accountMeta.PublicKey));
+
                 if (accountMeta.IsSigner)
                 {
-                    _messageHeader.RequiredSignatures += 1;
+                    _messageHeader.RequiredSignatures++;
+
                     if (!accountMeta.IsWritable)
-                        _messageHeader.ReadOnlySignedAccounts += 1;
+                        _messageHeader.ReadOnlySignedAccounts++;
                 }
                 else
                 {
                     if (!accountMeta.IsWritable)
-                        _messageHeader.ReadOnlyUnsignedAccounts += 1;
+                        _messageHeader.ReadOnlyUnsignedAccounts++;
                 }
             }
 
-            #region Build Message Body
+            VersionedMessage.MessageV0 message =
+                new()
+                {
+                    Version = 0,
+                    Header = _messageHeader,
+                    RecentBlockhash = RecentBlockHash,
+                    AccountKeys = accountKeys,
+                    Instructions = compiledInstructions,
+                    AddressTableLookups = AddressTableLookups
+                };
 
-            int messageBufferSize = MessageHeader.Layout.HeaderLength + BlockHashLength +
-                                    accountAddressesLength.Length +
-                                    +instructionsLength.Length + compiledInstructionsLength + accountKeysBufferSize;
-            MemoryStream buffer = new MemoryStream(messageBufferSize);
-            byte[] messageHeaderBytes = _messageHeader.ToBytes();
+            return message.SerializeV0();
+        }
+        private byte[] BuildV1()
+        {
+            _messageHeader = new MessageHeader();
 
-            buffer.WriteByte((byte)(0x80 | Version));
-            buffer.Write(messageHeaderBytes, 0, messageHeaderBytes.Length);
-            buffer.Write(accountAddressesLength, 0, accountAddressesLength.Length);
-            buffer.Write(accountKeysBuffer.ToArray(), 0, accountKeysBuffer.ToArray().Length);
-            var encodedRecentBlockHash = Encoders.Base58.DecodeData(RecentBlockHash);
-            buffer.Write(encodedRecentBlockHash, 0, encodedRecentBlockHash.Length);
-            buffer.Write(instructionsLength, 0, instructionsLength.Length);
+            List<AccountMeta> keysList = GetAccountKeys();
 
-            foreach (CompiledInstruction compiledInstruction in compiledInstructions)
+            List<CompiledInstruction> compiledInstructions = new();
+
+            foreach (TransactionInstruction instruction in Instructions)
             {
-                buffer.WriteByte(compiledInstruction.ProgramIdIndex);
-                buffer.Write(compiledInstruction.KeyIndicesCount, 0, compiledInstruction.KeyIndicesCount.Length);
-                buffer.Write(compiledInstruction.KeyIndices, 0, compiledInstruction.KeyIndices.Length);
-                buffer.Write(compiledInstruction.DataLength, 0, compiledInstruction.DataLength.Length);
-                buffer.Write(compiledInstruction.Data, 0, compiledInstruction.Data.Length);
+                int keyCount = instruction.Keys.Count;
+
+                byte[] keyIndices = new byte[keyCount];
+
+                if (instruction is VersionedTransactionInstruction vtx)
+                {
+                    keyIndices = vtx.KeyIndices;
+                }
+                else
+                {
+                    for (int i = 0; i < keyCount; i++)
+                    {
+                        keyIndices[i] =
+                            FindAccountIndex(
+                                keysList,
+                                instruction.Keys[i].PublicKey);
+                    }
+                }
+
+                compiledInstructions.Add(
+                    new CompiledInstruction
+                    {
+                        ProgramIdIndex = FindAccountIndex(keysList, instruction.ProgramId),
+
+                        KeyIndices = keyIndices,
+                        KeyIndicesCount = ShortVectorEncoding.EncodeLength(keyIndices.Length),
+
+                        Data = instruction.Data,
+                        DataLength = ShortVectorEncoding.EncodeLength(instruction.Data.Length)
+                    });
             }
 
-            #endregion
+            List<PublicKey> accountKeys = new(keysList.Count);
 
-            var serializeAddressTableLookups = AddressTableLookupUtils.SerializeAddressTableLookups(AddressTableLookups);
-            buffer.Write(serializeAddressTableLookups, 0, serializeAddressTableLookups.Length);
+            foreach (AccountMeta accountMeta in keysList)
+            {
+                accountKeys.Add(new PublicKey(accountMeta.PublicKey));
 
-            return buffer.ToArray();
+                if (accountMeta.IsSigner)
+                {
+                    _messageHeader.RequiredSignatures++;
+
+                    if (!accountMeta.IsWritable)
+                        _messageHeader.ReadOnlySignedAccounts++;
+                }
+                else
+                {
+                    if (!accountMeta.IsWritable)
+                        _messageHeader.ReadOnlyUnsignedAccounts++;
+                }
+            }
+
+            VersionedMessage.MessageV1 message =
+            new()
+            {
+                Version = 1,
+                Header = _messageHeader,
+                TransactionConfig = TransactionConfig,
+                RecentBlockhash = RecentBlockHash,
+                AccountKeys = accountKeys,
+                Instructions = compiledInstructions
+            };
+
+            return message.SerializeV1();
         }
     }
 }

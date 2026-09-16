@@ -1,4 +1,5 @@
 using Solnet.Rpc.Models;
+using Solnet.Rpc.Types;
 using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
@@ -33,20 +34,41 @@ namespace Solnet.Rpc.Builders
         /// The message after being serialized.
         /// </summary>
         private byte[] _serializedMessage;
+        
+        /// <summary>
+        /// The version of the transaction.
+        /// </summary>
+        private TransactionVersion _version;
 
         /// <summary>
         /// Default constructor that initializes the transaction builder.
         /// </summary>
-        public TransactionBuilder()
+        /// <param name="txVersion">The version of the transaction.</param>
+        public TransactionBuilder(TransactionVersion txVersion = TransactionVersion.Legacy)
         {
-            _messageBuilder = new MessageBuilder();
+            _version = txVersion;
+            if(txVersion == TransactionVersion.V0 || txVersion == TransactionVersion.V1)
+                _messageBuilder = new VersionedMessageBuilder { Version=(byte)_version};
+            else
+                _messageBuilder = new MessageBuilder();
             _signatures = new List<string>();
+        }
+        /// <summary>
+        /// Serializes the transaction into a byte array.
+        /// </summary>
+        /// <returns>A byte array representing the serialized transaction.</returns>
+        public byte[] Serialize()
+        {
+            if (_version == TransactionVersion.V1)
+                return SerializeV1Transaction();
+
+            return SerializeLegacyOrV0();
         }
 
         /// <summary>
         /// Serializes the message into a byte array.
         /// </summary>
-        public byte[] Serialize()
+        public byte[] SerializeLegacyOrV0()
         {
             byte[] signaturesLength = ShortVectorEncoding.EncodeLength(_signatures.Count);
             if (_serializedMessage == null)
@@ -59,6 +81,29 @@ namespace Solnet.Rpc.Builders
                 buffer.Write(Encoders.Base58.DecodeData(signature));
             }
             buffer.Write(_serializedMessage);
+
+            return buffer.ToArray();
+        }
+
+        /// <summary>
+        /// Serializes the transaction into a byte array for V1 transactions.
+        /// </summary>
+        /// <returns>A byte array representing the serialized V1 transaction.</returns>
+        public byte[] SerializeV1Transaction()
+        {
+            if (_serializedMessage == null)
+                _serializedMessage = _messageBuilder.Build();
+
+            int size = _serializedMessage.Length + (_signatures.Count * SignatureLength);
+
+            MemoryStream buffer = new(size);
+
+            buffer.Write(_serializedMessage);
+
+            foreach (string signature in _signatures)
+            {
+                buffer.Write(Encoders.Base58.DecodeData(signature));
+            }
 
             return buffer.ToArray();
         }
@@ -167,6 +212,17 @@ namespace Solnet.Rpc.Builders
         public TransactionBuilder SetFeePayer(PublicKey account)
         {
             _messageBuilder.FeePayer = account;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the transaction configuration for the transaction.
+        /// </summary>
+        /// <param name="config">The transaction configuration to set.</param>
+        /// <returns>The transaction builder, so instruction addition can be chained.</returns>
+        public TransactionBuilder SetTransactionConfig(TransactionConfig config)
+        {
+            _messageBuilder.TransactionConfig = config;
             return this;
         }
 

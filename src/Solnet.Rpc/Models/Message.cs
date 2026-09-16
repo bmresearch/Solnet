@@ -2,6 +2,7 @@ using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -271,10 +272,15 @@ namespace Solnet.Rpc.Models
             public List<MessageAddressTableLookup> AddressTableLookups { get; set; }
 
             /// <summary>
+            /// The transaction configuration for the versioned message.
+            /// </summary>
+            public TransactionConfig TransactionConfig { get; set; }
+
+            /// <summary>
             /// Serialize the versioned message into the wire format.
             /// </summary>
             /// <returns>A byte array corresponding to the serialized versioned message.</returns>
-            public override byte[] Serialize()
+            public byte[] SerializeV0()
             {
                 byte[] accountAddressesLength = ShortVectorEncoding.EncodeLength(AccountKeys.Count);
                 byte[] instructionsLength = ShortVectorEncoding.EncodeLength(Instructions.Count);
@@ -313,14 +319,369 @@ namespace Solnet.Rpc.Models
                 buffer.Write(addressTableLookupBytes);
                 return buffer.ToArray();
             }
+            /// <summary>
+            /// Serialize the versioned message into the wire format for version 1.
+            /// </summary>
+            /// <returns>A byte array corresponding to the serialized versioned message.</returns>
+            public byte[] SerializeV1()
+            {
+                MemoryStream buffer = new(GetV1Size());
 
+                TransactionConfigMask mask = CreateMask(TransactionConfig);
+
+                Span<byte> scratch = stackalloc byte[8];
+
+                // Version Prefix
+                buffer.WriteByte((byte)(0x80 | Version));
+                // Message Header
+                buffer.Write(Header.ToBytes());
+
+                // Config Mask (u32 LE)
+                BinaryPrimitives.WriteUInt32LittleEndian(
+                    scratch[..4],
+                    mask.Value);
+
+                buffer.Write(scratch[..4]);
+
+                // Lifetime Specifier / Blockhash
+                buffer.Write(Encoders.Base58.DecodeData(RecentBlockhash));
+
+                // Counts
+                buffer.WriteByte((byte)Instructions.Count);
+                buffer.WriteByte((byte)AccountKeys.Count);
+
+                // Account Keys
+                foreach (PublicKey key in AccountKeys)
+                {
+                    Console.WriteLine(key.ToString());
+                    buffer.Write(key.KeyBytes);
+                }
+                // Config Values
+
+                if (TransactionConfig.PriorityFee.HasValue)
+                {
+                    BinaryPrimitives.WriteUInt64LittleEndian(scratch, TransactionConfig.PriorityFee.Value);
+
+                    buffer.Write(scratch);
+                }
+
+                if (TransactionConfig.ComputeUnitLimit.HasValue)
+                {
+                    BinaryPrimitives.WriteUInt32LittleEndian(scratch[..4], TransactionConfig.ComputeUnitLimit.Value);
+                    buffer.Write(scratch[..4]);
+                }
+
+                if (TransactionConfig.LoadedAccountsDataSizeLimit.HasValue)
+                {
+                    BinaryPrimitives.WriteUInt32LittleEndian(scratch[..4], TransactionConfig.LoadedAccountsDataSizeLimit.Value);
+                    buffer.Write(scratch[..4]);
+                }
+
+                if (TransactionConfig.HeapSize.HasValue)
+                {
+                    BinaryPrimitives.WriteUInt32LittleEndian(scratch[..4], TransactionConfig.HeapSize.Value);
+                    buffer.Write(scratch[..4]);
+                }
+
+                // Instruction Headers
+                foreach (CompiledInstruction ix in Instructions)
+                {
+                    buffer.WriteByte(ix.ProgramIdIndex);
+                    buffer.WriteByte((byte)ix.KeyIndices.Length);
+                    BinaryPrimitives.WriteUInt16LittleEndian(scratch[..2], (ushort)ix.Data.Length);
+                    buffer.Write(scratch[..2]);
+                }
+
+                // Instruction Payloads
+                foreach (CompiledInstruction ix in Instructions)
+                {
+                    buffer.Write(ix.KeyIndices);
+                    buffer.Write(ix.Data);
+                }
+                
+                return buffer.ToArray();
+            }
+            private int GetV1Size()
+            {
+                int size = 0;
+
+                // version prefix
+                size += 1;
+
+                // header
+                size += 3;
+
+                // config mask
+                size += sizeof(uint);
+
+                // blockhash
+                size += 32;
+
+                // instruction count
+                size += sizeof(byte);
+
+                // account count
+                size += sizeof(byte);
+
+                // account keys
+                size += AccountKeys.Count * PublicKey.PublicKeyLength;
+
+                // config values
+                size += TransactionConfig?.Size() ?? 0;
+
+                // instruction headers
+                size += Instructions.Count * 4;
+
+                // instruction payloads
+                foreach (CompiledInstruction ix in Instructions)
+                {
+                    size += ix.KeyIndices.Length;
+                    size += ix.Data.Length;
+                }
+
+                return size;
+            }
 
             /// <summary>
-            /// Deserialize a compiled message into a Message object.
+            /// Serialize the versioned message into the wire format based on the version.
             /// </summary>
-            /// <param name="data">The data to deserialize into the Message object.</param>
-            /// <returns>The Message object instance.</returns>
+            /// <returns>A byte array containing the serialized message data.</returns>
+            /// <exception cref="NotSupportedException"></exception>
+            public override byte[] Serialize() 
+            {
+                switch(Version)
+                {
+                    case 0:
+                        return SerializeV0();
+                    case 1:
+                        return SerializeV1();
+                    default:
+                        throw new NotSupportedException($"Version {Version} is not supported for serialization.");
+                }
+                
+            }
+
+            /// <summary>
+            /// Deserialize a compiled message into a VersionedMessage object.
+            /// </summary>
+            /// <param name="data">The data to deserialize into the VersionedMessage object.</param>
+            /// <returns>The VersionedMessage object instance.</returns>
+            /// <exception cref="NotSupportedException">Thrown when the data represents a legacy message instead of a versioned message.</exception>
             public static new VersionedMessage Deserialize(ReadOnlySpan<byte> data)
+            {
+
+                byte prefix = data[0];
+                byte maskedPrefix = (byte)(prefix & VersionPrefixMask);
+
+                if (prefix == maskedPrefix)
+                    throw new NotSupportedException("Expected versioned message but received legacy message");
+
+                byte version = maskedPrefix;
+                
+                switch(version)
+                {
+                    case 0:
+                        return DeserializeV0(data);
+                    case 1:
+                        return DeserializeV1(data);
+                    default:
+                        throw new NotSupportedException($"Version {version} is not supported for deserialization.");
+                }
+            }
+
+            /// <summary>
+            /// Deserialize a compiled message into a VersionedMessage object for version 1.
+            /// </summary>
+            /// <param name="data">The byte span containing the serialized message data.</param>
+            /// <returns>A <see cref="VersionedMessage"/> object deserialized from the provided data.</returns>
+            /// <exception cref="NotSupportedException"></exception>
+            /// <exception cref="FormatException"></exception>
+            public static VersionedMessage DeserializeV1(ReadOnlySpan<byte> data)
+            {
+                int offset = 0;
+
+                byte prefix = data[offset++];
+
+                byte version =
+                    (byte)(prefix & VersionPrefixMask);
+
+                if (version != 1)
+                    throw new NotSupportedException(
+                        $"Expected V1 message, got V{version}");
+
+                MessageHeader header = new()
+                {
+                    RequiredSignatures = data[offset++],
+                    ReadOnlySignedAccounts = data[offset++],
+                    ReadOnlyUnsignedAccounts = data[offset++]
+                };
+
+                TransactionConfigMask configMask =
+                    new(BinaryPrimitives.ReadUInt32LittleEndian(
+                        data.Slice(offset, 4)));
+
+                offset += 4;
+
+                if (configMask.HasUnknownBits() ||
+                    configMask.HasInvalidPriorityFeeBits())
+                {
+                    throw new FormatException(
+                        "Invalid transaction config mask.");
+                }
+
+                string recentBlockHash =
+                    Encoders.Base58.EncodeData(
+                        data.Slice(offset, 32).ToArray());
+
+                offset += 32;
+
+                byte instructionCount = data[offset++];
+                byte accountCount = data[offset++];
+
+                List<PublicKey> accountKeys =
+                    new(accountCount);
+
+                for (int i = 0; i < accountCount; i++)
+                {
+                    accountKeys.Add(
+                        new PublicKey(
+                            data.Slice(
+                                offset,
+                                PublicKey.PublicKeyLength)));
+
+                    offset += PublicKey.PublicKeyLength;
+                }
+
+                TransactionConfig config = new();
+
+                if (configMask.HasPriorityFee())
+                {
+                    config.PriorityFee =
+                        BinaryPrimitives.ReadUInt64LittleEndian(
+                            data.Slice(offset, 8));
+
+                    offset += 8;
+                }
+
+                if (configMask.HasComputeUnitLimit())
+                {
+                    config.ComputeUnitLimit =
+                        BinaryPrimitives.ReadUInt32LittleEndian(
+                            data.Slice(offset, 4));
+
+                    offset += 4;
+                }
+
+                if (configMask.HasLoadedAccountsDataSize())
+                {
+                    config.LoadedAccountsDataSizeLimit =
+                        BinaryPrimitives.ReadUInt32LittleEndian(
+                            data.Slice(offset, 4));
+
+                    offset += 4;
+                }
+
+                if (configMask.HasHeapSize())
+                {
+                    config.HeapSize =
+                        BinaryPrimitives.ReadUInt32LittleEndian(
+                            data.Slice(offset, 4));
+
+                    offset += 4;
+                }
+
+                // Read instruction headers first.
+
+                List<(byte ProgramId,
+                      byte AccountCount,
+                      ushort DataLength)> headers =
+                    new(instructionCount);
+
+                for (int i = 0; i < instructionCount; i++)
+                {
+                    byte programId =
+                        data[offset++];
+
+                    byte numAccounts =
+                        data[offset++];
+
+                    ushort dataLength =
+                        BinaryPrimitives.ReadUInt16LittleEndian(
+                            data.Slice(offset, 2));
+
+                    offset += 2;
+
+                    headers.Add(
+                        (
+                            programId,
+                            numAccounts,
+                            dataLength
+                        ));
+                }
+
+                // Read payloads after all headers.
+
+                List<CompiledInstruction> instructions =
+                    new(instructionCount);
+
+                foreach (var headerInfo in headers)
+                {
+                    byte[] accounts =
+                        data.Slice(
+                            offset,
+                            headerInfo.AccountCount)
+                            .ToArray();
+
+                    offset += headerInfo.AccountCount;
+
+                    byte[] instructionData =
+                        data.Slice(
+                            offset,
+                            headerInfo.DataLength)
+                            .ToArray();
+
+                    offset += headerInfo.DataLength;
+
+                    instructions.Add(
+                        new CompiledInstruction
+                        {
+                            ProgramIdIndex =
+                                headerInfo.ProgramId,
+
+                            KeyIndices = accounts,
+
+                            Data = instructionData,
+
+                            KeyIndicesCount =
+                                ShortVectorEncoding.EncodeLength(
+                                    accounts.Length),
+
+                            DataLength =
+                                ShortVectorEncoding.EncodeLength(
+                                    instructionData.Length)
+                        });
+                }
+
+                return new VersionedMessage
+                {
+                    Version = 1,
+                    Header = header,
+                    TransactionConfig = config,
+                    RecentBlockhash = recentBlockHash,
+                    AccountKeys = accountKeys,
+                    Instructions = instructions
+                };
+            }
+
+            
+
+            /// <summary>
+            /// Deserialize a compiled message into a VersionedMessage object.
+            /// </summary>
+            /// <param name="data">The data to deserialize into the VersionedMessage object.</param>
+            /// <returns>The VersionedMessage object instance.</returns>
+            /// <exception cref="NotSupportedException">Thrown when the data represents a legacy message instead of a versioned message.</exception>
+            public static VersionedMessage DeserializeV0(ReadOnlySpan<byte> data)
             {
                 byte prefix = data[0];
                 byte maskedPrefix = (byte)(prefix & VersionPrefixMask);
@@ -523,6 +884,30 @@ namespace Solnet.Rpc.Models
                 {
                     Version = 1;
                 }
+            }
+
+            /// <summary>
+            /// Creates a TransactionConfigMask from a TransactionConfig object.
+            /// </summary>
+            /// <param name="config"></param>
+            /// <returns></returns>
+            public static TransactionConfigMask CreateMask(TransactionConfig config)
+            {
+                uint mask = 0;
+
+                if (config.PriorityFee.HasValue)
+                    mask |= TransactionConfigMask.PriorityFee;
+
+                if (config.ComputeUnitLimit.HasValue)
+                    mask |= TransactionConfigMask.ComputeUnitLimit;
+
+                if (config.LoadedAccountsDataSizeLimit.HasValue)
+                    mask |= TransactionConfigMask.LoadedAccountsDataSize;
+
+                if (config.HeapSize.HasValue)
+                    mask |= TransactionConfigMask.HeapSize;
+
+                return new TransactionConfigMask(mask);
             }
         }
 
