@@ -43,7 +43,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(0, msg.Header.ReadOnlySignedAccounts);
             Assert.AreEqual(4, msg.Header.ReadOnlyUnsignedAccounts);
             Assert.AreEqual("GDgnjNiNGnw9nA3diFYKeizi8LpBzFMjDaBSU5hoqEUH", msg.RecentBlockhash);
-            Assert.AreEqual(6, msg.AccountKeys.Count);
+            Assert.HasCount(6, msg.AccountKeys);
             Assert.AreEqual("7y62LXLwANaN9g3KJPxQFYwMxSdZraw5PkqwtqY9zLDF", msg.AccountKeys[0].Key);
             Assert.AreEqual("FWUPMzrLbAEuH83cf1QphoFdyUdhenDF5oHftwd9Vjyr", msg.AccountKeys[1].Key);
             Assert.AreEqual("AN5M7KvEFiZFxgEUWFdZUdR5i4b96HjXawADpqjxjXCL", msg.AccountKeys[2].Key);
@@ -51,7 +51,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual("11111111111111111111111111111111", msg.AccountKeys[4].Key);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", msg.AccountKeys[5].Key);
 
-            Assert.AreEqual(2, msg.Instructions.Count);
+            Assert.HasCount(2, msg.Instructions);
             Assert.AreEqual(4, msg.Instructions[0].ProgramIdIndex);
             CollectionAssert.AreEqual(new byte[] { 0, 1 }, msg.Instructions[0].KeyIndices);
             CollectionAssert.AreEqual(new byte[] { 2 }, msg.Instructions[0].KeyIndicesCount);
@@ -158,7 +158,7 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual(128, serialized[0]);
             Assert.AreEqual(0, deserialized.Version);
-            Assert.AreEqual(1, deserialized.AddressLookupTable.Count);
+            Assert.HasCount(1, deserialized.AddressLookupTable);
             Assert.AreEqual("AddressLookupTab1e1111111111111111111111111", deserialized.AddressLookupTable[0].AccountKey.Key);
             CollectionAssert.AreEqual(new byte[] { 0 }, deserialized.AddressLookupTable[0].WritableIndexes);
             CollectionAssert.AreEqual(new byte[] { 1, 2 }, deserialized.AddressLookupTable[0].ReadonlyIndexes);

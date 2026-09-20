@@ -49,7 +49,7 @@ namespace Solnet.Programs.Test
                 TwitterHandleRegistry,
                 payer, ownerAccount.PublicKey, ReverseRegistryMinBalance, 1096);
 
-            Assert.AreEqual(6, txInstruction.Keys.Count);
+            Assert.HasCount(6, txInstruction.Keys);
             CollectionAssert.AreEqual(NameServiceProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedCreateNameRegistryData, txInstruction.Data);
         }
@@ -71,7 +71,7 @@ namespace Solnet.Programs.Test
                 payer, parentNameOwner,
                 TwitterHandleRegistry);
 
-            Assert.AreEqual(7, txInstruction.Keys.Count);
+            Assert.HasCount(7, txInstruction.Keys);
             CollectionAssert.AreEqual(NameServiceProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedCreateNameRegistryData, txInstruction.Data);
         }
@@ -90,7 +90,7 @@ namespace Solnet.Programs.Test
                 new byte[] { 0, 1, 2, 3, 4, 5 },
                 ownerAccount, classAccount);
 
-            Assert.AreEqual(3, txInstruction.Keys.Count);
+            Assert.HasCount(3, txInstruction.Keys);
             CollectionAssert.AreEqual(NameServiceProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(new byte[] { 1, 5, 0, 0, 0, 0, 1, 2, 3, 4, 5 }, txInstruction.Data);
         }
@@ -109,7 +109,7 @@ namespace Solnet.Programs.Test
                 newOwnerAccount.PublicKey,
                 ownerAccount, classAccount);
 
-            Assert.AreEqual(3, txInstruction.Keys.Count);
+            Assert.HasCount(3, txInstruction.Keys);
             CollectionAssert.AreEqual(NameServiceProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedTransferNameRegistryData, txInstruction.Data);
         }
@@ -127,7 +127,7 @@ namespace Solnet.Programs.Test
                 ownerAccount,
                 refundAccount.PublicKey);
 
-            Assert.AreEqual(3, txInstruction.Keys.Count);
+            Assert.HasCount(3, txInstruction.Keys);
             CollectionAssert.AreEqual(NameServiceProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(new byte[] { 3 }, txInstruction.Data);
         }

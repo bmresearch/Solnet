@@ -34,7 +34,7 @@ namespace Solnet.Programs.Test
                 out byte bump);
 
             Assert.IsTrue(success);
-            Assert.AreEqual(4, txInstruction.Keys.Count);
+            Assert.HasCount(4, txInstruction.Keys);
             CollectionAssert.AreEqual(ProgramIdBytes, txInstruction.ProgramId);
             Assert.AreEqual(lookupTableAddress, new PublicKey(txInstruction.Keys[0].PublicKey));
             Assert.AreEqual(authority.PublicKey, new PublicKey(txInstruction.Keys[1].PublicKey));
@@ -57,7 +57,7 @@ namespace Solnet.Programs.Test
                 authority.PublicKey,
                 new List<PublicKey> { addressOne.PublicKey, addressTwo.PublicKey });
 
-            Assert.AreEqual(2, txInstruction.Keys.Count);
+            Assert.HasCount(2, txInstruction.Keys);
             Assert.AreEqual(2UL, Solnet.Programs.Utilities.Deserialization.GetU64(txInstruction.Data, 4));
         }
 

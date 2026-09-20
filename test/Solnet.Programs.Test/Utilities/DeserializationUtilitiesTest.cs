@@ -96,11 +96,13 @@ namespace Solnet.Programs.Test.Utilities
         };
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadU8Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1 }.AsSpan();
-            byte value = readSpan.GetU8(1);
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+            {
+                ReadOnlySpan<byte> readSpan = new byte[] { 1 }.AsSpan();
+                _ = readSpan.GetU8(1);
+            });
         }
 
         [TestMethod]
@@ -113,11 +115,13 @@ namespace Solnet.Programs.Test.Utilities
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadU16Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0 }.AsSpan();
-            uint value = readSpan.GetU16(1);
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+            {
+                ReadOnlySpan<byte> readSpan = new byte[] { 1, 0 }.AsSpan();
+                _ = readSpan.GetU16(1);
+            });
         }
 
         [TestMethod]
@@ -130,11 +134,13 @@ namespace Solnet.Programs.Test.Utilities
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadU32Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0 }.AsSpan();
-            uint value = readSpan.GetU32(1);
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+            {
+                ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0 }.AsSpan();
+                _ = readSpan.GetU32(1);
+            });
         }
 
         [TestMethod]
@@ -147,11 +153,13 @@ namespace Solnet.Programs.Test.Utilities
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadU64Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0, 0, 0, 0, 0 }.AsSpan();
-            ulong value = readSpan.GetU64(1);
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => 
+            {
+                ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0, 0, 0, 0, 0 }.AsSpan();
+                _ =readSpan.GetU64(1);
+            });
         }
 
         [TestMethod]
@@ -164,11 +172,13 @@ namespace Solnet.Programs.Test.Utilities
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadS8Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1 }.AsSpan();
-            sbyte value = readSpan.GetS8(1);
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+            {
+                ReadOnlySpan<byte> readSpan = new byte[] { 1 }.AsSpan();
+                _ = readSpan.GetS8(1);
+            });
         }
 
         [TestMethod]
@@ -181,11 +191,13 @@ namespace Solnet.Programs.Test.Utilities
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadS16Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0 }.AsSpan();
-            int value = readSpan.GetS16(1);
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+            {
+                ReadOnlySpan<byte> readSpan = new byte[] { 1, 0 }.AsSpan();
+                _ = readSpan.GetS16(1);
+            });
         }
 
         [TestMethod]
@@ -198,11 +210,13 @@ namespace Solnet.Programs.Test.Utilities
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadS32Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0 }.AsSpan();
-            int value = readSpan.GetS32(1);
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+            {
+                ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0 }.AsSpan();
+                _ = readSpan.GetS32(1);
+            });
         }
 
         [TestMethod]
@@ -215,11 +229,13 @@ namespace Solnet.Programs.Test.Utilities
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadS64Exception()
         {
-            ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0, 0, 0, 0, 0 }.AsSpan();
-            long value = readSpan.GetS64(1);
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+            {
+                ReadOnlySpan<byte> readSpan = new byte[] { 1, 0, 0, 0, 0, 0, 0, 0 }.AsSpan();
+                _ = readSpan.GetS64(1);
+            });
         }
 
         [TestMethod]
@@ -232,11 +248,13 @@ namespace Solnet.Programs.Test.Utilities
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadSpanException()
         {
-            ReadOnlySpan<byte> readSpan = PublicKeyBytes.AsSpan();
-            ReadOnlySpan<byte> span = readSpan.GetSpan(1, 32);
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+            {
+                ReadOnlySpan<byte> readSpan = PublicKeyBytes.AsSpan();
+                ReadOnlySpan<byte> span = readSpan.GetSpan(1, 32);
+            });
         }
 
         [TestMethod]
@@ -249,11 +267,13 @@ namespace Solnet.Programs.Test.Utilities
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadPublicKeyException()
         {
-            ReadOnlySpan<byte> span = PublicKeyBytes.AsSpan();
-            PublicKey pk = span.GetPubKey(1);
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+            {
+                ReadOnlySpan<byte> span = PublicKeyBytes.AsSpan();
+                PublicKey pk = span.GetPubKey(1);
+            });
         }
 
         [TestMethod]
@@ -266,11 +286,13 @@ namespace Solnet.Programs.Test.Utilities
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadBigIntegerException()
         {
-            ReadOnlySpan<byte> span = BigIntBytes.AsSpan();
-            BigInteger bi = span.GetBigInt(1, 16);
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+            {
+                ReadOnlySpan<byte> span = BigIntBytes.AsSpan();
+                _ = span.GetBigInt(1, 16);
+            });
         }
 
         [TestMethod]
@@ -279,7 +301,7 @@ namespace Solnet.Programs.Test.Utilities
             BigInteger actual = new(BigIntBytes);
             ReadOnlySpan<byte> span = BigIntBytes.AsSpan();
             BigInteger bi = span.GetBigInt(0, 16);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(actual: actual, expected: bi);
         }
 
         [TestMethod]
@@ -288,31 +310,31 @@ namespace Solnet.Programs.Test.Utilities
             BigInteger actual = new(HighPosValueBEBytes, isBigEndian: true);
             ReadOnlySpan<byte> span = HighPosValueBEBytes.AsSpan();
             BigInteger bi = span.GetBigInt(0, 16, isBigEndian: true);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(actual: actual, expected: bi);
             Assert.AreEqual(BigInteger.Parse("20282409603651670423947251286016"), bi);
 
             actual = new(HighPosValueBEBytes, true, true);
             span = HighPosValueBEBytes.AsSpan();
             bi = span.GetBigInt(0, 16, true, true);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(actual: actual, expected: bi);
             Assert.AreEqual(BigInteger.Parse("20282409603651670423947251286016"), bi);
 
             actual = new(LowNegValueBEBytes, isBigEndian: true);
             span = LowNegValueBEBytes.AsSpan();
             bi = span.GetBigInt(0, 16, isBigEndian: true);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(actual: actual, expected: bi);
             Assert.AreEqual(BigInteger.Parse("-20282409603651670423947251286016"), bi);
 
             actual = new(OneBEBytes, isBigEndian: true);
             span = OneBEBytes.AsSpan();
             bi = span.GetBigInt(0, 16, isBigEndian: true);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(actual: actual, expected: bi);
             Assert.AreEqual(1, bi);
 
             actual = new(OneNegBEBytes, isBigEndian: true);
             span = OneNegBEBytes.AsSpan();
             bi = span.GetBigInt(0, 16, isBigEndian: true);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(actual: actual, expected: bi);
             Assert.AreEqual(-1, bi);
         }
 
@@ -323,58 +345,60 @@ namespace Solnet.Programs.Test.Utilities
             BigInteger actual = new(ZeroValueBytes);
             ReadOnlySpan<byte> span = ZeroValueBytes.AsSpan();
             BigInteger bi = span.GetBigInt(0, 16);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(actual: actual, expected: bi);
             Assert.AreEqual(0, bi);
 
             actual = new(PosValueBytes);
             span = PosValueBytes.AsSpan();
             bi = span.GetBigInt(0, 16);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(actual: actual, expected: bi);
             Assert.AreEqual(281474976710656, bi);
 
             actual = new(NegValueBytes);
             span = NegValueBytes.AsSpan();
             bi = span.GetBigInt(0, 16);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(actual: actual, expected: bi);
             Assert.AreEqual(-281474976710656, bi);
 
             actual = new(HighPosValueBytes);
             span = HighPosValueBytes.AsSpan();
             bi = span.GetBigInt(0, 16);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(actual: actual, expected: bi);
             Assert.AreEqual(BigInteger.Parse("20282409603651670423947251286016"), bi);
 
             actual = new(HighPosValueBytes, isUnsigned: true);
             span = HighPosValueBytes.AsSpan();
             bi = span.GetBigInt(0, 16, true);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(actual: actual, expected: bi);
             Assert.AreEqual(BigInteger.Parse("20282409603651670423947251286016"), bi);
 
             actual = new(LowNegValueBytes);
             span = LowNegValueBytes.AsSpan();
             bi = span.GetBigInt(0, 16);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(actual: actual, expected: bi);
             Assert.AreEqual(BigInteger.Parse("-20282409603651670423947251286016"), bi);
 
             actual = new(OneBytes);
             span = OneBytes.AsSpan();
             bi = span.GetBigInt(0, 16);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(actual: actual, expected: bi);
             Assert.AreEqual(1, bi);
 
             actual = new(OneNegBytes);
             span = OneNegBytes.AsSpan();
             bi = span.GetBigInt(0, 16);
-            Assert.AreEqual(actual, bi);
+            Assert.AreEqual(actual: actual, expected: bi);
             Assert.AreEqual(-1, bi);
         }
 
-            [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        [TestMethod]
         public void TestReadDoubleException()
         {
-            ReadOnlySpan<byte> span = DoubleBytes.AsSpan();
-            double bi = span.GetDouble(1);
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+            {
+                ReadOnlySpan<byte> span = DoubleBytes.AsSpan();
+                _ = span.GetDouble(1);
+            });
         }
 
         [TestMethod]
@@ -387,11 +411,13 @@ namespace Solnet.Programs.Test.Utilities
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadSingleException()
         {
-            ReadOnlySpan<byte> span = SingleBytes.AsSpan();
-            float bi = span.GetSingle(1);
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+            {
+                ReadOnlySpan<byte> span = SingleBytes.AsSpan();
+                _ = span.GetSingle(1);
+            });
         }
 
         [TestMethod]
@@ -404,10 +430,9 @@ namespace Solnet.Programs.Test.Utilities
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestReadRustStringException()
         {
-            Deserialization.DecodeBincodeString(EncodedStringBytes, 22);
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => Deserialization.DecodeBincodeString(EncodedStringBytes, 22));
         }
 
         [TestMethod]

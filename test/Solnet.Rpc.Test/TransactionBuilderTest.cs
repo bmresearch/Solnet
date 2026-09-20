@@ -80,54 +80,54 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
         public void TestTransactionBuilderBuildNullBlockhashException()
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
             var fromAccount = wallet.GetAccount(0);
             var toAccount = wallet.GetAccount(1);
-            _ = new TransactionBuilder().SetFeePayer(fromAccount)
-                .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
-                .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)"))
-                .Build(fromAccount);
+            Assert.ThrowsExactly<Exception>(() => new TransactionBuilder()
+                    .SetFeePayer(fromAccount)
+                    .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
+                    .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)"))
+                    .Build(fromAccount));
+            
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
         public void TestTransactionBuilderBuildNullFeePayerException()
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
             var fromAccount = wallet.GetAccount(0);
             var toAccount = wallet.GetAccount(1);
-            _ = new TransactionBuilder()
+
+            Assert.ThrowsExactly<Exception>(() => new TransactionBuilder()
                 .SetRecentBlockHash(Blockhash)
                 .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
                 .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)"))
-                .Build(fromAccount);
+                .Build(fromAccount));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
         public void TestTransactionBuilderBuildEmptySignersException()
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
             var fromAccount = wallet.GetAccount(0);
             var toAccount = wallet.GetAccount(1);
-            _ = new TransactionBuilder()
+
+            Assert.ThrowsExactly<Exception>(() => new TransactionBuilder()
                 .SetRecentBlockHash(Blockhash)
                 .AddInstruction(SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000))
                 .AddInstruction(MemoProgram.NewMemo(fromAccount, "Hello from Sol.Net :)"))
-                .Build(new List<Account>());
+                .Build(new List<Account>()));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
         public void TestTransactionBuilderBuildNullInstructionsException()
         {
             var wallet = new Wallet.Wallet(MnemonicWords);
             var fromAccount = wallet.GetAccount(0);
-            _ = new TransactionBuilder().SetRecentBlockHash(Blockhash)
-                .Build(fromAccount);
+            Assert.ThrowsExactly<Exception>(() => new TransactionBuilder().SetRecentBlockHash(Blockhash)
+                .Build(fromAccount));
         }
 
         [TestMethod]

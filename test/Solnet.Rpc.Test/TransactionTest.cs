@@ -112,17 +112,15 @@ namespace Solnet.Rpc.Test
             "Zyb20gU29sLk5ldA==";
 
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
         public void TransactionDeserializeExceptionTest()
         {
-            _ = Transaction.Deserialize(InvalidBase64Transaction);
+            Assert.ThrowsExactly<Exception>(() => Transaction.Deserialize(InvalidBase64Transaction));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TransactionDeserializeArgumentNullExceptionTest()
         {
-            _ = Transaction.Deserialize((string)null);
+            Assert.ThrowsExactly<ArgumentNullException>(() => Transaction.Deserialize((string)null));
         }
 
         [TestMethod]
@@ -134,17 +132,17 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", tx.FeePayer.Key);
             Assert.AreEqual("2S1kjspXLPs6jpNVXQfNMqZzzSrKLbGdr9Fxap5h1DLN", tx.RecentBlockHash);
 
-            Assert.AreEqual(1, tx.Signatures.Count);
+            Assert.HasCount(1, tx.Signatures);
             Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", tx.Signatures[0].PublicKey.Key);
             Assert.AreEqual("GAJa8rLiVeTHYTcbwjLmVnxVH986Vwxz4PXDEPaZKz4BEcmv9rvMF2Sw2xLzbu8mwNHA8ZZ6Es5Thf8yQrwjLv9",
                 Encoders.Base58.EncodeData(tx.Signatures[0].Signature));
 
             // This is 1 because the transaction uses durable nonce.
-            Assert.AreEqual(1, tx.Instructions.Count);
+            Assert.HasCount(1, tx.Instructions);
 
             // Assert the durable nonce data
             Assert.AreEqual("2S1kjspXLPs6jpNVXQfNMqZzzSrKLbGdr9Fxap5h1DLN", tx.NonceInformation.Nonce);
-            Assert.AreEqual(3, tx.NonceInformation.Instruction.Keys.Count);
+            Assert.HasCount(3, tx.NonceInformation.Instruction.Keys);
             Assert.AreEqual("11111111111111111111111111111111",
                 Encoders.Base58.EncodeData(tx.NonceInformation.Instruction.ProgramId));
             Assert.AreEqual("G5EWCBwDM5GzVNwrG9LbgpTdQBD9PEAaey82ttuJJ7Qo",
@@ -162,7 +160,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual("BAAAAA==", Convert.ToBase64String(tx.NonceInformation.Instruction.Data));
 
             // Assert the instruction data that's not related to durable nonce
-            Assert.AreEqual(2, tx.Instructions[0].Keys.Count);
+            Assert.HasCount(2, tx.Instructions[0].Keys);
             Assert.AreEqual("11111111111111111111111111111111",
                 Encoders.Base58.EncodeData(tx.Instructions[0].ProgramId));
             Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", tx.Instructions[0].Keys[0].PublicKey);
@@ -380,7 +378,7 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual(128, compiled[0]);
             Assert.AreEqual(0, msg.Version);
-            Assert.AreEqual(1, msg.AddressLookupTable.Count);
+            Assert.HasCount(1, msg.AddressLookupTable);
             CollectionAssert.AreEqual(new byte[] { 0 }, msg.AddressLookupTable[0].WritableIndexes);
             CollectionAssert.AreEqual(new byte[] { 1, 2, 3 }, msg.AddressLookupTable[0].ReadonlyIndexes);
         }

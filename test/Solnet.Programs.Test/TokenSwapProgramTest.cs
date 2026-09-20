@@ -151,7 +151,7 @@ namespace Solnet.Programs.Test
                 SwapCurve.ConstantProduct
             );
 
-            Assert.AreEqual(8, txInstruction.Keys.Count);
+            Assert.HasCount(8, txInstruction.Keys);
             CollectionAssert.AreEqual(TokenSwapProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedInitializeData, txInstruction.Data);
         }
@@ -185,7 +185,7 @@ namespace Solnet.Programs.Test
                 8_500_000
             );
 
-            Assert.AreEqual(11, txInstruction.Keys.Count);
+            Assert.HasCount(11, txInstruction.Keys);
             CollectionAssert.AreEqual(TokenSwapProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedSwapData, txInstruction.Data);
         }
@@ -218,7 +218,7 @@ namespace Solnet.Programs.Test
                 4_000
             );
 
-            Assert.AreEqual(10, txInstruction.Keys.Count);
+            Assert.HasCount(10, txInstruction.Keys);
             CollectionAssert.AreEqual(TokenSwapProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedDepositAllTokenTypesData, txInstruction.Data);
         }
@@ -253,7 +253,7 @@ namespace Solnet.Programs.Test
                 8_500_000
             );
 
-            Assert.AreEqual(11, txInstruction.Keys.Count);
+            Assert.HasCount(11, txInstruction.Keys);
             CollectionAssert.AreEqual(TokenSwapProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedWithdrawAllTokenTypesData, txInstruction.Data);
         }
@@ -283,7 +283,7 @@ namespace Solnet.Programs.Test
                 4
             );
 
-            Assert.AreEqual(9, txInstruction.Keys.Count);
+            Assert.HasCount(9, txInstruction.Keys);
             CollectionAssert.AreEqual(TokenSwapProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedDepositSingleTokenTypeExactAmountInData, txInstruction.Data);
         }
@@ -315,7 +315,7 @@ namespace Solnet.Programs.Test
                 4
             );
 
-            Assert.AreEqual(10, txInstruction.Keys.Count);
+            Assert.HasCount(10, txInstruction.Keys);
             CollectionAssert.AreEqual(TokenSwapProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(ExpectedWithdrawSingleTokenTypeExactAmountOutData, txInstruction.Data);
         }
@@ -326,7 +326,7 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(InitializeMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(2, decodedInstructions.Count);
+            Assert.HasCount(2, decodedInstructions);
             Assert.AreEqual("[0] 11111111111111111111111111111111:System Program:Create Account\n[0] [[Owner Account, 6bhhceZToGG9RsTe1nfNFXEMjavhj6CV55EsvearAt2z],[New Account, Hz3UWwAR4z7TZmzMW2TFjjzDtxEveiZZbJ4sg1LEuvKo],[Amount, 3145920],[Space, 324]]\n[0] InnerInstructions (0)\n",
                     decodedInstructions[0].ToString());
             Assert.AreEqual("[0] SwaPpA9LAaLfeLi3a68M4DjnLqgtticKg6CnyNwgAC8:Token Swap Program:Initialize Swap\n[0] [[Token Swap Account, Hz3UWwAR4z7TZmzMW2TFjjzDtxEveiZZbJ4sg1LEuvKo],[Swap Authority, HRmkKfXbHcvNhWHw47zqoexKiLHmowR8o7hdwwWdaHoW],[Token A Account, 7WGJswQpwuNePUiEFBqCMKnGcpkNoX7fFeAdM16o1wV],[Token B Account, AbLFYgniLdGWikGJX3dT4iTWoX1FbFBwu2sjGDQN7nfa],[Pool Token Mint, CZSQMnD4jTvRfEuApDAmjWvz1AWpFpXqoePPXwZpmk1F],[Pool Token Fee Account, 3Z24fqykBPn1wNSXGz7SA5MXqGGk3DPSDpmxQoERMHrM],[Pool Token Account, CosUN9gxk8M6gdSDHYvaKKKCbX2VL73z1mJ66tYFsnSA],[Token Program ID, TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA],[Nonce, 253],[Trade Fee Numerator, 25],[Trade Fee Denominator, 10000],[Owner Trade Fee Numerator, 5],[Owner Trade Fee Denominator, 10000],[Owner Withraw Fee Numerator, 0],[Owner Withraw Fee Denominator, 0],[Host Fee Numerator, 20],[Host Fee Denominator, 100],[Curve Type, 0]]\n[0] InnerInstructions (0)\n",
@@ -339,7 +339,7 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(SwapMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(1, decodedInstructions.Count);
+            Assert.HasCount(1, decodedInstructions);
             Assert.AreEqual("[0] SwaPpA9LAaLfeLi3a68M4DjnLqgtticKg6CnyNwgAC8:Token Swap Program:Swap\n[0] [[Token Swap Account, Hz3UWwAR4z7TZmzMW2TFjjzDtxEveiZZbJ4sg1LEuvKo],[Swap Authority, HRmkKfXbHcvNhWHw47zqoexKiLHmowR8o7hdwwWdaHoW],[User Transfer Authority, 6bhhceZToGG9RsTe1nfNFXEMjavhj6CV55EsvearAt2z],[User Source Account, GxK5rLRGx1AnE9BZzQBP6SVenavuZqRUXbE6QTzL3jjW],[Token Base Into Account, 7WGJswQpwuNePUiEFBqCMKnGcpkNoX7fFeAdM16o1wV],[Token Base From Account, AbLFYgniLdGWikGJX3dT4iTWoX1FbFBwu2sjGDQN7nfa],[User Destination Account, DzVbjXqE9oFMJ4dWa9PqCA2bmiARtSURpmijux3PkC45],[Pool Token Mint, CZSQMnD4jTvRfEuApDAmjWvz1AWpFpXqoePPXwZpmk1F],[Fee Account, 3Z24fqykBPn1wNSXGz7SA5MXqGGk3DPSDpmxQoERMHrM],[Token Program ID, TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA],[Amount In, 1000000000],[Amount Out, 500000]]\n[0] InnerInstructions (0)\n",
                     decodedInstructions[0].ToString());
         }
@@ -350,7 +350,7 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(DepositAllTokenTypesMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(1, decodedInstructions.Count);
+            Assert.HasCount(1, decodedInstructions);
             Assert.AreEqual("[0] SwaPpA9LAaLfeLi3a68M4DjnLqgtticKg6CnyNwgAC8:Token Swap Program:Deposit Both\n[0] [[Token Swap Account, Hz3UWwAR4z7TZmzMW2TFjjzDtxEveiZZbJ4sg1LEuvKo],[Swap Authority, HRmkKfXbHcvNhWHw47zqoexKiLHmowR8o7hdwwWdaHoW],[User Transfer Authority, 6bhhceZToGG9RsTe1nfNFXEMjavhj6CV55EsvearAt2z],[User Token A Account, GxK5rLRGx1AnE9BZzQBP6SVenavuZqRUXbE6QTzL3jjW],[User Token B Account, DzVbjXqE9oFMJ4dWa9PqCA2bmiARtSURpmijux3PkC45],[Pool Token A Account, 7WGJswQpwuNePUiEFBqCMKnGcpkNoX7fFeAdM16o1wV],[Pool Token B Account, AbLFYgniLdGWikGJX3dT4iTWoX1FbFBwu2sjGDQN7nfa],[Pool Token Mint, CZSQMnD4jTvRfEuApDAmjWvz1AWpFpXqoePPXwZpmk1F],[User Pool Token Account, CosUN9gxk8M6gdSDHYvaKKKCbX2VL73z1mJ66tYFsnSA],[Token Program ID, TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA],[Pool Tokens, 1000000],[Max Token A, 100000000000],[Max Token B, 100000000000]]\n[0] InnerInstructions (0)\n",
                decodedInstructions[0].ToString());
         }
@@ -361,7 +361,7 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(WithdrawAllTokenTypesMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(1, decodedInstructions.Count);
+            Assert.HasCount(1, decodedInstructions);
             Assert.AreEqual("[0] SwaPpA9LAaLfeLi3a68M4DjnLqgtticKg6CnyNwgAC8:Token Swap Program:Withdraw Both\n[0] [[Token Swap Account, Hz3UWwAR4z7TZmzMW2TFjjzDtxEveiZZbJ4sg1LEuvKo],[Swap Authority, HRmkKfXbHcvNhWHw47zqoexKiLHmowR8o7hdwwWdaHoW],[User Transfer Authority, 6bhhceZToGG9RsTe1nfNFXEMjavhj6CV55EsvearAt2z],[Pool Token Account, CZSQMnD4jTvRfEuApDAmjWvz1AWpFpXqoePPXwZpmk1F],[User Pool Token Account, CosUN9gxk8M6gdSDHYvaKKKCbX2VL73z1mJ66tYFsnSA],[Pool Token A Account, 7WGJswQpwuNePUiEFBqCMKnGcpkNoX7fFeAdM16o1wV],[Pool Token B Account, AbLFYgniLdGWikGJX3dT4iTWoX1FbFBwu2sjGDQN7nfa],[User Token A Account, GxK5rLRGx1AnE9BZzQBP6SVenavuZqRUXbE6QTzL3jjW],[User Token B Account, DzVbjXqE9oFMJ4dWa9PqCA2bmiARtSURpmijux3PkC45],[Fee Account, 3Z24fqykBPn1wNSXGz7SA5MXqGGk3DPSDpmxQoERMHrM],[Token Program ID, TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA],[Pool Tokens, 1000000],[Min Token A, 1000],[Min Token B, 1000]]\n[0] InnerInstructions (0)\n",
                     decodedInstructions[0].ToString());
         }
@@ -372,7 +372,7 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(DepositSingleTokenTypeExactAmountInMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(1, decodedInstructions.Count);
+            Assert.HasCount(1, decodedInstructions);
             Assert.AreEqual("[0] SwaPpA9LAaLfeLi3a68M4DjnLqgtticKg6CnyNwgAC8:Token Swap Program:Deposit Single\n[0] [[Token Swap Account, Hz3UWwAR4z7TZmzMW2TFjjzDtxEveiZZbJ4sg1LEuvKo],[Swap Authority, HRmkKfXbHcvNhWHw47zqoexKiLHmowR8o7hdwwWdaHoW],[User Transfer Authority, 6bhhceZToGG9RsTe1nfNFXEMjavhj6CV55EsvearAt2z],[User Source Token Account, GxK5rLRGx1AnE9BZzQBP6SVenavuZqRUXbE6QTzL3jjW],[Token A Swap Account, 7WGJswQpwuNePUiEFBqCMKnGcpkNoX7fFeAdM16o1wV],[Token B Swap Account, AbLFYgniLdGWikGJX3dT4iTWoX1FbFBwu2sjGDQN7nfa],[Pool Mint Account, CZSQMnD4jTvRfEuApDAmjWvz1AWpFpXqoePPXwZpmk1F],[User Pool Token Account, CosUN9gxk8M6gdSDHYvaKKKCbX2VL73z1mJ66tYFsnSA],[Token Program ID, TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA],[Source Token Amount, 1000000000],[Min Pool Token Amount, 1000]]\n[0] InnerInstructions (0)\n",
                     decodedInstructions[0].ToString());
         }
@@ -383,7 +383,7 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(WithdrawSingleTokenTypeExactAmountOutMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(1, decodedInstructions.Count);
+            Assert.HasCount(1, decodedInstructions);
             Assert.AreEqual("[0] SwaPpA9LAaLfeLi3a68M4DjnLqgtticKg6CnyNwgAC8:Token Swap Program:Withdraw Single\n[0] [[Token Swap Account, Hz3UWwAR4z7TZmzMW2TFjjzDtxEveiZZbJ4sg1LEuvKo],[Swap Authority, HRmkKfXbHcvNhWHw47zqoexKiLHmowR8o7hdwwWdaHoW],[User Transfer Authority, 6bhhceZToGG9RsTe1nfNFXEMjavhj6CV55EsvearAt2z],[Pool Mint Account, CZSQMnD4jTvRfEuApDAmjWvz1AWpFpXqoePPXwZpmk1F],[User Pool Token Account, CosUN9gxk8M6gdSDHYvaKKKCbX2VL73z1mJ66tYFsnSA],[Token A Swap Account, 7WGJswQpwuNePUiEFBqCMKnGcpkNoX7fFeAdM16o1wV],[Token B Swap Account, AbLFYgniLdGWikGJX3dT4iTWoX1FbFBwu2sjGDQN7nfa],[User Token Account, GxK5rLRGx1AnE9BZzQBP6SVenavuZqRUXbE6QTzL3jjW],[Fee Account, 3Z24fqykBPn1wNSXGz7SA5MXqGGk3DPSDpmxQoERMHrM],[Token Program ID, TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA],[Destination Token Amount, 1000000],[Max Pool Token Amount, 100000]]\n[0] InnerInstructions (0)\n",
                     decodedInstructions[0].ToString());
         }

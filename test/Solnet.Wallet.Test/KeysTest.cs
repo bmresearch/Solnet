@@ -57,7 +57,7 @@ namespace Solnet.Wallet.Test
         public void TestPrivateKey()
         {
             PrivateKey pk = new(PrivateKeyString);
-            CollectionAssert.AreEqual(ExpectedPrivateKeyBytes, pk.KeyBytes);
+            Assert.AreSequenceEqual(ExpectedPrivateKeyBytes, pk.KeyBytes);
         }
 
         [TestMethod]
@@ -75,70 +75,71 @@ namespace Solnet.Wallet.Test
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestInvalidPrivateKeyBytes()
         {
-            _ = new PrivateKey(InvalidPrivateKeyBytes.AsSpan());
+            Assert.ThrowsExactly<ArgumentException>(() => new PrivateKey(InvalidPrivateKeyBytes.AsSpan()));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TestNullPrivateKeyBytes()
         {
-            byte[] key = null;
-            _ = new PrivateKey(key);
+            Assert.ThrowsExactly<ArgumentNullException>(() => new PrivateKey((byte[])null));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TestNullPrivateKeyString()
         {
             string key = null;
-            _ = new PrivateKey(key);
+            Assert.ThrowsExactly<ArgumentNullException>(() => new PrivateKey(key));
         }
 
         [TestMethod]
         public void TestPublicKeySpan()
         {
             PublicKey pk = new(PublicKeyBytes.AsSpan());
-            Assert.AreEqual(pk.Key, PublicKeyString);
+            Assert.AreEqual(actual: pk.Key, expected: PublicKeyString);
         }
 
         [TestMethod]
         public void TestPublicKeyToString()
         {
             PublicKey pk = new(PublicKeyBytes);
-            Assert.AreEqual(pk.Key, pk.ToString());
+            Assert.AreEqual(actual: pk.Key, expected: pk.ToString());
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestInvalidPublicKeyBytes()
         {
-            _ = new PublicKey(InvalidPublicKeyBytes.AsSpan());
+            Assert.ThrowsExactly<ArgumentException>(() => new PublicKey(InvalidPublicKeyBytes.AsSpan()));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TestNullPublicKeyString()
-        {
+        {   
             string key = null;
-            _ = new PublicKey(key);
+            Assert.ThrowsExactly<ArgumentNullException>(() =>
+            {
+               
+                _ = new PublicKey(key);
+            });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void TestNullPublicKeyBytes()
         {
             byte[] key = null;
-            _ = new PublicKey(key);
+            Assert.ThrowsExactly<ArgumentNullException>(() =>
+            {
+                
+                _ = new PublicKey(key);
+            });
         }
 
         [TestMethod]
         public void TestPrivateKeyExplicitStringOperator()
         {
             PrivateKey pk = TestExplicitOperator((PrivateKey)PrivateKeyString);
-            Assert.IsInstanceOfType(pk, typeof(PrivateKey));
+            Assert.IsInstanceOfType<PrivateKey>(pk);
         }
 
         [TestMethod]
@@ -146,14 +147,14 @@ namespace Solnet.Wallet.Test
         {
             PrivateKey pk = new(PrivateKeyString);
             string pkString = TestImplicitStringOperator(pk);
-            Assert.IsInstanceOfType(pkString, typeof(string));
+            Assert.IsInstanceOfType<string>(pkString);
         }
 
         [TestMethod]
         public void TestPrivateKeyExplicitBytesOperator()
         {
             PrivateKey pk = TestExplicitOperator((PrivateKey)PrivateKeyBytes);
-            Assert.IsInstanceOfType(pk, typeof(PrivateKey));
+            Assert.IsInstanceOfType<PrivateKey>(pk);
         }
 
         [TestMethod]
@@ -161,14 +162,14 @@ namespace Solnet.Wallet.Test
         {
             PrivateKey pk = new(PrivateKeyString);
             byte[] pkBytes = TestImplicitByteArrayOperator(pk);
-            Assert.IsInstanceOfType(pkBytes, typeof(byte[]));
+            Assert.IsInstanceOfType<byte[]>(pkBytes);
         }
 
         [TestMethod]
         public void TestPublicKeyExplicitStringOperator()
         {
             PublicKey pk = TestExplicitOperator((PublicKey)PublicKeyString);
-            Assert.IsInstanceOfType(pk, typeof(PublicKey));
+            Assert.IsInstanceOfType<PublicKey>(pk);
         }
 
         [TestMethod]
@@ -176,14 +177,14 @@ namespace Solnet.Wallet.Test
         {
             PublicKey pk = new(PublicKeyString);
             string pkString = TestImplicitStringOperator(pk);
-            Assert.IsInstanceOfType(pkString, typeof(string));
+            Assert.IsInstanceOfType<string>(pkString);
         }
 
         [TestMethod]
         public void TestPublicKeyExplicitBytesOperator()
         {
             PublicKey pk = TestExplicitOperator((PublicKey)PublicKeyBytes);
-            Assert.IsInstanceOfType(pk, typeof(PublicKey));
+            Assert.IsInstanceOfType<PublicKey>(pk);
         }
 
         [TestMethod]
@@ -191,7 +192,7 @@ namespace Solnet.Wallet.Test
         {
             PublicKey pk = new(PublicKeyString);
             byte[] pkBytes = TestImplicitByteArrayOperator(pk);
-            Assert.IsInstanceOfType(pkBytes, typeof(byte[]));
+            Assert.IsInstanceOfType<byte[]>(pkBytes);
         }
 
         private static PrivateKey TestExplicitOperator(PrivateKey key)
@@ -236,19 +237,21 @@ namespace Solnet.Wallet.Test
                     new("11111111111111111111111111111111"),
                     "limber chicken: 4/45",
                     new(Encoding.UTF8.GetBytes("aaaaaaaaaaaProgramDerivedAddress")),
-                    out var res));
+                    out _));
 
         }
 
-        private readonly PublicKey LoaderProgramId = new PublicKey("BPFLoader1111111111111111111111111111111111");
+        private readonly PublicKey LoaderProgramId = new("BPFLoader1111111111111111111111111111111111");
 
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestCreateProgramAddressException()
         {
-            _ = PublicKey.TryCreateProgramAddress(
-                new[] { Encoding.UTF8.GetBytes("SeedPubey1111111111111111111111111111111111") }, LoaderProgramId, out _);
+            Assert.ThrowsExactly<ArgumentException>(() =>
+            {
+                _ = PublicKey.TryCreateProgramAddress(
+                    new[] { Encoding.UTF8.GetBytes("SeedPubey1111111111111111111111111111111111") }, LoaderProgramId, out _);
+            });
         }
 
         [TestMethod]
@@ -263,7 +266,7 @@ namespace Solnet.Wallet.Test
             Assert.AreEqual("GUs5qLUfsEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K", pubKey.Key);
 
             success = PublicKey.TryCreateProgramAddress(
-                new[] { Encoding.UTF8.GetBytes(""), new byte[] { 1 } }, LoaderProgramId, out pubKey);
+                new[] { Encoding.UTF8.GetBytes(""), [1] }, LoaderProgramId, out pubKey);
 
             Assert.IsTrue(success);
             Assert.AreEqual("3gF2KMe9KiC6FNVBmfg9i267aMPvK37FewCip4eGBFcT", pubKey.Key);
@@ -343,17 +346,21 @@ namespace Solnet.Wallet.Test
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestCreateBadPublicKeyFatal_1()
         {
-            _ = new PublicKey("GUs5qLUfsEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K ");
+            Assert.ThrowsExactly<ArgumentException>(() =>
+            {
+                _ = new PublicKey("GUs5qLUfsEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K ");
+            });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestCreateBadPublicKeyFatal_2()
         {
-            _ = new PublicKey("GUs5qLU&sEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K");
+            Assert.ThrowsExactly<ArgumentException>(() =>
+            {
+                _ = new PublicKey("GUs5qLU&sEHkcMB9T38vjr18ypEhRuNWiePW2LoK4E3K");
+            });
         }
 
     }

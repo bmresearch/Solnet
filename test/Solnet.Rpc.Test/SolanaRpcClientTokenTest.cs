@@ -31,7 +31,7 @@ namespace Solnet.Rpc.Test
             var result = sut.GetTokenSupply("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(79266576UL, result.Result.Context.Slot);
             Assert.AreEqual("1000", result.Result.Value.Amount);
@@ -56,7 +56,7 @@ namespace Solnet.Rpc.Test
             var result = sut.GetTokenSupply("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2", Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(79266576UL, result.Result.Context.Slot);
             Assert.AreEqual("1000", result.Result.Value.Amount);
@@ -99,10 +99,10 @@ namespace Solnet.Rpc.Test
                 tokenProgramId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(79200468UL, result.Result.Context.Slot);
-            Assert.AreEqual(7, result.Result.Value.Count);
+            Assert.HasCount(7, result.Result.Value);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -124,10 +124,10 @@ namespace Solnet.Rpc.Test
                 tokenMintPubKey: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", commitment: Commitment.Confirmed);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(79200468UL, result.Result.Context.Slot);
-            Assert.AreEqual(7, result.Result.Value.Count);
+            Assert.HasCount(7, result.Result.Value);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -149,16 +149,15 @@ namespace Solnet.Rpc.Test
                 tokenProgramId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(1114UL, result.Result.Context.Slot);
-            Assert.AreEqual(1, result.Result.Value.Count);
+            Assert.HasCount(1, result.Result.Value);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", result.Result.Value[0].Account.Owner);
-            Assert.AreEqual(false, result.Result.Value[0].Account.Executable);
+            Assert.IsFalse(result.Result.Value[0].Account.Executable);
             Assert.AreEqual(4UL, result.Result.Value[0].Account.RentEpoch);
             Assert.AreEqual(1726080UL, result.Result.Value[0].Account.Lamports);
-            Assert.AreEqual("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T",
-                result.Result.Value[0].Account.Data.Parsed.Info.Delegate);
+            Assert.AreEqual("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T", result.Result.Value[0].Account.Data.Parsed.Info.Delegate);
             Assert.AreEqual("1", result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount.Amount);
             Assert.AreEqual(1, result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount.Decimals);
             Assert.AreEqual("0.1", result.Result.Value[0].Account.Data.Parsed.Info.DelegatedAmount.UiAmountString);
@@ -185,12 +184,12 @@ namespace Solnet.Rpc.Test
                 tokenMintPubKey: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", commitment: Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(1114UL, result.Result.Context.Slot);
-            Assert.AreEqual(1, result.Result.Value.Count);
+            Assert.HasCount(1, result.Result.Value);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", result.Result.Value[0].Account.Owner);
-            Assert.AreEqual(false, result.Result.Value[0].Account.Executable);
+            Assert.IsFalse(result.Result.Value[0].Account.Executable);
             Assert.AreEqual(4UL, result.Result.Value[0].Account.RentEpoch);
             Assert.AreEqual(1726080UL, result.Result.Value[0].Account.Lamports);
             Assert.AreEqual("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T",
@@ -235,7 +234,7 @@ namespace Solnet.Rpc.Test
             var result = sut.GetTokenAccountBalance("7247amxcSBamBSKZJrqbj373CiJSa1v21cRav56C3WfZ");
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(79207643UL, result.Result.Context.Slot);
             Assert.AreEqual("1000", result.Result.Value.Amount);
@@ -261,7 +260,7 @@ namespace Solnet.Rpc.Test
                 sut.GetTokenAccountBalance("7247amxcSBamBSKZJrqbj373CiJSa1v21cRav56C3WfZ", Commitment.Confirmed);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(79207643UL, result.Result.Context.Slot);
             Assert.AreEqual("1000", result.Result.Value.Amount);
@@ -287,10 +286,10 @@ namespace Solnet.Rpc.Test
             var result = sut.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2");
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(79207653UL, result.Result.Context.Slot);
-            Assert.AreEqual(1, result.Result.Value.Count);
+            Assert.HasCount(1, result.Result.Value);
             Assert.AreEqual("7247amxcSBamBSKZJrqbj373CiJSa1v21cRav56C3WfZ", result.Result.Value[0].Address);
             Assert.AreEqual("1000", result.Result.Value[0].Amount);
             Assert.AreEqual(2, result.Result.Value[0].Decimals);
@@ -315,10 +314,10 @@ namespace Solnet.Rpc.Test
                 sut.GetTokenLargestAccounts("7ugkvt26sFjMdiFQFP5AQX8m8UkxWaW7rk2nBk4R6Gf2", Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(79207653UL, result.Result.Context.Slot);
-            Assert.AreEqual(1, result.Result.Value.Count);
+            Assert.HasCount(1, result.Result.Value);
             Assert.AreEqual("7247amxcSBamBSKZJrqbj373CiJSa1v21cRav56C3WfZ", result.Result.Value[0].Address);
             Assert.AreEqual("1000", result.Result.Value[0].Amount);
             Assert.AreEqual(2, result.Result.Value[0].Decimals);

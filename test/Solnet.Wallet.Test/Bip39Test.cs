@@ -21,7 +21,7 @@ namespace Solnet.Wallet.Test
         {
             foreach (var count in new[] { WordCount.Twelve, WordCount.TwentyFour, WordCount.TwentyOne, WordCount.Fifteen, WordCount.Eighteen })
             {
-                Assert.AreEqual((int)count, new Mnemonic(WordList.English, count).Words.Length);
+                Assert.HasCount((int)count, new Mnemonic(WordList.English, count).Words);
             }
         }
 
@@ -49,7 +49,7 @@ namespace Solnet.Wallet.Test
 
             foreach (var unitTest in test.EnumerateArray())
             {
-                var entropy = BitConverter.ToString(Encoding.Default.GetBytes(unitTest[0].ToString())).ToLowerInvariant().Replace("-", "");
+                _ = BitConverter.ToString(Encoding.Default.GetBytes(unitTest[0].ToString())).ToLowerInvariant().Replace("-", "");
                 string mnemonicStr = unitTest[1].ToString();
                 string seed = unitTest[2].ToString();
                 var mnemonic = new Mnemonic(mnemonicStr, WordList.English);
@@ -63,11 +63,10 @@ namespace Solnet.Wallet.Test
         {
             var lang = WordList.English;
             var words = lang.GetWords();
-            int i;
             foreach (var word in words)
             {
-                Assert.IsTrue(lang.WordExists(word, out i));
-                Assert.IsTrue(i >= 0);
+                Assert.IsTrue(lang.WordExists(word, out int i));
+                Assert.IsGreaterThanOrEqualTo(value: i, lowerBound: 0);
             }
         }
 
@@ -76,7 +75,7 @@ namespace Solnet.Wallet.Test
         {
             var input = "あおぞら";
             var expected = "あおぞら";
-            Assert.IsFalse(input == expected);
+            Assert.AreNotEqual(expected, input);
             Assert.AreEqual(expected, KdTable.NormalizeKd(input));
         }
 

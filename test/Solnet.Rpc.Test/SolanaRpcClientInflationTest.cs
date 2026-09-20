@@ -34,7 +34,7 @@ namespace Solnet.Rpc.Test
             var result = sut.GetInflationGovernor();
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual((decimal)0.05, result.Result.Foundation);
             Assert.AreEqual(7, result.Result.FoundationTerm);
@@ -63,7 +63,7 @@ namespace Solnet.Rpc.Test
             var result = sut.GetInflationGovernor(Types.Commitment.Confirmed);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual((decimal)0.05, result.Result.Foundation);
             Assert.AreEqual(7, result.Result.FoundationTerm);
@@ -92,7 +92,7 @@ namespace Solnet.Rpc.Test
             var result = sut.GetInflationRate();
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(100, result.Result.Epoch);
             Assert.AreEqual((decimal)0.149, result.Result.Total);
@@ -125,14 +125,14 @@ namespace Solnet.Rpc.Test
                 }, 2);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(2, result.Result.Count);
+            Assert.HasCount(2, result.Result);
             Assert.AreEqual(2500UL, result.Result[0].Amount);
             Assert.AreEqual(224UL, result.Result[0].EffectiveSlot);
             Assert.AreEqual(2UL, result.Result[0].Epoch);
             Assert.AreEqual(499999442500UL, result.Result[0].PostBalance);
-            Assert.AreEqual(null, result.Result[1]);
+            Assert.IsNull(result.Result[1]);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -160,14 +160,14 @@ namespace Solnet.Rpc.Test
                 }, 2, Types.Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(2, result.Result.Count);
+            Assert.HasCount(2, result.Result);
             Assert.AreEqual(2500UL, result.Result[0].Amount);
             Assert.AreEqual(224UL, result.Result[0].EffectiveSlot);
             Assert.AreEqual(2UL, result.Result[0].Epoch);
             Assert.AreEqual(499999442500UL, result.Result[0].PostBalance);
-            Assert.AreEqual(null, result.Result[1]);
+            Assert.IsNull(result.Result[1]);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -195,14 +195,14 @@ namespace Solnet.Rpc.Test
                 });
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(2, result.Result.Count);
+            Assert.HasCount(2, result.Result);
             Assert.AreEqual(1758149777313UL, result.Result[0].Amount);
             Assert.AreEqual(81216004UL, result.Result[0].EffectiveSlot);
             Assert.AreEqual(187UL, result.Result[0].Epoch);
             Assert.AreEqual(1759149777313UL, result.Result[0].PostBalance);
-            Assert.AreEqual(null, result.Result[1]);
+            Assert.IsNull(result.Result[1]);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }

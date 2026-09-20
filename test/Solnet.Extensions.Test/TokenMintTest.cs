@@ -14,7 +14,7 @@ namespace Solnet.Extensions.Test
 
             // load simple 
             var json = File.ReadAllText("Resources/TokenMint/SimpleTokenList.json");
-            ITokenMintResolver tokens = TokenMintResolver.ParseTokenList(json);
+            TokenMintResolver tokens = TokenMintResolver.ParseTokenList(json);
 
             // lookup by mint
             var wsol = tokens.Resolve(WellKnownTokens.WrappedSOL.TokenMint);
@@ -38,7 +38,7 @@ namespace Solnet.Extensions.Test
             var unknown = tokens.Resolve("deadbeef11111111111111111111111111111111112");
             Assert.IsNotNull(unknown);
             Assert.AreEqual(-1, unknown.DecimalPlaces);
-            Assert.IsTrue(unknown.TokenName.IndexOf("deadbeef") >= 0);
+            Assert.IsGreaterThanOrEqualTo(value: unknown.TokenName.IndexOf("deadbeef"), lowerBound: 0);
             Assert.AreEqual("deadbeef11111111111111111111111111111111112", unknown.TokenMint);
 
             // repeat lookup and check we are reusing same instance

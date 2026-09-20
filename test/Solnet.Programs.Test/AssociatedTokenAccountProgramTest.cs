@@ -32,7 +32,7 @@ namespace Solnet.Programs.Test
                     ownerAccount.PublicKey,
                     mintAccount.PublicKey);
 
-            Assert.AreEqual(7, txInstruction.Keys.Count);
+            Assert.HasCount(7, txInstruction.Keys);
             CollectionAssert.AreEqual(ProgramIdBytes, txInstruction.ProgramId);
             CollectionAssert.AreEqual(System.Array.Empty<byte>(), txInstruction.Data);
         }

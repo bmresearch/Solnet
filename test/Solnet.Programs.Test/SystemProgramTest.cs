@@ -129,7 +129,7 @@ namespace Solnet.Programs.Test
 
             var txInstruction = SystemProgram.Transfer(fromAccount, toAccount.PublicKey, 10000000);
 
-            Assert.AreEqual(2, txInstruction.Keys.Count);
+            Assert.HasCount(2, txInstruction.Keys);
             CollectionAssert.AreEqual(TransferInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
@@ -149,7 +149,7 @@ namespace Solnet.Programs.Test
                 TokenProgram.TokenAccountDataSize,
                 TokenProgram.ProgramIdKey);
 
-            Assert.AreEqual(2, txInstruction.Keys.Count);
+            Assert.HasCount(2, txInstruction.Keys);
             CollectionAssert.AreEqual(CreateAccountInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
@@ -164,7 +164,7 @@ namespace Solnet.Programs.Test
 
             var txInstruction = SystemProgram.Assign(account, newOwner.PublicKey);
 
-            Assert.AreEqual(1, txInstruction.Keys.Count);
+            Assert.HasCount(1, txInstruction.Keys);
             CollectionAssert.AreEqual(AssignInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
@@ -188,7 +188,7 @@ namespace Solnet.Programs.Test
                 1000,
                 owner.PublicKey);
 
-            Assert.AreEqual(3, txInstruction.Keys.Count);
+            Assert.HasCount(3, txInstruction.Keys);
             CollectionAssert.AreEqual(CreateAccountWithSeedInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
@@ -204,7 +204,7 @@ namespace Solnet.Programs.Test
             var txInstruction = SystemProgram.AdvanceNonceAccount(
                 nonceAccount.PublicKey, owner);
 
-            Assert.AreEqual(3, txInstruction.Keys.Count);
+            Assert.HasCount(3, txInstruction.Keys);
             CollectionAssert.AreEqual(AdvanceNonceAccountInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
@@ -224,7 +224,7 @@ namespace Solnet.Programs.Test
                 owner,
                 1_000_000);
 
-            Assert.AreEqual(5, txInstruction.Keys.Count);
+            Assert.HasCount(5, txInstruction.Keys);
             CollectionAssert.AreEqual(WithdrawNonceAccountInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
@@ -241,7 +241,7 @@ namespace Solnet.Programs.Test
                 nonceAccount.PublicKey,
                 owner);
 
-            Assert.AreEqual(3, txInstruction.Keys.Count);
+            Assert.HasCount(3, txInstruction.Keys);
             CollectionAssert.AreEqual(InitializeNonceAccountInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
@@ -259,7 +259,7 @@ namespace Solnet.Programs.Test
                 nonceAccount.PublicKey,
                 owner, newAuthority.PublicKey);
 
-            Assert.AreEqual(2, txInstruction.Keys.Count);
+            Assert.HasCount(2, txInstruction.Keys);
             CollectionAssert.AreEqual(AuthorizeNonceAccountInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
@@ -274,7 +274,7 @@ namespace Solnet.Programs.Test
 
             var txInstruction = SystemProgram.Allocate(nonceAccount, 1_000_000);
 
-            Assert.AreEqual(1, txInstruction.Keys.Count);
+            Assert.HasCount(1, txInstruction.Keys);
             CollectionAssert.AreEqual(AllocateInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
@@ -295,7 +295,7 @@ namespace Solnet.Programs.Test
                 1_000,
                 owner.PublicKey);
 
-            Assert.AreEqual(2, txInstruction.Keys.Count);
+            Assert.HasCount(2, txInstruction.Keys);
             CollectionAssert.AreEqual(AllocateWithSeedInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
@@ -315,7 +315,7 @@ namespace Solnet.Programs.Test
                 "testSeed",
                 owner.PublicKey);
 
-            Assert.AreEqual(2, txInstruction.Keys.Count);
+            Assert.HasCount(2, txInstruction.Keys);
             CollectionAssert.AreEqual(AssignWithSeedInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
@@ -338,16 +338,15 @@ namespace Solnet.Programs.Test
                 to.PublicKey,
                 1_000_000);
 
-            Assert.AreEqual(3, txInstruction.Keys.Count);
+            Assert.HasCount(3, txInstruction.Keys);
             CollectionAssert.AreEqual(TransferWithSeedInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(SystemProgramIdBytes, txInstruction.ProgramId);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestNonceAccountDeserializationException()
         {
-            var nonceAccount = NonceAccount.Deserialize(Convert.FromBase64String(NonceAccountInvalidBase64Data));
+            Assert.ThrowsExactly<ArgumentException>(() => NonceAccount.Deserialize(Convert.FromBase64String(NonceAccountInvalidBase64Data)));
         }
 
         [TestMethod]

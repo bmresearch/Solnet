@@ -41,7 +41,7 @@ namespace Solnet.Rpc.Test
             // serialize
             var reqs = batch.Composer.CreateJsonRequests();
             Assert.IsNotNull(reqs);
-            Assert.AreEqual(2, reqs.Count);
+            Assert.HasCount(2, reqs);
 
             // serialize and check we're good
             var serializerOptions = CreateJsonOptions();
@@ -58,7 +58,7 @@ namespace Solnet.Rpc.Test
             var serializerOptions = CreateJsonOptions();
             var res = JsonSerializer.Deserialize<JsonRpcBatchResponse>(responseData, serializerOptions);
             Assert.IsNotNull(res);
-            Assert.AreEqual(5, res.Count);
+            Assert.HasCount(5, res);
         }
         
         [TestMethod]
@@ -68,7 +68,7 @@ namespace Solnet.Rpc.Test
             var serializerOptions = CreateJsonOptions();
             var res = JsonSerializer.Deserialize<JsonRpcBatchResponse>(responseData, serializerOptions);
             Assert.IsNotNull(res);
-            Assert.AreEqual(2, res.Count);
+            Assert.HasCount(2, res);
         }
 
         [TestMethod]

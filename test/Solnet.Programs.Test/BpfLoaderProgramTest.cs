@@ -18,10 +18,10 @@ public class BpfLoaderProgramTest
         var sampleString = "hello world";
         var buffer = new byte[100];
         buffer.WriteBorshString( sampleString, 0);
-        Assert.AreEqual( Convert.ToHexString(buffer) ,_expectedBorshStringResult );
+        Assert.AreEqual(actual: Convert.ToHexString(buffer), expected: _expectedBorshStringResult );
         buffer = new byte[100];
         buffer.WriteBorshString( sampleString, 1);
-        Assert.AreEqual( Convert.ToHexString(buffer) ,_expectedBorshStringResult2 );
+        Assert.AreEqual( actual: Convert.ToHexString(buffer), expected: _expectedBorshStringResult2 );
     }
 
     [TestMethod]
@@ -30,9 +30,9 @@ public class BpfLoaderProgramTest
         var sampleString = "hello world";
         var sample1 =  new ReadOnlySpan<byte>(Convert.FromHexString(_expectedBorshStringResult)) ;
         sample1.GetBorshString(0, out var result);
-        Assert.AreEqual(sampleString,result );
+        Assert.AreEqual(sampleString, result);
         sample1 =  new ReadOnlySpan<byte>(Convert.FromHexString(_expectedBorshStringResult2)) ;
         sample1.GetBorshString(1, out var result2);
-        Assert.AreEqual(sampleString,result2 );
+        Assert.AreEqual(sampleString, result2);
     }
 }

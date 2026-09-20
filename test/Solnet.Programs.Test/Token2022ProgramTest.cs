@@ -34,7 +34,7 @@ namespace Solnet.Programs.Test
 
             var instruction = Token2022Program.InitializeAccount3(account.PublicKey, mint.PublicKey, owner.PublicKey);
 
-            Assert.AreEqual(2, instruction.Keys.Count);
+            Assert.HasCount(2, instruction.Keys);
             Assert.AreEqual(18, instruction.Data[0]);
             CollectionAssert.AreEqual(owner.PublicKey.KeyBytes, instruction.Data[1..33]);
         }

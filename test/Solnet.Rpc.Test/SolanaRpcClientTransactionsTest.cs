@@ -35,7 +35,6 @@ namespace Solnet.Rpc.Test
             var result = sut.GetTransactionCount();
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(23632393337UL, result.Result);
 
@@ -60,7 +59,6 @@ namespace Solnet.Rpc.Test
             var result = sut.GetTransactionCount(Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(23632393337UL, result.Result);
 
@@ -91,7 +89,7 @@ namespace Solnet.Rpc.Test
             var result = sut.SendTransaction(txData);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual("gaSFQXFqbYQypZdMFZy4Fe7uB2VFDEo4sGDypyrVxFgzZqc5MqWnRWTT9hXamcrFRcsiiH15vWii5ACSsyNScbp",
                 result.Result);
@@ -125,7 +123,7 @@ namespace Solnet.Rpc.Test
             var result = sut.SendTransaction(bytes, true, Commitment.Confirmed);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual("gaSFQXFqbYQypZdMFZy4Fe7uB2VFDEo4sGDypyrVxFgzZqc5MqWnRWTT9hXamcrFRcsiiH15vWii5ACSsyNScbp",
                 result.Result);
@@ -159,8 +157,8 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result.Value);
             Assert.AreEqual(79206888UL, result.Result.Context.Slot);
-            Assert.AreEqual(null, result.Result.Value.Error);
-            Assert.AreEqual(5, result.Result.Value.Logs.Length);
+            Assert.IsNull(result.Result.Value.Error);
+            Assert.HasCount(5, result.Result.Value.Logs);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -193,7 +191,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(461971UL, result.Result.Context.Slot);
             Assert.IsNotNull(result.Result.Value.Error);
             Assert.AreEqual(TransactionErrorType.InsufficientFundsForRent, result.Result.Value.Error.Type);
-            Assert.AreEqual(2, result.Result.Value.Logs.Length);
+            Assert.HasCount(2, result.Result.Value.Logs);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -223,10 +221,10 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result.Value);
-            Assert.AreEqual(1, result.Result.Value.Accounts.Length);
+            Assert.HasCount(1, result.Result.Value.Accounts);
             Assert.AreEqual(79206888UL, result.Result.Context.Slot);
-            Assert.AreEqual(null, result.Result.Value.Error);
-            Assert.AreEqual(5, result.Result.Value.Logs.Length);
+            Assert.IsNull(result.Result.Value.Error);
+            Assert.HasCount(5, result.Result.Value.Logs);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -258,10 +256,10 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result.Value);
-            Assert.AreEqual(1, result.Result.Value.Accounts.Length);
+            Assert.HasCount(1, result.Result.Value.Accounts);
             Assert.AreEqual(79206888UL, result.Result.Context.Slot);
-            Assert.AreEqual(null, result.Result.Value.Error);
-            Assert.AreEqual(5, result.Result.Value.Logs.Length);
+            Assert.IsNull(result.Result.Value.Error);
+            Assert.HasCount(5, result.Result.Value.Logs);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -308,7 +306,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result.Value);
             Assert.AreEqual(79203980UL, result.Result.Context.Slot);
-            Assert.AreEqual(3, result.Result.Value.Logs.Length);
+            Assert.HasCount(3, result.Result.Value.Logs);
             Assert.IsNotNull(result.Result.Value.Error);
             Assert.AreEqual(TransactionErrorType.InstructionError, result.Result.Value.Error.Type);
             Assert.IsNotNull(result.Result.Value.Error.InstructionError);

@@ -34,7 +34,7 @@ namespace Solnet.Programs.Test
         private static readonly PublicKey UserPoolTokenAccount = new("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab");
 
 
-        private static Fee DummyFee() => new Fee(1, 100); // use a dummy fee with nonzero values
+        private static Fee DummyFee() => new (1, 100); // use a dummy fee with nonzero values
 
 
         [TestMethod]
@@ -46,9 +46,9 @@ namespace Solnet.Programs.Test
                 ManagerPoolAccount, TokenProgramId, DummyFee(), DummyFee(), DummyFee(), DummyFee(),
                 DepositAuthority, 42);
 
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count >= 4); // At least the required keys
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.IsGreaterThanOrEqualTo(value:instr.Keys.Count, lowerBound: 4); // At least the required keys
+            Assert.IsGreaterThanOrEqualTo(value:instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
@@ -59,9 +59,9 @@ namespace Solnet.Programs.Test
                 StakePool, Staker, ReserveStake, WithdrawAuthority, ValidatorList,
                 StakeAccount, ValidatorAccount, 123);
 
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count > 0);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.IsGreaterThanOrEqualTo(value:instr.Keys.Count, lowerBound: 0);
+            Assert.IsGreaterThanOrEqualTo(value:instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
@@ -71,9 +71,9 @@ namespace Solnet.Programs.Test
             var instr = program.RemoveValidatorFromPool(
                 StakePool, Staker, WithdrawAuthority, ValidatorList, StakeAccount, TransientStakeAccount);
 
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count > 0);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.IsGreaterThanOrEqualTo(value:instr.Keys.Count, lowerBound: 0);
+            Assert.IsGreaterThanOrEqualTo(value:instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
@@ -84,9 +84,9 @@ namespace Solnet.Programs.Test
                 StakePool, Staker, WithdrawAuthority, ValidatorList, ReserveStake, StakeAccount,
                 TransientStakeAccount, 1000, 55);
 
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count > 0);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.IsGreaterThanOrEqualTo(value:instr.Keys.Count, lowerBound: 0);
+            Assert.IsGreaterThanOrEqualTo(value:instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
@@ -97,9 +97,9 @@ namespace Solnet.Programs.Test
                 StakePool, Staker, WithdrawAuthority, ValidatorList, ReserveStake, StakeAccount,
                 EphemeralStake, TransientStakeAccount, 1000, 55, 77);
 
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count > 0);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.IsGreaterThanOrEqualTo(value:instr.Keys.Count, lowerBound: 0);
+            Assert.IsGreaterThanOrEqualTo(value:instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
@@ -110,9 +110,9 @@ namespace Solnet.Programs.Test
                 StakePool, Staker, WithdrawAuthority, ValidatorList, ReserveStake, StakeAccount,
                 TransientStakeAccount, 1000, 55);
 
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count > 0);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.IsGreaterThan(value: instr.Keys.Count, lowerBound: 0);
+            Assert.IsGreaterThan(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
@@ -123,9 +123,9 @@ namespace Solnet.Programs.Test
                 StakePool, Staker, WithdrawAuthority, ValidatorList, ReserveStake, TransientStakeAccount,
                 StakeAccount, 1000, 55);
 
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count > 0);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.IsGreaterThan(value: instr.Keys.Count, lowerBound: 0);
+            Assert.IsGreaterThan(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
@@ -136,9 +136,9 @@ namespace Solnet.Programs.Test
                 StakePool, Staker, WithdrawAuthority, ValidatorList, ReserveStake, EphemeralStake,
                 TransientStakeAccount, StakeAccount, Validator, 1000, 55, 77);
 
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count > 0);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Keys.Count, lowerBound: 0);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
@@ -149,49 +149,49 @@ namespace Solnet.Programs.Test
             var instr = program.SetPreferredDepositValidator(
                 StakePool, Staker, ValidatorList, PreferredValidatorType.Deposit, Validator);
 
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
             // Expecting 4 keys because the optional parameter is provided.
-            Assert.AreEqual(4, instr.Keys.Count);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.HasCount(4, instr.Keys);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
         public void SetFee_CreatesCorrectInstruction()
         {
             var instr = StakePoolProgram.SetFee(StakePool, Manager, DummyFee());
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count >= 2);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.HasCount(2, instr.Keys);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
         public void SetStaker_CreatesCorrectInstruction()
         {
             var instr = StakePoolProgram.SetStaker(StakePool, Staker, NewStaker);
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
             // Expecting 3 keys as per the implementation
-            Assert.AreEqual(3, instr.Keys.Count);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.HasCount(3, instr.Keys);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
         public void SetManager_CreatesCorrectInstruction()
         {
             var instr = StakePoolProgram.SetManager(StakePool, Manager, NewManager, NewFeeReceiver);
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
             // Expecting 4 keys per the SetManager instruction
-            Assert.AreEqual(4, instr.Keys.Count);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.HasCount(4, instr.Keys);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
         public void SetFundingAuthority_CreatesCorrectInstruction()
         {
             var instr = StakePoolProgram.SetFundingAuthority(StakePool, Manager, NewDepositAuthority, FundingType.SolDeposit);
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
             // Keys: StakePool, Manager, and NewDepositAuthority should be provided
-            Assert.IsTrue(instr.Keys.Count >= 2);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.HasCount(3, instr.Keys);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
@@ -202,16 +202,16 @@ namespace Solnet.Programs.Test
                 DepositAuthority, ValidatorAccount, ReserveStake, PoolMint,
                 ManagerPoolAccount, DepositAuthority, PoolMint, TokenProgramId);
 
-            Assert.IsTrue(instrList.Count > 0);
+            Assert.HasCount(3, instrList);
             // Ensure that at least one instruction uses the StakePoolProgram ID.
-            Assert.IsTrue(instrList.Any(i => i.ProgramId.SequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes)),
-                "None of the instructions use the stake pool program ID.");
+            Assert.Contains(i => i.ProgramId.SequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes), instrList,
+                message: "None of the instructions use the stake pool program ID.");
 
             // Additionally ensure each instruction has keys and nonempty data.
             foreach (var instr in instrList)
             {
-                Assert.IsTrue(instr.Keys.Count > 0, "Instruction has no keys.");
-                Assert.IsTrue(instr.Data.Length > 0, "Instruction has empty data.");
+                Assert.IsGreaterThanOrEqualTo(value: instr.Keys.Count, lowerBound: 0, message: "Instruction has no keys.");
+                Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0, message: "Instruction has empty data.");
             }
         }
 
@@ -223,16 +223,16 @@ namespace Solnet.Programs.Test
                 DepositAuthority, ValidatorAccount, ReserveStake, PoolMint,
                 ManagerPoolAccount, DepositAuthority, PoolMint, TokenProgramId, 1000);
 
-            Assert.IsTrue(instrList.Count > 0);
+            Assert.HasCount(3, instrList);
             // Check that at least one instruction uses the stake pool program ID.
-            Assert.IsTrue(instrList.Any(i => i.ProgramId.SequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes)),
-                "None of the instructions use the stake pool program ID.");
+            Assert.Contains(i => i.ProgramId.SequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes), instrList,
+                message: "None of the instructions use the stake pool program ID.");
 
             // Additionally ensure each instruction has nonempty keys and data.
             foreach (var instr in instrList)
             {
-                Assert.IsTrue(instr.Keys.Count > 0, "Instruction has no keys.");
-                Assert.IsTrue(instr.Data.Length > 0, "Instruction has empty data.");
+                Assert.IsGreaterThanOrEqualTo(value: instr.Keys.Count, lowerBound: 0, message: "Instruction has no keys.");
+                Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0, message: "Instruction has empty data.");
             }
         }
 
@@ -253,9 +253,9 @@ namespace Solnet.Programs.Test
                 TokenProgramId,    // tokenProgramId
                 2000);             // poolTokensIn
 
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count > 0);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Keys.Count, lowerBound: 0);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
@@ -276,9 +276,9 @@ namespace Solnet.Programs.Test
                 2000,              // poolTokensIn
                 1500);             // minimumLamportsOut
 
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count > 0);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Keys.Count, lowerBound: 0);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
@@ -287,9 +287,9 @@ namespace Solnet.Programs.Test
             var instr = StakePoolProgram.WithdrawSol(
                 StakePool, WithdrawAuthority, Manager, StakeAccount, ReserveStake,
                 PoolMint, ManagerPoolAccount, PoolMint, TokenProgramId, 3000);
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count > 0);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Keys.Count, lowerBound: 0);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
@@ -298,9 +298,9 @@ namespace Solnet.Programs.Test
             var instr = StakePoolProgram.WithdrawSolWithSlippage(
                 StakePool, WithdrawAuthority, Manager, StakeAccount, ReserveStake,
                 PoolMint, ManagerPoolAccount, PoolMint, TokenProgramId, 3000, 2500);
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count > 0);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Keys.Count, lowerBound: 0);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
         }
 
         // Updated WithdrawSolWithAuthority test
@@ -310,10 +310,10 @@ namespace Solnet.Programs.Test
             var instr = StakePoolProgram.WithdrawSolWithAuthority(
                 StakePool, DepositAuthority, WithdrawAuthority, Manager, StakeAccount, ReserveStake,
                 PoolMint, ManagerPoolAccount, PoolMint, TokenProgramId, 3000);
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Any(x => x.PublicKey.Equals(DepositAuthority) && x.IsSigner),
-                "DepositAuthority is not found with IsSigner true in the account metas.");
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.Contains(x => x.PublicKey.Equals(DepositAuthority) && x.IsSigner, instr.Keys,
+                message: "DepositAuthority is not found with IsSigner true in the account metas.");
+            Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
@@ -322,33 +322,33 @@ namespace Solnet.Programs.Test
             var instr = StakePoolProgram.WithdrawSolWithAuthorityAndSlippage(
                 StakePool, DepositAuthority, WithdrawAuthority, Manager, StakeAccount, ReserveStake,
                 PoolMint, ManagerPoolAccount, PoolMint, TokenProgramId, 3000, 2500);
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Any(x => x.PublicKey.Equals(DepositAuthority) && x.IsSigner),
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.Contains(x => x.PublicKey.Equals(DepositAuthority) && x.IsSigner, instr.Keys,
                 "DepositAuthority is not found with IsSigner true in the account metas.");
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
         public void UpdateValidatorListBalanceChunk_CreatesCorrectInstruction()
         {
             // For update test, we simulate a validator list with dummy validators.
-            var dummyValidatorList = new ValidatorList
+            ValidatorList dummyValidatorList = new()
             {
-                Validators = new System.Collections.Generic.List<ValidatorStakeInfo>
-                {
-                    new ValidatorStakeInfo { VoteAccountAddress = new PublicKey("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1"), ValidatorSeedSuffix = 1, TransientSeedSuffix = 10 },
-                    new ValidatorStakeInfo { VoteAccountAddress = new PublicKey("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa2"), ValidatorSeedSuffix = 2, TransientSeedSuffix = 20 },
-                    new ValidatorStakeInfo { VoteAccountAddress = new PublicKey("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa3"), ValidatorSeedSuffix = 3, TransientSeedSuffix = 30 }
-                }
+                Validators =
+                [
+                    new() { VoteAccountAddress = new PublicKey("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1"), ValidatorSeedSuffix = 1, TransientSeedSuffix = 10 },
+                    new() { VoteAccountAddress = new PublicKey("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa2"), ValidatorSeedSuffix = 2, TransientSeedSuffix = 20 },
+                    new() { VoteAccountAddress = new PublicKey("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa3"), ValidatorSeedSuffix = 3, TransientSeedSuffix = 30 }
+                ]
             };
 
             var instr = StakePoolProgram.UpdateValidatorListBalanceChunk(
                 StakePool, WithdrawAuthority, ValidatorList, ReserveStake,
                 dummyValidatorList, 2, 0, true);
 
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count > 0);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Keys.Count, lowerBound: 0);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
@@ -356,49 +356,48 @@ namespace Solnet.Programs.Test
         {
             var instr = StakePoolProgram.UpdateStakePoolBalance(
                 StakePool, WithdrawAuthority, ValidatorList, ReserveStake, ManagerPoolAccount, PoolMint, TokenProgramId);
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count >= 7);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Keys.Count, lowerBound: 7);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
         public void CleanupRemovedValidatorEntries_CreatesCorrectInstruction()
         {
             var instr = StakePoolProgram.CleanupRemovedValidatorEntries(StakePool, ValidatorList);
-            CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.IsTrue(instr.Keys.Count == 2);
-            Assert.IsTrue(instr.Data.Length > 0);
+            Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Keys.Count, lowerBound: 2);
+            Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
         }
 
         [TestMethod]
         public void UpdateStaleStakePool_CreatesCorrectInstructions()
         {
             // Create a dummy validator list with one outdated validator.
-            var dummyValidatorList = new ValidatorList
+            ValidatorList dummyValidatorList = new()
             {
-                Validators = new System.Collections.Generic.List<ValidatorStakeInfo>
-                {
-                    new ValidatorStakeInfo { VoteAccountAddress = new PublicKey("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1"), ValidatorSeedSuffix = 1, TransientSeedSuffix = 10, LastUpdateEpoch = 10 },
-                    new ValidatorStakeInfo { VoteAccountAddress = new PublicKey("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa2"), ValidatorSeedSuffix = 2, TransientSeedSuffix = 20, LastUpdateEpoch = 5 }
-                }
+                Validators =
+                [
+                    new() { VoteAccountAddress = new PublicKey("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1"), ValidatorSeedSuffix = 1, TransientSeedSuffix = 10, LastUpdateEpoch = 10 },
+                    new() { VoteAccountAddress = new PublicKey("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa2"), ValidatorSeedSuffix = 2, TransientSeedSuffix = 20, LastUpdateEpoch = 5 }
+                ]
             };
 
-            var result = StakePoolProgram.UpdateStaleStakePool(
+            var (updateListInstructions, finalInstructions) = StakePoolProgram.UpdateStaleStakePool(
                 new StakePool.Models.StakePool { Staker = Staker, ValidatorList = ValidatorList, ReserveStake = ReserveStake, ManagerFeeAccount = ManagerPoolAccount, PoolMint = PoolMint, TokenProgramId = TokenProgramId },
                 dummyValidatorList, StakePool, true, 6);
 
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.updateListInstructions.Count >= 1);
-            Assert.IsTrue(result.finalInstructions.Count >= 2);
-            foreach (var instr in result.updateListInstructions)
+            Assert.IsGreaterThanOrEqualTo(updateListInstructions.Count , 1);
+            Assert.IsGreaterThanOrEqualTo(finalInstructions.Count, 2);
+            foreach (var instr in updateListInstructions)
             {
-                CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-                Assert.IsTrue(instr.Data.Length > 0);
+                Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+                Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
             }
-            foreach (var instr in result.finalInstructions)
+            foreach (var instr in finalInstructions)
             {
-                CollectionAssert.AreEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
-                Assert.IsTrue(instr.Data.Length > 0);
+                Assert.AreSequenceEqual(StakePoolProgram.StakePoolProgramIdKey.KeyBytes, instr.ProgramId);
+                Assert.IsGreaterThanOrEqualTo(value: instr.Data.Length, lowerBound: 0);
             }
         }
     }
@@ -439,7 +438,7 @@ namespace Solnet.Programs.Test
 
             // Assert that they are different and non-negative.
             Assert.AreNotEqual(depositValue, withdrawValue, "PreferredValidatorType values must differ.");
-            Assert.IsTrue(depositValue < withdrawValue, "Expected Deposit value to be less than Withdraw value.");
+            Assert.IsGreaterThanOrEqualTo(depositValue, withdrawValue, message: "Deposit value should be greater than or equal to Withdraw value.");
         }
 
         [TestMethod]

@@ -122,7 +122,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual("11111111111111111111111111111111", resultNotification.Value.Owner);
             Assert.AreEqual(33594UL, resultNotification.Value.Lamports);
             Assert.AreEqual(635UL, resultNotification.Value.RentEpoch);
-            Assert.AreEqual(false, resultNotification.Value.Executable);
+            Assert.IsFalse(resultNotification.Value.Executable);
         }
 
         [TestMethod]
@@ -200,7 +200,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual("11111111111111111111111111111111", resultNotification.Value.Owner);
             Assert.AreEqual(33594UL, resultNotification.Value.Lamports);
             Assert.AreEqual(635UL, resultNotification.Value.RentEpoch);
-            Assert.AreEqual(false, resultNotification.Value.Executable);
+            Assert.IsFalse(resultNotification.Value.Executable);
         }
 
 
@@ -438,7 +438,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(80854485UL, resultNotification.Context.Slot);
             Assert.AreEqual("9FXD1NXrK6xFU8i4gLAgjj2iMEWTqJhSuQN8tQuDfm2e", resultNotification.Value.PublicKey);
             Assert.AreEqual("11111111111111111111111111111111", resultNotification.Value.Account.Owner);
-            Assert.AreEqual(false, resultNotification.Value.Account.Executable);
+            Assert.IsFalse(resultNotification.Value.Account.Executable);
             Assert.AreEqual(187UL, resultNotification.Value.Account.RentEpoch);
             Assert.AreEqual(458553192193UL, resultNotification.Value.Account.Lamports);
         }
@@ -561,7 +561,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(80854485UL, resultNotification.Context.Slot);
             Assert.AreEqual("9FXD1NXrK6xFU8i4gLAgjj2iMEWTqJhSuQN8tQuDfm2e", resultNotification.Value.PublicKey);
             Assert.AreEqual("11111111111111111111111111111111", resultNotification.Value.Account.Owner);
-            Assert.AreEqual(false, resultNotification.Value.Account.Executable);
+            Assert.IsFalse(resultNotification.Value.Account.Executable);
             Assert.AreEqual(187UL, resultNotification.Value.Account.RentEpoch);
             Assert.AreEqual(458553192193UL, resultNotification.Value.Account.Lamports);
         }

@@ -33,12 +33,12 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetAccountInfo("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(79200467UL, result.Result.Context.Slot);
             Assert.AreEqual("", result.Result.Value.Data[0]);
             Assert.AreEqual("base64", result.Result.Value.Data[1]);
-            Assert.AreEqual(false, result.Result.Value.Executable);
+            Assert.IsFalse(result.Result.Value.Executable);
             Assert.AreEqual(5478840UL, result.Result.Value.Lamports);
             Assert.AreEqual("11111111111111111111111111111111", result.Result.Value.Owner);
             Assert.AreEqual(195UL, result.Result.Value.RentEpoch);
@@ -65,10 +65,10 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetTokenAccountInfo("FMFMUFqRsGnKm2tQzsaeytATzSG6Evna4HEbKuS6h9uk");
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(103677806UL, result.Result.Context.Slot);
-            Assert.AreEqual(false, result.Result.Value.Executable);
+            Assert.IsFalse(result.Result.Value.Executable);
             Assert.AreEqual(2039280UL, result.Result.Value.Lamports);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", result.Result.Value.Owner);
             Assert.AreEqual(239UL, result.Result.Value.RentEpoch);
@@ -80,7 +80,7 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual("2v6JjYRt93Z1h8iTZavSdGdDufocHCFKT8gvHpg3GNko", result.Result.Value.Data.Parsed.Info.Mint);
             Assert.AreEqual("47vp5BqxBQoMJkitajbsZRhyAR5phW28nKPvXhFDKTFH", result.Result.Value.Data.Parsed.Info.Owner);
-            Assert.AreEqual(false, result.Result.Value.Data.Parsed.Info.IsNative);
+            Assert.IsFalse(result.Result.Value.Data.Parsed.Info.IsNative);
             Assert.AreEqual("initialized", result.Result.Value.Data.Parsed.Info.State);
 
             Assert.AreEqual("1", result.Result.Value.Data.Parsed.Info.TokenAmount.Amount);
@@ -108,10 +108,10 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetTokenMintInfo("2v6JjYRt93Z1h8iTZavSdGdDufocHCFKT8gvHpg3GNko", Commitment.Confirmed);
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(103677835UL, result.Result.Context.Slot);
-            Assert.AreEqual(false, result.Result.Value.Executable);
+            Assert.IsFalse(result.Result.Value.Executable);
             Assert.AreEqual(1461600UL, result.Result.Value.Lamports);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", result.Result.Value.Owner);
             Assert.AreEqual(239UL, result.Result.Value.RentEpoch);
@@ -149,12 +149,12 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetAccountInfo("2v6JjYRt93Z1h8iTZavSdGdDufocHCFKT8gvHpg3GNko", Commitment.Confirmed, BinaryEncoding.JsonParsed);
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(103659529UL, result.Result.Context.Slot);
             Assert.AreEqual(parsedJsonDataOnly, result.Result.Value.Data[0]);
             Assert.AreEqual("jsonParsed", result.Result.Value.Data[1]);
-            Assert.AreEqual(false, result.Result.Value.Executable);
+            Assert.IsFalse(result.Result.Value.Executable);
             Assert.AreEqual(1461600UL, result.Result.Value.Lamports);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", result.Result.Value.Owner);
             Assert.AreEqual(239UL, result.Result.Value.RentEpoch);
@@ -181,12 +181,12 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetAccountInfo("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", Types.Commitment.Confirmed);
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(79200467UL, result.Result.Context.Slot);
             Assert.AreEqual("", result.Result.Value.Data[0]);
             Assert.AreEqual("base64", result.Result.Value.Data[1]);
-            Assert.AreEqual(false, result.Result.Value.Executable);
+            Assert.IsFalse(result.Result.Value.Executable);
             Assert.AreEqual(5478840UL, result.Result.Value.Lamports);
             Assert.AreEqual("11111111111111111111111111111111", result.Result.Value.Owner);
             Assert.AreEqual(195UL, result.Result.Value.RentEpoch);
@@ -214,9 +214,9 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetProgramAccounts("GrAkKfEpTKQuVHG2Y97Y2FF4i7y7Q5AHLK94JBy7Y5yv");
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(2, result.Result.Count);
+            Assert.HasCount(2, result.Result);
             Assert.AreEqual("FzNKvS4SCHDoNbnnfhmGSLVRCLNBUuGecxdvobSGmWMh", result.Result[0].PublicKey);
 
             Assert.AreEqual("NhOiFR2mEcZJFj1ciaG2IrWOf2poe4LNGYC5gvdULBYyFH1Kq4cdNyYf+7u2r6NaWXHwnqiXnCzkFhIDU"
@@ -226,7 +226,7 @@ namespace Solnet.Rpc.Test
                 + "QuNTAlY5aWAEN5CRqkYmOXDcge++gRlEry6ItrMEA0VZV0zsOFk2oDiT9W7slB3JefUOpWS4DMPJW6N0zRUDTtXaGmW"
                 + "rqt6W4vEGC0DnBI++A2ZkHoMmJ+qeCKBVkNJgAAADc4o2AAAAAA/w==", result.Result[0].Account.Data[0]);
             Assert.AreEqual("base64", result.Result[0].Account.Data[1]);
-            Assert.AreEqual(false, result.Result[0].Account.Executable);
+            Assert.IsFalse(result.Result[0].Account.Executable);
             Assert.AreEqual(3486960UL, result.Result[0].Account.Lamports);
             Assert.AreEqual("GrAkKfEpTKQuVHG2Y97Y2FF4i7y7Q5AHLK94JBy7Y5yv", result.Result[0].Account.Owner);
             Assert.AreEqual(188UL, result.Result[0].Account.RentEpoch);
@@ -253,9 +253,9 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetProgramAccounts("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T", dataSize: 500);
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(2, result.Result.Count);
+            Assert.HasCount(2, result.Result);
             Assert.AreEqual("FzNKvS4SCHDoNbnnfhmGSLVRCLNBUuGecxdvobSGmWMh", result.Result[0].PublicKey);
 
             Assert.AreEqual("NhOiFR2mEcZJFj1ciaG2IrWOf2poe4LNGYC5gvdULBYyFH1Kq4cdNyYf+7u2r6NaWXHwnqiXnCzkFhIDU"
@@ -265,7 +265,7 @@ namespace Solnet.Rpc.Test
                 + "QuNTAlY5aWAEN5CRqkYmOXDcge++gRlEry6ItrMEA0VZV0zsOFk2oDiT9W7slB3JefUOpWS4DMPJW6N0zRUDTtXaGmW"
                 + "rqt6W4vEGC0DnBI++A2ZkHoMmJ+qeCKBVkNJgAAADc4o2AAAAAA/w==", result.Result[0].Account.Data[0]);
             Assert.AreEqual("base64", result.Result[0].Account.Data[1]);
-            Assert.AreEqual(false, result.Result[0].Account.Executable);
+            Assert.IsFalse(result.Result[0].Account.Executable);
             Assert.AreEqual(3486960UL, result.Result[0].Account.Lamports);
             Assert.AreEqual("GrAkKfEpTKQuVHG2Y97Y2FF4i7y7Q5AHLK94JBy7Y5yv", result.Result[0].Account.Owner);
             Assert.AreEqual(188UL, result.Result[0].Account.RentEpoch);
@@ -293,9 +293,9 @@ namespace Solnet.Rpc.Test
             var result = sut.GetProgramAccounts("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T", dataSize: 500,
                 memCmpList: new List<MemCmp> { new() { Offset = 25, Bytes = "3Mc6vR" } });
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(2, result.Result.Count);
+            Assert.HasCount(2, result.Result);
             Assert.AreEqual("FzNKvS4SCHDoNbnnfhmGSLVRCLNBUuGecxdvobSGmWMh", result.Result[0].PublicKey);
 
             Assert.AreEqual("NhOiFR2mEcZJFj1ciaG2IrWOf2poe4LNGYC5gvdULBYyFH1Kq4cdNyYf+7u2r6NaWXHwnqiXnCzkFhIDU"
@@ -305,7 +305,7 @@ namespace Solnet.Rpc.Test
                 + "QuNTAlY5aWAEN5CRqkYmOXDcge++gRlEry6ItrMEA0VZV0zsOFk2oDiT9W7slB3JefUOpWS4DMPJW6N0zRUDTtXaGmW"
                 + "rqt6W4vEGC0DnBI++A2ZkHoMmJ+qeCKBVkNJgAAADc4o2AAAAAA/w==", result.Result[0].Account.Data[0]);
             Assert.AreEqual("base64", result.Result[0].Account.Data[1]);
-            Assert.AreEqual(false, result.Result[0].Account.Executable);
+            Assert.IsFalse(result.Result[0].Account.Executable);
             Assert.AreEqual(3486960UL, result.Result[0].Account.Lamports);
             Assert.AreEqual("GrAkKfEpTKQuVHG2Y97Y2FF4i7y7Q5AHLK94JBy7Y5yv", result.Result[0].Account.Owner);
             Assert.AreEqual(188UL, result.Result[0].Account.RentEpoch);
@@ -332,9 +332,9 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetProgramAccounts("GrAkKfEpTKQuVHG2Y97Y2FF4i7y7Q5AHLK94JBy7Y5yv", Commitment.Processed);
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(2, result.Result.Count);
+            Assert.HasCount(2, result.Result);
             Assert.AreEqual("FzNKvS4SCHDoNbnnfhmGSLVRCLNBUuGecxdvobSGmWMh", result.Result[0].PublicKey);
 
             Assert.AreEqual("NhOiFR2mEcZJFj1ciaG2IrWOf2poe4LNGYC5gvdULBYyFH1Kq4cdNyYf+7u2r6NaWXHwnqiXnCzkFhIDU"
@@ -344,7 +344,7 @@ namespace Solnet.Rpc.Test
                 + "QuNTAlY5aWAEN5CRqkYmOXDcge++gRlEry6ItrMEA0VZV0zsOFk2oDiT9W7slB3JefUOpWS4DMPJW6N0zRUDTtXaGmW"
                 + "rqt6W4vEGC0DnBI++A2ZkHoMmJ+qeCKBVkNJgAAADc4o2AAAAAA/w==", result.Result[0].Account.Data[0]);
             Assert.AreEqual("base64", result.Result[0].Account.Data[1]);
-            Assert.AreEqual(false, result.Result[0].Account.Executable);
+            Assert.IsFalse(result.Result[0].Account.Executable);
             Assert.AreEqual(3486960UL, result.Result[0].Account.Lamports);
             Assert.AreEqual("GrAkKfEpTKQuVHG2Y97Y2FF4i7y7Q5AHLK94JBy7Y5yv", result.Result[0].Account.Owner);
             Assert.AreEqual(188UL, result.Result[0].Account.RentEpoch);
@@ -372,13 +372,13 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetMultipleAccounts(new List<string> { "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu", "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5" });
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(2, result.Result.Value.Count);
+            Assert.HasCount(2, result.Result.Value);
 
             Assert.AreEqual("base64", result.Result.Value[0].Data[1]);
             Assert.AreEqual("", result.Result.Value[0].Data[0]);
-            Assert.AreEqual(false, result.Result.Value[0].Executable);
+            Assert.IsFalse(result.Result.Value[0].Executable);
             Assert.AreEqual(503668985208UL, result.Result.Value[0].Lamports);
             Assert.AreEqual("11111111111111111111111111111111", result.Result.Value[0].Owner);
             Assert.AreEqual(197UL, result.Result.Value[0].RentEpoch);
@@ -406,13 +406,13 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetMultipleAccounts(new List<string> { "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu", "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5" }, Types.Commitment.Confirmed);
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(2, result.Result.Value.Count);
+            Assert.HasCount(2, result.Result.Value);
 
             Assert.AreEqual("base64", result.Result.Value[0].Data[1]);
             Assert.AreEqual("", result.Result.Value[0].Data[0]);
-            Assert.AreEqual(false, result.Result.Value[0].Executable);
+            Assert.IsFalse(result.Result.Value[0].Executable);
             Assert.AreEqual(503668985208UL, result.Result.Value[0].Lamports);
             Assert.AreEqual("11111111111111111111111111111111", result.Result.Value[0].Owner);
             Assert.AreEqual(197UL, result.Result.Value[0].RentEpoch);
@@ -439,9 +439,9 @@ namespace Solnet.Rpc.Test
             var result = sut.GetLargestAccounts(Rpc.Types.AccountFilterType.Circulating);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(20, result.Result.Value.Count);
+            Assert.HasCount(20, result.Result.Value);
             Assert.AreEqual("6caH6ayzofHnP8kcPQTEBrDPG4A2qDo1STE5xTMJ52k8", result.Result.Value[0].Address);
             Assert.AreEqual(20161157050000000UL, result.Result.Value[0].Lamports);
             Assert.AreEqual("gWgqQ4udVxE3uNxRHEwvftTHwpEmPHAd8JR9UzaHbR2", result.Result.Value[19].Address);
@@ -469,9 +469,9 @@ namespace Solnet.Rpc.Test
             var result = sut.GetLargestAccounts(Rpc.Types.AccountFilterType.NonCirculating, Types.Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(20, result.Result.Value.Count);
+            Assert.HasCount(20, result.Result.Value);
             Assert.AreEqual("6caH6ayzofHnP8kcPQTEBrDPG4A2qDo1STE5xTMJ52k8", result.Result.Value[0].Address);
             Assert.AreEqual(20161157050000000UL, result.Result.Value[0].Lamports);
             Assert.AreEqual("gWgqQ4udVxE3uNxRHEwvftTHwpEmPHAd8JR9UzaHbR2", result.Result.Value[19].Address);
@@ -499,10 +499,10 @@ namespace Solnet.Rpc.Test
             var result = sut.GetVoteAccounts();
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(1, result.Result.Current.Length);
-            Assert.AreEqual(1, result.Result.Delinquent.Length);
+            Assert.HasCount(1, result.Result.Current);
+            Assert.HasCount(1, result.Result.Delinquent);
 
             Assert.AreEqual(81274518UL, result.Result.Current[0].RootSlot);
             Assert.AreEqual("3ZT31jkAGhUaw8jsy4bTknwBMP8i4Eueh52By4zXcsVw", result.Result.Current[0].VotePublicKey);
@@ -510,17 +510,17 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(42UL, result.Result.Current[0].ActivatedStake);
             Assert.AreEqual(0, result.Result.Current[0].Commission);
             Assert.AreEqual(147UL, result.Result.Current[0].LastVote);
-            Assert.AreEqual(true, result.Result.Current[0].EpochVoteAccount);
-            Assert.AreEqual(2, result.Result.Current[0].EpochCredits.Length);
+            Assert.IsTrue(result.Result.Current[0].EpochVoteAccount);
+            Assert.HasCount(2, result.Result.Current[0].EpochCredits);
 
             Assert.AreEqual(1234UL, result.Result.Delinquent[0].RootSlot);
             Assert.AreEqual("CmgCk4aMS7KW1SHX3s9K5tBJ6Yng2LBaC8MFov4wx9sm", result.Result.Delinquent[0].VotePublicKey);
             Assert.AreEqual("6ZPxeQaDo4bkZLRsdNrCzchNQr5LN9QMc9sipXv9Kw8f", result.Result.Delinquent[0].NodePublicKey);
             Assert.AreEqual(0UL, result.Result.Delinquent[0].ActivatedStake);
-            Assert.AreEqual(false, result.Result.Delinquent[0].EpochVoteAccount);
+            Assert.IsFalse(result.Result.Delinquent[0].EpochVoteAccount);
             Assert.AreEqual(127UL, result.Result.Delinquent[0].Commission);
             Assert.AreEqual(0UL, result.Result.Delinquent[0].LastVote);
-            Assert.AreEqual(0, result.Result.Delinquent[0].EpochCredits.Length);
+            Assert.HasCount(0, result.Result.Delinquent[0].EpochCredits);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -543,7 +543,7 @@ namespace Solnet.Rpc.Test
             var result = sut.GetVoteAccounts("6ZPxeQaDo4bkZLRsdNrCzchNQr5LN9QMc9sipXv9Kw8f", Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
 
             FinishTest(messageHandlerMock, TestnetUri);

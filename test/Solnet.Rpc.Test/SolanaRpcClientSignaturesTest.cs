@@ -35,14 +35,14 @@ namespace Solnet.Rpc.Test
             var result = sut.GetSignaturesForAddress("4Rf9mGD7FeYknun5JczX5nGLTfQuS1GRjNVfkEMKE92b", limit: 3);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(3, result.Result.Count);
+            Assert.HasCount(3, result.Result);
             Assert.AreEqual(1616245823UL, result.Result[0].BlockTime);
             Assert.AreEqual(68710495UL, result.Result[0].Slot);
             Assert.AreEqual("5Jofwx5JcPT1dMsgo6DkyT6x61X5chS9K7hM7huGKAnUq8xxHwGKuDnnZmPGoapWVZcN4cPvQtGNCicnWZfPHowr", result.Result[0].Signature);
-            Assert.AreEqual(null, result.Result[0].Memo);
-            Assert.AreEqual(null, result.Result[0].Error);
+            Assert.IsNull(result.Result[0].Memo);
+            Assert.IsNull(result.Result[0].Error);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -85,14 +85,14 @@ namespace Solnet.Rpc.Test
                 1, until: "Vote111111111111111111111111111111111111111");
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(1, result.Result.Count);
-            Assert.AreEqual(null, result.Result[0].BlockTime);
+            Assert.HasCount(1, result.Result);
+            Assert.IsNull(result.Result[0].BlockTime);
             Assert.AreEqual(114UL, result.Result[0].Slot);
             Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", result.Result[0].Signature);
-            Assert.AreEqual(null, result.Result[0].Memo);
-            Assert.AreEqual(null, result.Result[0].Error);
+            Assert.IsNull(result.Result[0].Memo);
+            Assert.IsNull(result.Result[0].Error);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -117,14 +117,14 @@ namespace Solnet.Rpc.Test
                 1, before: "Vote111111111111111111111111111111111111111");
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(1, result.Result.Count);
-            Assert.AreEqual(null, result.Result[0].BlockTime);
+            Assert.HasCount(1, result.Result);
+            Assert.IsNull(result.Result[0].BlockTime);
             Assert.AreEqual(114UL, result.Result[0].Slot);
             Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", result.Result[0].Signature);
-            Assert.AreEqual(null, result.Result[0].Memo);
-            Assert.AreEqual(null, result.Result[0].Error);
+            Assert.IsNull(result.Result[0].Memo);
+            Assert.IsNull(result.Result[0].Error);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -149,14 +149,14 @@ namespace Solnet.Rpc.Test
                 1, before: "Vote111111111111111111111111111111111111111", commitment: Types.Commitment.Confirmed);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(1, result.Result.Count);
-            Assert.AreEqual(null, result.Result[0].BlockTime);
+            Assert.HasCount(1, result.Result);
+            Assert.IsNull(result.Result[0].BlockTime);
             Assert.AreEqual(114UL, result.Result[0].Slot);
             Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", result.Result[0].Signature);
-            Assert.AreEqual(null, result.Result[0].Memo);
-            Assert.AreEqual(null, result.Result[0].Error);
+            Assert.IsNull(result.Result[0].Memo);
+            Assert.IsNull(result.Result[0].Error);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -185,11 +185,11 @@ namespace Solnet.Rpc.Test
                 });
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(82UL, result.Result.Context.Slot);
-            Assert.AreEqual(2, result.Result.Value.Count);
-            Assert.AreEqual(null, result.Result.Value[1]);
+            Assert.HasCount(2, result.Result.Value);
+            Assert.IsNull(result.Result.Value[1]);
             Assert.AreEqual(72UL, result.Result.Value[0].Slot);
             Assert.AreEqual(10UL, result.Result.Value[0].Confirmations);
             Assert.AreEqual("confirmed", result.Result.Value[0].ConfirmationStatus);
@@ -220,13 +220,13 @@ namespace Solnet.Rpc.Test
                 }, true);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(82UL, result.Result.Context.Slot);
-            Assert.AreEqual(2, result.Result.Value.Count);
-            Assert.AreEqual(null, result.Result.Value[1]);
+            Assert.HasCount(2, result.Result.Value);
+            Assert.IsNull(result.Result.Value[1]);
             Assert.AreEqual(48UL, result.Result.Value[0].Slot);
-            Assert.AreEqual(null, result.Result.Value[0].Confirmations);
+            Assert.IsNull(result.Result.Value[0].Confirmations);
             Assert.AreEqual("finalized", result.Result.Value[0].ConfirmationStatus);
 
             FinishTest(messageHandlerMock, TestnetUri);

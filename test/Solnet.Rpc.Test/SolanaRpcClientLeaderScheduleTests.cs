@@ -33,13 +33,13 @@ namespace Solnet.Rpc.Test
             var res = sut.GetLeaderSchedule(79700000);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
+
             Assert.IsTrue(res.WasSuccessful);
 
-            Assert.AreEqual(2, res.Result.Count);
+            Assert.HasCount(2, res.Result);
             Assert.IsTrue(res.Result.ContainsKey("4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"));
 
-            Assert.AreEqual(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"].Count);
+            Assert.HasCount(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"]);
             Assert.AreEqual(0UL, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"][0]);
 
             FinishTest(messageHandlerMock, TestnetUri);
@@ -64,13 +64,13 @@ namespace Solnet.Rpc.Test
             var res = sut.GetLeaderSchedule(identity: "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu");
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
+
             Assert.IsTrue(res.WasSuccessful);
 
-            Assert.AreEqual(2, res.Result.Count);
+            Assert.HasCount(2, res.Result);
             Assert.IsTrue(res.Result.ContainsKey("4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"));
 
-            Assert.AreEqual(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"].Count);
+            Assert.HasCount(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"]);
             Assert.AreEqual(0UL, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"][0]);
 
             FinishTest(messageHandlerMock, TestnetUri);
@@ -95,13 +95,13 @@ namespace Solnet.Rpc.Test
             var res = sut.GetLeaderSchedule(79700000, "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu");
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
+
             Assert.IsTrue(res.WasSuccessful);
 
-            Assert.AreEqual(2, res.Result.Count);
+            Assert.HasCount(2, res.Result);
             Assert.IsTrue(res.Result.ContainsKey("4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"));
 
-            Assert.AreEqual(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"].Count);
+            Assert.HasCount(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"]);
             Assert.AreEqual(0UL, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"][0]);
 
             FinishTest(messageHandlerMock, TestnetUri);
@@ -126,13 +126,13 @@ namespace Solnet.Rpc.Test
             var res = sut.GetLeaderSchedule();
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
+
             Assert.IsTrue(res.WasSuccessful);
 
-            Assert.AreEqual(2, res.Result.Count);
+            Assert.HasCount(2, res.Result);
             Assert.IsTrue(res.Result.ContainsKey("4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"));
 
-            Assert.AreEqual(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"].Count);
+            Assert.HasCount(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"]);
             Assert.AreEqual(0UL, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"][0]);
 
             FinishTest(messageHandlerMock, TestnetUri);
@@ -157,13 +157,13 @@ namespace Solnet.Rpc.Test
             var res = sut.GetLeaderSchedule(commitment: Types.Commitment.Finalized);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
+
             Assert.IsTrue(res.WasSuccessful);
 
-            Assert.AreEqual(2, res.Result.Count);
+            Assert.HasCount(2, res.Result);
             Assert.IsTrue(res.Result.ContainsKey("4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"));
 
-            Assert.AreEqual(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"].Count);
+            Assert.HasCount(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"]);
             Assert.AreEqual(0UL, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"][0]);
 
             FinishTest(messageHandlerMock, TestnetUri);
@@ -188,13 +188,13 @@ namespace Solnet.Rpc.Test
             var res = sut.GetLeaderSchedule(commitment: Types.Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
+
             Assert.IsTrue(res.WasSuccessful);
 
-            Assert.AreEqual(2, res.Result.Count);
+            Assert.HasCount(2, res.Result);
             Assert.IsTrue(res.Result.ContainsKey("4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"));
 
-            Assert.AreEqual(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"].Count);
+            Assert.HasCount(7, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"]);
             Assert.AreEqual(0UL, res.Result["4Qkev8aNZcqFNSRhQzwyLMFSsi94jHqE8WNVTJzTP99F"][0]);
 
             FinishTest(messageHandlerMock, TestnetUri);

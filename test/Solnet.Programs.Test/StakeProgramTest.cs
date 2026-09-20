@@ -94,7 +94,7 @@ namespace Solnet.Programs.Test
                     UnixTimestamp = 0
                 });
 
-            Assert.AreEqual(2, txInstruction.Keys.Count);
+            Assert.HasCount(2, txInstruction.Keys);
 
             CollectionAssert.AreEqual(InitializeInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
@@ -116,7 +116,7 @@ namespace Solnet.Programs.Test
                 StakeAuthorize.Staker, 
                 custodian.PublicKey);
 
-            Assert.AreEqual(4, txInstruction.Keys.Count);
+            Assert.HasCount(4, txInstruction.Keys);
 
             CollectionAssert.AreEqual(AuthorizeInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
@@ -135,7 +135,7 @@ namespace Solnet.Programs.Test
                 authorizedAccount.PublicKey, 
                 voteAccount.PublicKey);
 
-            Assert.AreEqual(6, txInstruction.Keys.Count);
+            Assert.HasCount(6, txInstruction.Keys);
             CollectionAssert.AreEqual(DelegateStakeInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }
@@ -154,7 +154,7 @@ namespace Solnet.Programs.Test
                 1_000_000,
                 splitAccount.PublicKey);
 
-            Assert.AreEqual(3, txInstruction.Keys.Count);
+            Assert.HasCount(3, txInstruction.Keys);
             CollectionAssert.AreEqual(SplitInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }
@@ -175,8 +175,8 @@ namespace Solnet.Programs.Test
                 1_000_000,
                 custodian.PublicKey);
 
-            Assert.AreEqual(6, txInstruction.Keys.Count);
-            
+            Assert.HasCount(6, txInstruction.Keys);
+
             CollectionAssert.AreEqual(WithdrawInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }
@@ -193,7 +193,7 @@ namespace Solnet.Programs.Test
                 baseAccount.PublicKey,
                 authorized.PublicKey);
 
-            Assert.AreEqual(3, txInstruction.Keys.Count);
+            Assert.HasCount(3, txInstruction.Keys);
             CollectionAssert.AreEqual(DeactivateInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }
@@ -215,7 +215,7 @@ namespace Solnet.Programs.Test
                 },
                 custodian.PublicKey);
 
-            Assert.AreEqual(2, txInstruction.Keys.Count);
+            Assert.HasCount(2, txInstruction.Keys);
             CollectionAssert.AreEqual(SetLockupInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }
@@ -233,7 +233,7 @@ namespace Solnet.Programs.Test
                 source.PublicKey,
                 authorized.PublicKey);
 
-            Assert.AreEqual(5, txInstruction.Keys.Count);
+            Assert.HasCount(5, txInstruction.Keys);
             CollectionAssert.AreEqual(MergeInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }
@@ -257,7 +257,7 @@ namespace Solnet.Programs.Test
                 StakeAuthorize.Staker,
                 custodian.PublicKey);
 
-            Assert.AreEqual(4, txInstruction.Keys.Count);
+            Assert.HasCount(4, txInstruction.Keys);
             CollectionAssert.AreEqual(AuthorizeWithSeedInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }
@@ -274,7 +274,7 @@ namespace Solnet.Programs.Test
                 baseAccount.PublicKey,
                 new Authorized { Staker = staker.PublicKey, Withdrawer = withdrawer.PublicKey });
 
-            Assert.AreEqual(4, txInstruction.Keys.Count);
+            Assert.HasCount(4, txInstruction.Keys);
             CollectionAssert.AreEqual(InitializeCheckedInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }
@@ -295,7 +295,7 @@ namespace Solnet.Programs.Test
                 StakeAuthorize.Staker,
                 custodian.PublicKey);
 
-            Assert.AreEqual(5, txInstruction.Keys.Count);
+            Assert.HasCount(5, txInstruction.Keys);
             CollectionAssert.AreEqual(AuthorizeCheckedInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }
@@ -319,7 +319,7 @@ namespace Solnet.Programs.Test
                 StakeAuthorize.Staker,
                 custodian.PublicKey);
 
-            Assert.AreEqual(5, txInstruction.Keys.Count);
+            Assert.HasCount(5, txInstruction.Keys);
             CollectionAssert.AreEqual(AuthorizeCheckedWithSeedInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }
@@ -336,7 +336,7 @@ namespace Solnet.Programs.Test
                 new Lockup {Custodian = custodian.PublicKey, Epoch = 0, UnixTimestamp = 0 },
                 custodian.PublicKey);
 
-            Assert.AreEqual(3, txInstruction.Keys.Count);
+            Assert.HasCount(3, txInstruction.Keys);
             CollectionAssert.AreEqual(SetLockupCheckedInstructionBytes, txInstruction.Data);
             CollectionAssert.AreEqual(StakeProgramIdBytes, txInstruction.ProgramId);
         }

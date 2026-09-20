@@ -94,24 +94,31 @@ namespace Solnet.Wallet.Test
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestAccountInvalidKeys()
         {
-            _ = new Account(InvalidPrivateKey, InvalidPublicKey);
+
+            Assert.ThrowsExactly<ArgumentException>(() =>
+            {
+                _ = new Account(InvalidPrivateKey, InvalidPublicKey);
+            });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestAccountInvalidPrivateKey()
         {
-            _ = new Account(InvalidPrivateKey, PublicKey);
+            Assert.ThrowsExactly<ArgumentException>(() =>
+            {
+                _ = new Account(InvalidPrivateKey, PublicKey);
+            });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestAccountInvalidPublicKey()
         {
-            _ = new Account(PrivateKey, InvalidPublicKey);
+            Assert.ThrowsExactly<ArgumentException>(() =>
+            {
+                _ = new Account(PrivateKey, InvalidPublicKey);
+            });
         }
 
         [TestMethod]

@@ -33,8 +33,8 @@ namespace Solnet.Rpc.Test
             var res = sut.GetBlock(79662905);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
-            Assert.AreEqual(2, res.Result.Transactions.Length);
+
+            Assert.HasCount(2, res.Result.Transactions);
 
             Assert.AreEqual(66130135, res.Result.BlockHeight);
             Assert.AreEqual(1622632900, res.Result.BlockTime);
@@ -42,7 +42,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual("5wLhsKAH9SCPbRZc4qWf3GBiod9CD8sCEZfMiU25qW8", res.Result.Blockhash);
             Assert.AreEqual("CjJ97j84mUq3o67CEqzEkTifXpHLBCD8GvmfBYLz4Zdg", res.Result.PreviousBlockhash);
 
-            Assert.AreEqual(1, res.Result.Rewards.Length);
+            Assert.HasCount(1, res.Result.Rewards);
             var rewards = res.Result.Rewards[0];
 
             Assert.AreEqual(1785000, rewards.Lamports);
@@ -59,27 +59,27 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(0u, first.Meta.Error.InstructionError.CustomError);
 
             Assert.AreEqual(5000UL, first.Meta.Fee);
-            Assert.AreEqual(0, first.Meta.InnerInstructions.Length);
-            Assert.AreEqual(2, first.Meta.LogMessages.Length);
-            Assert.AreEqual(5, first.Meta.PostBalances.Length);
+            Assert.HasCount(0, first.Meta.InnerInstructions);
+            Assert.HasCount(2, first.Meta.LogMessages);
+            Assert.HasCount(5, first.Meta.PostBalances);
             Assert.AreEqual(35132731759UL, first.Meta.PostBalances[0]);
-            Assert.AreEqual(5, first.Meta.PreBalances.Length);
+            Assert.HasCount(5, first.Meta.PreBalances);
             Assert.AreEqual(35132736759UL, first.Meta.PreBalances[0]);
-            Assert.AreEqual(0, first.Meta.PostTokenBalances.Length);
-            Assert.AreEqual(0, first.Meta.PreTokenBalances.Length);
+            Assert.HasCount(0, first.Meta.PostTokenBalances);
+            Assert.HasCount(0, first.Meta.PreTokenBalances);
 
-            Assert.AreEqual(1, ((TransactionInfo)first.Transaction).Signatures.Length);
+            Assert.HasCount(1, ((TransactionInfo)first.Transaction).Signatures);
             Assert.AreEqual("2Hh35eZPP1wZLYQ1HHv8PqGoRo73XirJeKFpBVc19msi6qeJHk3yUKqS1viRtqkdb545CerTWeywPFXxjKEhDWTK", ((TransactionInfo)first.Transaction).Signatures[0]);
 
-            Assert.AreEqual(5,((TransactionInfo)first.Transaction).Message.AccountKeys.Length);
+            Assert.HasCount(5,((TransactionInfo)first.Transaction).Message.AccountKeys);
             Assert.AreEqual("DjuMPGThkGdyk2vDvDDYjTFSyxzTumdapnDNbvVZbYQE",((TransactionInfo)first.Transaction).Message.AccountKeys[0]);
 
             Assert.AreEqual(0,((TransactionInfo)first.Transaction).Message.Header.NumReadonlySignedAccounts);
             Assert.AreEqual(3,((TransactionInfo)first.Transaction).Message.Header.NumReadonlyUnsignedAccounts);
             Assert.AreEqual(1,((TransactionInfo)first.Transaction).Message.Header.NumRequiredSignatures);
 
-            Assert.AreEqual(1,((TransactionInfo)first.Transaction).Message.Instructions.Length);
-            Assert.AreEqual(4,((TransactionInfo)first.Transaction).Message.Instructions[0].Accounts.Length);
+            Assert.HasCount(1,((TransactionInfo)first.Transaction).Message.Instructions);
+            Assert.HasCount(4,((TransactionInfo)first.Transaction).Message.Instructions[0].Accounts);
             Assert.AreEqual("2ZjTR1vUs2pHXyTLxtFDhN2tsm2HbaH36cAxzJcwaXf8y5jdTESsGNBLFaxGuWENxLa2ZL3cX9foNJcWbRq",((TransactionInfo)first.Transaction).Message.Instructions[0].Data);
             Assert.AreEqual(4,((TransactionInfo)first.Transaction).Message.Instructions[0].ProgramIdIndex);
 
@@ -123,7 +123,7 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual(requestData, sentMessage);
 
-            Assert.AreEqual(3, res.Result.Value.ByIdentity.Count);
+            Assert.HasCount(3, res.Result.Value.ByIdentity);
             Assert.AreEqual(79580256UL, res.Result.Value.Range.FirstSlot);
             Assert.AreEqual(79712285UL, res.Result.Value.Range.LastSlot);
 
@@ -170,7 +170,7 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual(requestData, sentMessage);
 
-            Assert.AreEqual(1, res.Result.Value.ByIdentity.Count);
+            Assert.HasCount(1, res.Result.Value.ByIdentity);
             Assert.AreEqual(79580256UL, res.Result.Value.Range.FirstSlot);
             Assert.AreEqual(79712285UL, res.Result.Value.Range.LastSlot);
 
@@ -201,7 +201,7 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual(requestData, sentMessage);
 
-            Assert.AreEqual(35, res.Result.Value.ByIdentity.Count);
+            Assert.HasCount(35, res.Result.Value.ByIdentity);
             Assert.AreEqual(79714135UL, res.Result.Value.Range.FirstSlot);
             Assert.AreEqual(79714275UL, res.Result.Value.Range.LastSlot);
 
@@ -233,7 +233,7 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual(requestData, sentMessage);
 
-            Assert.AreEqual(1, res.Result.Value.ByIdentity.Count);
+            Assert.HasCount(1, res.Result.Value.ByIdentity);
             Assert.AreEqual(79000000UL, res.Result.Value.Range.FirstSlot);
             Assert.AreEqual(79500000UL, res.Result.Value.Range.LastSlot);
 
@@ -263,7 +263,7 @@ namespace Solnet.Rpc.Test
             var res = sut.GetTransaction("5as3w4KMpY23MP5T1nkPVksjXjN7hnjHKqiDxRMxUNcw5XsCGtStayZib1kQdyR2D9w8dR11Ha9Xk38KP3kbAwM1");
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
+
             Assert.AreEqual(79700345UL, res.Result.Slot);
 
             Assert.AreEqual(1622655364, res.Result.BlockTime);
@@ -273,27 +273,27 @@ namespace Solnet.Rpc.Test
             Assert.IsNull(first.Meta.Error);
 
             Assert.AreEqual(5000UL, first.Meta.Fee);
-            Assert.AreEqual(0, first.Meta.InnerInstructions.Length);
-            Assert.AreEqual(2, first.Meta.LogMessages.Length);
-            Assert.AreEqual(5, first.Meta.PostBalances.Length);
+            Assert.HasCount(0, first.Meta.InnerInstructions);
+            Assert.HasCount(2, first.Meta.LogMessages);
+            Assert.HasCount(5, first.Meta.PostBalances);
             Assert.AreEqual(395383573380UL, first.Meta.PostBalances[0]);
-            Assert.AreEqual(5, first.Meta.PreBalances.Length);
+            Assert.HasCount(5, first.Meta.PreBalances);
             Assert.AreEqual(395383578380UL, first.Meta.PreBalances[0]);
-            Assert.AreEqual(0, first.Meta.PostTokenBalances.Length);
-            Assert.AreEqual(0, first.Meta.PreTokenBalances.Length);
+            Assert.HasCount(0, first.Meta.PostTokenBalances);
+            Assert.HasCount(0, first.Meta.PreTokenBalances);
 
-            Assert.AreEqual(1, ((TransactionInfo)first.Transaction).Signatures.Length);
+            Assert.HasCount(1, ((TransactionInfo)first.Transaction).Signatures);
             Assert.AreEqual("5as3w4KMpY23MP5T1nkPVksjXjN7hnjHKqiDxRMxUNcw5XsCGtStayZib1kQdyR2D9w8dR11Ha9Xk38KP3kbAwM1", ((TransactionInfo)first.Transaction).Signatures[0]);
 
-            Assert.AreEqual(5, ((TransactionInfo)first.Transaction).Message.AccountKeys.Length);
+            Assert.HasCount(5, ((TransactionInfo)first.Transaction).Message.AccountKeys);
             Assert.AreEqual("EvVrzsxoj118sxxSTrcnc9u3fRdQfCc7d4gRzzX6TSqj",((TransactionInfo)first.Transaction).Message.AccountKeys[0]);
 
             Assert.AreEqual(0, ((TransactionInfo)first.Transaction).Message.Header.NumReadonlySignedAccounts);
             Assert.AreEqual(3, ((TransactionInfo)first.Transaction).Message.Header.NumReadonlyUnsignedAccounts);
             Assert.AreEqual(1, ((TransactionInfo)first.Transaction).Message.Header.NumRequiredSignatures);
 
-            Assert.AreEqual(1, ((TransactionInfo)first.Transaction).Message.Instructions.Length);
-            Assert.AreEqual(4, ((TransactionInfo)first.Transaction).Message.Instructions[0].Accounts.Length);
+            Assert.HasCount(1, ((TransactionInfo)first.Transaction).Message.Instructions);
+            Assert.HasCount(4, ((TransactionInfo)first.Transaction).Message.Instructions[0].Accounts);
             Assert.AreEqual("2kr3BYaDkghC7rvHsQYnBNoB4dhXrUmzgYMM4kbHSG7ALa3qsMPxfC9cJTFDKyJaC8VYSjrey9pvyRivtESUJrC3qzr89pvS2o6MQ"
                 + "hyRVxmh3raQStxFFYwZ6WyKFNoQXvcchBwy8uQGfhhUqzuLNREwRmZ5U2VgTjFWX8Vikqya6iyzvALQNZEvqz7ZoGEyRtJ6AzNyWbkUyEo63rZ5w3wnxmhr3Uood",
                 ((TransactionInfo)first.Transaction).Message.Instructions[0].Data);
@@ -322,7 +322,7 @@ namespace Solnet.Rpc.Test
             var res = sut.GetTransaction("3Q9mu4ePvtbtQzY1kpGmaViJKyBev6hgUppyXDF9hKgWHHnecwGLE2pSoFvNUF3h7acKyFwWd65bkwr9A1jN2CdT");
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
+
 
             Assert.AreEqual(132196637UL, res.Result.Slot);
 
@@ -354,7 +354,7 @@ namespace Solnet.Rpc.Test
             var res = sut.GetTransaction("5as3w4KMpY23MP5T1nkPVksjXjN7hnjHKqiDxRMxUNcw5XsCGtStayZib1kQdyR2D9w8dR11Ha9Xk38KP3kbAwM1", Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
+
             FinishTest(messageHandlerMock, TestnetUri);
         }
 
@@ -377,8 +377,8 @@ namespace Solnet.Rpc.Test
             var res = sut.GetBlocks(79_499_950, 79_500_000);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
-            Assert.AreEqual(39, res.Result.Count);
+
+            Assert.HasCount(39, res.Result);
             Assert.AreEqual(79499950UL, res.Result[0]);
             Assert.AreEqual(79500000UL, res.Result[38]);
 
@@ -419,8 +419,8 @@ namespace Solnet.Rpc.Test
             var res = sut.GetBlocksWithLimit(79_699_950, 2);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
-            Assert.AreEqual(2, res.Result.Count);
+
+            Assert.HasCount(2, res.Result);
             Assert.AreEqual(79699950UL, res.Result[0]);
             Assert.AreEqual(79699951UL, res.Result[1]);
 
@@ -463,7 +463,7 @@ namespace Solnet.Rpc.Test
             var res = sut.GetFirstAvailableBlock();
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(res.Result);
+
             Assert.AreEqual(39368303UL, res.Result);
 
             FinishTest(messageHandlerMock, TestnetUri);
@@ -539,9 +539,9 @@ namespace Solnet.Rpc.Test
             var result = sut.GetBlockCommitment(78561320);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual(null, result.Result.Commitment);
+            Assert.IsNull(result.Result.Commitment);
             Assert.AreEqual(78380558524696194UL, result.Result.TotalStake);
 
             FinishTest(messageHandlerMock, TestnetUri);
@@ -565,7 +565,6 @@ namespace Solnet.Rpc.Test
             var result = sut.GetBlockTime(78561320);
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(1621971949UL, result.Result);
 
@@ -590,7 +589,7 @@ namespace Solnet.Rpc.Test
             var result = sut.GetLatestBlockHash();
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(127140942UL, result.Result.Context.Slot);
             Assert.AreEqual("DDFfxGAsEVcqNbCLRgvDtzcc2ZxNnqJfQJfMTRhEEPwW", result.Result.Value.Blockhash);
@@ -617,10 +616,10 @@ namespace Solnet.Rpc.Test
             var result = sut.IsBlockHashValid("DDFfxGAsEVcqNbCLRgvDtzcc2ZxNnqJfQJfMTRhEEPwW");
 
             Assert.AreEqual(requestData, sentMessage);
-            Assert.IsNotNull(result.Result);
+            
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(127140942UL, result.Result.Context.Slot);
-            Assert.AreEqual(true, result.Result.Value);
+            Assert.IsTrue(result.Result.Value);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }

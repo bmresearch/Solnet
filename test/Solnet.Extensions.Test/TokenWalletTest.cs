@@ -70,10 +70,10 @@ namespace Solnet.Extensions.Test
 
             // locate known test mint account
             var testAccounts = wallet.TokenAccounts().WithMint("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819");
-            Assert.AreEqual(1, testAccounts.Count());
+            Assert.HasCount(1, testAccounts);
             Assert.AreEqual((ulong)2039280, testAccounts.First().Lamports);
-            Assert.AreEqual(0, testAccounts.WhichAreAssociatedTokenAccounts().Count());
-            Assert.AreEqual(1, wallet.TokenAccounts().WithCustomFilter(x => x.PublicKey.StartsWith("G")).Count());
+            Assert.IsEmpty(testAccounts.WhichAreAssociatedTokenAccounts());
+            Assert.HasCount(1, wallet.TokenAccounts().WithCustomFilter(x => x.PublicKey.StartsWith('G')));
             Assert.AreEqual(2, wallet.TokenAccounts().WithSymbol("TEST").First().DecimalPlaces);
             Assert.AreEqual(testToken.TokenMint, wallet.TokenAccounts().WithSymbol("TEST").First().TokenMint);
             Assert.AreEqual(testToken.Symbol, wallet.TokenAccounts().WithMint("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819").First().Symbol);
@@ -110,8 +110,8 @@ namespace Solnet.Extensions.Test
 
             // locate unknown mint account
             var unknownAccounts = wallet.TokenAccounts().WithMint("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex");
-            Assert.AreEqual(1, unknownAccounts.Count());
-            Assert.AreEqual(0, unknownAccounts.WhichAreAssociatedTokenAccounts().Count());
+            Assert.HasCount(1, unknownAccounts);
+            Assert.IsEmpty(unknownAccounts.WhichAreAssociatedTokenAccounts());
             Assert.AreEqual(2, wallet.TokenAccounts().WithMint("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex").First().DecimalPlaces);
             Assert.AreEqual(10M, wallet.TokenAccounts().WithMint("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex").First().QuantityDecimal);
             Assert.AreEqual("4NSREK36nAr32vooa3L9z8tu6JWj5rY3k4KnsqTgynvm", wallet.TokenAccounts().WithMint("88ocFjrLgHEMQRMwozC7NnDBQUsq2UoQaqREFZoDEex").First().PublicKey);
@@ -150,8 +150,8 @@ namespace Solnet.Extensions.Test
 
             // locate known test mint account
             var testAccounts = wallet.TokenAccounts().WithMint("98mCaWvZYTmTHmimisaAQW4WGLphN1cWhcC7KtnZF819");
-            Assert.AreEqual(1, testAccounts.Count());
-            Assert.AreEqual(0, testAccounts.WhichAreAssociatedTokenAccounts().Count());
+            Assert.HasCount(1, testAccounts);
+            Assert.IsEmpty(testAccounts.WhichAreAssociatedTokenAccounts());
 
             // provision the ata
             var builder = new TransactionBuilder();
@@ -164,7 +164,7 @@ namespace Solnet.Extensions.Test
             var testAta = wallet.JitCreateAssociatedTokenAccount(builder, testToken.TokenMint, new PublicKey("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5"));
             var after = builder.Build(signer);
             Assert.AreEqual("F6qCC87R5cmAJUKbhwERSFQHkQpSKyUkETgrjTJKB2nK", testAta.Key);
-            Assert.IsTrue(after.Length > before.Length);
+            Assert.IsGreaterThanOrEqualTo(value: after.Length, lowerBound: before.Length);
 
         }
 
@@ -248,17 +248,20 @@ namespace Solnet.Extensions.Test
         }
 
 
-        [TestMethod, ExpectedException(typeof(AggregateException))]
+        [TestMethod]
         public void TestTokenWalletLoadAddressCheck()
-        {
+        {       
             // try to load a made up wallet address
-            var client = new MockTokenWalletRpc();
-            var tokens = new TokenMintResolver();
-            TokenWallet.Load(client, tokens, "FAKEkjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
+                var client = new MockTokenWalletRpc();
+                var tokens = new TokenMintResolver();
+            Assert.ThrowsExactly<AggregateException>(() =>
+            {
+                TokenWallet.Load(client, tokens, "FAKEkjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
+            });
         }
 
 
-        [TestMethod, ExpectedException(typeof(AggregateException))]
+        [TestMethod]
         public void TestTokenWalletSendAddressCheck()
         {
 
@@ -285,7 +288,7 @@ namespace Solnet.Extensions.Test
 
             // trigger send to bogus target wallet
             var targetOwner = "BADxzxtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5";
-            wallet.Send(testTokenAccount, 1M, targetOwner, signer.PublicKey, builder => builder.Build(signer));
+            Assert.ThrowsExactly<AggregateException>(() => wallet.Send(testTokenAccount, 1M, targetOwner, signer.PublicKey, builder => builder.Build(signer)));
 
         }
 
@@ -293,7 +296,7 @@ namespace Solnet.Extensions.Test
         /// <summary>
         /// Check to make sure callee can not send source TokenWalletAccount from Wallet A using Wallet B
         /// </summary>
-        [TestMethod, ExpectedException(typeof(AggregateException))]
+        [TestMethod]
         public void TestSendTokenDefendAgainstAccountMismatch()
         {
 
@@ -327,22 +330,21 @@ namespace Solnet.Extensions.Test
             Assert.IsFalse(account_in_a.IsAssociatedTokenAccount);
 
             // attempt to send using wallet b - this should not succeed
-            wallet_b.Send(account_in_a, 1M, destination, account_a.PublicKey, builder => builder.Build(account_b));
+            Assert.ThrowsExactly<AggregateException>(() => wallet_b.Send(account_in_a, 1M, destination, account_a.PublicKey, builder => builder.Build(account_b)));
 
         }
-
+        public JsonSerializerOptions serializerOptions = new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters =
+            {
+                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+            }
+        };
 
         [TestMethod]
         public void TestMockJsonRpcParseResponseValue()
         {
-            var serializerOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                Converters =
-            {
-                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-            }
-            };
             var json = File.ReadAllText("Resources/TokenWallet/GetBalanceResponse.json");
             var result = JsonSerializer.Deserialize<JsonRpcResponse<ResponseValue<ulong>>>(json, serializerOptions);
             Assert.IsNotNull(result);
@@ -351,14 +353,6 @@ namespace Solnet.Extensions.Test
         [TestMethod]
         public void TestMockJsonRpcSendTxParse()
         {
-            var serializerOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                Converters =
-            {
-                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-            }
-            };
             var json = File.ReadAllText("Resources/TokenWallet/SendTransactionResponse.json");
             var result = JsonSerializer.Deserialize<JsonRpcResponse<string>>(json, serializerOptions);
             Assert.IsNotNull(result);
@@ -413,13 +407,13 @@ namespace Solnet.Extensions.Test
             var serializerOptions = CreateJsonOptions();
             var json = JsonSerializer.Serialize<JsonRpcBatchRequest>(reqs, serializerOptions);
             Assert.IsNotNull(reqs);
-            Assert.AreEqual(2, reqs.Count);
+            Assert.HasCount(2, reqs);
             Assert.AreEqual(expected_request, json);
 
             // fake RPC response
             var resp = CreateMockRequestResult<JsonRpcBatchResponse>(expected_request, expected_response, HttpStatusCode.OK);
             Assert.IsNotNull(resp.Result);
-            Assert.AreEqual(2, resp.Result.Count);
+            Assert.HasCount(2, resp.Result);
 
             // process and invoke callbacks - this will unblock walletPromise
             batch.Composer.ProcessBatchResponse(resp);
@@ -480,7 +474,7 @@ namespace Solnet.Extensions.Test
         /// Common JSON options
         /// </summary>
         /// <returns></returns>
-        private JsonSerializerOptions CreateJsonOptions()
+        private static JsonSerializerOptions CreateJsonOptions()
         {
             return new JsonSerializerOptions
             {
@@ -500,12 +494,14 @@ namespace Solnet.Extensions.Test
         /// <param name="resp"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public RequestResult<T> CreateMockRequestResult<T>(string req, string resp, HttpStatusCode status)
+        public static RequestResult<T> CreateMockRequestResult<T>(string req, string resp, HttpStatusCode status)
         {
-            var x = new RequestResult<T>();
-            x.HttpStatusCode = status;
-            x.RawRpcRequest = req;
-            x.RawRpcResponse = resp;
+            var x = new RequestResult<T>
+            {
+                HttpStatusCode = status,
+                RawRpcRequest = req,
+                RawRpcResponse = resp
+            };
 
             // deserialize resp
             if (status == HttpStatusCode.OK)

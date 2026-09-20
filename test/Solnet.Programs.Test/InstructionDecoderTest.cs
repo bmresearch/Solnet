@@ -132,12 +132,12 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(Base64Message);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(2, decodedInstructions.Count);
+            Assert.HasCount(2, decodedInstructions);
 
             Assert.AreEqual("Create Account", decodedInstructions[0].InstructionName);
             Assert.AreEqual("System Program", decodedInstructions[0].ProgramName);
             Assert.AreEqual("11111111111111111111111111111111", decodedInstructions[0].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[0].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[0].InnerInstructions);
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Owner Account", out object owner));
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("New Account", out object newAccount));
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Amount", out object amount));
@@ -150,7 +150,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("Initialize Account", decodedInstructions[1].InstructionName);
             Assert.AreEqual("Token Program", decodedInstructions[1].ProgramName);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", decodedInstructions[1].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[1].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[1].InnerInstructions);
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Account", out object account));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Authority", out owner));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Mint", out object mint));
@@ -172,13 +172,13 @@ namespace Solnet.Programs.Test
 
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(txMeta);
 
-            Assert.AreEqual(3, decodedInstructions.Count);
+            Assert.HasCount(3, decodedInstructions);
 
             Assert.AreEqual("Create Associated Token Account", decodedInstructions[0].InstructionName);
             Assert.AreEqual("Associated Token Account Program", decodedInstructions[0].ProgramName);
             Assert.AreEqual("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
                 decodedInstructions[0].PublicKey);
-            Assert.AreEqual(4, decodedInstructions[0].InnerInstructions.Count);
+            Assert.HasCount(4, decodedInstructions[0].InnerInstructions);
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Payer", out object payer));
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Associated Token Account Address",
                 out object associatedAccount));
@@ -193,7 +193,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("Token Program", decodedInstructions[1].ProgramName);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
                 decodedInstructions[1].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[1].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[1].InnerInstructions);
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Source", out object source));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Destination", out object destination));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Authority", out owner));
@@ -207,7 +207,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("Memo Program", decodedInstructions[2].ProgramName);
             Assert.AreEqual("Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo",
                 decodedInstructions[2].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[2].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[2].InnerInstructions);
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Signer", out object signer));
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Memo", out object memo));
             Assert.AreEqual("5omQJtDUHA3gMFdHEQg1zZSvcBUVzey5WaKWYRmqF1Vj", (PublicKey)signer);
@@ -227,13 +227,13 @@ namespace Solnet.Programs.Test
 
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(txMeta);
 
-            Assert.AreEqual(4, decodedInstructions.Count);
+            Assert.HasCount(4, decodedInstructions);
 
             Assert.AreEqual("Unknown", decodedInstructions[2].InstructionName);
             Assert.AreEqual("Unknown", decodedInstructions[2].ProgramName);
             Assert.AreEqual("auctxRXPeJoc4817jDhf4HbjnhEcr1cCXenosMhK5R8",
                 decodedInstructions[2].PublicKey);
-            Assert.AreEqual(1, decodedInstructions[2].InnerInstructions.Count);
+            Assert.HasCount(1, decodedInstructions[2].InnerInstructions);
         }
 
 
@@ -249,29 +249,29 @@ namespace Solnet.Programs.Test
                 });
 
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(txMeta);
-            Assert.AreEqual(2, decodedInstructions.Count);
+            Assert.HasCount(2, decodedInstructions);
 
             Assert.AreEqual("Unknown", decodedInstructions[0].InstructionName);
             Assert.AreEqual("Unknown", decodedInstructions[0].ProgramName);
             Assert.AreEqual("675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",
                 decodedInstructions[0].PublicKey);
-            Assert.AreEqual(3, decodedInstructions[0].InnerInstructions.Count);
+            Assert.HasCount(3, decodedInstructions[0].InnerInstructions);
             Assert.AreEqual("Unknown", decodedInstructions[0].InnerInstructions[0].InstructionName);
             Assert.AreEqual("Unknown", decodedInstructions[0].InnerInstructions[0].ProgramName);
             Assert.AreEqual("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin",
                 decodedInstructions[0].InnerInstructions[0].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[0].InnerInstructions[0].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[0].InnerInstructions[0].InnerInstructions);
 
             Assert.AreEqual("Unknown", decodedInstructions[1].InstructionName);
             Assert.AreEqual("Unknown", decodedInstructions[1].ProgramName);
             Assert.AreEqual("675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",
                 decodedInstructions[1].PublicKey);
-            Assert.AreEqual(3, decodedInstructions[1].InnerInstructions.Count);
+            Assert.HasCount(3, decodedInstructions[1].InnerInstructions);
             Assert.AreEqual("Unknown", decodedInstructions[1].InnerInstructions[0].InstructionName);
             Assert.AreEqual("Unknown", decodedInstructions[1].InnerInstructions[0].ProgramName);
             Assert.AreEqual("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin",
                 decodedInstructions[1].InnerInstructions[0].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[1].InnerInstructions[0].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[1].InnerInstructions[0].InnerInstructions);
         }
 
         [TestMethod]
@@ -280,12 +280,12 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(UnknownInstructionMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(4, decodedInstructions.Count);
+            Assert.HasCount(4, decodedInstructions);
 
             Assert.AreEqual("Unknown", decodedInstructions[2].InstructionName);
             Assert.AreEqual("Unknown", decodedInstructions[2].ProgramName);
             Assert.AreEqual("HgQBwfas29FTc2hFw2KfdtrhChYVfk5LmMraSHUTTh9L", decodedInstructions[2].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[2].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[2].InnerInstructions);
         }
 
         [TestMethod]
@@ -294,13 +294,13 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(CreateNameRecordMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(3, decodedInstructions.Count);
+            Assert.HasCount(3, decodedInstructions);
 
             // Create name registry instruction
             Assert.AreEqual("Create Name Record", decodedInstructions[0].InstructionName);
             Assert.AreEqual("Name Service Program", decodedInstructions[0].ProgramName);
             Assert.AreEqual("namesLPneVptA9Z5rqUDD9tMTWEJwofgaYwp8cawRkX", decodedInstructions[0].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[0].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[0].InnerInstructions);
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Payer", out object payer));
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Name Account", out object nameAccount));
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Name Owner", out object nameOwner));
@@ -324,13 +324,13 @@ namespace Solnet.Programs.Test
         {
             Message msg = Message.Deserialize(CreateNameRecordMessageWithOptionals);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
-            Assert.AreEqual(3, decodedInstructions.Count);
+            Assert.HasCount(3, decodedInstructions);
 
             // Create name registry instruction
             Assert.AreEqual("Create Name Record", decodedInstructions[0].InstructionName);
             Assert.AreEqual("Name Service Program", decodedInstructions[0].ProgramName);
             Assert.AreEqual("namesLPneVptA9Z5rqUDD9tMTWEJwofgaYwp8cawRkX", decodedInstructions[0].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[0].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[0].InnerInstructions);
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Payer", out object payer));
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Name Account", out object nameAccount));
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Name Owner", out object nameOwner));
@@ -359,13 +359,13 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(UpdateNameRegistryMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(3, decodedInstructions.Count);
+            Assert.HasCount(3, decodedInstructions);
 
             // update name registry instruction
             Assert.AreEqual("Update Name Record", decodedInstructions[1].InstructionName);
             Assert.AreEqual("Name Service Program", decodedInstructions[1].ProgramName);
             Assert.AreEqual("namesLPneVptA9Z5rqUDD9tMTWEJwofgaYwp8cawRkX", decodedInstructions[1].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[1].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[1].InnerInstructions);
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Name Account", out object nameAccount));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Name Class", out object nameClass));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Offset", out object offset));
@@ -382,13 +382,13 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(TransferNameRegistryMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(3, decodedInstructions.Count);
+            Assert.HasCount(3, decodedInstructions);
 
             // update name registry instruction
             Assert.AreEqual("Transfer Name Record", decodedInstructions[1].InstructionName);
             Assert.AreEqual("Name Service Program", decodedInstructions[1].ProgramName);
             Assert.AreEqual("namesLPneVptA9Z5rqUDD9tMTWEJwofgaYwp8cawRkX", decodedInstructions[1].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[1].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[1].InnerInstructions);
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Name Account", out object nameAccount));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Name Owner", out object nameOwner));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Name Class", out object nameClass));
@@ -405,13 +405,13 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(DeleteNameRegistryMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(3, decodedInstructions.Count);
+            Assert.HasCount(3, decodedInstructions);
 
             // update name registry instruction
             Assert.AreEqual("Delete Name Record", decodedInstructions[1].InstructionName);
             Assert.AreEqual("Name Service Program", decodedInstructions[1].ProgramName);
             Assert.AreEqual("namesLPneVptA9Z5rqUDD9tMTWEJwofgaYwp8cawRkX", decodedInstructions[1].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[1].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[1].InnerInstructions);
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Name Account", out object nameAccount));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Name Owner", out object nameOwner));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Refund Account", out object refundAccount));
@@ -426,11 +426,11 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(SharedMemoryWriteMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(4, decodedInstructions.Count);
+            Assert.HasCount(4, decodedInstructions);
             Assert.AreEqual("Write", decodedInstructions[2].InstructionName);
             Assert.AreEqual("Shared Memory Program", decodedInstructions[2].ProgramName);
             Assert.AreEqual("shmem4EWT2sPdVGvTZCzXXRAURL9G5vpPxNwSeKhHUL", decodedInstructions[2].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[2].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[2].InnerInstructions);
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Offset", out object offset));
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Data", out object data));
             Assert.AreEqual(35UL, (ulong)offset);
@@ -443,11 +443,11 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(DurableNonceMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(2, decodedInstructions.Count);
+            Assert.HasCount(2, decodedInstructions);
             Assert.AreEqual("Advance Nonce Account", decodedInstructions[0].InstructionName);
             Assert.AreEqual("System Program", decodedInstructions[0].ProgramName);
             Assert.AreEqual("11111111111111111111111111111111", decodedInstructions[0].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[0].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[0].InnerInstructions);
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Nonce Account", out object nonceAccount));
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Authority", out object authority));
             Assert.AreEqual("G5EWCBwDM5GzVNwrG9LbgpTdQBD9PEAaey82ttuJJ7Qo", (PublicKey)nonceAccount);
@@ -460,11 +460,11 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(CreateWithSeedTransferCheckedMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(3, decodedInstructions.Count);
+            Assert.HasCount(3, decodedInstructions);
             Assert.AreEqual("Create Account With Seed", decodedInstructions[0].InstructionName);
             Assert.AreEqual("System Program", decodedInstructions[0].ProgramName);
             Assert.AreEqual("11111111111111111111111111111111", decodedInstructions[0].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[0].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[0].InnerInstructions);
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("From Account", out object fromAccount));
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("To Account", out object toAccount));
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Base Account", out object baseAccount));
@@ -506,11 +506,11 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(AllocateAndTransferWithSeedMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(6, decodedInstructions.Count);
+            Assert.HasCount(6, decodedInstructions);
             Assert.AreEqual("Allocate With Seed", decodedInstructions[1].InstructionName);
             Assert.AreEqual("System Program", decodedInstructions[1].ProgramName);
             Assert.AreEqual("11111111111111111111111111111111", decodedInstructions[1].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[1].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[1].InnerInstructions);
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Account", out object account));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Base Account", out object baseAccount));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Owner", out object ownerAccount));
@@ -525,7 +525,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("Transfer With Seed", decodedInstructions[2].InstructionName);
             Assert.AreEqual("System Program", decodedInstructions[2].ProgramName);
             Assert.AreEqual("11111111111111111111111111111111", decodedInstructions[2].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[2].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[2].InnerInstructions);
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("From Account", out object fromAccount));
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("From Base Account", out object fromBaseAccount));
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("To Account", out object toAccount));
@@ -546,11 +546,11 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(AssignWithSeedAndWithdrawNonceMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(6, decodedInstructions.Count);
+            Assert.HasCount(6, decodedInstructions);
             Assert.AreEqual("Assign With Seed", decodedInstructions[1].InstructionName);
             Assert.AreEqual("System Program", decodedInstructions[1].ProgramName);
             Assert.AreEqual("11111111111111111111111111111111", decodedInstructions[1].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[1].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[1].InnerInstructions);
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Account", out object account));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Base Account", out object baseAccount));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Owner", out object ownerAccount));
@@ -563,7 +563,7 @@ namespace Solnet.Programs.Test
             Assert.AreEqual("Withdraw Nonce Account", decodedInstructions[2].InstructionName);
             Assert.AreEqual("System Program", decodedInstructions[2].ProgramName);
             Assert.AreEqual("11111111111111111111111111111111", decodedInstructions[2].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[2].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[2].InnerInstructions);
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Nonce Account", out object nonceAccount));
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("To Account", out object toAccount));
             Assert.IsTrue(decodedInstructions[2].Values.TryGetValue("Authority", out object authority));
@@ -580,11 +580,11 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(CreateNonceAccountMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(2, decodedInstructions.Count);
+            Assert.HasCount(2, decodedInstructions);
             Assert.AreEqual("Initialize Nonce Account", decodedInstructions[1].InstructionName);
             Assert.AreEqual("System Program", decodedInstructions[1].ProgramName);
             Assert.AreEqual("11111111111111111111111111111111", decodedInstructions[1].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[1].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[1].InnerInstructions);
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Nonce Account", out object nonceAccount));
             Assert.IsTrue(decodedInstructions[1].Values.TryGetValue("Authority", out object authority));
             Assert.AreEqual("G5EWCBwDM5GzVNwrG9LbgpTdQBD9PEAaey82ttuJJ7Qo", (PublicKey)nonceAccount);
@@ -597,11 +597,11 @@ namespace Solnet.Programs.Test
             Message msg = Message.Deserialize(AuthorizeNonceAccountMessage);
             List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(msg);
 
-            Assert.AreEqual(1, decodedInstructions.Count);
+            Assert.HasCount(1, decodedInstructions);
             Assert.AreEqual("Authorize Nonce Account", decodedInstructions[0].InstructionName);
             Assert.AreEqual("System Program", decodedInstructions[0].ProgramName);
             Assert.AreEqual("11111111111111111111111111111111", decodedInstructions[0].PublicKey);
-            Assert.AreEqual(0, decodedInstructions[0].InnerInstructions.Count);
+            Assert.HasCount(0, decodedInstructions[0].InnerInstructions);
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Nonce Account", out object nonceAccount));
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("Current Authority", out object currentAuthority));
             Assert.IsTrue(decodedInstructions[0].Values.TryGetValue("New Authority", out object newAuthority));

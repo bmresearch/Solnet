@@ -23,27 +23,25 @@ namespace Solnet.KeyStore.Test
         private const string ExpectedStringKeyStoreAddress = "8D6vFRiysWWBwuf3HY7RrPt8EiFoP9o94LzySZqD4HsV";
 
         private static readonly byte[] SeedWithPassphrase =
-        {
+        [
             163,4,184,24,182,219,174,214,13,54,158,198,
             63,202,76,3,190,224,76,202,160,96,124,95,89,
             155,113,10,46,218,154,74,125,7,103,78,0,51,
             244,192,221,12,200,148,9,252,4,117,193,123,
             102,56,255,105,167,180,125,222,19,111,219,18,
             115,0
-        };
+        ];
 
         [TestMethod]
-        [ExpectedException(typeof(FileNotFoundException))]
         public void TestKeyStoreFileNotFound()
         {
-            _ = KeyStoreService.RestoreKeystoreFromFile(InvalidPath);
+            Assert.ThrowsExactly<FileNotFoundException>(() => KeyStoreService.RestoreKeystoreFromFile(InvalidPath));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestKeyStoreInvalidEmptyFilePath()
         {
-            _ = KeyStoreService.RestoreKeystoreFromFile(InvalidEmptyFilePath);
+            Assert.Throws<ArgumentException>(() => KeyStoreService.RestoreKeystoreFromFile(InvalidEmptyFilePath));
         }
 
         [TestMethod]
@@ -51,14 +49,13 @@ namespace Solnet.KeyStore.Test
         {
             var wallet = KeyStoreService.RestoreKeystoreFromFile(ValidKeyStorePath);
 
-            Assert.AreEqual(wallet.Account.PublicKey.Key, ExpectedKeyStoreAddress);
+            Assert.AreEqual(actual: wallet.Account.PublicKey.Key, expected: ExpectedKeyStoreAddress);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestKeyStoreInvalid()
         {
-            _ = KeyStoreService.RestoreKeystoreFromFile(InvalidKeyStorePath);
+            Assert.ThrowsExactly<ArgumentException>(() => KeyStoreService.RestoreKeystoreFromFile(InvalidKeyStorePath));
         }
 
         [TestMethod]

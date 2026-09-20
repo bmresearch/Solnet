@@ -29,7 +29,7 @@ namespace Solnet.Programs.Test
             Array.Copy(payload, 0, expectedData, 8, payload.Length);
 
             CollectionAssert.AreEqual(expectedData, tx.Data);
-            Assert.AreEqual(1, tx.Keys.Count);
+            Assert.HasCount(1, tx.Keys);
         }
 
     }

@@ -17,13 +17,13 @@ namespace Solnet.Rpc.Test
             // allow unlimited fires instantly
             var limit = RateLimiter.Create();
             Assert.IsTrue(limit.CanFire());
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
         }
 
         [TestMethod]
@@ -32,15 +32,15 @@ namespace Solnet.Rpc.Test
             // allow unlimited fires instantly
             var limit = RateLimiter.Create().AllowHits(100).PerSeconds(10);
             Assert.IsTrue(limit.CanFire());
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
         }
 
         [TestMethod]
@@ -53,26 +53,26 @@ namespace Solnet.Rpc.Test
             Console.WriteLine(limit);
             Assert.IsTrue(limit.CanFire());
             Console.WriteLine(limit);
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
             Console.WriteLine(limit);
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
             Console.WriteLine(limit);
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
             Console.WriteLine(limit);
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
             Console.WriteLine(limit);
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
             Console.WriteLine(limit);
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
             Console.WriteLine(limit);
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
             Console.WriteLine(limit);
 
             // observe why this may break the build
             var finalTimeCheck = DateTime.UtcNow;
             Console.WriteLine($" ExecTime diff {finalTimeCheck.Subtract(timeCheck).TotalMilliseconds}ms");
             Console.WriteLine($"TimeCheck diff {finalTimeCheck.Subtract(twoSecondsLater).TotalMilliseconds}ms");
-            Assert.IsTrue(finalTimeCheck.Subtract(timeCheck).TotalMilliseconds > 2000, $"ExecTime diff {finalTimeCheck.Subtract(timeCheck).TotalMilliseconds}ms");
+            Assert.IsGreaterThan(value: finalTimeCheck.Subtract(timeCheck).TotalMilliseconds, lowerBound: 2000, message: $"ExecTime diff {finalTimeCheck.Subtract(timeCheck).TotalMilliseconds}ms");
         }
 
         [TestMethod]
@@ -81,13 +81,13 @@ namespace Solnet.Rpc.Test
             // allow unlimited fires instantly
             var limit = RateLimiter.Create();
             Assert.IsTrue(limit.CanFire());
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
         }
 
         [TestMethod]
@@ -96,15 +96,15 @@ namespace Solnet.Rpc.Test
             // allow unlimited fires instantly
             var limit = RateLimiter.Create().AllowHits(100).PerSeconds(10);
             Assert.IsTrue(limit.CanFire());
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
+            await limit.WaitFireAsync(TestContext.CancellationToken);
         }
 
         [TestMethod]
@@ -117,27 +117,29 @@ namespace Solnet.Rpc.Test
             Console.WriteLine(limit);
             Assert.IsTrue(limit.CanFire());
             Console.WriteLine(limit);
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
             Console.WriteLine(limit);
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
             Console.WriteLine(limit);
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
             Console.WriteLine(limit);
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
             Console.WriteLine(limit);
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
             Console.WriteLine(limit);
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
             Console.WriteLine(limit);
-            await limit.WaitFireAsync();
+            await limit.WaitFireAsync(TestContext.CancellationToken);
             Console.WriteLine(limit);
 
             // observe why this may break the build
             var finalTimeCheck = DateTime.UtcNow;
             Console.WriteLine($" ExecTime diff {finalTimeCheck.Subtract(timeCheck).TotalMilliseconds}ms");
             Console.WriteLine($"TimeCheck diff {finalTimeCheck.Subtract(twoSecondsLater).TotalMilliseconds}ms");
-            Assert.IsTrue(finalTimeCheck.Subtract(timeCheck).TotalMilliseconds > 2000, $"ExecTime diff {finalTimeCheck.Subtract(timeCheck).TotalMilliseconds}ms");
+            Assert.IsGreaterThan(value: finalTimeCheck.Subtract(timeCheck).TotalMilliseconds, lowerBound: 2000, message: $"ExecTime diff {finalTimeCheck.Subtract(timeCheck).TotalMilliseconds}ms");
         }
+
+        public TestContext TestContext { get; set; }
     }
 
 }

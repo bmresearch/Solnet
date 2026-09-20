@@ -252,8 +252,8 @@ namespace Solnet.Wallet.Test
         {
             var wallet = SetupWalletFromMnemonicWords(SeedMode.Bip39);
 
-            Assert.ThrowsException<Exception>(() => wallet.Sign(SerializedMessage, 1));
-            Assert.ThrowsException<Exception>(() => wallet.GetAccount(0).Sign(SerializedMessage));
+            Assert.ThrowsExactly<Exception>(() => wallet.Sign(SerializedMessage, 1));
+            Assert.ThrowsExactly<Exception>(() => wallet.GetAccount(0).Sign(SerializedMessage));
 
             CollectionAssert.AreEqual(SerializedMessageSignatureBip39, wallet.Sign(SerializedMessage));
         }
@@ -263,8 +263,8 @@ namespace Solnet.Wallet.Test
         {
             var wallet = SetupWalletFromMnemonicWords(SeedMode.Bip39);
 
-            Assert.ThrowsException<Exception>(() => wallet.Sign(SerializedMessage, 1));
-            Assert.ThrowsException<Exception>(() => wallet.GetAccount(0).Sign(SerializedMessage));
+            Assert.ThrowsExactly<Exception>(() => wallet.Sign(SerializedMessage, 1));
+            Assert.ThrowsExactly<Exception>(() => wallet.GetAccount(0).Sign(SerializedMessage));
 
             CollectionAssert.AreEqual(SerializedMessageSignatureBip39, wallet.Account.Sign(SerializedMessage));
         }
@@ -274,8 +274,8 @@ namespace Solnet.Wallet.Test
         {
             var wallet = SetupWalletFromMnemonicWords(SeedMode.Bip39);
 
-            Assert.ThrowsException<Exception>(() => wallet.Verify(SerializedMessage, SerializedMessageSignature, 1));
-            Assert.ThrowsException<Exception>(() => wallet.GetAccount(0).Verify(SerializedMessage, SerializedMessageSignature));
+            Assert.ThrowsExactly<Exception>(() => wallet.Verify(SerializedMessage, SerializedMessageSignature, 1));
+            Assert.ThrowsExactly<Exception>(() => wallet.GetAccount(0).Verify(SerializedMessage, SerializedMessageSignature));
 
             Assert.IsTrue(wallet.Account.Verify(SerializedMessage, SerializedMessageSignatureBip39));
         }

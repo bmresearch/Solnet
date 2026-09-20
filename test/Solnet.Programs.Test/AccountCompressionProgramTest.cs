@@ -19,10 +19,10 @@ namespace Solnet.Programs.Test
             var instr = AccountCompressionProgram.Append(MerkleTree, Authority, leaf);
 
             CollectionAssert.AreEqual(AccountCompressionProgram.ProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.AreEqual(2, instr.Keys.Count);
+            Assert.HasCount(2, instr.Keys);
             Assert.IsTrue(instr.Keys[0].IsWritable && instr.Keys[0].IsSigner); // Authority
             Assert.IsTrue(instr.Keys[1].IsWritable && !instr.Keys[1].IsSigner); // MerkleTree
-            Assert.AreEqual(36, instr.Data.Length);
+            Assert.HasCount(36, instr.Data);
         }
 
         [TestMethod]
@@ -31,11 +31,11 @@ namespace Solnet.Programs.Test
             var instr = AccountCompressionProgram.CloseEmptyTree(MerkleTree, Authority, Recipient);
 
             CollectionAssert.AreEqual(AccountCompressionProgram.ProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.AreEqual(3, instr.Keys.Count);
+            Assert.HasCount(3, instr.Keys);
             Assert.IsTrue(instr.Keys[0].IsWritable); // MerkleTree
             Assert.IsTrue(instr.Keys[1].IsWritable && instr.Keys[1].IsSigner); // Authority
             Assert.IsFalse(instr.Keys[2].IsWritable); // Recipient
-            Assert.AreEqual(4, instr.Data.Length);
+            Assert.HasCount(4, instr.Data);
         }
 
         [TestMethod]
@@ -45,10 +45,10 @@ namespace Solnet.Programs.Test
             var instr = AccountCompressionProgram.InitEmptyMerkleTree(MerkleTree, Authority, maxDepth, maxBufferSize);
 
             CollectionAssert.AreEqual(AccountCompressionProgram.ProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.AreEqual(2, instr.Keys.Count);
+            Assert.HasCount(2, instr.Keys);
             Assert.IsTrue(instr.Keys[0].IsWritable); // MerkleTree
             Assert.IsTrue(instr.Keys[1].IsWritable && instr.Keys[1].IsSigner); // Authority
-            Assert.AreEqual(6, instr.Data.Length);
+            Assert.HasCount(6, instr.Data);
         }
 
         [TestMethod]
@@ -62,10 +62,10 @@ namespace Solnet.Programs.Test
             var instr = AccountCompressionProgram.ReplaceLeaf(MerkleTree, Authority, newLeaf, prevLeaf, root, index);
 
             CollectionAssert.AreEqual(AccountCompressionProgram.ProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.AreEqual(2, instr.Keys.Count);
+            Assert.HasCount(2, instr.Keys);
             Assert.IsTrue(instr.Keys[0].IsWritable); // MerkleTree
             Assert.IsTrue(instr.Keys[1].IsWritable && instr.Keys[1].IsSigner); // Authority
-            Assert.AreEqual(104, instr.Data.Length);
+            Assert.HasCount(104, instr.Data);
         }
 
         [TestMethod]
@@ -78,10 +78,10 @@ namespace Solnet.Programs.Test
             var instr = AccountCompressionProgram.InsertOrAppend(MerkleTree, Authority, leaf, root, index);
 
             CollectionAssert.AreEqual(AccountCompressionProgram.ProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.AreEqual(2, instr.Keys.Count);
+            Assert.HasCount(2, instr.Keys);
             Assert.IsTrue(instr.Keys[0].IsWritable); // MerkleTree
             Assert.IsTrue(instr.Keys[1].IsWritable && instr.Keys[1].IsSigner); // Authority
-            Assert.AreEqual(72, instr.Data.Length);
+            Assert.HasCount(72, instr.Data);
         }
 
         [TestMethod]
@@ -90,11 +90,11 @@ namespace Solnet.Programs.Test
             var instr = AccountCompressionProgram.TransferAuthority(MerkleTree, Authority, NewAuthority);
 
             CollectionAssert.AreEqual(AccountCompressionProgram.ProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.AreEqual(3, instr.Keys.Count);
+            Assert.HasCount(3, instr.Keys);
             Assert.IsTrue(instr.Keys[0].IsWritable); // MerkleTree
             Assert.IsTrue(instr.Keys[1].IsWritable && instr.Keys[1].IsSigner); // Authority
             Assert.IsFalse(instr.Keys[2].IsWritable); // NewAuthority
-            Assert.AreEqual(36, instr.Data.Length);
+            Assert.HasCount(36, instr.Data);
         }
 
         [TestMethod]
@@ -107,10 +107,10 @@ namespace Solnet.Programs.Test
             var instr = AccountCompressionProgram.VerifyLeaf(MerkleTree, Authority, root, leaf, index);
 
             CollectionAssert.AreEqual(AccountCompressionProgram.ProgramIdKey.KeyBytes, instr.ProgramId);
-            Assert.AreEqual(2, instr.Keys.Count);
+            Assert.HasCount(2, instr.Keys);
             Assert.IsTrue(instr.Keys[0].IsWritable); // MerkleTree
             Assert.IsTrue(instr.Keys[1].IsWritable && instr.Keys[1].IsSigner); // Authority
-            Assert.AreEqual(72, instr.Data.Length);
+            Assert.HasCount(72, instr.Data);
         }
     }
 }

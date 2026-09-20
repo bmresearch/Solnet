@@ -27,11 +27,13 @@ namespace Solnet.Wallet.Test
         };
 
         [TestMethod]
-        [ExpectedException(typeof(FormatException))]
         public void TestDerivePath()
         {
-            var ed25519 = new Ed25519Bip32(SeedWithoutPassphrase);
-            _ = ed25519.DerivePath(InvalidDerivationPath);
+            Assert.ThrowsExactly<FormatException>(() =>
+            {
+                var ed25519 = new Ed25519Bip32(SeedWithoutPassphrase);
+                _ = ed25519.DerivePath(InvalidDerivationPath);
+            });
         }
     }
 }
