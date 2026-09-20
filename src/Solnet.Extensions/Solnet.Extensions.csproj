@@ -6,16 +6,12 @@
     <PackageId>Solana.Extensions</PackageId>
     <Title>Solana.Extensions</Title>
     <PackageProjectUrl>https://github.com/bmresearch/Solnet</PackageProjectUrl>
-    <PackageIcon>icon.png</PackageIcon>
+    <PackageIcon></PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes />
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\assets\icon.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
     <None Include="..\..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>

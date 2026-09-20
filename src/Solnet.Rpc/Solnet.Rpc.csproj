@@ -8,7 +8,7 @@
     <PackageId>Solana.Rpc</PackageId>
     <Title>Solana.Rpc</Title>
     <PackageProjectUrl>https://github.com/bmresearch/Solnet</PackageProjectUrl>
-    <PackageIcon>icon.png</PackageIcon>
+    <PackageIcon></PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes />
     <Version>10.0.0</Version>
@@ -24,10 +24,6 @@
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
     </AssemblyAttribute>
-    <None Include="..\..\assets\icon.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
     <None Include="..\..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
