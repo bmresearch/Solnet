@@ -249,7 +249,7 @@ namespace Solnet.Wallet
         /// <returns>Returns true if the input is a valid key, false otherwise.</returns>
         public static bool IsValid(ReadOnlySpan<byte> key, bool validateCurve = false)
         {
-            return key != null && key.Length == PublicKeyLength && (!validateCurve || key.IsOnCurve());
+            return !key.IsEmpty && key.Length == PublicKeyLength && (!validateCurve || key.IsOnCurve());
         }
 
         /// <summary>

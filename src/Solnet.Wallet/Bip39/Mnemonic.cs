@@ -193,10 +193,12 @@ namespace Solnet.Wallet.Bip39
         /// <returns>The derived key.</returns>
         private static byte[] GenerateSeed(byte[] password, byte[] salt)
         {
-            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 2048, HashAlgorithmName.SHA512))
-            {
-                return pbkdf2.GetBytes(64);
-            }
+            return Rfc2898DeriveBytes.Pbkdf2(
+                password,
+                salt,
+                2048,
+                HashAlgorithmName.SHA512,
+                64);
         }
 
         /// <summary>
