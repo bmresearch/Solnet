@@ -45,6 +45,22 @@ namespace Solnet.Wallet
             PublicKey = new PublicKey(publicKey);
         }
 
+        /// <summary>
+        /// Initialize an account with the passed base58 encoded secret key (64 bytes: seed + public key).
+        /// </summary>
+        /// <param name="privateKey">The base58 encoded secret key.</param>
+        public Account(string privateKey)
+        {
+            var B58 = new Base58Encoder();
+            byte[] privateKeyBytes = B58.DecodeData(privateKey);
+            if (privateKeyBytes.Length != 64)
+            {
+                throw new ArgumentException("Not a secret key");
+            }
+            PrivateKey = new PrivateKey(privateKeyBytes);
+            PublicKey = new PublicKey(privateKeyBytes.AsSpan(32, 32).ToArray());
+        }
+
         /// <inheritdoc cref="Account(string,string)"/>
         public Account(byte[] privateKey, byte[] publicKey)
         {
