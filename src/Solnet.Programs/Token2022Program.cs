@@ -10,7 +10,7 @@ namespace Solnet.Programs
     /// <summary>
     /// Implements the Token-2022 Program methods.
     /// </summary>
-    public static class Token2022Program
+    public static partial class Token2022Program
     {
         /// <summary>
         /// The public key of the Token-2022 Program.
@@ -698,6 +698,8 @@ namespace Solnet.Programs
         public static DecodedInstruction Decode(ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
             byte instruction = data.GetU8(TokenProgramData.MethodOffset);
+            DecodedInstruction extension = DecodeExtensionInstruction(data, keys, keyIndices);
+            if (extension != null) return extension;
 
             if (!Enum.IsDefined(typeof(TokenProgramInstructions.Values), instruction))
             {

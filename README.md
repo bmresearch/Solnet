@@ -52,6 +52,7 @@ Solnet is Solana's C# SDK designed to integrate seamlessly with the .NET ecosyst
       - Address Lookup Table Program
       - Memo Program
       - Token Program
+      - Token-2022 Program: transfer fees, transfer hooks, permanent delegates, metadata pointers, default account states, non-transferable tokens, and confidential-transfer instructions
       - Token Swap Program
       - Associated Token Account Program
       - Name Service Program
@@ -72,9 +73,34 @@ Maintained by Bifrost <img src="https://avatars.githubusercontent.com/u/11955073
 - [Pumpfun](https://github.com/Bifrost-Technologies/Solnet.Pumpfun)
 - [Ore](https://github.com/Bifrost-Technologies/Solnet.Ore)
 
+## Token-2022 extensions
+
+`Token2022Program` includes extension initialization and management, fee-aware transfers and fee collection, transfers with resolved hook accounts, and confidential account configuration, deposits, transfers, withdrawals, and fee collection. It also provides allocation helpers for supported fixed-size extensions.
+
+Use `Token2022Mint.Deserialize` and `Token2022Account.Deserialize` from `Solnet.Programs.Models.Token2022` to read the base account state and TLV extension data. Transfer-fee models calculate capped, rounded fees using integer arithmetic and select the active fee by epoch.
+
+```csharp
+var extensions = new[]
+{
+    Token2022ExtensionType.TransferFeeConfig,
+    Token2022ExtensionType.PermanentDelegate
+};
+int mintSpace = Token2022Program.GetMintAccountDataSize(extensions);
+
+// After allocating mintSpace bytes to Token2022Program.ProgramIdKey,
+// initialize extensions BEFORE InitializeMint2, in the same transaction.
+var feeConfig = Token2022Program.InitializeTransferFeeConfig(
+    mint, feeAuthority, withdrawAuthority, basisPoints: 100, maximumFee: 1_000_000);
+var delegateConfig = Token2022Program.InitializePermanentDelegate(mint, delegateAuthority);
+var initializeMint = Token2022Program.InitializeMint2(mint, 6, mintAuthority);
+```
+
+Confidential-transfer builders accept encrypted balances and proof references through `ConfidentialProofLocation`. `ZkElGamalProofProgram` submits caller-generated proofs, optionally persists proof contexts, and closes context accounts. **Encryption, decryption, and zero-knowledge proof generation are external inputs**, supplied through Solana's proof SDK or an equivalent compatible integration. Transfer-hook extra accounts must likewise be resolved for the hook program and supplied in its required order.
+
+See the [Token-2022 extension guide](docs/articles/token_2022_extensions.md) for complete setup examples, supported APIs, multisig behavior, state decoding, and proof integration. The example explorer also includes `Token2022ExtensionsExample`.
+
 ## Requirements
-- .NET 6.0 (deprecated)
-- .NET 8.0+ (recommended)
+- .NET 10 SDK for the current source tree
 
 ## Dependencies
 - BifrostSecurity
