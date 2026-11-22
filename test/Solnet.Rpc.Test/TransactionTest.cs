@@ -6,6 +6,7 @@ using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using static Solnet.Rpc.Models.Message;
 
 namespace Solnet.Rpc.Test
@@ -406,6 +407,31 @@ namespace Solnet.Rpc.Test
 
             Assert.AreEqual(129, compiled[0]);
             Assert.AreEqual(1, msg.Version);
+        }
+
+        [TestMethod]
+        [DoNotParallelize]
+        public void VersionedTransactionV1SerializeWritesNothingToConsoleTest()
+        {
+            // mainnet v1 transaction, slot 462733585
+            byte[] v1 = Convert.FromBase64String(
+                "gQEAAg8AAAAXdVBRU6o+csjYxFfP2uox3EI97dLi8dTKQJQkEQvBrAEE0p/7hGd1vQG2gT9OV2BqGTqNwNnrNJYwnOu7DfhhZNoukLW9WNDWad3rp/Q0nDMHMGndhSMCoqDeY6ggDT3Hkgbd9uHudY/eGEJdvORszdq2GvxNg7kNJ/69+SjYoYv8e4vtdLwF7d7WFoT+auIMPfng7MksoleL4tylbX1erce8AgAAAAAAADB1AAAAADMAAgQBAAEAAAMJuxM0qooYTRViAQI0vknT2j0FxjgYZKVKugsZcySW9adpB2wrJxcV/CptFV/XFKAjrwrBbQoD3EekMqSBgX/tDQ==");
+
+            TextWriter original = Console.Out;
+            StringWriter captured = new();
+            byte[] serialized;
+            Console.SetOut(captured);
+            try
+            {
+                serialized = VersionedTransaction.Deserialize(v1).Serialize();
+            }
+            finally
+            {
+                Console.SetOut(original);
+            }
+
+            Assert.AreEqual(129, serialized[0]);
+            Assert.AreEqual(string.Empty, captured.ToString());
         }
     }
 }

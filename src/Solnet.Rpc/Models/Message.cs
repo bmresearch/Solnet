@@ -353,7 +353,6 @@ namespace Solnet.Rpc.Models
                 // Account Keys
                 foreach (PublicKey key in AccountKeys)
                 {
-                    Console.WriteLine(key.ToString());
                     buffer.Write(key.KeyBytes);
                 }
                 // Config Values
