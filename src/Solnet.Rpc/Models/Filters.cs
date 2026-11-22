@@ -3,7 +3,7 @@
 namespace Solnet.Rpc.Models
 {
     /// <summary>
-    /// Represents the <c>memcmp</c> filter for the <see cref="IRpcClient.GetProgramAccounts"/> method.
+    /// Represents the <c>memcmp</c> filter for the <see cref="IRpcClient.GetProgramAccounts(string, Types.Commitment, int?, System.Collections.Generic.IList{MemCmp})"/> method.
     /// </summary>
     public class MemCmp
     {

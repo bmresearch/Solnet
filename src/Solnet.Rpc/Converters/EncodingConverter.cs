@@ -1,4 +1,4 @@
-﻿using Solnet.Rpc.Types;
+using Solnet.Rpc.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +28,10 @@ namespace Solnet.Rpc.Converters
             else if (value == BinaryEncoding.Base64Zstd)
             {
                 writer.WriteStringValue("base64+zstd");
+            }
+            else if (value == BinaryEncoding.Base58)
+            {
+                writer.WriteStringValue("base58");
             }
             else
             {

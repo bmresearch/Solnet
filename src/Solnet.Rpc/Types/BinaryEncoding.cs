@@ -16,6 +16,10 @@ namespace Solnet.Rpc.Types
         /// <summary>
         /// Base64+Zstd encoding.
         /// </summary>
-        Base64Zstd
+        Base64Zstd,
+        /// <summary>
+        /// Base58 encoding, for account data within the node's size limit.
+        /// </summary>
+        Base58
     }
 }

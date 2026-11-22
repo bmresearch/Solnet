@@ -15,6 +15,28 @@ namespace Solnet.Rpc
     public interface IStreamingRpcClient : IDisposable
     {
         /// <summary>
+        /// Subscribes to confirmed or finalized blocks. Requires a validator with block subscriptions enabled.
+        /// Transactions use JSON encoding.
+        /// </summary>
+        /// <param name="callback">The callback for block updates.</param>
+        /// <param name="mentionsAccountOrProgram">An optional account or program filter; null requests all blocks.</param>
+        /// <param name="commitment">Confirmed or finalized commitment.</param>
+        /// <param name="transactionDetails">The transaction details to return.</param>
+        /// <param name="showRewards">Whether to include rewards.</param>
+        /// <param name="maxSupportedTransactionVersion">The highest supported transaction version.</param>
+        /// <returns>The subscription state.</returns>
+        Task<SubscriptionState> SubscribeBlockAsync(Action<SubscriptionState, ResponseValue<BlockUpdate>> callback,
+            string mentionsAccountOrProgram = null, Commitment commitment = Commitment.Finalized,
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full,
+            bool showRewards = false, int maxSupportedTransactionVersion = 1);
+
+        /// <summary>Subscribes synchronously to blocks. See <see cref="SubscribeBlockAsync"/>.</summary>
+        SubscriptionState SubscribeBlock(Action<SubscriptionState, ResponseValue<BlockUpdate>> callback,
+            string mentionsAccountOrProgram = null, Commitment commitment = Commitment.Finalized,
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full,
+            bool showRewards = false, int maxSupportedTransactionVersion = 1);
+
+        /// <summary>
         /// Current connection state.
         /// </summary>
         WebSocketState State { get; }
@@ -44,8 +66,12 @@ namespace Solnet.Rpc
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, 
+        Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState,
             ResponseValue<AccountInfo>> callback, Commitment commitment = Commitment.Finalized);
+
+        /// <summary>Uses the specified account data encoding.</summary>
+        Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState,
+            ResponseValue<AccountInfo>> callback, BinaryEncoding encoding, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes to the AccountInfo. This is a synchronous and blocking function.
@@ -57,8 +83,12 @@ namespace Solnet.Rpc
         /// <param name="callback">The callback to handle data notifications.</param>
         /// <param name="commitment">The state commitment to consider when querying the ledger state.</param>
         /// <returns>Returns an object representing the state of the subscription.</returns>
-        SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, 
+        SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback,
             Commitment commitment = Commitment.Finalized);
+
+        /// <summary>Uses the specified account data encoding.</summary>
+        SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback,
+            BinaryEncoding encoding, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Subscribes asynchronously to Token Account notifications. Note: Only works if the account is a Token Account.
@@ -173,8 +203,12 @@ namespace Solnet.Rpc
         /// <param name="dataSize"></param>
         /// <param name="memCmpList"></param>
         /// <returns></returns>
-        Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, 
+        Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback,
             Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null);
+
+        /// <summary>Uses the specified account data encoding.</summary>
+        Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback,
+            BinaryEncoding encoding, Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null);
 
         /// <summary>
         /// Subscribes to changes to a given program account data. This is a synchronous and blocking function.
@@ -188,8 +222,12 @@ namespace Solnet.Rpc
         /// <param name="dataSize"></param>
         /// <param name="memCmpList"></param>
         /// <returns>Returns an object representing the state of the subscription.</returns>
-        SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, 
+        SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback,
             Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null);
+
+        /// <summary>Uses the specified account data encoding.</summary>
+        SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback,
+            BinaryEncoding encoding, Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null);
 
         /// <summary>
         /// Subscribes asynchronously to receive notifications anytime a slot is processed by the validator.
