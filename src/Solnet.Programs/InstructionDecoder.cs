@@ -1,4 +1,4 @@
-﻿using Solnet.Programs.AccountCompression;
+using Solnet.Programs.AccountCompression;
 using Solnet.Programs.TokenSwap;
 using Solnet.Rpc.Builders;
 using Solnet.Rpc.Models;
@@ -42,6 +42,7 @@ namespace Solnet.Programs
             InstructionDictionary.Add(AccountCompressionProgram.ProgramIdKey, AccountCompressionProgram.Decode);
             InstructionDictionary.Add(AddressLookupTableProgram.ProgramIdKey, AddressLookupTableProgram.Decode);
             InstructionDictionary.Add(Token2022Program.ProgramIdKey, Token2022Program.Decode);
+            InstructionDictionary.Add(ZkElGamalProofProgram.ProgramIdKey, ZkElGamalProofProgram.Decode);
         }
 
         /// <summary>
