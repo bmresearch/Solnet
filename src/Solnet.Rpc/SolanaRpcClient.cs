@@ -143,9 +143,14 @@ namespace Solnet.Rpc
             => GetAccountInfoAsync(pubKey, commitment, encoding).Result;
 
 
-        /// <inheritdoc cref="IRpcClient.GetProgramAccountsAsync"/>
-        public async Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey,
+        /// <inheritdoc cref="IRpcClient.GetProgramAccountsAsync(string, Commitment, int?, IList{MemCmp})"/>
+        public Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey,
             Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null)
+            => GetProgramAccountsAsync(pubKey, BinaryEncoding.Base64, commitment, dataSize, memCmpList);
+
+        /// <summary>Uses the specified account data encoding.</summary>
+        public async Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey,
+            BinaryEncoding encoding, Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null)
         {
             List<object> filters = Parameters.Create(ConfigObject.Create(KeyValue.Create("dataSize", dataSize)));
             if (memCmpList != null)
@@ -160,35 +165,52 @@ namespace Solnet.Rpc
                 Parameters.Create(
                     pubKey,
                     ConfigObject.Create(
-                        KeyValue.Create("encoding", "base64"),
+                        KeyValue.Create("encoding", encoding),
                         KeyValue.Create("filters", filters),
                         HandleCommitment(commitment))));
         }
 
-        /// <inheritdoc cref="IRpcClient.GetProgramAccounts"/>
+        /// <inheritdoc cref="IRpcClient.GetProgramAccounts(string, Commitment, int?, IList{MemCmp})"/>
         public RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey,
             Commitment commitment = Commitment.Finalized,
             int? dataSize = null, IList<MemCmp> memCmpList = null)
-            => GetProgramAccountsAsync(pubKey, commitment, dataSize, memCmpList).Result;
+            => GetProgramAccounts(pubKey, BinaryEncoding.Base64, commitment, dataSize, memCmpList);
+
+        /// <summary>Uses the specified account data encoding.</summary>
+        public RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey,
+            BinaryEncoding encoding, Commitment commitment = Commitment.Finalized,
+            int? dataSize = null, IList<MemCmp> memCmpList = null)
+            => GetProgramAccountsAsync(pubKey, encoding, commitment, dataSize, memCmpList).Result;
 
 
-        /// <inheritdoc cref="IRpcClient.GetMultipleAccountsAsync"/>
-        public async Task<RequestResult<ResponseValue<List<AccountInfo>>>> GetMultipleAccountsAsync(
+        /// <inheritdoc cref="IRpcClient.GetMultipleAccountsAsync(IList{string}, Commitment)"/>
+        public Task<RequestResult<ResponseValue<List<AccountInfo>>>> GetMultipleAccountsAsync(
             IList<string> accounts,
             Commitment commitment = Commitment.Finalized)
+            => GetMultipleAccountsAsync(accounts, BinaryEncoding.Base64, commitment);
+
+        /// <summary>Uses the specified account data encoding.</summary>
+        public async Task<RequestResult<ResponseValue<List<AccountInfo>>>> GetMultipleAccountsAsync(
+            IList<string> accounts,
+            BinaryEncoding encoding, Commitment commitment = Commitment.Finalized)
         {
             return await SendRequestAsync<ResponseValue<List<AccountInfo>>>("getMultipleAccounts",
                 Parameters.Create(
                     accounts,
                     ConfigObject.Create(
-                        KeyValue.Create("encoding", "base64"),
+                        KeyValue.Create("encoding", encoding),
                         HandleCommitment(commitment))));
         }
 
-        /// <inheritdoc cref="IRpcClient.GetMultipleAccounts"/>
+        /// <inheritdoc cref="IRpcClient.GetMultipleAccounts(IList{string}, Commitment)"/>
         public RequestResult<ResponseValue<List<AccountInfo>>> GetMultipleAccounts(IList<string> accounts,
             Commitment commitment = Commitment.Finalized)
-            => GetMultipleAccountsAsync(accounts, commitment).Result;
+            => GetMultipleAccounts(accounts, BinaryEncoding.Base64, commitment);
+
+        /// <summary>Uses the specified account data encoding.</summary>
+        public RequestResult<ResponseValue<List<AccountInfo>>> GetMultipleAccounts(IList<string> accounts,
+            BinaryEncoding encoding, Commitment commitment = Commitment.Finalized)
+            => GetMultipleAccountsAsync(accounts, encoding, commitment).Result;
 
         #endregion
 
@@ -376,7 +398,7 @@ namespace Solnet.Rpc
             Commitment commitment = Commitment.Finalized, int maxSupportedTransactionVersion = 1, string encoding = "json")
             => GetTransactionAsync(signature, commitment, maxSupportedTransactionVersion).Result;
 
-     
+
         /// <inheritdoc cref="IRpcClient.GetBlockHeightAsync"/>
         public async Task<RequestResult<ulong>> GetBlockHeightAsync(Commitment commitment = Commitment.Finalized)
         {
@@ -437,7 +459,7 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="IRpcClient.GetEpochSchedule"/>
         public RequestResult<EpochScheduleInfo> GetEpochSchedule() => GetEpochScheduleAsync().Result;
-        
+
         /// <inheritdoc cref="IRpcClient.GetFeeForMessageAsync(string, Commitment)"/>
         public async Task<RequestResult<ResponseValue<ulong>>> GetFeeForMessageAsync(
             string message, Commitment commitment = Commitment.Finalized)

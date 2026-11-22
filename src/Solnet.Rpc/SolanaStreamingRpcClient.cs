@@ -71,103 +71,45 @@ namespace Solnet.Rpc
         /// <inheritdoc cref="StreamingRpcClient.HandleNewMessage(Memory{byte})"/>
         protected override void HandleNewMessage(Memory<byte> messagePayload)
         {
-            Utf8JsonReader jsonReader = new Utf8JsonReader(messagePayload.Span);
-            jsonReader.Read();
-
             if (_logger?.IsEnabled(LogLevel.Information) ?? false)
             {
                 var str = Encoding.UTF8.GetString(messagePayload.Span);
                 _logger?.LogInformation($"[Received]{str}");
             }
 
-            string prop = "", method = "";
-            int id = -1, intResult = -1;
-            bool handled = false;
-            bool? boolResult = null;
-
-            Utf8JsonReader savedState = default;
-
-            while (!handled && jsonReader.Read())
+            using JsonDocument document = JsonDocument.Parse(messagePayload);
+            JsonElement root = document.RootElement;
+            if (root.TryGetProperty("params", out JsonElement parameters))
             {
-                switch (jsonReader.TokenType)
-                {
-                    case JsonTokenType.PropertyName:
-                        prop = jsonReader.GetString();
-                        if (prop == "params")
-                        {
-                            savedState = jsonReader;
-                            jsonReader.Read();
-                            jsonReader.Read();
-                            jsonReader.Skip();
-                        }
-                        else if (prop == "error")
-                        {
-                            HandleError(ref jsonReader);
-                            handled = true;
-                        }
-                        break;
-                    case JsonTokenType.String:
-                        if (prop == "method")
-                        {
-                            method = jsonReader.GetString();
-                        }
-                        break;
-                    case JsonTokenType.Number:
-                        if (prop == "id")
-                        {
-                            id = jsonReader.GetInt32();
-                        }
-                        else if (prop == "result")
-                        {
-                            intResult = jsonReader.GetInt32();
-                        }
-                        else if (prop == "subscription")
-                        {
-                            id = jsonReader.GetInt32();
-                            HandleDataMessage(ref savedState, method, id);
-                            handled = true;
-                        }
-                        if (id != -1 && intResult != -1)
-                        {
-                            ConfirmSubscription(id, intResult);
-                            handled = true;
-                        }
-                        break;
-                    case JsonTokenType.True:
-                    case JsonTokenType.False:
-                        if (prop == "result")
-                        {
-                            // this is the result of an unsubscription
-                            // I don't think its supposed to ever be false if we correctly manage the subscription ids
-                            // maybe future followup
-                            boolResult = jsonReader.GetBoolean();
-                        }
-                        break;
-                }
+                string method = root.GetProperty("method").GetString();
+                int subscriptionId = parameters.GetProperty("subscription").GetInt32();
+                byte[] parameterBytes = Encoding.UTF8.GetBytes(parameters.GetRawText());
+                Utf8JsonReader parameterReader = new(parameterBytes);
+                parameterReader.Read();
+                HandleDataMessage(ref parameterReader, method, subscriptionId);
             }
-
-            if (boolResult.HasValue)
+            else if (root.TryGetProperty("error", out JsonElement error))
             {
-                RemoveSubscription(id, boolResult.Value);
+                HandleError(error, root.GetProperty("id").GetInt32());
+            }
+            else if (root.TryGetProperty("id", out JsonElement id) && root.TryGetProperty("result", out JsonElement result))
+            {
+                if (result.ValueKind == JsonValueKind.Number)
+                    ConfirmSubscription(id.GetInt32(), result.GetInt32());
+                else if (result.ValueKind == JsonValueKind.True || result.ValueKind == JsonValueKind.False)
+                    RemoveSubscription(id.GetInt32(), result.GetBoolean());
             }
         }
 
         /// <summary>
         /// Handles and finishes parsing the contents of an error message.
         /// </summary>
-        /// <param name="reader">The jsonReader that read the message so far.</param>
-        private void HandleError(ref Utf8JsonReader reader)
+        /// <param name="error">The error object.</param>
+        /// <param name="id">The request id.</param>
+        private void HandleError(JsonElement error, int id)
         {
             JsonSerializerOptions opts = new JsonSerializerOptions() { MaxDepth = 64, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-            var err = JsonSerializer.Deserialize<ErrorContent>(ref reader, opts);
-
-            reader.Read();
-
-            //var prop = reader.GetString(); //don't care about property name
-
-            reader.Read();
-
-            var id = reader.GetInt32();
+            var err = error.Deserialize<ErrorContent>(opts);
 
             var sub = RemoveUnconfirmedSubscription(id);
 
@@ -278,6 +220,10 @@ namespace Solnet.Rpc
 
             switch (method)
             {
+                case "blockNotification":
+                    var blockNotification = JsonSerializer.Deserialize<JsonRpcStreamResponse<ResponseValue<BlockUpdate>>>(ref reader, opts);
+                    result = blockNotification.Result;
+                    break;
                 case "accountNotification":
                     {
                         if (sub.Channel == SubscriptionChannel.TokenAccount)
@@ -319,13 +265,46 @@ namespace Solnet.Rpc
             sub.HandleData(result);
         }
 
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeBlockAsync"/>
+        public async Task<SubscriptionState> SubscribeBlockAsync(Action<SubscriptionState, ResponseValue<BlockUpdate>> callback,
+            string mentionsAccountOrProgram = null, Commitment commitment = Commitment.Finalized,
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full,
+            bool showRewards = false, int maxSupportedTransactionVersion = 1)
+        {
+            if (commitment == Commitment.Processed)
+                throw new ArgumentException("Commitment.Processed is not supported for block subscriptions.", nameof(commitment));
+
+            object filter = mentionsAccountOrProgram == null ? "all"
+                : ConfigObject.Create(KeyValue.Create("mentionsAccountOrProgram", mentionsAccountOrProgram));
+            var parameters = Parameters.Create(filter, ConfigObject.Create(
+                KeyValue.Create("commitment", commitment),
+                KeyValue.Create("encoding", "json"),
+                KeyValue.Create("transactionDetails", transactionDetails.ToString().ToLowerInvariant()),
+                KeyValue.Create("showRewards", showRewards),
+                KeyValue.Create("maxSupportedTransactionVersion", maxSupportedTransactionVersion)));
+            var sub = new SubscriptionState<ResponseValue<BlockUpdate>>(this, SubscriptionChannel.Block, callback, parameters);
+            return await Subscribe(sub, new JsonRpcRequest(_idGenerator.GetNextId(), "blockSubscribe", parameters)).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc cref="IStreamingRpcClient.SubscribeBlock"/>
+        public SubscriptionState SubscribeBlock(Action<SubscriptionState, ResponseValue<BlockUpdate>> callback,
+            string mentionsAccountOrProgram = null, Commitment commitment = Commitment.Finalized,
+            TransactionDetailsFilterType transactionDetails = TransactionDetailsFilterType.Full,
+            bool showRewards = false, int maxSupportedTransactionVersion = 1)
+            => SubscribeBlockAsync(callback, mentionsAccountOrProgram, commitment, transactionDetails,
+                showRewards, maxSupportedTransactionVersion).GetAwaiter().GetResult();
+
         #region AccountInfo
         /// <inheritdoc cref="IStreamingRpcClient.SubscribeAccountInfoAsync(string, Action{SubscriptionState, ResponseValue{AccountInfo}}, Commitment)"/>
-        public async Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, Commitment commitment = Commitment.Finalized)
+        public Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, Commitment commitment = Commitment.Finalized)
+            => SubscribeAccountInfoAsync(pubkey, callback, BinaryEncoding.Base64, commitment);
+
+        /// <summary>Uses the specified account data encoding.</summary>
+        public async Task<SubscriptionState> SubscribeAccountInfoAsync(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, BinaryEncoding encoding, Commitment commitment = Commitment.Finalized)
 
         {
             var parameters = new List<object> { pubkey };
-            var configParams = new Dictionary<string, object> { { "encoding", "base64" } };
+            var configParams = new Dictionary<string, object> { { "encoding", encoding } };
 
             if (commitment != Commitment.Finalized)
             {
@@ -343,7 +322,11 @@ namespace Solnet.Rpc
 
         /// <inheritdoc cref="IStreamingRpcClient.SubscribeAccountInfo(string, Action{SubscriptionState, ResponseValue{AccountInfo}}, Commitment)"/>
         public SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, Commitment commitment = Commitment.Finalized)
-            => SubscribeAccountInfoAsync(pubkey, callback, commitment).Result;
+            => SubscribeAccountInfo(pubkey, callback, BinaryEncoding.Base64, commitment);
+
+        /// <summary>Uses the specified account data encoding.</summary>
+        public SubscriptionState SubscribeAccountInfo(string pubkey, Action<SubscriptionState, ResponseValue<AccountInfo>> callback, BinaryEncoding encoding, Commitment commitment = Commitment.Finalized)
+            => SubscribeAccountInfoAsync(pubkey, callback, encoding, commitment).Result;
         #endregion
 
         #region TokenAccount
@@ -450,8 +433,14 @@ namespace Solnet.Rpc
         /// <param name="dataSize"></param>
         /// <param name="memCmpList"></param>
         /// <returns></returns>
-        public async Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, 
+        public Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState,
             ResponseValue<AccountKeyPair>> callback, Commitment commitment = Commitment.Finalized, int? dataSize = null, 
+            IList<MemCmp> memCmpList = null)
+            => SubscribeProgramAsync(programPubkey, callback, BinaryEncoding.Base64, commitment, dataSize, memCmpList);
+
+        /// <summary>Uses the specified account data encoding.</summary>
+        public async Task<SubscriptionState> SubscribeProgramAsync(string programPubkey, Action<SubscriptionState, 
+            ResponseValue<AccountKeyPair>> callback, BinaryEncoding encoding, Commitment commitment = Commitment.Finalized, int? dataSize = null,
             IList<MemCmp> memCmpList = null)
         {
             List<object> filters = Parameters.Create(ConfigObject.Create(KeyValue.Create("dataSize", dataSize)));
@@ -462,11 +451,11 @@ namespace Solnet.Rpc
                     ConfigObject.Create(KeyValue.Create("offset", filter.Offset),
                         KeyValue.Create("bytes", filter.Bytes))))));
             }
-            
+
             List<object> parameters = Parameters.Create(
                 programPubkey,
                 ConfigObject.Create(
-                    KeyValue.Create("encoding", "base64"),
+                    KeyValue.Create("encoding", encoding),
                     KeyValue.Create("filters", filters),
                     commitment != Commitment.Finalized ? KeyValue.Create("commitment", commitment) : null));
 
@@ -485,9 +474,14 @@ namespace Solnet.Rpc
         /// <param name="dataSize"></param>
         /// <param name="memCmpList"></param>
         /// <returns></returns>
-        public SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback, 
+        public SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback,
             Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null)
-            => SubscribeProgramAsync(programPubkey, callback, commitment, dataSize, memCmpList).Result;
+            => SubscribeProgram(programPubkey, callback, BinaryEncoding.Base64, commitment, dataSize, memCmpList);
+
+        /// <summary>Uses the specified account data encoding.</summary>
+        public SubscriptionState SubscribeProgram(string programPubkey, Action<SubscriptionState, ResponseValue<AccountKeyPair>> callback,
+            BinaryEncoding encoding, Commitment commitment = Commitment.Finalized, int? dataSize = null, IList<MemCmp> memCmpList = null)
+            => SubscribeProgramAsync(programPubkey, callback, encoding, commitment, dataSize, memCmpList).Result;
         #endregion
 
         #region SlotInfo
@@ -563,6 +557,7 @@ namespace Solnet.Rpc
 
         private string GetUnsubscribeMethodName(SubscriptionChannel channel) => channel switch
         {
+            SubscriptionChannel.Block => "blockUnsubscribe",
             SubscriptionChannel.Account => "accountUnsubscribe",
             SubscriptionChannel.Logs => "logsUnsubscribe",
             SubscriptionChannel.Program => "programUnsubscribe",

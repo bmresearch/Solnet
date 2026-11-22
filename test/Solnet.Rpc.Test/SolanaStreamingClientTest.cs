@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.WebSockets;
 using System.Text;
+using System.Text.Json;
+using Solnet.Rpc.Types;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -56,7 +58,7 @@ namespace Solnet.Rpc.Test
                 {
                     if (!_isSubConfirmed)
                     {
-                        _subConfirmEvent.WaitOne();
+                        if (!_subConfirmEvent.WaitOne(TimeSpan.FromSeconds(10))) throw new TimeoutException("Subscription confirmation was not released.");
                         subConfirmContent.CopyTo(mem);
                         _isSubConfirmed = true;
                     }
@@ -117,7 +119,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.AreEqual(5199307UL, resultNotification.Context.Slot);
             Assert.AreEqual("11111111111111111111111111111111", resultNotification.Value.Owner);
             Assert.AreEqual(33594UL, resultNotification.Value.Lamports);
@@ -155,7 +157,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.AreEqual(99118135UL, resultNotification.Context.Slot);
             Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", resultNotification.Value.Owner);
             Assert.AreEqual("F8Vyqk3unwxkXukZFQeYyGmFfTG3CAX4v24iyrjEYBJV", resultNotification.Value.Data.Parsed.Info.Owner);
@@ -195,7 +197,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.AreEqual(5199307UL, resultNotification.Context.Slot);
             Assert.AreEqual("11111111111111111111111111111111", resultNotification.Value.Owner);
             Assert.AreEqual(33594UL, resultNotification.Value.Lamports);
@@ -236,7 +238,7 @@ namespace Solnet.Rpc.Test
 
             sub.Unsubscribe();
 
-            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.IsTrue(unsubscribed);
         }
 
@@ -328,7 +330,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.AreEqual(5208469UL, resultNotification.Context.Slot);
             Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", resultNotification.Value.Signature);
             Assert.IsNull(resultNotification.Value.Error);
@@ -363,7 +365,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.AreEqual(5208469UL, resultNotification.Context.Slot);
             Assert.AreEqual("5h6xBEauJ3PK6SWCZ1PGjBvj8vDdWG3KpwATGy1ARAXFSDwt8GFXM7W5Ncn16wmqokgpiKRLuS83KUxyZyv2sUYv", resultNotification.Value.Signature);
             Assert.IsNull(resultNotification.Value.Error);
@@ -398,7 +400,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.AreEqual(TransactionErrorType.InstructionError, resultNotification.Value.Error.Type);
             Assert.AreEqual(InstructionErrorType.Custom, resultNotification.Value.Error.InstructionError.Type);
             Assert.AreEqual(41u, resultNotification.Value.Error.InstructionError.CustomError);
@@ -434,7 +436,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.AreEqual(80854485UL, resultNotification.Context.Slot);
             Assert.AreEqual("9FXD1NXrK6xFU8i4gLAgjj2iMEWTqJhSuQN8tQuDfm2e", resultNotification.Value.PublicKey);
             Assert.AreEqual("11111111111111111111111111111111", resultNotification.Value.Account.Owner);
@@ -454,15 +456,15 @@ namespace Solnet.Rpc.Test
                 (x) => result = x,
                 Array.Empty<byte>(),
                 Array.Empty<byte>());
-            
+
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.ConnectAsync().Wait();
             _ = sut.SubscribeProgram("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", (s, e) => {}, 
                     dataSize:3228, memCmpList: new List<MemCmp>() { new MemCmp() {Offset = 45, Bytes = "CuieVDEDtLo7FypA9SbLM9saXFdb1dsshEkyErMqkRQq"}});
             _subConfirmEvent.Set();
-            
-            
+
+
             _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
                 WebSocketMessageType.Text,
                 true,
@@ -471,7 +473,7 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(expected, res);
         }
 
-        
+
         [TestMethod]
         public void SubscribeProgramMemcmpFilters()
         {
@@ -483,15 +485,15 @@ namespace Solnet.Rpc.Test
                 (x) => result = x,
                 Array.Empty<byte>(),
                 Array.Empty<byte>());
-            
+
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.ConnectAsync().Wait();
             _ = sut.SubscribeProgram("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", (s, e) => {}, 
                 memCmpList: new List<MemCmp>() { new MemCmp() {Offset = 45, Bytes = "CuieVDEDtLo7FypA9SbLM9saXFdb1dsshEkyErMqkRQq"}});
             _subConfirmEvent.Set();
-            
-            
+
+
             _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
                 WebSocketMessageType.Text,
                 true,
@@ -499,8 +501,8 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
         }
-        
-        
+
+
         [TestMethod]
         public void SubscribeProgramDataFilter()
         {
@@ -512,15 +514,15 @@ namespace Solnet.Rpc.Test
                 (x) => result = x,
                 Array.Empty<byte>(),
                 Array.Empty<byte>());
-            
+
             var sut = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
 
             sut.ConnectAsync().Wait();
             _ = sut.SubscribeProgram("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", (s, e) => {}, 
                 dataSize:3228);
             _subConfirmEvent.Set();
-            
-            
+
+
             _socketMock.Verify(s => s.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(),
                 WebSocketMessageType.Text,
                 true,
@@ -528,7 +530,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
         }
-        
+
         [TestMethod]
         public void SubscribeProgramConfirmed()
         {
@@ -557,7 +559,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.AreEqual(80854485UL, resultNotification.Context.Slot);
             Assert.AreEqual("9FXD1NXrK6xFU8i4gLAgjj2iMEWTqJhSuQN8tQuDfm2e", resultNotification.Value.PublicKey);
             Assert.AreEqual("11111111111111111111111111111111", resultNotification.Value.Account.Owner);
@@ -567,11 +569,15 @@ namespace Solnet.Rpc.Test
         }
 
         [TestMethod]
-        public void SubscribeSlotTest()
+        [DataRow(false)]
+        [DataRow(true)]
+        public void SubscribeSlotTest(bool subscriptionFirst)
         {
             var expected = File.ReadAllText("Resources/Streaming/SlotSubscribe.json");
             var subConfirmContent = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
             var notificationContents = File.ReadAllBytes("Resources/Streaming/SlotSubscribeNotification.json");
+            if (subscriptionFirst)
+                notificationContents = Encoding.UTF8.GetBytes("{\"params\":{\"subscription\":23784,\"result\":{\"slot\":76,\"parent\":75,\"root\":44}},\"method\":\"slotNotification\",\"jsonrpc\":\"2.0\"}");
             SlotInfo resultNotification = null;
             var result = new ReadOnlyMemory<byte>();
 
@@ -594,12 +600,88 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(5)));
             Assert.AreEqual(75, resultNotification.Parent);
             Assert.AreEqual(44, resultNotification.Root);
             Assert.AreEqual(76, resultNotification.Slot);
         }
 
+
+        [TestMethod]
+        [DataRow(null, false)]
+        [DataRow("11111111111111111111111111111111", false)]
+        [DataRow(null, true)]
+        public void SubscribeBlockTest(string mention, bool hasError)
+        {
+            byte[] confirmation = File.ReadAllBytes("Resources/Streaming/SubscribeConfirm.json");
+            string value = hasError
+                ? "{\"slot\":76,\"block\":null,\"err\":{\"blockStoreError\":\"unavailable\"}}"
+                : "{\"slot\":76,\"block\":{\"parentSlot\":75,\"blockhash\":\"hash\",\"previousBlockhash\":\"parent\",\"transactions\":[],\"rewards\":[],\"blockTime\":123,\"blockHeight\":70},\"err\":null}";
+            byte[] notification = Encoding.UTF8.GetBytes("{\"params\":{\"subscription\":23784,\"result\":{\"context\":{\"slot\":77},\"value\":" + value + "}},\"method\":\"blockNotification\",\"jsonrpc\":\"2.0\"}");
+            ResponseValue<BlockUpdate> update = null;
+            ReadOnlyMemory<byte> sent = default;
+            SetupAction(out Action<SubscriptionState, ResponseValue<BlockUpdate>> action,
+                x => update = x, x => sent = x, confirmation, notification);
+            using var client = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            client.ConnectAsync().GetAwaiter().GetResult();
+            var subscription = client.SubscribeBlock(action, mention, Commitment.Confirmed, showRewards: true);
+            using (JsonDocument request = JsonDocument.Parse(sent))
+            {
+                Assert.AreEqual("blockSubscribe", request.RootElement.GetProperty("method").GetString());
+                var parameters = request.RootElement.GetProperty("params");
+                if (mention == null) Assert.AreEqual("all", parameters[0].GetString());
+                else Assert.AreEqual(mention, parameters[0].GetProperty("mentionsAccountOrProgram").GetString());
+                Assert.AreEqual("confirmed", parameters[1].GetProperty("commitment").GetString());
+                Assert.AreEqual("json", parameters[1].GetProperty("encoding").GetString());
+                Assert.AreEqual("full", parameters[1].GetProperty("transactionDetails").GetString());
+                Assert.IsTrue(parameters[1].GetProperty("showRewards").GetBoolean());
+                Assert.AreEqual(1, parameters[1].GetProperty("maxSupportedTransactionVersion").GetInt32());
+            }
+            _subConfirmEvent.Set();
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(10)));
+            Assert.AreEqual(77UL, update.Context.Slot);
+            Assert.AreEqual(76UL, update.Value.Slot);
+            if (hasError)
+            {
+                Assert.IsNull(update.Value.Block);
+                Assert.AreEqual("unavailable", update.Value.Err.Value.GetProperty("blockStoreError").GetString());
+            }
+            else
+            {
+                Assert.AreEqual("hash", update.Value.Block.Blockhash);
+                Assert.IsNull(update.Value.Err);
+            }
+            client.Unsubscribe(subscription);
+            using JsonDocument unsubscribe = JsonDocument.Parse(sent);
+            Assert.AreEqual("blockUnsubscribe", unsubscribe.RootElement.GetProperty("method").GetString());
+            Assert.AreEqual(23784, unsubscribe.RootElement.GetProperty("params")[0].GetInt32());
+        }
+
+        [TestMethod]
+        public async Task BlockSubscriptionRejectsProcessedCommitment()
+        {
+            using var client = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            await Assert.ThrowsExactlyAsync<ArgumentException>(() => client.SubscribeBlockAsync((_, _) => { }, commitment: Commitment.Processed));
+        }
+
+        [TestMethod]
+        [DataRow(BinaryEncoding.Base58, "base58")]
+        [DataRow(BinaryEncoding.Base64, "base64")]
+        [DataRow(BinaryEncoding.Base64Zstd, "base64+zstd")]
+        [DataRow(BinaryEncoding.JsonParsed, "jsonParsed")]
+        public void AccountAndProgramSubscriptionsRespectEncoding(BinaryEncoding encoding, string expected)
+        {
+            ReadOnlyMemory<byte> sent = default;
+            _socketMock.Setup(x => x.SendAsync(It.IsAny<ReadOnlyMemory<byte>>(), WebSocketMessageType.Text, true, It.IsAny<CancellationToken>()))
+                .Callback<ReadOnlyMemory<byte>, WebSocketMessageType, bool, CancellationToken>((message, _, _, _) => sent = message);
+            using var client = new SolanaStreamingRpcClient("wss://api.mainnet-beta.solana.com/", null, _socketMock.Object);
+            client.SubscribeAccountInfo("11111111111111111111111111111111", (_, _) => { }, encoding: encoding);
+            using (JsonDocument request = JsonDocument.Parse(sent))
+                Assert.AreEqual(expected, request.RootElement.GetProperty("params")[1].GetProperty("encoding").GetString());
+            client.SubscribeProgram("11111111111111111111111111111111", (_, _) => { }, encoding: encoding);
+            using (JsonDocument request = JsonDocument.Parse(sent))
+                Assert.AreEqual(expected, request.RootElement.GetProperty("params")[1].GetProperty("encoding").GetString());
+        }
 
         [TestMethod]
         public void SubscribeRootTest()
@@ -629,7 +711,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.AreEqual(42, resultNotification);
         }
 
@@ -671,10 +753,10 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.IsNull(resultNotification.Value.Error);
 
-            Assert.IsTrue(subscriptionEvent.WaitOne());
+            Assert.IsTrue(subscriptionEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.AreEqual(SubscriptionStatus.Unsubscribed, evt.Status);
             Assert.AreEqual(SubscriptionStatus.Unsubscribed, sub.State);
         }
@@ -717,9 +799,9 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
 
-            Assert.IsTrue(subscriptionEvent.WaitOne());
+            Assert.IsTrue(subscriptionEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
 
             Assert.AreEqual(TransactionErrorType.InstructionError, resultNotification.Value.Error.Type);
             Assert.AreEqual(InstructionErrorType.Custom, resultNotification.Value.Error.InstructionError.Type);
@@ -767,20 +849,24 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.IsNull(resultNotification.Value.Error);
 
-            Assert.IsTrue(subscriptionEvent.WaitOne());
+            Assert.IsTrue(subscriptionEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.AreEqual(SubscriptionStatus.Unsubscribed, evt.Status);
             Assert.AreEqual(SubscriptionStatus.Unsubscribed, sub.State);
         }
 
 
         [TestMethod]
-        public void SubscribeBadAccountTest()
+        [DataRow(false)]
+        [DataRow(true)]
+        public void SubscribeBadAccountTest(bool idFirst)
         {
             var expected = File.ReadAllText("Resources/Streaming/Account/BadAccountSubscribe.json");
             var subConfirmContent = File.ReadAllBytes("Resources/Streaming/Account/BadAccountSubscribeResult.json");
+            if (idFirst)
+                subConfirmContent = Encoding.UTF8.GetBytes("{\"id\":0,\"error\":{\"message\":\"Invalid Request: Invalid pubkey provided\",\"code\":-32602},\"jsonrpc\":\"2.0\"}");
             var result = new ReadOnlyMemory<byte>();
             AutoResetEvent subscriptionEvent = new AutoResetEvent(false);
             SetupAction(out Action<SubscriptionState, ResponseValue<AccountInfo>> action,
@@ -811,7 +897,7 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(subscriptionEvent.WaitOne());
+            Assert.IsTrue(subscriptionEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.AreEqual("-32602", subEvent.Code);
             Assert.AreEqual(SubscriptionStatus.ErrorSubscribing, subEvent.Status);
             Assert.AreEqual("Invalid Request: Invalid pubkey provided", subEvent.Error);
@@ -862,7 +948,7 @@ namespace Solnet.Rpc.Test
                 Callback<Memory<byte>, CancellationToken>((mem, _) =>
                 {
                     if (currentMessageIdx == 0)
-                        signal.WaitOne();
+                        if (!signal.WaitOne(TimeSpan.FromSeconds(10))) throw new TimeoutException("Streaming test signal was not released.");
                     payloads[currentMessageIdx++].CopyTo(mem);
                 }).Returns(() => new ValueTask<ValueWebSocketReceiveResult>(
                     new ValueWebSocketReceiveResult(
@@ -893,13 +979,13 @@ namespace Solnet.Rpc.Test
             var res = Encoding.UTF8.GetString(result.Span);
             Assert.AreEqual(expected, res);
 
-            Assert.IsTrue(subscriptionEvent.WaitOne());
+            Assert.IsTrue(subscriptionEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
             Assert.IsTrue(string.IsNullOrEmpty(subEvent.Code));
             Assert.AreEqual(SubscriptionStatus.Subscribed, subEvent.Status);
             Assert.IsTrue(string.IsNullOrEmpty(subEvent.Error));
             Assert.AreEqual(SubscriptionStatus.Subscribed, sub.State);
 
-            Assert.IsTrue(_notificationEvent.WaitOne());
+            Assert.IsTrue(_notificationEvent.WaitOne(TimeSpan.FromSeconds(10)), "Timed out waiting for a streaming event.");
 
             Assert.AreEqual(expectedDataContent, notificationValue.Value.Data[0]);
             Assert.AreEqual("base64", notificationValue.Value.Data[1]);

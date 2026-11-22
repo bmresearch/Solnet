@@ -6,6 +6,11 @@ namespace Solnet.Rpc.Models
     public class BlockInfo
     {
         /// <summary>
+        /// Transaction signatures when only signatures were requested.
+        /// </summary>
+        public string[] Signatures { get; set; }
+
+        /// <summary>
         /// Estimated block production time.
         /// </summary>
         public long BlockTime { get; set; }

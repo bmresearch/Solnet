@@ -532,6 +532,10 @@ namespace Solnet.Rpc
         Task<RequestResult<ResponseValue<List<AccountInfo>>>> GetMultipleAccountsAsync(IList<string> accounts,
             Commitment commitment = Commitment.Finalized);
 
+        /// <summary>Uses the specified account data encoding.</summary>
+        Task<RequestResult<ResponseValue<List<AccountInfo>>>> GetMultipleAccountsAsync(IList<string> accounts,
+            BinaryEncoding encoding, Commitment commitment = Commitment.Finalized);
+
         /// <summary>
         /// Gets the account info for multiple accounts.
         /// </summary>
@@ -540,6 +544,10 @@ namespace Solnet.Rpc
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<ResponseValue<List<AccountInfo>>> GetMultipleAccounts(IList<string> accounts,
             Commitment commitment = Commitment.Finalized);
+
+        /// <summary>Uses the specified account data encoding.</summary>
+        RequestResult<ResponseValue<List<AccountInfo>>> GetMultipleAccounts(IList<string> accounts,
+            BinaryEncoding encoding, Commitment commitment = Commitment.Finalized);
 
         /// <summary>
         /// Returns all accounts owned by the provided program Pubkey.
@@ -553,6 +561,10 @@ namespace Solnet.Rpc
         Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey, Commitment commitment = Commitment.Finalized,
             int? dataSize = null, IList<MemCmp> memCmpList = null);
 
+        /// <summary>Uses the specified account data encoding.</summary>
+        Task<RequestResult<List<AccountKeyPair>>> GetProgramAccountsAsync(string pubKey, BinaryEncoding encoding, Commitment commitment = Commitment.Finalized,
+            int? dataSize = null, IList<MemCmp> memCmpList = null);
+
         /// <summary>
         /// Returns all accounts owned by the provided program Pubkey.
         /// <remarks>Accounts must meet all filter criteria to be included in the results.</remarks>
@@ -563,6 +575,10 @@ namespace Solnet.Rpc
         /// <param name="memCmpList">The list of comparisons to match against the program account data.</param>
         /// <returns>Returns an object that wraps the result along with possible errors with the request.</returns>
         RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey, Commitment commitment = Commitment.Finalized,
+            int? dataSize = null, IList<MemCmp> memCmpList = null);
+
+        /// <summary>Uses the specified account data encoding.</summary>
+        RequestResult<List<AccountKeyPair>> GetProgramAccounts(string pubKey, BinaryEncoding encoding, Commitment commitment = Commitment.Finalized,
             int? dataSize = null, IList<MemCmp> memCmpList = null);
 
         /// <summary>

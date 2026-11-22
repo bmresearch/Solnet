@@ -1,4 +1,4 @@
-﻿using Solnet.Rpc.Core.Http;
+using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
@@ -295,11 +295,17 @@ namespace Solnet.Rpc
         public void GetMultipleAccounts(IList<string> accounts,
                                 Commitment commitment = Commitment.Finalized,
                                 Action<ResponseValue<List<AccountInfo>>, Exception> callback = null)
+            => GetMultipleAccounts(accounts, BinaryEncoding.Base64, commitment, callback);
+
+        /// <summary>Gets multiple accounts using the specified data encoding.</summary>
+        public void GetMultipleAccounts(IList<string> accounts, BinaryEncoding encoding,
+                                Commitment commitment = Commitment.Finalized,
+                                Action<ResponseValue<List<AccountInfo>>, Exception> callback = null)
         {
             var parameters = Parameters.Create(
                     accounts,
                     ConfigObject.Create(
-                        KeyValue.Create("encoding", "base64"),
+                        KeyValue.Create("encoding", encoding),
                         HandleCommitment(commitment)));
 
             _composer.AddRequest("getMultipleAccounts", parameters, callback);

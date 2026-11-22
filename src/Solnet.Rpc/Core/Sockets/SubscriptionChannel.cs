@@ -1,4 +1,4 @@
-﻿namespace Solnet.Rpc.Core.Sockets
+namespace Solnet.Rpc.Core.Sockets
 {
     /// <summary>
     /// Represents the channel of a given subscription.
@@ -32,6 +32,10 @@
         /// <summary>
         /// Root subscription (<c>rootSubscribe</c>). 
         /// </summary>
-        Root
+        Root,
+        /// <summary>
+        /// Block subscription (<c>blockSubscribe</c>).
+        /// </summary>
+        Block
     }
 }

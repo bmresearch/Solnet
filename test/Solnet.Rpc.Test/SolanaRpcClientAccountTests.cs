@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
 using System;
@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Solnet.Rpc.Test
@@ -14,6 +15,30 @@ namespace Solnet.Rpc.Test
     [TestClass]
     public class SolanaRpcClientAccountTest : SolanaRpcClientTestBase
     {
+        [TestMethod]
+        [DataRow(BinaryEncoding.Base58, "base58")]
+        [DataRow(BinaryEncoding.Base64, "base64")]
+        [DataRow(BinaryEncoding.Base64Zstd, "base64+zstd")]
+        [DataRow(BinaryEncoding.JsonParsed, "jsonParsed")]
+        public void GenericAccountRequestsRespectEncoding(BinaryEncoding encoding, string expected)
+        {
+            foreach (string method in new[] { "getAccountInfo", "getMultipleAccounts", "getProgramAccounts" })
+            {
+                string sent = null;
+                var handler = SetupTest(s => sent = s, "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":null}");
+                using var http = new HttpClient(handler.Object, disposeHandler: false) { BaseAddress = TestnetUri };
+                var client = new SolanaRpcClient(TestnetUrl, null, http);
+                const string key = "11111111111111111111111111111111";
+                if (method == "getAccountInfo") client.GetAccountInfo(key, encoding: encoding);
+                else if (method == "getMultipleAccounts") client.GetMultipleAccounts(new[] { key }, encoding: encoding);
+                else client.GetProgramAccounts(key, encoding: encoding);
+                using JsonDocument request = JsonDocument.Parse(sent);
+                Assert.AreEqual(method, request.RootElement.GetProperty("method").GetString());
+                Assert.AreEqual(expected, request.RootElement.GetProperty("params")[1].GetProperty("encoding").GetString());
+                FinishTest(handler, TestnetUri);
+            }
+        }
+
         [TestMethod]
         public void TestGetAccountInfoDefault()
         {
@@ -33,7 +58,7 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetAccountInfo("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5");
             Assert.AreEqual(requestData, sentMessage);
-            
+
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(79200467UL, result.Result.Context.Slot);
             Assert.AreEqual("", result.Result.Value.Data[0]);
@@ -65,7 +90,7 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetTokenAccountInfo("FMFMUFqRsGnKm2tQzsaeytATzSG6Evna4HEbKuS6h9uk");
             Assert.AreEqual(requestData, sentMessage);
-            
+
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(103677806UL, result.Result.Context.Slot);
             Assert.IsFalse(result.Result.Value.Executable);
@@ -108,7 +133,7 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetTokenMintInfo("2v6JjYRt93Z1h8iTZavSdGdDufocHCFKT8gvHpg3GNko", Commitment.Confirmed);
             Assert.AreEqual(requestData, sentMessage);
-            
+
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(103677835UL, result.Result.Context.Slot);
             Assert.IsFalse(result.Result.Value.Executable);
@@ -149,7 +174,7 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetAccountInfo("2v6JjYRt93Z1h8iTZavSdGdDufocHCFKT8gvHpg3GNko", Commitment.Confirmed, BinaryEncoding.JsonParsed);
             Assert.AreEqual(requestData, sentMessage);
-            
+
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(103659529UL, result.Result.Context.Slot);
             Assert.AreEqual(parsedJsonDataOnly, result.Result.Value.Data[0]);
@@ -181,7 +206,7 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetAccountInfo("9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5", Types.Commitment.Confirmed);
             Assert.AreEqual(requestData, sentMessage);
-            
+
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(79200467UL, result.Result.Context.Slot);
             Assert.AreEqual("", result.Result.Value.Data[0]);
@@ -214,7 +239,7 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetProgramAccounts("GrAkKfEpTKQuVHG2Y97Y2FF4i7y7Q5AHLK94JBy7Y5yv");
             Assert.AreEqual(requestData, sentMessage);
-            
+
             Assert.IsTrue(result.WasSuccessful);
             Assert.HasCount(2, result.Result);
             Assert.AreEqual("FzNKvS4SCHDoNbnnfhmGSLVRCLNBUuGecxdvobSGmWMh", result.Result[0].PublicKey);
@@ -253,7 +278,7 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetProgramAccounts("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T", dataSize: 500);
             Assert.AreEqual(requestData, sentMessage);
-            
+
             Assert.IsTrue(result.WasSuccessful);
             Assert.HasCount(2, result.Result);
             Assert.AreEqual("FzNKvS4SCHDoNbnnfhmGSLVRCLNBUuGecxdvobSGmWMh", result.Result[0].PublicKey);
@@ -293,7 +318,7 @@ namespace Solnet.Rpc.Test
             var result = sut.GetProgramAccounts("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T", dataSize: 500,
                 memCmpList: new List<MemCmp> { new() { Offset = 25, Bytes = "3Mc6vR" } });
             Assert.AreEqual(requestData, sentMessage);
-            
+
             Assert.IsTrue(result.WasSuccessful);
             Assert.HasCount(2, result.Result);
             Assert.AreEqual("FzNKvS4SCHDoNbnnfhmGSLVRCLNBUuGecxdvobSGmWMh", result.Result[0].PublicKey);
@@ -332,7 +357,7 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetProgramAccounts("GrAkKfEpTKQuVHG2Y97Y2FF4i7y7Q5AHLK94JBy7Y5yv", Commitment.Processed);
             Assert.AreEqual(requestData, sentMessage);
-            
+
             Assert.IsTrue(result.WasSuccessful);
             Assert.HasCount(2, result.Result);
             Assert.AreEqual("FzNKvS4SCHDoNbnnfhmGSLVRCLNBUuGecxdvobSGmWMh", result.Result[0].PublicKey);
@@ -372,7 +397,7 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetMultipleAccounts(new List<string> { "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu", "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5" });
             Assert.AreEqual(requestData, sentMessage);
-            
+
             Assert.IsTrue(result.WasSuccessful);
             Assert.HasCount(2, result.Result.Value);
 
@@ -406,7 +431,7 @@ namespace Solnet.Rpc.Test
 
             var result = sut.GetMultipleAccounts(new List<string> { "Bbe9EKucmRtJr2J4dd5Eb5ybQmY7Fm7jYxKXxmmkLFsu", "9we6kjtbcZ2vy3GSLLsZTEhbAqXPTRvEyoxa8wxSqKp5" }, Types.Commitment.Confirmed);
             Assert.AreEqual(requestData, sentMessage);
-            
+
             Assert.IsTrue(result.WasSuccessful);
             Assert.HasCount(2, result.Result.Value);
 
@@ -439,7 +464,7 @@ namespace Solnet.Rpc.Test
             var result = sut.GetLargestAccounts(Rpc.Types.AccountFilterType.Circulating);
 
             Assert.AreEqual(requestData, sentMessage);
-            
+
             Assert.IsTrue(result.WasSuccessful);
             Assert.HasCount(20, result.Result.Value);
             Assert.AreEqual("6caH6ayzofHnP8kcPQTEBrDPG4A2qDo1STE5xTMJ52k8", result.Result.Value[0].Address);
@@ -469,7 +494,7 @@ namespace Solnet.Rpc.Test
             var result = sut.GetLargestAccounts(Rpc.Types.AccountFilterType.NonCirculating, Types.Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
-            
+
             Assert.IsTrue(result.WasSuccessful);
             Assert.HasCount(20, result.Result.Value);
             Assert.AreEqual("6caH6ayzofHnP8kcPQTEBrDPG4A2qDo1STE5xTMJ52k8", result.Result.Value[0].Address);
@@ -499,7 +524,7 @@ namespace Solnet.Rpc.Test
             var result = sut.GetVoteAccounts();
 
             Assert.AreEqual(requestData, sentMessage);
-            
+
             Assert.IsTrue(result.WasSuccessful);
             Assert.HasCount(1, result.Result.Current);
             Assert.HasCount(1, result.Result.Delinquent);
@@ -543,7 +568,7 @@ namespace Solnet.Rpc.Test
             var result = sut.GetVoteAccounts("6ZPxeQaDo4bkZLRsdNrCzchNQr5LN9QMc9sipXv9Kw8f", Commitment.Processed);
 
             Assert.AreEqual(requestData, sentMessage);
-            
+
             Assert.IsTrue(result.WasSuccessful);
 
             FinishTest(messageHandlerMock, TestnetUri);
