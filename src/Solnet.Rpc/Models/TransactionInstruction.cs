@@ -102,7 +102,7 @@ namespace Solnet.Rpc.Models
 
             // Read the number of keys for the instruction
             ReadOnlySpan<byte> encodedKeyIndicesLength =
-                data.Slice(instructionLength, ShortVectorEncoding.SpanLength);
+                data.Slice(instructionLength, Math.Min(ShortVectorEncoding.SpanLength, data.Length - instructionLength));
             (int keyIndicesLength, int keyIndicesLengthEncodedLength) =
                 ShortVectorEncoding.DecodeLength(encodedKeyIndicesLength);
             instructionLength += keyIndicesLengthEncodedLength;

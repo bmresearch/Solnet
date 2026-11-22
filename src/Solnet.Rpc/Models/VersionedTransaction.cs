@@ -1,4 +1,4 @@
-﻿using Solnet.Rpc.Builders;
+using Solnet.Rpc.Builders;
 using Solnet.Rpc.Utilities;
 using System;
 using System.Collections.Generic;
@@ -13,6 +13,7 @@ namespace Solnet.Rpc.Models
     /// </summary>
     public class VersionedTransaction : Transaction
     {
+        private MessageHeader _originalHeader;
 
         /// <summary>
         /// Address Lookup Table for the message. This is used to resolve addresses in the message.
@@ -39,6 +40,7 @@ namespace Solnet.Rpc.Models
             {
                 FeePayer = FeePayer,
                 AccountKeys = _accountKeys,
+                OriginalHeader = _originalHeader,
                 Version = Version
             };
 
@@ -62,7 +64,7 @@ namespace Solnet.Rpc.Models
         /// Serialize the transaction into wire format.
         /// </summary>
         /// <returns>A byte array containing the serialized transaction data.</returns>
-        public new byte[] Serialize()
+        public override byte[] Serialize()
         {
             return Version switch
             {
@@ -137,6 +139,7 @@ namespace Solnet.Rpc.Models
             VersionedTransaction tx = new()
             {
                 Version = message.Version,
+                _originalHeader = message.Header,
                 RecentBlockHash = message.RecentBlockhash,
                 Signatures = new List<SignaturePubKeyPair>(),
                 Instructions = new List<TransactionInstruction>(),
@@ -248,7 +251,8 @@ namespace Solnet.Rpc.Models
                                 TransactionBuilder.SignatureLength
                             )
                         )..]);
-            message.Version = 0;
+            if (message.Version != 0)
+                throw new FormatException("Signature-first framing requires a V0 message.");
             return Populate(message, signatures);
         }
         /// <summary>
@@ -267,8 +271,9 @@ namespace Solnet.Rpc.Models
                 signatureCount *
                 TransactionBuilder.SignatureLength;
 
-            int messageLength =
-                data.Length - signatureBytes;
+            int messageLength = message.SerializedLength;
+            if (messageLength + signatureBytes != data.Length)
+                throw new FormatException("V1 transaction must contain exactly the required signatures after the message.");
 
             List<byte[]> signatures =
                 new(signatureCount);

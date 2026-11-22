@@ -1,4 +1,3 @@
-using Bifrost.Security;
 using Solnet.Rpc.Builders;
 using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
@@ -141,7 +140,7 @@ namespace Solnet.Rpc.Models
             foreach (Account account in uniqueSigners)
             {
                 byte[] signatureBytes = account.Sign(serializedMessage);
-                Signatures.Add(new SignaturePubKeyPair { PublicKey = account.PublicKey, Signature = signatureBytes });
+                AddSignature(account.PublicKey, signatureBytes);
             }
 
             return VerifySignatures();
@@ -181,7 +180,7 @@ namespace Solnet.Rpc.Models
             foreach (Account account in uniqueSigners)
             {
                 byte[] signatureBytes = account.Sign(serializedMessage);
-                Signatures.Add(new SignaturePubKeyPair { PublicKey = account.PublicKey, Signature = signatureBytes });
+                AddSignature(account.PublicKey, signatureBytes);
             }
         }
 
@@ -244,7 +243,10 @@ namespace Solnet.Rpc.Models
         public void AddSignature(PublicKey publicKey, byte[] signature)
         {
             Signatures ??= new List<SignaturePubKeyPair>();
-            Signatures.Add(new SignaturePubKeyPair { PublicKey = publicKey, Signature = signature });
+            int index = Signatures.FindIndex(pair => pair.PublicKey.Key == publicKey.Key);
+            SignaturePubKeyPair pair = new() { PublicKey = publicKey, Signature = signature };
+            if (index >= 0) Signatures[index] = pair;
+            else Signatures.Add(pair);
         }
 
         /// <summary>
@@ -271,7 +273,7 @@ namespace Solnet.Rpc.Models
         /// Serializes the transaction into wire format.
         /// </summary>
         /// <returns>The transaction encoded in wire format.</returns>
-        public byte[] Serialize()
+        public virtual byte[] Serialize()
         {
             byte[] signaturesLength = ShortVectorEncoding.EncodeLength(Signatures.Count);
             byte[] serializedMessage = CompileMessage();
@@ -311,35 +313,13 @@ namespace Solnet.Rpc.Models
 
             if (signatures != null)
             {
-                int i = 0;
-                foreach(byte[] signature in signatures)
+                for (int i = 0; i < signatures.Count; i++)
                 {
-                    byte[] messageBytes = message.Serialize();
-                    bool validSig = Ed25519.Verify(signature, messageBytes, message.AccountKeys[i].KeyBytes);
-                    PublicKey signer = message.AccountKeys[i];
-                    if (!validSig)
+                    tx.Signatures.Add(new SignaturePubKeyPair
                     {
-                        foreach (var account in message.AccountKeys)
-                        {
-                            if (Ed25519.Verify(signature, messageBytes, account.KeyBytes))
-                            {
-                                validSig = true;
-                                signer = account;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (validSig)
-                    {
-                        tx.Signatures.Add(new SignaturePubKeyPair
-                        {
-                            PublicKey = signer,
-                            Signature = signature
-                        });
-                    }
-
-                    i++;
+                        PublicKey = message.AccountKeys[i],
+                        Signature = signatures[i]
+                    });
                 }
             }
 
@@ -389,6 +369,9 @@ namespace Solnet.Rpc.Models
         /// <returns>The Transaction object.</returns>
         public static Transaction Deserialize(ReadOnlySpan<byte> data)
         {
+            if (data.IsEmpty) throw new ArgumentException("Transaction data cannot be empty.", nameof(data));
+            if (data[0] == 0x81) return VersionedTransaction.Deserialize(data);
+
             // Read number of signatures
             (int signaturesLength, int encodedLength) =
                 ShortVectorEncoding.DecodeLength(data[..ShortVectorEncoding.SpanLength]);

@@ -276,6 +276,9 @@ namespace Solnet.Rpc.Models
             /// </summary>
             public TransactionConfig TransactionConfig { get; set; }
 
+            // Number of bytes consumed by the V1 message parser, excluding signatures.
+            internal int SerializedLength { get; private set; }
+
             /// <summary>
             /// Serialize the versioned message into the wire format.
             /// </summary>
@@ -664,6 +667,7 @@ namespace Solnet.Rpc.Models
                 return new VersionedMessage
                 {
                     Version = 1,
+                    SerializedLength = offset,
                     Header = header,
                     TransactionConfig = config,
                     RecentBlockhash = recentBlockHash,

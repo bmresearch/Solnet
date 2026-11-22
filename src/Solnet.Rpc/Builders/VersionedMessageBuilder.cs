@@ -54,6 +54,25 @@ namespace Solnet.Rpc.Builders
         /// </summary>
         public IList<PublicKey> AccountKeys { get; internal set; }
 
+        internal MessageHeader OriginalHeader { get; set; }
+
+        private List<AccountMeta> GetVersionedAccountKeys()
+        {
+            if (OriginalHeader == null || AccountKeys == null) return GetAccountKeys();
+
+            // Compiled instruction indices and existing signatures refer to this exact order.
+            List<AccountMeta> keys = new(AccountKeys.Count);
+            for (int i = 0; i < AccountKeys.Count; i++)
+            {
+                bool signer = i < OriginalHeader.RequiredSignatures;
+                bool writable = signer
+                    ? i < OriginalHeader.RequiredSignatures - OriginalHeader.ReadOnlySignedAccounts
+                    : i < AccountKeys.Count - OriginalHeader.ReadOnlyUnsignedAccounts;
+                keys.Add(new AccountMeta(AccountKeys[i], writable, signer));
+            }
+            return keys;
+        }
+
         /// <summary>
         /// Builds the message into the wire format.
         /// </summary>
@@ -102,7 +121,7 @@ namespace Solnet.Rpc.Builders
         {
             _messageHeader = new MessageHeader();
 
-            List<AccountMeta> keysList = GetAccountKeys();
+            List<AccountMeta> keysList = GetVersionedAccountKeys();
 
             List<CompiledInstruction> compiledInstructions = new();
 
@@ -176,7 +195,7 @@ namespace Solnet.Rpc.Builders
         {
             _messageHeader = new MessageHeader();
 
-            List<AccountMeta> keysList = GetAccountKeys();
+            List<AccountMeta> keysList = GetVersionedAccountKeys();
 
             List<CompiledInstruction> compiledInstructions = new();
 

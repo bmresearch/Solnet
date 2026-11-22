@@ -36,11 +36,11 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(requestData, sentMessage);
             
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual((decimal)0.05, result.Result.Foundation);
+            Assert.AreEqual(0.05m, result.Result.Foundation);
             Assert.AreEqual(7, result.Result.FoundationTerm);
-            Assert.AreEqual((decimal)0.15, result.Result.Initial);
-            Assert.AreEqual((decimal)0.15, result.Result.Taper);
-            Assert.AreEqual((decimal)0.015, result.Result.Terminal);
+            Assert.AreEqual(0.15m, result.Result.Initial);
+            Assert.AreEqual(0.15m, result.Result.Taper);
+            Assert.AreEqual(0.015m, result.Result.Terminal);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -65,11 +65,11 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(requestData, sentMessage);
             
             Assert.IsTrue(result.WasSuccessful);
-            Assert.AreEqual((decimal)0.05, result.Result.Foundation);
+            Assert.AreEqual(0.05m, result.Result.Foundation);
             Assert.AreEqual(7, result.Result.FoundationTerm);
-            Assert.AreEqual((decimal)0.15, result.Result.Initial);
-            Assert.AreEqual((decimal)0.15, result.Result.Taper);
-            Assert.AreEqual((decimal)0.015, result.Result.Terminal);
+            Assert.AreEqual(0.15m, result.Result.Initial);
+            Assert.AreEqual(0.15m, result.Result.Taper);
+            Assert.AreEqual(0.015m, result.Result.Terminal);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -95,9 +95,9 @@ namespace Solnet.Rpc.Test
             
             Assert.IsTrue(result.WasSuccessful);
             Assert.AreEqual(100, result.Result.Epoch);
-            Assert.AreEqual((decimal)0.149, result.Result.Total);
-            Assert.AreEqual((decimal)0.148, result.Result.Validator);
-            Assert.AreEqual((decimal)0.001, result.Result.Foundation);
+            Assert.AreEqual(0.149m, result.Result.Total);
+            Assert.AreEqual(0.148m, result.Result.Validator);
+            Assert.AreEqual(0.001m, result.Result.Foundation);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
